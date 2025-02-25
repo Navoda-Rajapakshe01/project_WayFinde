@@ -13,18 +13,22 @@ function App() {
 
   return (
     <>
-      <div className="App">
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/home" />} exact />
-            <Route path="/home" element={<Home />} exact />
-            <Route path="/plantrip" element={<PlanTrip />} exact />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/accommodation" element={<Accommodation />} />
-            <Route path="/thingstodo" element={<ThingsToDo />} />
-            <Route path="/vehicle" element={<Vehicle />} />
-          </Routes>
-        </BrowserRouter>
+      <div>
+        <a href="https://vite.dev" target="_blank">
+          <img src={viteLogo} className="logo" alt="Vite logo" />
+        </a>
+        <a href="https://react.dev" target="_blank">
+          <img src={reactLogo} className="logo react" alt="React logo" />
+        </a>
+      </div>
+      <h1>Vite + React</h1>
+      <div className="card">
+        <button onClick={() => setCount((count) => count + 1)}>
+          count is {count}
+        </button>
+        <p>
+          Edit <code>src/App.jsx</code> and save to test HMR
+        </p>
       </div>
     </>
   );
