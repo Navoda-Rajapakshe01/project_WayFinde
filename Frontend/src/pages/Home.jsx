@@ -1,12 +1,16 @@
-import MainNavbar from "../Components/MainNavbar/MainNavbar";
-const Home = () => {
+import React from "react";
+import HeroSection from "../Components/HeroSection/HeroSection";
+import LocationSection from "../Components/LocationSection/LocationSection";
+import BlogPostSection from "../Components/BlogPostSection/BlogPostSection";
+
+function Home() {
   return (
-    <div className="page-container">
-      <MainNavbar />
-      <h1>Home Page</h1>
-      <p>Welcome to our website!</p>
-    </div>
+    <>
+      <HeroSection />
+      <LocationSection />
+      <BlogPostSection />
+    </>
   );
-};
+}
 
 export default Home;

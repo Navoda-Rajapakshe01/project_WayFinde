@@ -1,35 +1,30 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import MainNavbar from "./Components/MainNavbar/MainNavbar";
+import Footer from "./Components/Footer/Footer";
+import Home from "./Pages/Home";
+import PlanTrip from "./Pages/PlanTrip";
+import Accommodation from "./Pages/Accommodation";
+import Vehicle from "./Pages/Vehicle";
+import Blog from "./Pages/Blog";
+import ThingsToDo from "./Pages/ThingsToDo";
 import "./App.css";
 
-import Accommodation from "./pages/Accommodation";
-import Blog from "./pages/Blog";
-import Home from "./pages/Home";
-import PlanTrip from "./pages/PlanTrip";
-import ThingsToDo from "./pages/ThingsToDo";
-import Vehicle from "./pages/Vehicle";
-
 function App() {
-  //const [count, setCount] = useState(0);
-
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
+      <BrowserRouter>
+        <MainNavbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/plantrip" element={<PlanTrip />} />
+          <Route path="/accommodation" element={<Accommodation />} />
+          <Route path="/vehicle" element={<Vehicle />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/thingstodo" element={<ThingsToDo />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
     </>
   );
 }
