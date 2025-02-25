@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom"; // useLocation for automatic active tab
 import logo from "../../assets/Images/logo.png";
 import "./MainNavbar.css";
 
@@ -12,7 +12,8 @@ import {
 } from "react-icons/fa";
 
 const MainNavbar = () => {
-  const [activeTab, setActiveTab] = useState("Home");
+  const location = useLocation(); // Use location to track current route
+  const [activeTab, setActiveTab] = useState(location.pathname);
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -22,6 +23,11 @@ const MainNavbar = () => {
     { name: "Blog", icon: <FaBook />, path: "/blog" },
     { name: "Things To Do", icon: <FaBook />, path: "/thingstodo" },
   ];
+
+  // Update active tab when location changes
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location]);
 
   return (
     <nav className="navbar">
@@ -34,9 +40,8 @@ const MainNavbar = () => {
             <li
               key={item.name}
               className={`navbar-item ${
-                activeTab === item.name ? "active" : ""
-              }`}
-              onClick={() => setActiveTab(item.name)}>
+                activeTab === item.path ? "active" : ""
+              }`}>
               <Link to={item.path} className="navbar-link">
                 {item.icon}
                 <span>{item.name}</span>

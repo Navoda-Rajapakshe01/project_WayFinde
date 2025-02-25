@@ -6,9 +6,10 @@ const HeroSection = () => {
     <>
       <div className="hero">
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Welcome to WayFinde
+          Discover. Explore. Experience. <br />
+          Your Perfect Journey Starts Here!
         </h1>
-        <p className="text-lg mb-6">Plan your trips easily</p>
+        <p className="text-lg mb-6">Plan your trips easily</p> <br />
         <SearchBar />
       </div>
     </>

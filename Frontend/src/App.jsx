@@ -1,20 +1,31 @@
-import { BrowserRouter } from "react-router-dom";
-import "./App.css";
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
-import HeroSection from "./Components/HeroSection/HeroSection";
-import LocationSection from "./Components/LocationSection/LocationSection";
-import BlogPostSection from "./Components/BlogPostSection/BlogPostSection";
 import Footer from "./Components/Footer/Footer";
+import Home from "./Pages/Home";
+import PlanTrip from "./Pages/PlanTrip";
+import Accommodation from "./Pages/Accommodation";
+import Vehicle from "./Pages/Vehicle";
+import Blog from "./Pages/Blog";
+import ThingsToDo from "./Pages/ThingsToDo";
+import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
-      <MainNavbar />
-      <HeroSection />
-      <LocationSection />
-      <BlogPostSection />
-      <Footer />
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <MainNavbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/plantrip" element={<PlanTrip />} />
+          <Route path="/accommodation" element={<Accommodation />} />
+          <Route path="/vehicle" element={<Vehicle />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/thingstodo" element={<ThingsToDo />} />
+        </Routes>
+        <Footer />
+      </BrowserRouter>
+    </>
   );
 }
 
