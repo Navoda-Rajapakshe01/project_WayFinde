@@ -1,17 +1,118 @@
-import React from "react";
+import React, { useState } from "react";
 import HeroSection from "../Components/HeroSection/HeroSection";
 import ImageGrid from "../Components/ImageGrid/ImageGrid";
-
 import BeachImage from "../assets/Images/Blogimages/beach1.jpg";
+import sinharajaForestImage from "../assets/Images/Blogimages/sinharajaforest.jpg";
 
-const images = [
-  BeachImage,
-  BeachImage,
-  BeachImage,
-  BeachImage,
-  
+const latestBlogs = [
+  {
+    img: BeachImage,
+    writerName: "Name1",
+    topic: "Topic 1",
+    briefDescription: "Description",
+  },
+  {
+    img: BeachImage,
+    writerName: "Name2",
+    topic: "Topic 2",
+    briefDescription: "Another description",
+  },
+  {
+    img: BeachImage,
+    writerName: "Name3",
+    topic: "Topic 3",
+    briefDescription: "Yet another description",
+  },
+  {
+    img: BeachImage,
+    writerName: "Name4",
+    topic: "Topic 4",
+    briefDescription: "Final description",
+  },
+];
+// const writersName = [Name1, Name2, Name3, Name4];
+const trendingBlogs = [
+  {
+    img: sinharajaForestImage,
+    writerName: "Name1",
+    topic: "Topic 1",
+    briefDescription: "Description",
+  },
+  {
+    img: sinharajaForestImage,
+    writerName: "Name2",
+    topic: "Topic 2",
+    briefDescription: "Another description",
+  },
+  {
+    img: sinharajaForestImage,
+    writerName: "Name3",
+    topic: "Topic 3",
+    briefDescription: "Yet another description",
+  },
+  {
+    img: sinharajaForestImage,
+    writerName: "Name4",
+    topic: "Topic 4",
+    briefDescription: "Final description",
+  },
+];
+const allBlogs = [
+  {
+    img: BeachImage,
+    writerName: "Name1",
+    topic: "Topic 1",
+    briefDescription: "Description",
+  },
+  {
+    img: BeachImage,
+    writerName: "Name2",
+    topic: "Topic 2",
+    briefDescription: "Another description",
+  },
+  {
+    img: BeachImage,
+    writerName: "Name3",
+    topic: "Topic 3",
+    briefDescription: "Yet another description",
+  },
+  {
+    img: BeachImage,
+    writerName: "Name4",
+    topic: "Topic 4",
+    briefDescription: "Final description",
+  },
+  {
+    img: sinharajaForestImage,
+    writerName: "Name1",
+    topic: "Topic 1",
+    briefDescription: "Description",
+  },
+  {
+    img: sinharajaForestImage,
+    writerName: "Name2",
+    topic: "Topic 2",
+    briefDescription: "Another description",
+  },
+  {
+    img: sinharajaForestImage,
+    writerName: "Name3",
+    topic: "Topic 3",
+    briefDescription: "Yet another description",
+  },
+  {
+    img: sinharajaForestImage,
+    writerName: "Name4",
+    topic: "Topic 4",
+    briefDescription: "Final description",
+  },
 ];
 const Blog = () => {
+  const [visibleBlogs, setVisibleBlogs] = useState(allBlogs.slice(0, 4)); // Show only 4 initially
+
+  const handleShowMore = () => {
+    setVisibleBlogs(allBlogs.slice(0, visibleBlogs.length + 2)); // Load 2 more blogs each time
+  };
   return (
     <div className="page-container">
       <HeroSection
@@ -25,11 +126,23 @@ const Blog = () => {
         placeHolder="Search blog posts..."
       />
       <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Latest Blog Posts</h1>
-        <ImageGrid images={images} />
+        <h1 className="text-3xl font-bold mb-6">Latest Blog Posts</h1>
+        <ImageGrid images={latestBlogs} />
         <h1 className="text-3xl font-bold mb-6">Trending Blog Posts</h1>
-        <ImageGrid images={images} />
+        <ImageGrid images={trendingBlogs} />
       </div>
+      <ImageGrid images={visibleBlogs} />
+
+      {visibleBlogs.length < allBlogs.length && ( // Show button only if more blogs exist
+        <div className="flex justify-center mt-6">
+          <button
+            className="mt-6 px-6 py-2 bg-sky-400 text-white font-semibold rounded-lg hover:bg-sky-400 transition"
+            onClick={handleShowMore}
+          >
+            Show More
+          </button>
+        </div>
+      )}
     </div>
   );
 };
