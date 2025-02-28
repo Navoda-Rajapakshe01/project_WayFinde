@@ -3,6 +3,7 @@ import HeroSection from "../Components/HeroSection/HeroSection";
 import ImageGrid from "../Components/ImageGrid/ImageGrid";
 import BeachImage from "../assets/Images/Blogimages/beach1.jpg";
 import sinharajaForestImage from "../assets/Images/Blogimages/sinharajaforest.jpg";
+import "./Blog.css";
 
 const latestBlogs = [
   {
@@ -134,9 +135,10 @@ const Blog = () => {
       <ImageGrid images={visibleBlogs} />
 
       {visibleBlogs.length < allBlogs.length && ( // Show button only if more blogs exist
-        <div className="flex justify-center mt-6">
+        <div className="flex justify-center items-center m-5">
           <button
-            className="mt-6 px-6 py-2 bg-sky-400 text-white font-semibold rounded-lg hover:bg-sky-400 transition"
+            type="button"
+            class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br  focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 "
             onClick={handleShowMore}
           >
             Show More
