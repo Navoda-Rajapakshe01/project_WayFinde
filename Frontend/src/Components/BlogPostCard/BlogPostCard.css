@@ -1,0 +1,29 @@
+.blog-post-card {
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px;
+  overflow: hidden;
+}
+
+.blog-post-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.blog-post-card .blog-post-info {
+  padding: 15px;
+}
+
+.blog-post-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.blog-post-card p {
+  font-size: 1rem;
+  color: #555;
+}
