@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom"; // useLocation for automatic active tab
+import { Link, useLocation, useNavigate } from "react-router-dom"; // useLocation for automatic active tab
 import logo from "../../assets/Images/logo.png";
 import "./MainNavbar.css";
 
@@ -49,6 +49,12 @@ const MainNavbar = () => {
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location]);
+  //Add the dynamic navigation
+  const navigate = useNavigate();
+
+  const handleNavigation = (path) => {
+    navigate(path); // Navigate dynamically based on the clicked item
+  };
 
   return (
     <nav className="navbar">
@@ -82,13 +88,13 @@ const MainNavbar = () => {
         {/* Pop-up Section */}
         {isOpen && (
           <div className="profile-popup">
-            <p>👤 Profile</p>
-            <p>✈️ Trips</p>
-            <p>📝 Posts</p>
-            <p>💬 Chat</p>
-            <p>📰 Blogs</p>
-            <p>⚙️ Settings</p>
-            <p>🔓 Logout</p>
+            <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
+            <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
+            <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
+            <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
+            <p onClick={() => handleNavigation("/personalblog")}>📰 Blogs</p>
+            <p onClick={() => handleNavigation("/settings")}>⚙️ Settings</p>
+            <p onClick={() => handleNavigation("/logout")}>🔓 Logout</p>
           </div>
         )}
       </div>
