@@ -5,17 +5,18 @@ import BlogPage1 from "./Components/BlogPages/BlogPage1";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Accommodation from "./Pages/Accommodation";
-import Home from "./Pages/Home";
 import PlanTrip from "./Pages/PlanTrip";
 import ThingsToDo from "./Pages/ThingsToDo";
-import Vehicle from "./Pages/Vehicle";
 import Blog from "./pages/Blog";
 import Chat from "./pages/Chat";
+import Home from "./pages/Home";
 import Logout from "./pages/Logout";
+import PersonalBlog from "./pages/PersonalBlog";
 import Post from "./pages/Post";
 import Profile from "./pages/Profile";
 import Setting from "./pages/Setting";
-import PersonalBlog from "./pages/PersonalBlog";
+import Vehicle from "./pages/Vehicle";
+import Profilepage from "./pages/Profilepage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/setting" element={<Setting />} />
           <Route path="/blog/:id" element={<BlogPage1 />} />{" "}
+          <Route path="/profile/:writerId" element={<Profilepage />} />
           {/* Dynamic route */}
         </Routes>
         <Footer />
