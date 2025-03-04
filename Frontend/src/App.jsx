@@ -6,9 +6,22 @@ import Home from "./Pages/Home";
 import PlanTrip from "./Pages/PlanTrip";
 import Accommodation from "./Pages/Accommodation";
 import Vehicle from "./Pages/Vehicle";
-import Blog from "./Pages/Blog";
+import Blog from "./pages/Blog";
 import ThingsToDo from "./Pages/ThingsToDo";
 import "./App.css";
+import Profilepage from "./pages/Profilepage";
+
+
+
+import Chat from "./pages/Chat";
+
+import Logout from "./pages/Logout";
+import PersonalBlog from "./pages/PersonalBlog";
+import Post from "./pages/Post";
+import Profile from "./pages/Profile";
+import Setting from "./pages/Setting";
+
+
 
 function App() {
   return (
@@ -22,6 +35,15 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/personalblog" element={<PersonalBlog />} />
+          <Route path="/post" element={<Post />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/setting" element={<Setting />} />
+          <Route path="/blog/:id" element={<BlogPage1 />} />{" "}
+          <Route path="/profile/:writerId" element={<Profilepage />} />
+          {/* Dynamic route */}
         </Routes>
         <Footer />
       </BrowserRouter>
