@@ -1,14 +1,14 @@
-.blog-post-section {
+.vehicle-section {
   padding: 40px;
   text-align: center;
 }
 
-.blog-post-section h2 {
+.vehicle-section h2 {
   font-size: 2rem;
   margin-bottom: 20px;
 }
 
-.blog-posts {
+.vehicle-cards {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
