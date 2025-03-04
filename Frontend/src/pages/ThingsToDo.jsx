@@ -1,6 +1,7 @@
 import MainNavbar from "../Components/MainNavbar/MainNavbar";
 import FirstSection from "../Components/ThingsToDo/FirstSection/FirstSection";
 import BestLocations from "../Components/ThingsToDo/BestLocations/BestLocations";
+import Blogs from "../Components/ThingsToDo/Blogs/Blogs";
 
 const ThingsToDo = () => {
   return (
@@ -8,6 +9,7 @@ const ThingsToDo = () => {
       <MainNavbar />
       <FirstSection />
       <BestLocations />
+      <Blogs />
     </div>
   );
 };
