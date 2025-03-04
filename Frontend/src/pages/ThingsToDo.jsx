@@ -1,10 +1,13 @@
 import MainNavbar from "../Components/MainNavbar/MainNavbar";
+import FirstSection from "../Components/ThingsToDo/FirstSection/FirstSection";
+import BestLocations from "../Components/ThingsToDo/BestLocations/BestLocations";
+
 const ThingsToDo = () => {
   return (
     <div className="page-container">
       <MainNavbar />
-      <h1>Home Page</h1>
-      <p>Welcome to our website!</p>
+      <FirstSection />
+      <BestLocations />
     </div>
   );
 };
