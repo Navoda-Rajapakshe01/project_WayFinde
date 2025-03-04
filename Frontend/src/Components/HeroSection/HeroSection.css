@@ -1,7 +1,7 @@
 .hero {
   height: 100vh;
   width: 100%;
-  background-image: url("https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"); /* Adjust path if needed */
+  /*background-image: url("https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"); /* Adjust path if needed */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

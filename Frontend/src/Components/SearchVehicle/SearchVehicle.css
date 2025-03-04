@@ -1,0 +1,104 @@
+.search-vehicle {
+  background-color: #f4f6f7; /* Background – Soft Cloud White */
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.search-vehicle-header {
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.search-vehicle-header h1 {
+  font-size: 2.5rem;
+  color: #2d2d2d; /* Text – Dark Charcoal */
+  margin-bottom: 0.5rem;
+}
+
+.search-vehicle-header p {
+  font-size: 1.2rem;
+  color: #1467a6; /* Secondary – Deep Ocean Blue */
+}
+
+/* Form Styles */
+.search-vehicle-form-container {
+  width: 90%;
+}
+
+.search-vehicle-form {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.search-vehicle-form input,
+.search-vehicle-form select {
+  padding: 0.75rem;
+  border: 1px solid #19b9df; /* Primary – Sky Blue */
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #2d2d2d; /* Text – Dark Charcoal */
+  background-color: #ffffff;
+  flex: 1;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-vehicle-form input:focus,
+.search-vehicle-form select:focus {
+  border-color: #ff8c42; /* Accent – Sunset Orange */
+  outline: none;
+  box-shadow: 0 0 8px rgba(255, 140, 66, 0.3);
+}
+
+.search-vehicle-form button {
+  padding: 0.75rem 1.5rem;
+  background-color: #19b9df; /* Primary – Sky Blue */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-vehicle-form button:hover {
+  background-color: #3aa69b; /* Hover Effects – Teal Green */
+}
+
+/* Input and Select with Icons */
+.input-with-icon,
+.select-with-icon {
+  position: relative;
+  flex: 1;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #1467a6; /* Secondary – Deep Ocean Blue */
+  font-size: 1.2rem;
+}
+
+.input-with-icon input,
+.select-with-icon select {
+  padding-left: 40px; /* Add padding to accommodate the icon */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-vehicle-form {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .search-vehicle-form input,
+  .search-vehicle-form select,
+  .search-vehicle-form button {
+    width: 100%;
+  }
+}
