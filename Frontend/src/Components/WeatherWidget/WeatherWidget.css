@@ -1,0 +1,32 @@
+.weather-image-card {
+    width: 100%;
+    max-width: 27%; 
+    border: 1px solid #ddd; 
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    margin: 30px;
+    margin-left: 61%; 
+    margin-top: -8%;
+
+  }
+  
+  .weather-image-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; 
+  }
+  
+  .weather-image-card .image-info {
+    padding: 15px;
+  }
+  
+  .weather-image-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .weather-image-card p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
