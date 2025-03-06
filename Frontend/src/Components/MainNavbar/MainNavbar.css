@@ -98,3 +98,30 @@ body, html {
   cursor: pointer;
   margin-right: 10px;
 }
+.profile-popup {
+  position: absolute;
+  top: 60px;  /* Adjust based on image size */
+  left: 90%;
+  transform: translateX(-50%); /* Centers the pop-up */
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  z-index: 100;
+  white-space: nowrap;
+}
+
+.profile-popup p {
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.profile-popup p:hover {
+  background: #f0f0f0;
+}
+
+.navbar-profile {
+  position: relative; /* Ensures pop-up stays attached to the profile picture */
+  cursor: pointer;
+}
