@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ThingsToDo from "./Pages/ThingsToDo";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Footer from "./Components/Footer/Footer";
 import Home from "./Pages/Home";
-import PlanTrip from "./Pages/PlanTrip";
+import PlanTrip from "../src/pages/Trip/NewTrip/PlanTrip";
 import Accommodation from "./Pages/Accommodation";
 import Vehicle from "./Pages/Vehicle";
 import Blog from "./Pages/Blog";
-import ThingsToDo from "./Pages/ThingsToDo";
 import "./App.css";
 
 function App() {
