@@ -1,8 +1,8 @@
 import React from "react";
-import { FaCar, FaUsers, FaGasPump, FaCogs } from "react-icons/fa"; // Icons for features
+import { FaMapMarkerAlt } from "react-icons/fa"; // Import location icon
 import "./VehicleDealCard.css";
 
-function VehicleDealCard({ vehicle }) {
+const VehicleDealCard = ({ vehicle }) => {
   return (
     <div className="vehicle-deal-card">
       <img src={vehicle.image} alt={vehicle.name} className="vehicle-image" />
@@ -11,28 +11,33 @@ function VehicleDealCard({ vehicle }) {
         <p className="vehicle-price">
           ${vehicle.price} <span>/ day</span>
         </p>
+        {/* Location Section */}
+        <div className="vehicle-location">
+          <FaMapMarkerAlt className="location-icon" />
+          <span>{vehicle.location}</span>
+        </div>
         <div className="vehicle-features">
           <div className="feature">
-            <FaCar className="feature-icon" />
+            <span>Type:</span>
             <span>{vehicle.type}</span>
           </div>
           <div className="feature">
-            <FaUsers className="feature-icon" />
-            <span>{vehicle.passengers} Passengers</span>
+            <span>Passengers:</span>
+            <span>{vehicle.passengers}</span>
           </div>
           <div className="feature">
-            <FaGasPump className="feature-icon" />
+            <span>Fuel:</span>
             <span>{vehicle.fuelType}</span>
           </div>
           <div className="feature">
-            <FaCogs className="feature-icon" />
+            <span>Transmission:</span>
             <span>{vehicle.transmission}</span>
           </div>
         </div>
-        <button className="rent-button">Rent Now</button>
+        <button className="book-button">Book Now</button>
       </div>
     </div>
   );
-}
+};
 
 export default VehicleDealCard;

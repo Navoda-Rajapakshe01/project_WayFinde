@@ -14,6 +14,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 2,
@@ -24,6 +25,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 3,
@@ -34,6 +36,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 4,
@@ -44,6 +47,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 5,
@@ -54,6 +58,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 6,
@@ -64,6 +69,7 @@ const vehicleDeals = [
     fuelType: "Desiel",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 7,
@@ -74,6 +80,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 8,
@@ -84,6 +91,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 9,
@@ -94,6 +102,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 10,
@@ -104,6 +113,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 11,
@@ -114,6 +124,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 12,
@@ -124,6 +135,7 @@ const vehicleDeals = [
     fuelType: "Desiel",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 13,
@@ -134,6 +146,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 14,
@@ -144,6 +157,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 15,
@@ -154,6 +168,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 16,
@@ -164,6 +179,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 17,
@@ -174,6 +190,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 18,
@@ -184,6 +201,7 @@ const vehicleDeals = [
     fuelType: "Desiel",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 19,
@@ -194,6 +212,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 20,
@@ -204,6 +223,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 21,
@@ -214,6 +234,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 22,
@@ -224,6 +245,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "Manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 23,
@@ -234,6 +256,7 @@ const vehicleDeals = [
     fuelType: "Petrol",
     transmission: "manual",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   {
     id: 24,
@@ -244,13 +267,14 @@ const vehicleDeals = [
     fuelType: "Desiel",
     transmission: "Automatic",
     image: "https://via.placeholder.com/300",
+    location: "Colombo, Sri Lanka",
   },
   // Add more vehicles here...
 ];
 
 function VehicleDealSection() {
   const [currentPage, setCurrentPage] = useState(1);
-  const dealsPerPage = 15;
+  const dealsPerPage = 4;
 
   // Calculate total pages
   const totalPages = Math.ceil(vehicleDeals.length / dealsPerPage);
