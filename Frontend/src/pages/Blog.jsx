@@ -136,12 +136,8 @@ const Blog = () => {
 
       {visibleBlogs.length < allBlogs.length && ( // Show button only if more blogs exist
         <div className="flex justify-center items-center m-5">
-          <button
-            type="button"
-            class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br  focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 "
-            onClick={handleShowMore}>
-            Show More
-          </button>
+          <button onClick={handleShowMore}
+          className="showMoreButton">Show More</button>
         </div>
       )}
     </div>
