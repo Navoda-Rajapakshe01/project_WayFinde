@@ -5,7 +5,6 @@ h1{
 .blogs{
     display: flex;
     flex-direction: column;
-    padding: 30px;
     margin-left: 30px;
     padding-top: 0;
 }
