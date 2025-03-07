@@ -36,7 +36,7 @@ const Blogs = () => {
         <br />
         <br />
         {visiblePosts < blogPosts.length && (
-          <button onClick={handleSeeMore}>See More</button>
+          <button className="see-more" onClick={handleSeeMore}>See More</button>
         )}
       </div>
     </div>
