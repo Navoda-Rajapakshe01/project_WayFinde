@@ -1,13 +1,14 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import ThingsToDo from "./pages/ThingsToDo";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Footer from "./Components/Footer/Footer";
 import Home from "./Pages/Home";
-import PlanTrip from "./Pages/PlanTrip";
+import PlanTrip from "../src/pages/Trip/NewTrip/PlanTrip";
 import Accommodation from "./Pages/Accommodation";
 import Vehicle from "./Pages/Vehicle";
 import Blog from "./Pages/Blog";
-import ThingsToDo from "./Pages/ThingsToDo";
+import ThingstodoCategories from "./pages/ThingstodoCategories";
 import "./App.css";
 import VehicleDetail from "./pages/VehicleDetail";
 import Chat from "./pages/Chat";
@@ -32,6 +33,7 @@ function App() {
           <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
           <Route path="/PaymentGateway" element={<PaymentGateway />} />
           <Route path="/VehicleBookingForm" element={<VehicleBookingForm />} />
+          <Route path="/thingstodocategories" element={<ThingstodoCategories />} />
         </Routes>
         <Footer />
       </BrowserRouter>

@@ -1,6 +1,6 @@
 import React from "react";
 import { FaComment } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ImageGrid = ({ images, writerName, topic, briefDescription }) => {
   const navigate = useNavigate(); // Initialize navigation hook
@@ -10,18 +10,26 @@ const ImageGrid = ({ images, writerName, topic, briefDescription }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 border">
+    <div className="container mx-auto px-4 py-8">
       {/* Image Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-10">
         {images.map((img, index) => (
           <div
             key={index}
-            className="overflow-hidden rounded-lg cursor-pointer flex justify-end border"
+            className="overflow-hidden rounded-lg cursor-pointer flex justify-end"
             onClick={() => handleNavigate(index)} // Navigate to the blog page when clicked
           >
             {/* Description (Left Side) */}
             <div className="text-left w-1/2">
-              <p className="text-gray-600">{img.writerName}</p>
+              <p className="text-gray-600">
+                <Link
+                  to={`/profile/${img.writerName}`} // Navigate to the specific user's profile
+                  className="text-blue-500 hover:underline"
+                  onClick={(e) => e.stopPropagation()} // Prevent triggering blog navigation
+                >
+                  {img.writerName}
+                </Link>
+              </p>
               <h3 className="text-lg font-semibold">{img.topic}</h3>
               <p className="text-gray-600">{img.briefDescription}</p>
               <p className="inline-flex items-center">
