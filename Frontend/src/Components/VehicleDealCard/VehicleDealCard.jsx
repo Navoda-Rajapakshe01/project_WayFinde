@@ -13,6 +13,9 @@ const VehicleDealCard = ({ vehicle }) => {
     navigate("/VehicleDetail", { state: { vehicle } });
   };
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   return (
     <div className="vehicle-deal-card">
@@ -41,7 +44,13 @@ const VehicleDealCard = ({ vehicle }) => {
           </div>
         </div>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <button className="rent-button">Rent Now</button>
+=======
+        <button className="book-button" onClick={handleViewNow}>
+          View Now
+        </button>
+>>>>>>> Stashed changes
 =======
         <button className="book-button" onClick={handleViewNow}>
           View Now
