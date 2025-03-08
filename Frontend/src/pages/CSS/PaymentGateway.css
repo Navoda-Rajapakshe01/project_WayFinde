@@ -1,0 +1,19 @@
+.payment-gateway {
+  padding: 2rem;
+  text-align: center;
+}
+
+.book-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #19b9df;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.book-button:hover {
+  background-color: #3aa69b;
+}

@@ -7,9 +7,14 @@ import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Accommodation from "./Pages/Accommodation";
 import Blog from "./Pages/Blog";
 import Home from "./Pages/Home";
-import ThingsToDo from "./Pages/ThingsToDo";
 import Vehicle from "./Pages/Vehicle";
-import Profile from "./pages/Profile";
+import Chat from "./pages/Chat";
+import PaymentGateway from "./pages/PaymentGateway";
+import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
+import ThingsToDo from "./pages/ThingsToDo";
+import ThingstodoCategories from "./pages/ThingstodoCategories";
+import VehicleBookingForm from "./pages/VehicleBookingForm";
+import VehicleDetail from "./pages/VehicleDetail";
 
 function App() {
   return (
@@ -23,7 +28,15 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/VehicleDetail" element={<VehicleDetail />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
+          <Route path="/PaymentGateway" element={<PaymentGateway />} />
+          <Route path="/VehicleBookingForm" element={<VehicleBookingForm />} />
+          <Route
+            path="/thingstodocategories"
+            element={<ThingstodoCategories />}
+          />
         </Routes>
         <Footer />
       </BrowserRouter>

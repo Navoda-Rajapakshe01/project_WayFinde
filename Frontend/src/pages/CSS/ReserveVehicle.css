@@ -1,0 +1,67 @@
+.reserve-now {
+  padding: 100px;
+  margin-top: 150px;
+  text-align: center;
+}
+
+.checklist-box {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.checklist-menu {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 1.5rem;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+
+.checklist-menu button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #2d2d2d;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.checklist-menu button.active {
+  background-color: #19b9df;
+  color: #ffffff;
+}
+
+.checklist-menu button:hover {
+  background-color: #f4f6f7;
+}
+
+.checklist-content {
+  text-align: left;
+}
+
+.checklist-item p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.continue-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #19b9df;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.continue-button:hover {
+  background-color: #3aa69b;
+}

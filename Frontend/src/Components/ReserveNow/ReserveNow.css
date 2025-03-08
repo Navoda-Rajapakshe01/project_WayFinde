@@ -1,0 +1,33 @@
+.reserve-now {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.reserve-now h2 {
+  font-size: 1.75rem;
+  color: #2d2d2d;
+  margin-bottom: 1rem;
+}
+
+.reserve-now p {
+  font-size: 1rem;
+  color: #2d2d2d;
+  margin-bottom: 1rem;
+}
+
+.reserve-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #19b9df;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.reserve-button:hover {
+  background-color: #3aa69b;
+}
