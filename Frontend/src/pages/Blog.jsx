@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import HeroSection from "../Components/HeroSection/HeroSection";
 import ImageGrid from "../Components/ImageGrid/ImageGrid";
 import BeachImage from "../assets/Images/Blogimages/beach1.jpg";
+import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
 import sinharajaForestImage from "../assets/Images/Blogimages/sinharajaforest.jpg";
 import "../pages/CSS/Blog.css";
 
@@ -123,7 +124,7 @@ const Blog = () => {
           </>
         }
         subtitle="Explore our latest blog posts and get inspired."
-        backgroundImage="https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"
+        backgroundImage={backgroundImage}
         placeHolder="Search blog posts..."
       />
       <div className="container mx-auto px-4 py-8">
@@ -136,8 +137,9 @@ const Blog = () => {
 
       {visibleBlogs.length < allBlogs.length && ( // Show button only if more blogs exist
         <div className="flex justify-center items-center m-5">
-          <button onClick={handleShowMore}
-          className="showMoreButton">Show More</button>
+          <button onClick={handleShowMore} className="showMoreButton">
+            Show More
+          </button>
         </div>
       )}
     </div>
