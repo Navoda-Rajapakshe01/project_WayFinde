@@ -1,6 +1,6 @@
-import React from 'react'
-import Categories from '../Components/ThingsToDo/ThingstodoCategories/Categories'
-import MainNavbar from '../Components/MainNavbar/MainNavbar'
+import React from "react";
+import MainNavbar from "../Components/MainNavbar/MainNavbar";
+import Categories from "../Components/ThingsToDo/ThingstodoCategories/Categories";
 
 const ThingstodoCategories = () => {
   return (
@@ -8,7 +8,7 @@ const ThingstodoCategories = () => {
       <MainNavbar />
       <Categories />
     </div>
-  )
-}
+  );
+};
 
-export default ThingstodoCategories
+export default ThingstodoCategories;
