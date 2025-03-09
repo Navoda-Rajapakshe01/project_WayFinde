@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import BlogPostCard from "../BlogPostCard/BlogPostCard"; // Import the BlogPostCard component
 import "./BlogPostSection.css";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import ImageGrid from "../Components/BlogComponents/ImageGrid/ImageGrid";
 import HeroSection from "../Components/HeroSection/HeroSection";
-import ImageGrid from "../Components/ImageGrid/ImageGrid";
 import BeachImage from "../assets/Images/Blogimages/beach1.jpg";
 import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
 import sinharajaForestImage from "../assets/Images/Blogimages/sinharajaforest.jpg";

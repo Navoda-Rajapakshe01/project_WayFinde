@@ -36,8 +36,8 @@ const ProfileHeadSection = () => {
               </Link>
             ))}
           </div>
-          <div className="edit_profile">
-            <button>Edit Profile</button>
+          <div>
+            <button className="editProfilebutton">Edit Profile</button>
           </div>
         </div>
       </div>

@@ -5,11 +5,12 @@ import "./App.css";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Accommodation from "./Pages/Accommodation";
-import Blog from "./Pages/Blog";
 import Home from "./Pages/Home";
 import Vehicle from "./Pages/Vehicle";
+import Blog from "./pages/Blog";
 import Chat from "./pages/Chat";
 import PaymentGateway from "./pages/PaymentGateway";
+import Profile from "./pages/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
 import ThingsToDo from "./pages/ThingsToDo";
 import ThingstodoCategories from "./pages/ThingstodoCategories";
@@ -37,6 +38,7 @@ function App() {
             path="/thingstodocategories"
             element={<ThingstodoCategories />}
           />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
         <Footer />
       </BrowserRouter>

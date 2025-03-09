@@ -1,4 +1,4 @@
-import MainNavbar from "../MainNavbar/MainNavbar";
+import MainNavbar from "../../MainNavbar/MainNavbar";
 const PlanTrip = () => {
   return (
     <div className="page-container">
