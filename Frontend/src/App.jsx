@@ -10,6 +10,7 @@ import Vehicle from "./Pages/Vehicle";
 import Blog from "./pages/Blog";
 import Chat from "./pages/Chat";
 import PaymentGateway from "./pages/PaymentGateway";
+import PersonalBlog from "./pages/PersonalBlog";
 import Profile from "./pages/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
 import ThingsToDo from "./pages/ThingsToDo";
@@ -39,6 +40,8 @@ function App() {
             element={<ThingstodoCategories />}
           />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/blog/:blogId" element={<PersonalBlog />} />
+          <Route path="/profile/:writername" element={<Profile />} />
         </Routes>
         <Footer />
       </BrowserRouter>

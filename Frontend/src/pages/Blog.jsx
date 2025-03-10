@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import ImageGrid from "../Components/BlogComponents/ImageGrid/ImageGrid";
 import HeroSection from "../Components/HeroSection/HeroSection";
 import BeachImage from "../assets/Images/Blogimages/beach1.jpg";
 import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
 import sinharajaForestImage from "../assets/Images/Blogimages/sinharajaforest.jpg";
 import "../pages/CSS/Blog.css";
+import ImageGrid from "../Components/BlogComponents/ImageGrid/ImageGrid";
 
-const latestBlogs = [
+const latestBlogData = [
   {
     img: BeachImage,
     writerName: "Name1",
@@ -33,7 +33,7 @@ const latestBlogs = [
   },
 ];
 // const writersName = [Name1, Name2, Name3, Name4];
-const trendingBlogs = [
+const trendingBlogData = [
   {
     img: sinharajaForestImage,
     writerName: "Name1",
@@ -59,7 +59,7 @@ const trendingBlogs = [
     briefDescription: "Final description",
   },
 ];
-const allBlogs = [
+const otherBlogData = [
   {
     img: BeachImage,
     writerName: "Name1",
@@ -110,11 +110,11 @@ const allBlogs = [
   },
 ];
 const Blog = () => {
-  const [visibleBlogs, setVisibleBlogs] = useState(allBlogs.slice(0, 4)); // Show only 4 initially
+  const [visibleBlogs, setVisibleBlogs] = useState(otherBlogData.slice(0, 4)); // Show only 4 initially
 
-  const handleShowMore = () => {
-    setVisibleBlogs(allBlogs.slice(0, visibleBlogs.length + 2)); // Load 2 more blogs each time
-  };
+  // const handleShowMore = () => {
+  //   setVisibleBlogs(otherBlogData.slice(0, visibleBlogs.length + 2)); // Load 2 more blogs each time
+  // };
   return (
     <div className="page-container">
       <HeroSection
@@ -127,21 +127,11 @@ const Blog = () => {
         backgroundImage={backgroundImage}
         placeHolder="Search blog posts..."
       />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Latest Blog Posts</h1>
-        <ImageGrid images={latestBlogs} />
-        <h1 className="text-3xl font-bold mb-6">Trending Blog Posts</h1>
-        <ImageGrid images={trendingBlogs} />
-      </div>
-      <ImageGrid images={visibleBlogs} />
-
-      {visibleBlogs.length < allBlogs.length && ( // Show button only if more blogs exist
-        <div className="flex justify-center items-center m-5">
-          <button onClick={handleShowMore} className="showMoreButton">
-            Show More
-          </button>
-        </div>
-      )}
+      <ImageGrid
+        latestBlogs={latestBlogData}
+        trendingBlogs={trendingBlogData}
+        otherBlogs={otherBlogData}
+      />
     </div>
   );
 };
