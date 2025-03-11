@@ -1,9 +1,5 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import PlanTrip from "../src/pages/Trip/NewTrip/PlanTrip";
-import "./App.css";
-import Footer from "./Components/Footer/Footer";
-import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Accommodation from "./Pages/Accommodation";
 import Home from "./Pages/Home";
 import Vehicle from "./Pages/Vehicle";
@@ -26,6 +22,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/plantrip" element={<PlanTrip />} />
+          <Route path="/trip-planner" element={<OptimizedTripRoute />} />
+          <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
           <Route path="/accommodation" element={<Accommodation />} />
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
@@ -39,9 +37,6 @@ function App() {
             path="/thingstodocategories"
             element={<ThingstodoCategories />}
           />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/blog/:blogId" element={<PersonalBlog />} />
-          <Route path="/profile/:writername" element={<Profile />} />
         </Routes>
         <Footer />
       </BrowserRouter>
