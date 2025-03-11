@@ -1,119 +1,21 @@
 import React, { useState } from "react";
 import HeroSection from "../Components/HeroSection/HeroSection";
-import ImageGrid from "../Components/ImageGrid/ImageGrid";
-import BeachImage from "../assets/Images/Blogimages/beach1.jpg";
-import sinharajaForestImage from "../assets/Images/Blogimages/sinharajaforest.jpg";
+
+// import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
+
 import "../pages/CSS/Blog.css";
+import ImageGrid from "../Components/BlogComponents/ImageGrid/ImageGrid";
+import blogData from "../Components/BlogComponents/blogData.json";
 
-const latestBlogs = [
-  {
-    img: BeachImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-];
-// const writersName = [Name1, Name2, Name3, Name4];
-const trendingBlogs = [
-  {
-    img: sinharajaForestImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-];
-const allBlogs = [
-  {
-    img: BeachImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-];
+const backgroundImage = "/Blogimages/blogbackground1.jpg"; // Correct path from public folder
+
+const { latestBlogData, trendingBlogData, otherBlogData } = blogData;
 const Blog = () => {
-  const [visibleBlogs, setVisibleBlogs] = useState(allBlogs.slice(0, 4)); // Show only 4 initially
+  const [visibleBlogs, setVisibleBlogs] = useState(otherBlogData.slice(0, 4)); // Show only 4 initially
 
-  const handleShowMore = () => {
-    setVisibleBlogs(allBlogs.slice(0, visibleBlogs.length + 2)); // Load 2 more blogs each time
-  };
+  // const handleShowMore = () => {
+  //   setVisibleBlogs(otherBlogData.slice(0, visibleBlogs.length + 2)); // Load 2 more blogs each time
+  // };
   return (
     <div className="page-container">
       <HeroSection
@@ -123,27 +25,14 @@ const Blog = () => {
           </>
         }
         subtitle="Explore our latest blog posts and get inspired."
-        backgroundImage="https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"
+        backgroundImage={backgroundImage}
         placeHolder="Search blog posts..."
       />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Latest Blog Posts</h1>
-        <ImageGrid images={latestBlogs} />
-        <h1 className="text-3xl font-bold mb-6">Trending Blog Posts</h1>
-        <ImageGrid images={trendingBlogs} />
-      </div>
-      <ImageGrid images={visibleBlogs} />
-
-      {visibleBlogs.length < allBlogs.length && ( // Show button only if more blogs exist
-        <div className="flex justify-center items-center m-5">
-          <button
-            type="button"
-            class="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br  focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 "
-            onClick={handleShowMore}>
-            Show More
-          </button>
-        </div>
-      )}
+      <ImageGrid
+        latestBlogs={latestBlogData}
+        trendingBlogs={trendingBlogData}
+        otherBlogs={otherBlogData}
+      />
     </div>
   );
 };

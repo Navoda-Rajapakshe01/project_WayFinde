@@ -1,20 +1,22 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ThingsToDo from "./pages/ThingsToDo";
-import MainNavbar from "./Components/MainNavbar/MainNavbar";
-import Footer from "./Components/Footer/Footer";
-import Home from "./Pages/Home";
 import PlanTrip from "../src/pages/Trip/NewTrip/PlanTrip";
-import Accommodation from "./Pages/Accommodation";
-import Vehicle from "./Pages/Vehicle";
-import Blog from "./Pages/Blog";
-import ThingstodoCategories from "./pages/ThingstodoCategories";
 import "./App.css";
-import VehicleDetail from "./pages/VehicleDetail";
+import Footer from "./Components/Footer/Footer";
+import MainNavbar from "./Components/MainNavbar/MainNavbar";
+import Accommodation from "./Pages/Accommodation";
+import Home from "./Pages/Home";
+import Vehicle from "./Pages/Vehicle";
+import Blog from "./pages/Blog";
 import Chat from "./pages/Chat";
-import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
 import PaymentGateway from "./pages/PaymentGateway";
+import PersonalBlog from "./pages/PersonalBlog";
+import Profile from "./pages/Profile";
+import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
+import ThingsToDo from "./pages/ThingsToDo";
+import ThingstodoCategories from "./pages/ThingstodoCategories";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
+import VehicleDetail from "./pages/VehicleDetail";
 
 function App() {
   return (
@@ -33,7 +35,13 @@ function App() {
           <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
           <Route path="/PaymentGateway" element={<PaymentGateway />} />
           <Route path="/VehicleBookingForm" element={<VehicleBookingForm />} />
-          <Route path="/thingstodocategories" element={<ThingstodoCategories />} />
+          <Route
+            path="/thingstodocategories"
+            element={<ThingstodoCategories />}
+          />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/blog/:blogId" element={<PersonalBlog />} />
+          <Route path="/profile/:writername" element={<Profile />} />
         </Routes>
         <Footer />
       </BrowserRouter>
