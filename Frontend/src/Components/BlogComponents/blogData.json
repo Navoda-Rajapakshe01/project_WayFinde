@@ -1,0 +1,202 @@
+
+{
+    "latestBlogData": [
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name1",
+        "topic": "Topic 1",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name2",
+        "topic": "Topic 2",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name3",
+        "topic": "Topic 3",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name4",
+        "topic": "Topic 4",
+        "briefDescription": "Final description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name5",
+        "topic": "Topic 5",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name6",
+        "topic": "Topic 6",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name7",
+        "topic": "Topic 7",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name8",
+        "topic": "Topic 8",
+        "briefDescription": "Final description"
+      }
+    ],
+    "trendingBlogData": [
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name1",
+        "topic": "Topic 1",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name2",
+        "topic": "Topic 2",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name3",
+        "topic": "Topic 3",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name4",
+        "topic": "Topic 4",
+        "briefDescription": "Final description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name5",
+        "topic": "Topic 5",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name6",
+        "topic": "Topic 6",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name7",
+        "topic": "Topic 7",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name8",
+        "topic": "Topic 8",
+        "briefDescription": "Final description"
+      }
+    ],
+    "otherBlogData": [
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name1",
+        "topic": "Topic 1",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name2",
+        "topic": "Topic 2",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name3",
+        "topic": "Topic 3",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name4",
+        "topic": "Topic 4",
+        "briefDescription": "Final description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name5",
+        "topic": "Topic 5",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name6",
+        "topic": "Topic 6",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name7",
+        "topic": "Topic 7",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/beach1.jpg",
+        "writerName": "Name8",
+        "topic": "Topic 8",
+        "briefDescription": "Final description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name9",
+        "topic": "Topic 9",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name10",
+        "topic": "Topic 10",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name11",
+        "topic": "Topic 11",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name12",
+        "topic": "Topic 12",
+        "briefDescription": "Final description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name13",
+        "topic": "Topic 13",
+        "briefDescription": "Description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name14",
+        "topic": "Topic 14",
+        "briefDescription": "Another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name15",
+        "topic": "Topic 15",
+        "briefDescription": "Yet another description"
+      },
+      {
+        "img": "/Blogimages/sinharajaforest.jpg",
+        "writerName": "Name16",
+        "topic": "Topic 16",
+        "briefDescription": "Final description"
+      }
+    ]
+  }
+  

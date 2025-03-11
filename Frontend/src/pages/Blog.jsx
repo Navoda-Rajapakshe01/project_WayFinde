@@ -1,114 +1,15 @@
 import React, { useState } from "react";
 import HeroSection from "../Components/HeroSection/HeroSection";
-import BeachImage from "../assets/Images/Blogimages/beach1.jpg";
-import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
-import sinharajaForestImage from "../assets/Images/Blogimages/sinharajaforest.jpg";
+
+// import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
+
 import "../pages/CSS/Blog.css";
 import ImageGrid from "../Components/BlogComponents/ImageGrid/ImageGrid";
+import blogData from "../Components/BlogComponents/blogData.json";
 
-const latestBlogData = [
-  {
-    img: BeachImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-];
-// const writersName = [Name1, Name2, Name3, Name4];
-const trendingBlogData = [
-  {
-    img: sinharajaForestImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-];
-const otherBlogData = [
-  {
-    img: BeachImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: BeachImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name1",
-    topic: "Topic 1",
-    briefDescription: "Description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name2",
-    topic: "Topic 2",
-    briefDescription: "Another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name3",
-    topic: "Topic 3",
-    briefDescription: "Yet another description",
-  },
-  {
-    img: sinharajaForestImage,
-    writerName: "Name4",
-    topic: "Topic 4",
-    briefDescription: "Final description",
-  },
-];
+const backgroundImage = "/Blogimages/blogbackground1.jpg"; // Correct path from public folder
+
+const { latestBlogData, trendingBlogData, otherBlogData } = blogData;
 const Blog = () => {
   const [visibleBlogs, setVisibleBlogs] = useState(otherBlogData.slice(0, 4)); // Show only 4 initially
 

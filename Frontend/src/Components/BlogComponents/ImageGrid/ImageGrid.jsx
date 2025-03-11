@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+
 import { FaChevronLeft, FaChevronRight, FaComment } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
 const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
   const navigate = useNavigate();
+  const scrollContainerRef = useRef(null); // Create ref for scrolling container
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 5; // Number of blogs per page
 
@@ -17,23 +19,44 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
     navigate(`/blog/blog${index + 1}`); // Navigate dynamically
   };
 
+  // 🔹 Scroll Left
+  const handleScrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+
+  // 🔹 Scroll Right
+  const handleScrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Latest Blogs Section */}
       <div>
         <h2 className="text-2xl font-bold mb-4">Latest Blogs</h2>
         <div className="relative flex items-center">
-          {/* Scroll Left Button */}
-          <button className="absolute left-0 z-10 bg-gray-200 p-2 rounded-full">
+          {/* 🔹 Scroll Left Button */}
+          <button
+            className="absolute left-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            onClick={handleScrollLeft}
+          >
             <FaChevronLeft />
           </button>
 
           {/* Blog Cards in Horizontal Scroll */}
-          <div className="flex overflow-x-auto space-x-4 scrollbar-hide">
+          <div
+            ref={scrollContainerRef}
+            className="flex overflow-x-auto space-x-4 scrollbar-hide p-2"
+            style={{ scrollBehavior: "smooth" }}
+          >
             {latestBlogs.map((blog, index) => (
               <div
                 key={index}
-                className="min-w-[300px] p-4 border rounded-lg cursor-pointer"
+                className="min-w-[300px] p-4 shadow-2xl rounded-lg cursor-pointer"
                 onClick={() => handleNavigate(index)}
               >
                 <img
@@ -52,17 +75,26 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
                 </p>
                 <h3 className="font-semibold">{blog.topic}</h3>
                 <p className="text-gray-600">{blog.briefDescription}</p>
-                <p className="inline-flex items-center">
-                  Date
-                  <FaComment className="text-xl" /> Comments
-                  <FaComment className="text-xl" /> Likes
+                <p className="inline-flex items-center space-x-2">
+                  <span>Date</span>
+                  <span className="flex items-center gap-1">
+                    <FaComment className="text-xl" />
+                    <span>Comments</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <FaComment className="text-xl" />
+                    <span>Likes</span>
+                  </span>
                 </p>
               </div>
             ))}
           </div>
 
-          {/* Scroll Right Button */}
-          <button className="absolute right-0 z-10 bg-gray-200 p-2 rounded-full">
+          {/* 🔹 Scroll Right Button */}
+          <button
+            className="absolute right-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            onClick={handleScrollRight}
+          >
             <FaChevronRight />
           </button>
         </div>
@@ -72,17 +104,24 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Trending Blogs</h2>
         <div className="relative flex items-center">
-          {/* Scroll Left Button */}
-          <button className="absolute left-0 z-10 bg-gray-200 p-2 rounded-full">
+          {/* 🔹 Scroll Left Button */}
+          <button
+            className="absolute left-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            onClick={handleScrollLeft}
+          >
             <FaChevronLeft />
           </button>
 
           {/* Blog Cards in Horizontal Scroll */}
-          <div className="flex overflow-x-auto space-x-4 scrollbar-hide">
+          <div
+            ref={scrollContainerRef}
+            className="flex overflow-x-auto space-x-4 scrollbar-hide p-2"
+            style={{ scrollBehavior: "smooth" }}
+          >
             {trendingBlogs.map((blog, index) => (
               <div
                 key={index}
-                className="min-w-[300px] p-4 border rounded-lg cursor-pointer"
+                className="min-w-[300px] p-4 shadow-2xl rounded-lg cursor-pointer"
                 onClick={() => handleNavigate(index)}
               >
                 <img
@@ -110,8 +149,10 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
             ))}
           </div>
 
-          {/* Scroll Right Button */}
-          <button className="absolute right-0 z-10 bg-gray-200 p-2 rounded-full">
+          <button
+            className="absolute right-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            onClick={handleScrollRight}
+          >
             <FaChevronRight />
           </button>
         </div>
@@ -124,7 +165,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           {currentBlogs.map((blog, index) => (
             <div
               key={index}
-              className="p-4 border rounded-lg cursor-pointer"
+              className="p-4 shadow-2xl rounded-lg cursor-pointer"
               onClick={() => handleNavigate(index)}
             >
               <img
