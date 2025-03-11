@@ -1,8 +1,7 @@
-import MainNavbar from "../Components/MainNavbar/MainNavbar";
 import HeroSection from "../Components/HeroSection/HeroSection";
+import MainNavbar from "../Components/MainNavbar/MainNavbar";
 import BestLocations from "../Components/ThingsToDo/BestLocations/BestLocations";
 import Blogs from "../Components/ThingsToDo/Blogs/Blogs";
-
 
 const ThingsToDo = () => {
   return (

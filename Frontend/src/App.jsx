@@ -1,22 +1,18 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ThingsToDo from "./pages/ThingsToDo";
-import MainNavbar from "./Components/MainNavbar/MainNavbar";
-import Footer from "./Components/Footer/Footer";
-import Home from "./Pages/Home";
-import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
-import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
-import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import Accommodation from "./Pages/Accommodation";
+import Home from "./Pages/Home";
 import Vehicle from "./Pages/Vehicle";
-import Blog from "./Pages/Blog";
-import ThingstodoCategories from "./pages/ThingstodoCategories";
-import "./App.css";
-import VehicleDetail from "./pages/VehicleDetail";
+import Blog from "./pages/Blog";
 import Chat from "./pages/Chat";
-import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
 import PaymentGateway from "./pages/PaymentGateway";
+import PersonalBlog from "./pages/PersonalBlog";
+import Profile from "./pages/Profile";
+import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
+import ThingsToDo from "./pages/ThingsToDo";
+import ThingstodoCategories from "./pages/ThingstodoCategories";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
+import VehicleDetail from "./pages/VehicleDetail";
 
 function App() {
   return (

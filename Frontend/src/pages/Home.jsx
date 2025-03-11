@@ -1,5 +1,5 @@
 import React from "react";
-import BlogPostSection from "../Components/BlogPostSection/BlogPostSection";
+import BlogPostSection from "../Components/BlogComponents/BlogPostSection/BlogPostSection";
 import HeroSection from "../Components/HeroSection/HeroSection";
 import LocationSection from "../Components/LocationSection/LocationSection";
 import VehicleSection from "../Components/VehicleSection/VehicleSection";

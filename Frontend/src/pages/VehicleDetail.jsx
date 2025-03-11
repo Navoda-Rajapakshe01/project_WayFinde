@@ -1,10 +1,10 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import AboutSection from "../Components/AboutSection/AboutSection"; // About Section Component
 import NameTag from "../Components/NameTag/NameTag"; // Name Tag Component
 import PhotoGallery from "../Components/PhotoGallery/PhotoGallery"; // Photo Gallery Component
-import AboutSection from "../Components/AboutSection/AboutSection"; // About Section Component
-import ReviewSection from "../Components/ReviewSection/ReviewSection"; // Review Section Component
 import ReserveNow from "../Components/ReserveNow/ReserveNow";
+import ReviewSection from "../Components/ReviewSection/ReviewSection"; // Review Section Component
 import "../pages/CSS/VehicleDetail.css";
 
 const VehicleDetail = () => {
