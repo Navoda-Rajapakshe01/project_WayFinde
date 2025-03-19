@@ -41,9 +41,9 @@ const VehicleRent = () => {
       <div className="vehicles-list">
         {/* Toyota RAV4 */}
         <div className="vehicle-card">
-          <img src="/path-to-your-toyota-rav4.jpg" alt="Toyota RAV4" />
+          <img src="https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8VG95b3RhJTIwUkFWNHxlbnwwfHwwfHx8MA%3D%3D" alt="Toyota RAV4" />
           <div className="vehicle-info">
-            <h3>Toyota RAV4</h3>
+      
             <div className="vehicle-details">
               <span>5 Seats</span>
               <span>3 Bags</span>
@@ -60,7 +60,24 @@ const VehicleRent = () => {
         <div className="vehicle-card">
           <img src="/path-to-your-honda.jpg" alt="Honda" />
           <div className="vehicle-info">
-            <h3>Honda</h3>
+           
+            <div className="vehicle-details">
+              <span>4 Seats</span>
+              <span>2 Bags</span>
+            </div>
+            <div className="vehicle-rating">
+              <span>⭐ 4.8 (124 reviews)</span>
+            </div>
+            <button className="book-now-button">Book Now</button>
+            <span className="availability-status available">Available</span>
+          </div>
+        </div>
+
+          {/* Honda */}
+          <div className="vehicle-card">
+          <img src="/path-to-your-honda.jpg" alt="Honda" />
+          <div className="vehicle-info">
+           
             <div className="vehicle-details">
               <span>4 Seats</span>
               <span>2 Bags</span>
@@ -77,7 +94,24 @@ const VehicleRent = () => {
         <div className="vehicle-card">
           <img src="/path-to-your-honda-navi.jpg" alt="Honda NAVI 110" />
           <div className="vehicle-info">
-            <h3>Honda NAVI 110</h3>
+ 
+            <div className="vehicle-details">
+              <span>2 Seats</span>
+              <span>1 Bags</span>
+            </div>
+            <div className="vehicle-rating">
+              <span>⭐ 4.8 (124 reviews)</span>
+            </div>
+            <button className="book-now-button unavailable-button">Unavailable</button>
+            <span className="availability-status unavailable">Unavailable</span>
+          </div>
+        </div>
+
+          {/* Honda NAVI 110 */}
+          <div className="vehicle-card">
+          <img src="/path-to-your-honda-navi.jpg" alt="Honda NAVI 110" />
+          <div className="vehicle-info">
+ 
             <div className="vehicle-details">
               <span>2 Seats</span>
               <span>1 Bags</span>
@@ -94,7 +128,7 @@ const VehicleRent = () => {
         <div className="vehicle-card">
           <img src="/path-to-your-bajaj-re.jpg" alt="Bajaj RE Three Wheeler" />
           <div className="vehicle-info">
-            <h3>Bajaj RE Three Wheeler</h3>
+            
             <div className="vehicle-details">
               <span>3 Seats</span>
               <span>2 Bags</span>
@@ -106,6 +140,41 @@ const VehicleRent = () => {
             <span className="availability-status available">Available</span>
           </div>
         </div>
+
+        {/* Bajaj RE Three Wheeler */}
+        <div className="vehicle-card">
+          <img src="/path-to-your-bajaj-re.jpg" alt="Bajaj RE Three Wheeler" />
+          <div className="vehicle-info">
+            
+            <div className="vehicle-details">
+              <span>3 Seats</span>
+              <span>2 Bags</span>
+            </div>
+            <div className="vehicle-rating">
+              <span>⭐ 4.8 (124 reviews)</span>
+            </div>
+            <button className="book-now-button">Book Now</button>
+            <span className="availability-status available">Available</span>
+          </div>
+        </div>
+
+          {/* Honda */}
+          <div className="vehicle-card">
+          <img src="/path-to-your-honda.jpg" alt="Honda" />
+          <div className="vehicle-info">
+           
+            <div className="vehicle-details">
+              <span>4 Seats</span>
+              <span>2 Bags</span>
+            </div>
+            <div className="vehicle-rating">
+              <span>⭐ 4.8 (124 reviews)</span>
+            </div>
+            <button className="book-now-button">Book Now</button>
+            <span className="availability-status available">Available</span>
+          </div>
+        </div>
+        
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import './CustomButtons.css';
 import TodoList from '../ToDoList/ToDoList';
 import TravelBudget from '../TravelBudget/TravelBudget';
 import VehicleRent from '../VehicleRent/VehicleRent';
-
+import PlacesToStay from '../PlacesToStay/PlacesToStay';
 
 const CustomButtons = () => {
   const [activeButton, setActiveButton] = useState('todo-list');
@@ -45,7 +45,8 @@ const CustomButtons = () => {
       {activeButton === 'todo-list' && <TodoList />}
       {activeButton === 'budget' && <TravelBudget />}
       {activeButton === 'vehicle-rent' && <VehicleRent />}
-      
+      {activeButton === 'places' && <PlacesToStay />}
+
     </div>
   );
 };

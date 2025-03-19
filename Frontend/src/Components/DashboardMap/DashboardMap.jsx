@@ -1,20 +1,23 @@
 import React from 'react';
-import './DashboardMap.css'; 
+import './DashboardMap.css';
 
-const DashboardMap = () => {
+function DashboardMap() {
   return (
-    <div className="dashboard-map-card">
-      <img
-        src="https://via.placeholder.com/300x200" 
-        alt="Map Location"
-        className="dashboard-map"
-      />
-      <div className="map-info">
-        <h3>Map View</h3>
-        <p>Location Coordinates</p>
+    <div className="dashboard-map-container">
+      <div className="dashboard-map">
+        {/* Placeholder for map - would use Google Maps or another map library in real app */}
+        <div className="dashboard-map-controls">
+          <button className="center-btn">
+            <i className="fas fa-location-arrow"></i>
+          </button>
+          <div className="zoom-control-panel">
+            <button className="zoom-in-btn">+</button>
+            <button className="zoom-out-btn">−</button>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default DashboardMap;

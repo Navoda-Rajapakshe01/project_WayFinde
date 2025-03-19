@@ -14,7 +14,7 @@ const TripDashboard = () => {
 
       <DashboardText /> {/* Include the DashboardText component */}
       <DashboardImage /> 
-      <DashboardMap /><br/>
+      <DashboardMap />
       <TabNavigation/>
       <WeatherWidget/>
       
