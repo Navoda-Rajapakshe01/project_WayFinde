@@ -41,7 +41,7 @@
   padding-right: 15px;
   padding-top: 0;
   box-sizing: border-box;
-  margin-top: 60px;
+  margin-top: 70px;
 }
 .pc-body-left h2 {
   font-weight: bold;
@@ -97,7 +97,7 @@
   /* clearly removes scrollbar from map section */
   position: sticky; /* keeps map fixed to viewport when scrolling */
   top: 120px;
-  margin-top: 60px;
+  margin-top: 70px;
 }
 .pc-body-right h2 {
   font-weight: bold;

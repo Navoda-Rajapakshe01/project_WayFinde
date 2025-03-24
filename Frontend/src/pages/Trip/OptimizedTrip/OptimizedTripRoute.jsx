@@ -131,7 +131,7 @@ const OptimizedTripRoute = () => {
       alert("Please enter a trip name before continuing.");
       return;
     }
-    navigate("/all-trips/upcoming", { state: { tripName } });
+    navigate("/upcomingtrips", { state: { tripName } });
   };
 
   return (

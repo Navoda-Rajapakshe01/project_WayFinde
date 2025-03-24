@@ -1,17 +1,21 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ThingsToDo from "./pages/ThingsToDo";
-import MainNavbar from "./Components/MainNavbar/MainNavbar";
-import Footer from "./Components/Footer/Footer";
-import Home from "./Pages/Home";
-import PlanTrip from "../src/pages/Trip/NewTrip/PlanTrip";
 import Accommodation from "./Pages/Accommodation";
+import Home from "./Pages/Home";
 import Vehicle from "./Pages/Vehicle";
-import Blog from "./Pages/Blog";
+import Blog from "./pages/Blog";
+import Chat from "./pages/Chat";
+import PaymentGateway from "./pages/PaymentGateway";
+import PersonalBlog from "./pages/PersonalBlog";
+import Profile from "./pages/Profile";
+import ReserveVehicle from "./pages/ReserveVehicle"; // Import the Reserve Now Page
+import ThingsToDo from "./pages/ThingsToDo";
 import ThingstodoCategories from "./pages/ThingstodoCategories";
 import TripDashboard from './pages/TripDashboard';
 
 import "./App.css";
+import VehicleBookingForm from "./pages/VehicleBookingForm";
+import VehicleDetail from "./pages/VehicleDetail";
 
 function App() {
   return (
@@ -21,12 +25,24 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/plantrip" element={<PlanTrip />} />
+          <Route path="/trip-planner" element={<OptimizedTripRoute />} />
+          <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
           <Route path="/accommodation" element={<Accommodation />} />
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
           <Route path="/thingstodocategories" element={<ThingstodoCategories />} />
           <Route path="/tripdashboard" element={<TripDashboard />} /> {/* TripDashboard only on this route */}
+          <Route path="/VehicleDetail" element={<VehicleDetail />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
+          <Route path="/PaymentGateway" element={<PaymentGateway />} />
+          <Route path="/VehicleBookingForm" element={<VehicleBookingForm />} />
+          <Route
+            path="/thingstodocategories"
+            element={<ThingstodoCategories />}
+          />
+
         </Routes>
         <Footer />
       </BrowserRouter>
