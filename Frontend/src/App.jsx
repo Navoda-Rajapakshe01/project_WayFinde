@@ -9,6 +9,8 @@ import Accommodation from "./Pages/Accommodation";
 import Vehicle from "./Pages/Vehicle";
 import Blog from "./Pages/Blog";
 import ThingstodoCategories from "./pages/ThingstodoCategories";
+import TripDashboard from './pages/TripDashboard';
+
 import "./App.css";
 
 function App() {
@@ -24,6 +26,7 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
           <Route path="/thingstodocategories" element={<ThingstodoCategories />} />
+          <Route path="/tripdashboard" element={<TripDashboard />} /> {/* TripDashboard only on this route */}
         </Routes>
         <Footer />
       </BrowserRouter>
