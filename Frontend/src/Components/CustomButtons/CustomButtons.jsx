@@ -6,7 +6,7 @@ import VehicleRent from '../VehicleRent/VehicleRent';
 import PlacesToStay from '../PlacesToStay/PlacesToStay';
 
 const CustomButtons = () => {
-  const [activeButton, setActiveButton] = useState('todo-list');
+  const [activeButton, setActiveButton] = useState('');
 
   const handleButtonClick = (button) => {
     setActiveButton(button);

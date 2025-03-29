@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './TabNavigation.css';
 import CustomButtons from '../CustomButtons/CustomButtons';
+import DashboardSaves from '../DashboardSaves/DashboardSaves';
 
 const TabNavigation = () => {
   const [activeTab, setActiveTab] = useState('for-you');
@@ -33,6 +34,7 @@ const TabNavigation = () => {
       </div>
       
       {activeTab === 'for-you' && <CustomButtons />}
+      {activeTab === 'saves' && <DashboardSaves />}
     </div>
   );
 };
