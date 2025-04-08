@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\L2S2\\Software_Project\\project_WayFinde\\Backend\\Backend.csproj": {}
+    "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj": {}
   },
   "projects": {
-    "C:\\L2S2\\Software_Project\\project_WayFinde\\Backend\\Backend.csproj": {
+    "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\L2S2\\Software_Project\\project_WayFinde\\Backend\\Backend.csproj",
+        "projectUniqueName": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj",
         "projectName": "Backend",
-        "projectPath": "C:\\L2S2\\Software_Project\\project_WayFinde\\Backend\\Backend.csproj",
-        "packagesPath": "C:\\Users\\USER\\.nuget\\packages\\",
-        "outputPath": "C:\\L2S2\\Software_Project\\project_WayFinde\\Backend\\obj\\",
+        "projectPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj",
+        "packagesPath": "C:\\Users\\ACER\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\USER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ACER\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -74,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.404/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

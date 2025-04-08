@@ -17,7 +17,6 @@ import Footer from "./Components/Footer/Footer";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
-
 import "./App.css";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
