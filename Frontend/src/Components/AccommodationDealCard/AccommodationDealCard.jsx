@@ -3,6 +3,10 @@ import { FaBed, FaUsers, FaBath, FaHome, FaMapMarkerAlt } from "react-icons/fa";
 import "./AccommodationDealCard.css";
 
 const AccommodationDealCard = ({ accommodation }) => {
+  const handleViewNow = () => {
+    navigate("/Accommodationdeal/", { state: { AccommodationDealCard } });
+  };
+
   return (
     <div className="accommodation-deal-card">
       <img
@@ -42,7 +46,9 @@ const AccommodationDealCard = ({ accommodation }) => {
             <span>{accommodation.baths} Baths</span>
           </div>
         </div>
-        <button className="book-button">Book Now</button>
+        <button className="book-button" onClick={handleViewNow}>
+          Book Now
+        </button>
       </div>
     </div>
   );

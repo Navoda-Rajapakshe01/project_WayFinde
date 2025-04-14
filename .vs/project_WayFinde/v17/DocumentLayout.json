@@ -6,7 +6,135 @@
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
+<<<<<<< Updated upstream
       "DocumentGroups": []
+=======
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "20250413034615_FixVehiclePriceProperty.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
+              "RelativeDocumentMoniker": "Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
+              "RelativeToolTip": "Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T03:46:15.848Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Program.cs",
+              "RelativeDocumentMoniker": "Backend\\Program.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Program.cs",
+              "RelativeToolTip": "Backend\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T03:07:59.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Backend\\Data\\AppDbContext.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Backend\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAUwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T02:55:51.025Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Vehicle.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\Vehicle.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\Vehicle.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\Vehicle.cs",
+              "RelativeToolTip": "Backend\\Models\\Vehicle.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAA/wBAAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T00:00:14.248Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "VehicleReservation.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\VehicleReservation.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\VehicleReservation.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\VehicleReservation.cs",
+              "RelativeToolTip": "Backend\\Models\\VehicleReservation.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAmwBsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T02:44:29.324Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\appsettings.json",
+              "RelativeDocumentMoniker": "Backend\\appsettings.json",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\appsettings.json",
+              "RelativeToolTip": "Backend\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-04-11T19:59:12.268Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "20250413033337_InitialCreate.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Migrations\\20250413033337_InitialCreate.cs",
+              "RelativeDocumentMoniker": "Backend\\Migrations\\20250413033337_InitialCreate.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Migrations\\20250413033337_InitialCreate.cs",
+              "RelativeToolTip": "Backend\\Migrations\\20250413033337_InitialCreate.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T03:33:39.645Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "VehicleReview.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\VehicleReview.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\VehicleReview.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\VehicleReview.cs",
+              "RelativeToolTip": "Backend\\Models\\VehicleReview.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAowAsAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T02:39:35.011Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "VehicleImage.cs",
+              "DocumentMoniker": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\VehicleImage.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\VehicleImage.cs",
+              "ToolTip": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Models\\VehicleImage.cs",
+              "RelativeToolTip": "Backend\\Models\\VehicleImage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-13T02:37:41.166Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+>>>>>>> Stashed changes
     }
   ]
 }
