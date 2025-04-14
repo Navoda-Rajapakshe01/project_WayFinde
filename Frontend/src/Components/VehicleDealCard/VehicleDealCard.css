@@ -19,6 +19,13 @@
 
 .vehicle-details {
   padding: 1rem;
+  display: flex;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: space-around;
+  justify-content: space-between;
 }
 
 .vehicle-name {
