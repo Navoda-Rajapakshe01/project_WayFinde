@@ -1,0 +1,44 @@
+.dashboard-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+  
+  .gradient-box {
+    
+    background: linear-gradient(135deg, #f0f2f5, #f0f2f5);
+    padding: 15px;
+    border-radius: 16px;
+    max-width: 100%;
+    text-align: center;
+    color: rgb(15, 15, 15);
+    font-family: Arial, sans-serif;
+    width: 100%;
+  }
+  
+  .gradient-box h1 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    font-weight: bold; 
+    font-family: 'Poppins', sans-serif; 
+  }
+  
+  .gradient-box p {
+    font-size: 1rem;
+    margin-bottom: 2px;
+    
+
+
+  }
+  
+  .happy-travels {
+    font-style: italic;
+    margin-top: 10px;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+  
+  .navbar-spacing {
+    height: 80px; /* Adjust this value for more or less space */
+  }

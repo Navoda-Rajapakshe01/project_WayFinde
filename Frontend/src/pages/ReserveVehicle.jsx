@@ -26,17 +26,20 @@ const ReserveVehicle = () => {
         <div className="checklist-menu">
           <button
             className={activeTopic === "arriveOnTime" ? "active" : ""}
-            onClick={() => handleMenuClick("arriveOnTime")}>
+            onClick={() => handleMenuClick("arriveOnTime")}
+          >
             Arrive on Time
           </button>
           <button
             className={activeTopic === "whatToBring" ? "active" : ""}
-            onClick={() => handleMenuClick("whatToBring")}>
+            onClick={() => handleMenuClick("whatToBring")}
+          >
             What to Bring
           </button>
           <button
             className={activeTopic === "refundableDeposit" ? "active" : ""}
-            onClick={() => handleMenuClick("refundableDeposit")}>
+            onClick={() => handleMenuClick("refundableDeposit")}
+          >
             Refundable Deposit
           </button>
         </div>

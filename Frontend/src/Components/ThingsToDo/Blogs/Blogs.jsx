@@ -1,20 +1,40 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BlogPostCard from "../../BlogComponents/BlogPostCard/BlogPostCard";
 import "./Blogs.css";
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
-import BlogPostCard from "../../BlogPostCard/BlogPostCard"; 
 
 const Blogs = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [visiblePosts, setVisiblePosts] = useState(4);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   useEffect(() => {
     const posts = [
-      { title: "Post 1", content: "This is the content of the first post.", image: "https://via.placeholder.com/150" },
-      { title: "Post 2", content: "This is the content of the second post.", image: "https://via.placeholder.com/150" },
-      { title: "Post 3", content: "This is the content of the third post.", image: "https://via.placeholder.com/150" },
-      { title: "Post 4", content: "This is the content of the fourth post.", image: "https://via.placeholder.com/150" },
-      { title: "Post 5", content: "This is the content of the fifth post.", image: "https://via.placeholder.com/150" },
+      {
+        title: "Post 1",
+        content: "This is the content of the first post.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        title: "Post 2",
+        content: "This is the content of the second post.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        title: "Post 3",
+        content: "This is the content of the third post.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        title: "Post 4",
+        content: "This is the content of the fourth post.",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        title: "Post 5",
+        content: "This is the content of the fifth post.",
+        image: "https://via.placeholder.com/150",
+      },
     ];
 
     setBlogPosts(posts);
@@ -36,7 +56,9 @@ const Blogs = () => {
         <br />
         <br />
         {visiblePosts < blogPosts.length && (
-          <button className="see-more" onClick={handleSeeMore}>See More</button>
+          <button className="see-more" onClick={handleSeeMore}>
+            See More
+          </button>
         )}
       </div>
     </div>
