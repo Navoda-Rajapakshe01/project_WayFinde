@@ -9,7 +9,7 @@ import Vehicle from "./Pages/Vehicle";
 import Blog from "./pages/Blog";
 import ThingsToDo from "./Pages/ThingsToDo";
 import "./App.css";
-import Profilepage from "./pages/Profilepage";
+// import Profilepage from "./pages/Profilepage";
 
 
 
@@ -41,8 +41,8 @@ function App() {
           <Route path="/chat" element={<Chat />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/setting" element={<Setting />} />
-          <Route path="/blog/:id" element={<BlogPage1 />} />{" "}
-          <Route path="/profile/:writerId" element={<Profilepage />} />
+          <Route path="/blog/:id" element={<Setting />} />{" "}
+          <Route path="/profile/:writerId" element={<Setting />} />
           {/* Dynamic route */}
         </Routes>
         <Footer />
