@@ -1,0 +1,55 @@
+.review-section {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+}
+
+.review-section h2 {
+  font-size: 1.75rem;
+  color: #2d2d2d;
+  margin-bottom: 1rem;
+}
+
+.reviews {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: space-around;
+  justify-content: space-evenly;
+  align-items: stretch;
+}
+
+.review {
+  flex: 0 0 auto; /* Prevent flex items from shrinking or growing */
+  width: 300px; /* Set a fixed width for each review */
+  padding: 1rem;
+  background-color: #f4f6f7; /* Light background for each review */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review p {
+  font-size: 1rem;
+  color: #2d2d2d;
+  margin-bottom: 0.5rem;
+}
+
+.add-review-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #19b9df;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-review-button:hover {
+  background-color: #3aa69b;
+}

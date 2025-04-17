@@ -1,8 +1,15 @@
 import React from "react";
 import { FaMapMarkerAlt } from "react-icons/fa"; // Import location icon
 import "./VehicleDealCard.css";
+import { useNavigate } from "react-router-dom";
 
 const VehicleDealCard = ({ vehicle }) => {
+  const navigate = useNavigate();
+
+  const handleViewNow = () => {
+    navigate("/VehicleDetail", { state: { vehicle } });
+  };
+
   return (
     <div className="vehicle-deal-card">
       <img src={vehicle.image} alt={vehicle.name} className="vehicle-image" />
@@ -34,7 +41,9 @@ const VehicleDealCard = ({ vehicle }) => {
             <span>{vehicle.transmission}</span>
           </div>
         </div>
-        <button className="book-button">Book Now</button>
+        <button className="book-button" onClick={handleViewNow}>
+          View Now
+        </button>
       </div>
     </div>
   );

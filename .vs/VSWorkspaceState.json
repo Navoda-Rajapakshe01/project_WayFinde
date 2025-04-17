@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Frontend",
+    "\\Frontend\\src",
+    "\\Frontend\\src\\pages"
   ],
   "PreviewInSolutionExplorer": false
 }
