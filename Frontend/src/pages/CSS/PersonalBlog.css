@@ -1,0 +1,135 @@
+.blogTopic{
+    font-weight: bold;
+   text-align: center;
+   
+ }
+ .page-container-personalBlog{
+     padding-left: 200px;
+     padding-right: 200px;
+    
+ 
+ }
+ .blogImages{
+     padding-bottom: 50px;
+ }
+ .page-container-personalBlog p{
+     font-size: 20px;
+     padding-bottom: 50px;
+     text-align: justify;
+ }
+ .writerDetails{
+     display: flex;
+     
+     
+ }
+ .follow_button{
+     color: aquamarine;
+ }
+ .name-container {
+     display: flex;
+     flex-direction: column; /* Stack Name & Published on */
+   }
+   .profile-img{
+     width: 50px;
+     height: 50px;
+   }
+   .writerName{
+     font-weight: boldcd;
+   }
+   .numComLikes{
+     font-size: 15px;
+   }
+   .comLikeIcons{
+     padding-top: 10px;
+     margin-bottom: 0; /* Remove bottom margin */
+     display: flex;
+     gap: 10px;
+ 
+   }
+   .numOfFollowersFollowing{
+     display: flex;
+     gap: 10px;
+   }
+   .numberOfComments{
+     font-size:20px ;
+     padding-bottom: 10px;
+   }
+   .commentsAreaProfileDetails{
+     display: flex;
+ 
+   }
+   .commentAreaAddComments {
+     width: 100%; /* Ensure it takes full width */
+     display: flex;
+     flex-direction: column;
+     margin-bottom: 20px;
+     margin-top: 20px;
+ }
+ 
+ .commentInput {
+     width: 100%;
+     min-height: 50px; /* Default height */
+     max-height: 200px; /* Prevent it from growing too large */
+     padding: 10px;
+     font-size: 16px;
+     border: 1px solid #ccc;
+     border-radius: 5px;
+     resize: none; /* Prevent manual resizing */
+     overflow: hidden; /* Hide scrollbar when unnecessary */
+ }
+ 
+ /* JavaScript to auto-expand */
+ .commentInput:focus {
+     outline: none; /* Remove default blue outline */
+ }
+ 
+ .functionButtons{
+   display: flex;
+     justify-content: flex-end; /* Aligns buttons to the right */
+     gap: 10px; /* Adds space between the buttons */
+     
+ }
+ .functionButtons button{
+     padding:5px;
+     margin-bottom: 5px;
+     /* margin-top: 10px; */
+     /* padding: 0.75rem 1.5rem; */
+     background-color: #19b9df; /* Primary – Sky Blue */
+     color: #ffffff;
+     border: none;
+     border-radius: 8px;
+     font-size: 1rem;
+     cursor: pointer;
+     transition: background-color 0.3s ease;
+     
+ }
+ /* .functionButtons button:hover{
+   background-color: #3aa69b; 
+ } */
+ .cancelButton:hover{
+   background-color: red;
+ }
+ .submitButton:hover{
+   background-color: #3aa69b; 
+ }
+ .allResponses{
+   /* font-weight: bold; */
+   font-size: 20px;
+ }
+ .allResponses button{
+   padding:5px;
+     margin-bottom: 5px;
+     /* margin-top: 10px; */
+     /* padding: 0.75rem 1.5rem; */
+     background-color: #19b9df; /* Primary – Sky Blue */
+     color: #ffffff;
+     border: none;
+     border-radius: 8px;
+     font-size: 1rem;
+     cursor: pointer;
+     transition: background-color 0.3s ease;
+     
+ }
+ .allResponses button:hover{
+   background-color: #3aa69b; 
+ }

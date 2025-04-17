@@ -5192,39 +5192,23 @@
     ]
   },
   "packageFolders": {
-<<<<<<< HEAD
-    "C:\\Users\\Sajeewa\\.nuget\\packages\\": {},
-=======
-    "C:\\Users\\ACER\\.nuget\\packages\\": {},
->>>>>>> update-v2
+    "C:\\Users\\ASUS\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< HEAD
-      "projectUniqueName": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Backend.csproj",
+      "projectUniqueName": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Backend.csproj",
       "projectName": "Backend",
-      "projectPath": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Backend.csproj",
-      "packagesPath": "C:\\Users\\Sajeewa\\.nuget\\packages\\",
-      "outputPath": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\obj\\",
-=======
-      "projectUniqueName": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj",
-      "projectName": "Backend",
-      "projectPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj",
-      "packagesPath": "C:\\Users\\ACER\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\obj\\",
->>>>>>> update-v2
+      "projectPath": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Backend.csproj",
+      "packagesPath": "C:\\Users\\ASUS\\.nuget\\packages\\",
+      "outputPath": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-<<<<<<< HEAD
-        "C:\\Users\\Sajeewa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-=======
-        "C:\\Users\\ACER\\AppData\\Roaming\\NuGet\\NuGet.Config",
->>>>>>> update-v2
+        "C:\\Users\\ASUS\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -5295,7 +5279,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.203/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
