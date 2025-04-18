@@ -1,12 +1,15 @@
+import axios from "axios";
 import React, { useState } from "react";
-
+import "../UserLogin/UserLogin.css";
 const UserForm = () => {
   const [formData, setFormData] = useState({
-    id: "",
+    // id: "",
     fullName: "",
     email: "",
     age: "",
   });
+
+  console.log("API URL:", import.meta.env.VITE_API_URL);
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -23,32 +26,30 @@ const UserForm = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await axios.post(
+        "https://localhost:7138/api/user",
+        formData
+      );
 
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         setMessage("User added successfully.");
         setError("");
-        setFormData({ id: "", fullName: "", email: "", age: "" });
+        setFormData({ fullName: "", email: "", age: "" });
       } else {
         setMessage("");
         setError("Failed to add user. Please try again.");
       }
     } catch (err) {
+      console.error("Axios error:", err); // <-- This will give you the real cause!
       setMessage("");
       setError("An error occurred. Please check your connection.");
     }
   };
 
   return (
-    <div>
+    <div className="registration_form">
       <form onSubmit={handleSubmit}>
-        <div>
+        {/* <div>
           <label>ID: </label>
           <input
             type="number"
@@ -56,7 +57,7 @@ const UserForm = () => {
             value={formData.id}
             onChange={handleChange}
           />
-        </div>
+        </div> */}
 
         <div>
           <label>Full Name: </label>

@@ -1,9 +1,12 @@
 ﻿using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controller
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -19,6 +22,13 @@ namespace Backend.Controller
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return Ok(user);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUsers()
+        {
+            var users = await _context.Users.ToListAsync();
+            return Ok(users);
         }
     }
 }

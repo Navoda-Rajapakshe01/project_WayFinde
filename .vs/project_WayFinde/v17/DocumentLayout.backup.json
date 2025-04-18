@@ -3,24 +3,24 @@
   "WorkspaceRootPath": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\controller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250417013905_user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250417013905_user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\controller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250417013905_user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250417013905_user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250413033337_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,7 +62,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -70,7 +70,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "20250417013905_User.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250417013905_User.cs",
               "RelativeDocumentMoniker": "Backend\\Migrations\\20250417013905_User.cs",
@@ -78,18 +78,17 @@
               "RelativeToolTip": "Backend\\Migrations\\20250417013905_User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-17T01:39:05.574Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-17T01:39:05.574Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "UserController.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Controller\\UserController.cs",
               "RelativeDocumentMoniker": "Backend\\Controller\\UserController.cs",
               "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Controller\\UserController.cs",
               "RelativeToolTip": "Backend\\Controller\\UserController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAYAAAAwAAAAAAAAAA==",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAUwA0AAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-17T01:22:55.266Z",
               "EditorCaption": ""
@@ -104,18 +103,17 @@
               "RelativeToolTip": "Backend\\Backend.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-04-16T14:30:38.372Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-16T14:30:38.372Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "User.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\User.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\User.cs",
-              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\User.cs",
-              "RelativeToolTip": "Backend\\Models\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\User.cs*",
+              "RelativeToolTip": "Backend\\Models\\User.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-16T14:27:07.443Z",
               "EditorCaption": ""
@@ -130,18 +128,17 @@
               "RelativeToolTip": "Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
               "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T03:46:15.848Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-13T03:46:15.848Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Program.cs",
               "RelativeDocumentMoniker": "Backend\\Program.cs",
-              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Program.cs",
-              "RelativeToolTip": "Backend\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Program.cs*",
+              "RelativeToolTip": "Backend\\Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-13T03:07:59.824Z",
               "EditorCaption": ""
@@ -156,8 +153,7 @@
               "RelativeToolTip": "Backend\\Data\\AppDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T02:55:51.025Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-13T02:55:51.025Z"
             },
             {
               "$type": "Document",
@@ -191,7 +187,7 @@
               "RelativeDocumentMoniker": "Backend\\appsettings.json",
               "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\appsettings.json",
               "RelativeToolTip": "Backend\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAACXAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2025-04-11T19:59:12.268Z",
               "EditorCaption": ""
@@ -206,8 +202,7 @@
               "RelativeToolTip": "Backend\\Migrations\\20250413033337_InitialCreate.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T03:33:39.645Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-13T03:33:39.645Z"
             },
             {
               "$type": "Document",
