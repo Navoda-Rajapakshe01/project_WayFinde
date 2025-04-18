@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+241bbf3a3f812cc198c39f01c8a7085e3cca738b")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27322df3074fbb591a5036e6015beef1997cb43e")]
->>>>>>> update-v2
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4d1db33d2e3063bddeb8ea86dcef2d7e9f117a32")]
 [assembly: System.Reflection.AssemblyProductAttribute("Backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

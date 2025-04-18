@@ -1,5 +1,4 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 import "./ProfileHeadsection.css";
 
@@ -14,12 +13,12 @@ const ProfileHeadSection = () => {
   ];
 
   // Redirect to "/posts" if the current path is not in stats
-  useEffect(() => {
-    const isValidPath = stats.some((stat) => stat.path === location.pathname);
-    if (!isValidPath) {
-      navigate("/posts", { replace: true }); // Redirect to "/posts"
-    }
-  }, [location.pathname, navigate]);
+  // useEffect(() => {
+  //   const isValidPath = stats.some((stat) => stat.path === location.pathname);
+  //   if (!isValidPath) {
+  //     navigate("/posts", { replace: true }); // Redirect to "/posts"
+  //   }
+  // }, [location.pathname, navigate]);
   return (
     <div className="page-container">
       {/* profile image part */}
