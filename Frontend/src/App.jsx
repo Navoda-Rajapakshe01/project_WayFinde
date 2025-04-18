@@ -9,9 +9,8 @@ import Following from "./pages/Following";
 import Followers from "./pages/Follwers";
 import Home from "./pages/Home";
 // import Posts from "./pages/Post";
-import Profile from "./pages/Profile"; // your Profile component
-
 import "./App.css";
+import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import ThingstodoCategories from "./Components/ThingsToDo/ThingstodoCategories/Categories";
@@ -19,6 +18,7 @@ import Chat from "./pages/Chat";
 import Logout from "./pages/Logout";
 import PaymentGateway from "./pages/PaymentGateway";
 import PersonalBlog from "./pages/PersonalBlog";
+import Profile from "./pages/Profile"; // your Profile component
 import ReserveVehicle from "./pages/ReserveVehicle";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
@@ -51,8 +51,8 @@ function App() {
           <Route path="/chat" element={<Chat />} />
           <Route path="/personalBlog" element={<PersonalBlog />} />
           <Route path="/logout" element={<Logout />} />
-          {/* <Route path="/setting" element={<Setting />} />
-          <Route path="/blog/:id" element={<Setting />} />{" "} */}
+          <Route path="/settings" element={<UserLogin />} />
+          {/* <Route path="/blog/:id" element={<Setting />} /> */}
           {/* <Route path="/profile/:writerId" element={<Setting />} /> */}
           {/* Dynamic route */}
           <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
