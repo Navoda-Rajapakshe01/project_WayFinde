@@ -64,9 +64,17 @@
               "target": "Package",
               "version": "[9.0.4, )"
             },
+            "Scalar.AspNetCore": {
+              "target": "Package",
+              "version": "[2.1.16, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.6.2, )"
+              "version": "[6.5.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.8.0, )"
             }
           },
           "imports": [

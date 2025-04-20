@@ -3,12 +3,36 @@
   "WorkspaceRootPath": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\controller\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250417013905_createusertable.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250417013905_createusertable.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250417013905_createusertable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250417013905_createusertable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\controller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\entities\\userauthentication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\entities\\userauthentication.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\models\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\models\\vehiclereview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\vehiclereview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
@@ -19,20 +43,12 @@
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250417013905_user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250417013905_user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250413033337_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250413033337_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\migrations\\20250413034615_fixvehiclepriceproperty.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250413034615_fixvehiclepriceproperty.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -45,10 +61,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\models\\vehiclereservation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\vehiclereservation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\models\\vehiclereview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\vehiclereview.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|d:\\university materials\\l2s2\\software project\\project_wayfinde\\backend\\models\\vehicleimage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -70,57 +82,98 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "20250417013905_User.cs",
-              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250417013905_User.cs",
-              "RelativeDocumentMoniker": "Backend\\Migrations\\20250417013905_User.cs",
-              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250417013905_User.cs",
-              "RelativeToolTip": "Backend\\Migrations\\20250417013905_User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABFAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "User.cs",
+              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\User.cs",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\User.cs",
+              "RelativeToolTip": "Backend\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-17T01:39:05.574Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UserController.cs",
-              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Controller\\UserController.cs",
-              "RelativeDocumentMoniker": "Backend\\Controller\\UserController.cs",
-              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Controller\\UserController.cs",
-              "RelativeToolTip": "Backend\\Controller\\UserController.cs",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAUwA0AAAAzAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-17T01:22:55.266Z",
+              "WhenOpened": "2025-04-18T17:22:23.004Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Backend.csproj",
-              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Backend.csproj",
-              "RelativeDocumentMoniker": "Backend\\Backend.csproj",
-              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Backend.csproj",
-              "RelativeToolTip": "Backend\\Backend.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-04-16T14:30:38.372Z"
+              "DocumentIndex": 1,
+              "Title": "20250417013905_CreateUserTable.Designer.cs",
+              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250417013905_CreateUserTable.Designer.cs",
+              "RelativeDocumentMoniker": "Backend\\Migrations\\20250417013905_CreateUserTable.Designer.cs",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250417013905_CreateUserTable.Designer.cs",
+              "RelativeToolTip": "Backend\\Migrations\\20250417013905_CreateUserTable.Designer.cs",
+              "ViewState": "AgIAABYAAAAAAAAAAAAQwBEAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T17:21:05.847Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "20250417013905_CreateUserTable.cs",
+              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250417013905_CreateUserTable.cs",
+              "RelativeDocumentMoniker": "Backend\\Migrations\\20250417013905_CreateUserTable.cs",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250417013905_CreateUserTable.cs",
+              "RelativeToolTip": "Backend\\Migrations\\20250417013905_CreateUserTable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T10:29:07.058Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "User.cs",
-              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\User.cs",
-              "RelativeDocumentMoniker": "Backend\\Models\\User.cs",
-              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\User.cs*",
-              "RelativeToolTip": "Backend\\Models\\User.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Controller\\AuthController.cs",
+              "RelativeDocumentMoniker": "Backend\\Controller\\AuthController.cs",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Controller\\AuthController.cs",
+              "RelativeToolTip": "Backend\\Controller\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-16T14:27:07.443Z",
+              "WhenOpened": "2025-04-18T04:32:21.998Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
+              "Title": "UserDto.cs",
+              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\UserDto.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\UserDto.cs",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\UserDto.cs",
+              "RelativeToolTip": "Backend\\Models\\UserDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T04:30:55.49Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UserAuthentication.cs",
+              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Entities\\UserAuthentication.cs",
+              "RelativeDocumentMoniker": "Backend\\Entities\\UserAuthentication.cs",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Entities\\UserAuthentication.cs",
+              "RelativeToolTip": "Backend\\Entities\\UserAuthentication.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-18T04:24:00.751Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Backend.csproj",
+              "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Backend.csproj",
+              "RelativeDocumentMoniker": "Backend\\Backend.csproj",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Backend.csproj",
+              "RelativeToolTip": "Backend\\Backend.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-16T14:30:38.372Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "20250413034615_FixVehiclePriceProperty.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
               "RelativeDocumentMoniker": "Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
@@ -128,24 +181,25 @@
               "RelativeToolTip": "Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
               "ViewState": "AgIAACoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T03:46:15.848Z"
+              "WhenOpened": "2025-04-13T03:46:15.848Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Program.cs",
               "RelativeDocumentMoniker": "Backend\\Program.cs",
-              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Program.cs*",
-              "RelativeToolTip": "Backend\\Program.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Program.cs",
+              "RelativeToolTip": "Backend\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-13T03:07:59.824Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 4,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "Backend\\Data\\AppDbContext.cs",
@@ -153,35 +207,38 @@
               "RelativeToolTip": "Backend\\Data\\AppDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T02:55:51.025Z"
+              "WhenOpened": "2025-04-13T02:55:51.025Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "Vehicle.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\Vehicle.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\Vehicle.cs",
               "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\Vehicle.cs",
               "RelativeToolTip": "Backend\\Models\\Vehicle.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAA/wBAAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAswBAAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T00:00:14.248Z"
+              "WhenOpened": "2025-04-13T00:00:14.248Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 14,
               "Title": "VehicleReservation.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\VehicleReservation.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\VehicleReservation.cs",
               "ToolTip": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\VehicleReservation.cs",
               "RelativeToolTip": "Backend\\Models\\VehicleReservation.cs",
-              "ViewState": "AgIAABEAAAAAAAAAAAAmwBsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABEAAAAAAAAAAAA6wBsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T02:44:29.324Z"
+              "WhenOpened": "2025-04-13T02:44:29.324Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 8,
               "Title": "appsettings.json",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\appsettings.json",
               "RelativeDocumentMoniker": "Backend\\appsettings.json",
@@ -194,7 +251,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 10,
               "Title": "20250413033337_InitialCreate.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Migrations\\20250413033337_InitialCreate.cs",
               "RelativeDocumentMoniker": "Backend\\Migrations\\20250413033337_InitialCreate.cs",
@@ -202,11 +259,12 @@
               "RelativeToolTip": "Backend\\Migrations\\20250413033337_InitialCreate.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T03:33:39.645Z"
+              "WhenOpened": "2025-04-13T03:33:39.645Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 7,
               "Title": "VehicleReview.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\VehicleReview.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\VehicleReview.cs",
@@ -214,11 +272,12 @@
               "RelativeToolTip": "Backend\\Models\\VehicleReview.cs",
               "ViewState": "AgIAAAkAAAAAAAAAAAAowAsAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T02:39:35.011Z"
+              "WhenOpened": "2025-04-13T02:39:35.011Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "VehicleImage.cs",
               "DocumentMoniker": "D:\\University materials\\L2S2\\Software project\\project_WayFinde\\Backend\\Models\\VehicleImage.cs",
               "RelativeDocumentMoniker": "Backend\\Models\\VehicleImage.cs",
@@ -226,7 +285,8 @@
               "RelativeToolTip": "Backend\\Models\\VehicleImage.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T02:37:41.166Z"
+              "WhenOpened": "2025-04-13T02:37:41.166Z",
+              "EditorCaption": ""
             }
           ]
         }
