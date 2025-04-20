@@ -9,7 +9,7 @@ import PaymentGateway from "./pages/PaymentGateway";
 import PersonalBlog from "./pages/PersonalBlog";
 import Profile from "./pages/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle"; 
-import ThingsToDo from "./pages/ThingsToDo";
+import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import ThingstodoCategories from "./Components/ThingsToDo/ThingstodoCategories/Categories";
 import TripDashboard from './pages/TripDashboard';
 import MainNavbar from "./Components/MainNavbar/MainNavbar";

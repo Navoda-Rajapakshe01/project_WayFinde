@@ -1,13 +1,8 @@
-h1{
-    padding: 30px;
-    margin-top: 70px;
-    margin-left: 20px;
-}
-
 .category-section {
     margin: 20px auto;
     width: 80%;
     max-width: 1000px;
+    padding-top: 80px;
 }
 
 
@@ -52,87 +47,3 @@ h1{
     transition: 0.3s;
 }
 
-.card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 80px;
-    max-width: 1390px;
-    width: 100%;
-    padding: 30px;
-    margin-left: 30px;
-    margin-top: 40px;
-}
-
-/* Individual Card */
-.card {
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: 0.3s ease-in-out;
-    position: relative;
-    width: 320px;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Card Image */
-.card img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-}
-
-/* Card Content */
-.card-content {
-    padding: 15px;
-    text-align: justify;
-}
-
-h3 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.description {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 10px;
-    margin-top: 10px;
-}
-
-/* Details Button */
-.details-btn {
-    background-color: #00a9ce;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: 0.3s;
-    margin-top: 10px;
-}
-
-.details-btn:hover {
-    background-color: #008bb3;
-}
-
-/* Favorite Heart Icon */
-.favorite {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 18px;
-    color: #888;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.favorite:hover {
-    color: red;
-}
