@@ -1,37 +1,23 @@
+import React, { useEffect, useState } from "react";
 import HeroSection from "../../Components/HeroSection/HeroSection";
 import MainNavbar from "../../Components/MainNavbar/MainNavbar";
 import DistrictCard from "../../Components/ThingsToDo/DistrictCard";
 import "../CSS/ThingsToDo.css";
-
-const districts = [
-  { name: "Ampara", image: "/DistrictImages/Ampara.jpg" },
-  { name: "Anuradhapura", image: "/DistrictImages/Anuradhapura.jpeg" },
-  { name: "Badulla", image: "/DistrictImages/Badulla.jpg" },
-  { name: "Batticaloa", image: "/DistrictImages/Batticaloa.jpg" },
-  { name: "Colombo", image: "/DistrictImages/colombo.jpg" },
-  { name: "Galle", image: "/DistrictImages/galle.webp" },
-  { name: "Gampaha", image: "/DistrictImages/gampaha.png" },
-  { name: "Hambantota", image: "/DistrictImages/hambantota.webp" },
-  { name: "Jaffna", image: "/DistrictImages/jaffna.jpg" },
-  { name: "Kalutara", image: "/DistrictImages/Kalutara.webp" },
-  { name: "Kandy", image: "/DistrictImages/kandy.jpg" },
-  { name: "Kegalle", image: "/DistrictImages/Kegalle.webp" },
-  { name: "Kilinochchi", image: "/DistrictImages/killinochchi.JPG" },
-  { name: "Kurunegala", image: "/DistrictImages/Kurunegala.jpg" },
-  { name: "Mannar", image: "/DistrictImages/mannar.jpg" },
-  { name: "Matale", image: "/DistrictImages/matale.jpg" },
-  { name: "Matara", image: "/DistrictImages/matara.jpg" },
-  { name: "Moneragala", image: "/DistrictImages/Moneragala.jpg" },
-  { name: "Mullaitivu", image: "/DistrictImages/Mullaitivu.jpg" },
-  { name: "Nuwara Eliya", image: "/DistrictImages/nuwaraeliya.jpg" },
-  { name: "Polonnaruwa", image: "/DistrictImages/Polonnaruwa.jpg" },
-  { name: "Puttalam", image: "/DistrictImages/Puttalam.webp" },
-  { name: "Ratnapura", image: "/DistrictImages/Ratnapura.webp" },
-  { name: "Trincomalee", image: "/DistrictImages/Trincomalee.jpg" },
-  { name: "Vauniya", image: "/DistrictImages/Vavuniya.jpg" },
-];
+import axios from "axios";
 
 const ThingsToDo = () => {
+  const [districts, setDistricts] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5030/api/district") 
+      .then((response) => {
+        setDistricts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching district data:", error);
+      });
+  }, []);
+
   return (
     <div className="page-container">
       <MainNavbar />
@@ -59,11 +45,12 @@ const ThingsToDo = () => {
           Explore by District
         </h2>
         <section className="district-container">
-          {districts.map((district, index) => (
+          {districts.map((district) => (
             <DistrictCard
-              key={index}
+              key={district.id}
               name={district.name}
-              image={district.image}
+              image={district.imageUrl} 
+              districtId={district.id}
             />
           ))}
         </section>
