@@ -3,9 +3,9 @@ import HeroSection from "../Components/HeroSection/HeroSection";
 
 // import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
 
-import "../pages/CSS/Blog.css";
 import ImageGrid from "../Components/BlogComponents/ImageGrid/ImageGrid";
 import blogData from "../Components/BlogComponents/blogData.json";
+import "../pages/CSS/Blog.css";
 
 const backgroundImage = "/Blogimages/blogbackground1.jpg"; // Correct path from public folder
 

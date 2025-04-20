@@ -11,6 +11,7 @@ namespace Backend.Data
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
