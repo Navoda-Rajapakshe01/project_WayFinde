@@ -17,10 +17,10 @@ import Chat from "./pages/Chat";
 import Logout from "./pages/Logout";
 import PaymentGateway from "./pages/PaymentGateway";
 import PersonalBlog from "./pages/PersonalBlog";
-import Profile from "./pages/Profile"; 
+import Profile from "./pages/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
-import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
+import PlanNewTrip from "./pages/PlanNewTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import TripDashboard from "./pages/TripDashboard";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
@@ -33,7 +33,7 @@ function App() {
         <MainNavbar />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/plantrip" element={<PlanTrip />} />
+          <Route path="/plantrip" element={<PlanNewTrip />} />
           <Route path="/trip-planner" element={<OptimizedTripRoute />} />
           <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
           <Route path="/accommodation" element={<Accommodation />} />
@@ -59,7 +59,6 @@ function App() {
           <Route path="/profile/blog" element={<Blogs />} />
           <Route path="/profile/followers" element={<Followers />} />
           <Route path="/profile/following" element={<Following />} />
-
         </Routes>
         <Footer />
       </BrowserRouter>

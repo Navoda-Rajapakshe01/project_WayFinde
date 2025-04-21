@@ -19,6 +19,9 @@ namespace Backend.Data
         // DbSet for PlaceToVisit
         public DbSet<PlaceToVisit> PlacesToVisit { get; set; }
 
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripLocation> TripLocations { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Vehicle>()

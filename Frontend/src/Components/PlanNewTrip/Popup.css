@@ -1,0 +1,128 @@
+/* Overlay */
+.popup-overlay-1 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Popup Container */
+.popup-container-1 {
+  background: #f5f5f7;
+  padding: 40px;
+  border-radius: 15px;
+  width: 450px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+}
+
+.popup-close-1,
+.popup-back-1 {
+  position: absolute;
+  top: 15px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  border: none;
+  background: none;
+  color: Black;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s ease-in-out;
+}
+
+.popup-close-1 {
+  right: 15px;
+}
+.popup-back-1 {
+  left: 15px;
+}
+
+.popup-close-1:hover,
+.popup-back-1:hover {
+  background: white;
+}
+/* Popup Content */
+.popup-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 10px;
+}
+.popup-description {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+.popup-select {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  background: white;
+  color: #333;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+.date-picker-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0;
+}
+.date-picker {
+  background: rgb(255, 255, 255);
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.date-picker label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+.popup-input-container {
+  margin-bottom: 15px; /* Adds gap between select box and button */
+}
+
+.popup-confirm-1 {
+  background-color: #27bc9b;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  width: auto;
+  min-width: 80px;
+  margin-top: 25px;
+  font-weight: bold;
+  transition: background 0.3s ease-in-out;
+}
+
+.popup-confirm-1:hover {
+  background-color: #1a8c74;
+}
+
+.date-picker:last-child {
+  margin-right: 0;
+}
+
+.popup-select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}

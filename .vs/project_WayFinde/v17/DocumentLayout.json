@@ -1,10 +1,42 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\",
+  "WorkspaceRootPath": "C:\\Users\\dilsh\\Desktop\\2dclone\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\acer\\desktop\\wayfinde\\backend\\migrations\\20250413034615_fixvehiclepriceproperty.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250413034615_fixvehiclepriceproperty.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\route controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\route controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\tripcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\tripcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\placescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\placescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\districtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\districtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\triplocation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\triplocation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\trip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\trip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\placetovisit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\placetovisit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -19,14 +51,118 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "20250413034615_FixVehiclePriceProperty.cs",
-              "DocumentMoniker": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
-              "RelativeDocumentMoniker": "Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
-              "ToolTip": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
-              "RelativeToolTip": "Backend\\Migrations\\20250413034615_FixVehiclePriceProperty.cs",
+              "Title": "Route Controller.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\Route Controller.cs",
+              "RelativeDocumentMoniker": "Backend\\Controller\\Route Controller.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\Route Controller.cs",
+              "RelativeToolTip": "Backend\\Controller\\Route Controller.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T13:39:26.204Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "TripController.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\TripController.cs",
+              "RelativeDocumentMoniker": "Backend\\Controller\\TripController.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\TripController.cs",
+              "RelativeToolTip": "Backend\\Controller\\TripController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T13:37:20.987Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PlacesController.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\PlacesController.cs",
+              "RelativeDocumentMoniker": "Backend\\Controller\\PlacesController.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\PlacesController.cs",
+              "RelativeToolTip": "Backend\\Controller\\PlacesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T13:35:41.164Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "DistrictController.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\DistrictController.cs",
+              "RelativeDocumentMoniker": "Backend\\Controller\\DistrictController.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\DistrictController.cs",
+              "RelativeToolTip": "Backend\\Controller\\DistrictController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T13:34:37.293Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Backend\\Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Backend\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAA8AAAAANTMzMzMlwBQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T13:32:52.429Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "TripLocation.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\TripLocation.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\TripLocation.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\TripLocation.cs",
+              "RelativeToolTip": "Backend\\Models\\TripLocation.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T13:30:37.173Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Trip.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\Trip.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\Trip.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\Trip.cs",
+              "RelativeToolTip": "Backend\\Models\\Trip.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAowAcAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T13:28:25.744Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\User.cs",
+              "RelativeToolTip": "Backend\\Models\\User.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T03:46:15.848Z",
+              "WhenOpened": "2025-04-21T12:59:13.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "PlacetoVisit.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\PlacetoVisit.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\PlacetoVisit.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\PlacetoVisit.cs",
+              "RelativeToolTip": "Backend\\Models\\PlacetoVisit.cs",
+              "ViewState": "AgIAAAAAAAAszMzMzMwHwAMAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-21T12:59:03.205Z",
               "EditorCaption": ""
             }
           ]
