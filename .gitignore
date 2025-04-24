@@ -35,11 +35,12 @@ Frontend/.env.*.local
 *.user
 *.suo
 
-# Entity Framework files
+# Entity Framework generated files
 Backend/Migrations/*Snapshot.cs
 Backend/Migrations/*.Designer.cs
 
-# Local settings
+# Local settings and secrets
+Backend/appsettings.json
 Backend/appsettings.Development.json
 
 # -------------------------------

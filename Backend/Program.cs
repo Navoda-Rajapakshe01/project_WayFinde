@@ -1,21 +1,28 @@
 ﻿using Backend.Data;
-using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ SQL Server DB එකට Connect වෙන AppDbContext එක add කරනවා
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// ✅ Adding the AppDbContext to connect with the SQL Server database
 
-// ✅ Controller-based API එකක් enable කිරීම
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy
+            .WithOrigins("http://localhost:5173") 
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// ✅ Swagger UI (testing tool) enable කිරීම development mode එකට
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -23,10 +30,13 @@ if (app.Environment.IsDevelopment())
 }
 
 // ✅ HTTPS redirect & authorization middleware
+
 app.UseHttpsRedirection();
+
+app.UseCors("AllowReactApp");
+
 app.UseAuthorization();
 
-// ✅ Controller routes map කරන එක (MEHEMA නැත්නම් route එක වැඩ නොකරයි!)
 app.MapControllers();
 
 app.Run();
