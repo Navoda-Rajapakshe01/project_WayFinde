@@ -184,6 +184,26 @@ namespace Backend.Migrations
                     b.ToTable("VehicleReviews");
                 });
 
+            modelBuilder.Entity("TodoItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TodoItems");
+                });
+
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
                 {
                     b.HasOne("Backend.Models.Vehicle", "Vehicle")

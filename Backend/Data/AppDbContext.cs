@@ -12,6 +12,12 @@ namespace Backend.Data
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
 
+         // Add the TodoItem DbSet here
+        public DbSet<TodoItem> TodoItems { get; set; }  // This is where we added it
+
+
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Vehicle>()
