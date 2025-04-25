@@ -1,6 +1,26 @@
 [
   {
     "ContainingType": "Backend.Controller.AuthController",
+    "Method": "AuthenticatedOnlyEndpoint",
+    "RelativePath": "api/Auth",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.Controller.AuthController",
+    "Method": "AdminOnlyEndpoint",
+    "RelativePath": "api/Auth/Admin-only",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Backend.Controller.AuthController",
     "Method": "Login",
     "RelativePath": "api/Auth/Login",
     "HttpMethod": "POST",
@@ -41,7 +61,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "Backend.Models.User",
+        "Type": "Backend.Models.UserNew",
         "MediaTypes": [
           "text/plain",
           "application/json",

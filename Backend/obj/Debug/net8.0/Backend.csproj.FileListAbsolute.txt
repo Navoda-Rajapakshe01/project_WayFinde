@@ -348,3 +348,4 @@ D:\University materials\L2S2\Software project\project_WayFinde\Backend\obj\Debug
 D:\University materials\L2S2\Software project\project_WayFinde\Backend\obj\Debug\net8.0\ref\Backend.dll
 D:\University materials\L2S2\Software project\project_WayFinde\Backend\bin\Debug\net8.0\Scalar.AspNetCore.dll
 D:\University materials\L2S2\Software project\project_WayFinde\Backend\bin\Debug\net8.0\Microsoft.Bcl.Memory.dll
+D:\University materials\L2S2\Software project\project_WayFinde\Backend\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
