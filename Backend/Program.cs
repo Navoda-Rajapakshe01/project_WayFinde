@@ -1,8 +1,8 @@
 ﻿using Backend.Data;
-<<<<<<< HEAD
+
 using Scalar.AspNetCore;
-=======
->>>>>>> update-v2
+
+
 using Microsoft.EntityFrameworkCore;
 using Backend.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
 
-<<<<<<< HEAD
+
 // ➕ Add UserDbContext and connect to SQL Server
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
@@ -41,8 +41,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // ? Register CORS policy here
-=======
->>>>>>> update-v2
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
@@ -56,11 +56,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-<<<<<<< HEAD
+
 
 // Middleware
-=======
->>>>>>> update-v2
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -80,30 +80,8 @@ app.UseCors("AllowReactApp");
 
 app.UseAuthorization();
 
-<<<<<<< HEAD
-// Sample endpoint (you can delete later)
-//app.MapGet("/weatherforecast", () =>
-//{
-//    var summaries = new[]
-//    {
-//        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-//    };
 
-    //var forecast = Enumerable.Range(1, 5).Select(index =>
-    //    new WeatherForecast
-    //    (
-    //        DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-    //        Random.Shared.Next(-20, 55),
-    //        summaries[Random.Shared.Next(summaries.Length)]
-    //    ))
-    //    .ToArray();
-    //return forecast;
-//})
-//.WithName("GetWeatherForecast")
-//.WithOpenApi();
 
-=======
->>>>>>> update-v2
 app.MapControllers();
 
 app.Run();

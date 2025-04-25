@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom"; // useLocation for automatic active tab
 import logo from "../../assets/Images/logo.png";
 import "./MainNavbar.css";
@@ -97,6 +97,20 @@ const MainNavbar = () => {
             <p onClick={() => handleNavigation("/logout")}>🔓 Logout</p>
           </div>
         )}
+      </div>
+      <div className="signButton">
+        <button
+          className="signInButton"
+          onClick={() => handleNavigation("/signin")}
+        >
+          Sign In
+        </button>
+        <button
+          className="signUpButton"
+          onClick={() => handleNavigation("/signup")}
+        >
+          Sign Up
+        </button>
       </div>
     </nav>
   );

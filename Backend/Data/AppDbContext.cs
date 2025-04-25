@@ -12,9 +12,9 @@ namespace Backend.Data
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
         public DbSet<User> Users { get; set; }
-<<<<<<< HEAD
+
         //public DbSet<UserNew> UsersNew { get; set; }
-=======
+
         
         // DbSet for District
         public DbSet<District> Districts { get; set; }
@@ -27,7 +27,7 @@ namespace Backend.Data
 
 
 
->>>>>>> update-v2
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
