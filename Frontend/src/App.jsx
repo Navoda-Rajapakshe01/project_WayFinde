@@ -1,24 +1,23 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import ThingsToDo from "./Pages/ThingsToDo";
-import Vehicle from "./Pages/Vehicle";
+import ThingsToDo from "./Pages/Thingstodo/ThingsToDo";
+import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
+import Vehicle from "./pages/Vehicle";
 import Accommodation from "./pages/Accommodation";
 import { default as Blog, default as Blogs } from "./pages/Blog";
 import Following from "./pages/Following";
 import Followers from "./pages/Follwers";
 import Home from "./pages/Home";
-// import Posts from "./pages/Post";
 import "./App.css";
 import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
-import ThingstodoCategories from "./Components/ThingsToDo/ThingstodoCategories/Categories";
 import Chat from "./pages/Chat";
 import Logout from "./pages/Logout";
 import PaymentGateway from "./pages/PaymentGateway";
 import PersonalBlog from "./pages/PersonalBlog";
-import Profile from "./pages/Profile"; // your Profile component
+import Profile from "./pages/Profile"; 
 import ReserveVehicle from "./pages/ReserveVehicle";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
@@ -41,11 +40,8 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
+          <Route path="/thingstodo/:districtId" element={<DistrictDetails />} />
           <Route path="/logout" element={<Logout />} />
-          <Route
-            path="/thingstodocategories"
-            element={<ThingstodoCategories />}
-          />
           <Route path="/tripdashboard" element={<TripDashboard />} />
           <Route path="/VehicleDetail" element={<VehicleDetail />} />
           <Route path="/chat" element={<Chat />} />
@@ -63,6 +59,7 @@ function App() {
           <Route path="/profile/blog" element={<Blogs />} />
           <Route path="/profile/followers" element={<Followers />} />
           <Route path="/profile/following" element={<Following />} />
+
         </Routes>
         <Footer />
       </BrowserRouter>

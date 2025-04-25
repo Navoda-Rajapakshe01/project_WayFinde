@@ -1,4 +1,70 @@
+<<<<<<< HEAD
 .vs 
 /backend/.vs 
 .env 
 /Backend/.vs 
+=======
+# -------------------------------
+# Global
+# -------------------------------
+node_modules/
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# -------------------------------
+# Frontend (React + Vite)
+# -------------------------------
+/Frontend/node_modules/
+Frontend/dist/
+Frontend/.vite/
+
+# Vite cache
+Frontend/.cache/
+Frontend/.parcel-cache/
+Frontend/.eslintcache
+
+# Env files
+Frontend/.env
+Frontend/.env.*.local
+
+# -------------------------------
+# Backend (.NET Core)
+# -------------------------------
+/Backend/bin/
+/Backend/obj/
+/Backend/.vs/
+*.user
+*.suo
+
+# Entity Framework generated files
+Backend/Migrations/*Snapshot.cs
+Backend/Migrations/*.Designer.cs
+
+# Local settings and secrets
+Backend/appsettings.json
+Backend/appsettings.Development.json
+
+# -------------------------------
+# Root level
+# -------------------------------
+/node_modules/
+.vs/
+.env
+.env.local
+*.local
+
+# Solution and build artifacts
+project_WayFinde.sln
+*.dbmdl
+*.bak
+*.pdb
+
+# Git
+.git/
+.gitignore
+>>>>>>> update-v2

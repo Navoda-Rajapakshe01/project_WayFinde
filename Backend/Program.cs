@@ -1,5 +1,8 @@
 ﻿using Backend.Data;
+<<<<<<< HEAD
 using Scalar.AspNetCore;
+=======
+>>>>>>> update-v2
 using Microsoft.EntityFrameworkCore;
 using Backend.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -8,10 +11,12 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ➕ Add AppDbContext and connect to SQL Server
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
+// ✅ Adding the AppDbContext to connect with the SQL Server database
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+
+<<<<<<< HEAD
 // ➕ Add UserDbContext and connect to SQL Server
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
@@ -36,22 +41,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 // ? Register CORS policy here
+=======
+>>>>>>> update-v2
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy => policy
-            .WithOrigins("http://localhost:5173") // Adjust to your front-end address
+            .WithOrigins("http://localhost:5173") 
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
 
-// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+<<<<<<< HEAD
 
 // Middleware
+=======
+>>>>>>> update-v2
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -63,13 +72,15 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+// ✅ HTTPS redirect & authorization middleware
+
 app.UseHttpsRedirection();
 
-// ✅ Apply the CORS middleware here
 app.UseCors("AllowReactApp");
 
 app.UseAuthorization();
 
+<<<<<<< HEAD
 // Sample endpoint (you can delete later)
 //app.MapGet("/weatherforecast", () =>
 //{
@@ -91,12 +102,8 @@ app.UseAuthorization();
 //.WithName("GetWeatherForecast")
 //.WithOpenApi();
 
+=======
+>>>>>>> update-v2
 app.MapControllers();
 
 app.Run();
-
-// Define WeatherForecast record
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

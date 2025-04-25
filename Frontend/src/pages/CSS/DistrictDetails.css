@@ -1,0 +1,39 @@
+.district-places-container {
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  .places-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 35px;
+  }
+  
+  .place-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+  }
+  
+  .place-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .place-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .place-card h3 {
+    padding: 1rem;
+    font-size: 1.2rem;
+    color: #2c3e50;
+  }
+  
