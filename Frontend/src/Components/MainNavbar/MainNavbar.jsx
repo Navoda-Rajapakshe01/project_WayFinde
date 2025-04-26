@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // useLocation for automatic active tab
+import { useEffect, useState, useContext } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../Authentication/AuthContext/AuthContext";
 import logo from "../../assets/Images/logo.png";
 import "./MainNavbar.css";
 
@@ -15,6 +16,9 @@ const MainNavbar = () => {
   const location = useLocation(); // Use location to track current route
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
+
+  const { user, logout } = useContext(AuthContext); // Use AuthContext to get user and logout function
+  const navigate = useNavigate();
 
   // Function to toggle the pop-up
   const togglePopup = () => {
@@ -49,8 +53,6 @@ const MainNavbar = () => {
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location]);
-  //Add the dynamic navigation
-  const navigate = useNavigate();
 
   const handleNavigation = (path) => {
     navigate(path); // Navigate dynamically based on the clicked item
@@ -78,39 +80,41 @@ const MainNavbar = () => {
           ))}
         </ul>
         {/* Profile Section */}
-        <div className="navbar-profile" onClick={togglePopup}>
-          <img
-            src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-            alt="User Profile"
-            className="profile-img"
-          />
-        </div>
-        {/* Pop-up Section */}
-        {isOpen && (
-          <div className="profile-popup">
-            <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
-            <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
-            <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
-            <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
-            <p onClick={() => handleNavigation("/personalblog")}>📰 Blogs</p>
-            <p onClick={() => handleNavigation("/settings")}>⚙️ Settings</p>
-            <p onClick={() => handleNavigation("/logout")}>🔓 Logout</p>
+        {user ? (
+          <div className="navbar-profile" onClick={togglePopup}>
+            <img
+              src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg" // Replace with user's profile image if available
+              alt="User Profile"
+              className="profile-img"
+            />
+            {isOpen && (
+              <div className="profile-popup">
+                <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
+                <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
+                <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
+                <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
+                <p onClick={() => handleNavigation("/personalblog")}>📰 Blogs</p>
+                <p onClick={() => handleNavigation("/settings")}>⚙️ Settings</p>
+                <p onClick={logout}>🔓 Logout</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="signButton">
+            <button
+              className="signInButton"
+              onClick={() => handleNavigation("/signin")}
+            >
+              Sign In
+            </button>
+            <button
+              className="signUpButton"
+              onClick={() => handleNavigation("/signup")}
+            >
+              Sign Up
+            </button>
           </div>
         )}
-      </div>
-      <div className="signButton">
-        <button
-          className="signInButton"
-          onClick={() => handleNavigation("/signin")}
-        >
-          Sign In
-        </button>
-        <button
-          className="signUpButton"
-          onClick={() => handleNavigation("/signup")}
-        >
-          Sign Up
-        </button>
       </div>
     </nav>
   );

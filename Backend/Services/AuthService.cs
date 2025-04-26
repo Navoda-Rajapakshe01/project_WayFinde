@@ -19,43 +19,47 @@ namespace Backend.Services
         {
             this.context = context;
             this.configuration = configuration;
-        } 
-        public async Task<string?> LoginAsync(UserDto request)
+        }
+        public async Task<string?> LoginAsync(UserDtoLogin request)
         {
             var user = await context.UsersNew.FirstOrDefaultAsync(u => u.Username == request.Username);
             if (user == null)
             {
-                return null;
+                return null; // User not found
             }
+
             // Check if the password hash is null
             if (string.IsNullOrEmpty(user.PasswordHash))
             {
-                return "Invalid password"; // Handle missing password hash
+                return null; // Treat missing password as login failure
             }
-            // Check if the password is correct
 
+            // Check if the password is correct
             if (new PasswordHasher<UserNew>().VerifyHashedPassword(user, user.PasswordHash, request.Password)
                 == PasswordVerificationResult.Failed)
             {
-                return "Wrong Password";
-            } 
+                return null; // Treat wrong password as login failure
+            }
 
+            // Everything is correct - generate token
             return CreateToken(user);
         }
 
-        public async Task<UserNew?> RegisterAsync(UserDto request)
+
+        public async Task<UserNew?> RegisterAsync(UserDtoRegister request)
         {
-            // Check if a user with the same username alread exists
-            if (await context.UsersNew.AnyAsync(u => u.Username == request.Username)) 
-            { 
+            // Check if a user with the same username already exists
+            if (await context.UsersNew.AnyAsync(u => u.Username == request.Username))
+            {
                 return null;
             }
-            var user = new UserNew();
-            var hashedPassword = new PasswordHasher<UserNew>()
-                .HashPassword(user, request.Password);
 
-            user.Username = request.Username;
-            user.PasswordHash = hashedPassword;
+            var user = new UserNew
+            {
+                Username = request.Username,
+                PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password),
+                Role = request.Role // Assign the role from the request
+            };
 
             context.UsersNew.Add(user);
             await context.SaveChangesAsync();

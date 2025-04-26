@@ -29,7 +29,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "Backend.Models.UserDto",
+        "Type": "Backend.Models.UserDtoLogin",
         "IsRequired": true
       }
     ],
@@ -55,7 +55,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "Backend.Models.UserDto",
+        "Type": "Backend.Models.UserDtoRegister",
         "IsRequired": true
       }
     ],

@@ -1,12 +1,14 @@
-import { useState } from "react";
 import axios from "axios";
-import "../SignIn/SignIn.css";
-
+import { useContext, useState } from "react";
+import { AuthContext } from "../AuthContext/AuthContext";
+import "./SignIn.css"; // Import the CSS file for styling
 const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
+
+  const { setUser } = useContext(AuthContext); // Use the AuthContext to update the user state
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -15,9 +17,26 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:7138/api/Auth/login", formData);
-      alert("Login successful! Token: " + response.data.token);
-      localStorage.setItem("token", response.data.token); // Save token for future use
+      const response = await axios.post(
+        "https://localhost:7138/api/Auth/login",
+        formData
+      );
+
+      const token = response.data.token;
+
+      if (!token) {
+        throw new Error("No token received from server");
+      }
+
+      // Save the token in localStorage
+      localStorage.setItem("token", token);
+
+      // Decode the token to get user information
+      const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode the JWT payload
+      setUser(decodedToken); // Update the user state in the AuthContext
+
+      alert("Login successful!");
+      window.location.href = "/profile"; // Redirect to the profile page
     } catch (error) {
       console.error(error);
       alert("Invalid credentials");
@@ -33,7 +52,7 @@ const Login = () => {
         placeholder="Username"
         value={formData.username}
         onChange={handleChange}
-        required
+        
       />
       <input
         type="password"
@@ -41,7 +60,7 @@ const Login = () => {
         placeholder="Password"
         value={formData.password}
         onChange={handleChange}
-        required
+        
       />
       <button type="submit">Login</button>
     </form>

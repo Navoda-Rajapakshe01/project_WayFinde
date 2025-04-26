@@ -16,15 +16,22 @@ const Register = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:7138/api/Auth/register",
+        "https://localhost:7138/api/Auth/register",
         formData
       );
-      alert(response.data.message);
+      
+      console.log(response.data); // 👈 See the full response
+      alert("User registered successfully!");
     } catch (error) {
       console.error(error);
-      alert("Error registering user");
+      if (error.response && error.response.data) {
+        alert(error.response.data);  // Show backend BadRequest message
+      } else {
+        alert("Error registering user");
+      }
     }
   };
+  
 
   return (
     <form onSubmit={handleSubmit} className="register-form">

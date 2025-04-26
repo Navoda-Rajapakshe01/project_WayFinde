@@ -21,12 +21,18 @@ namespace Backend.Controller
         public static UserNew user = new()
         {
             Username = string.Empty,
-            PasswordHash = string.Empty
+            PasswordHash = string.Empty,
+            Role = string.Empty
         };
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserNew>> Register(UserDto request)
+        public async Task<ActionResult<UserNew>> Register([FromBody] UserDtoRegister request)
         {
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest("Username and password are required.");
+            }
+
             var user = await authService.RegisterAsync(request);
             if (user == null)
             {
@@ -36,12 +42,27 @@ namespace Backend.Controller
             return Ok(user);
         }
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login([FromBody] UserDtoLogin request)
         {
-           var token = await authService.LoginAsync(request);
-           if(token == null)
-                return BadRequest("Invalid credentials.");
-            return Ok(token);
+            // Validate input
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+            {
+                return BadRequest(new { message = "Username and password are required." });
+            }
+
+            // Call the login service to authenticate the user and generate a token
+            var token = await authService.LoginAsync(request);
+            if (token == null)
+            {
+                return Unauthorized(new { message = "Invalid username or password." });
+            }
+
+            // Return the token to the frontend
+            return Ok(new
+            {
+                message = "Login successful.",
+                token = token
+            });
         }
 
         [Authorize]
