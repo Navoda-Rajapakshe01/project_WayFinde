@@ -28,6 +28,8 @@ const DistrictDetails = () => {
           setLoading(false);
         });
     }
+    
+    window.scrollTo(0, 0);
   }, [slug]);
 
   // Handle navigation to detailed page of the place

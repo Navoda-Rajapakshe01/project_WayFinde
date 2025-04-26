@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUtensils, faCompass, faTheaterMasks, faLeaf, faShoppingBag, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faPaw, faCompass, faTheaterMasks, faLeaf, faHiking } from '@fortawesome/free-solid-svg-icons';
 import "./Categories.css";
 
 const Categories = () => {
@@ -10,7 +10,7 @@ const Categories = () => {
         <div className="categories">
           <div className="category">
             <div className="icon-container">
-              <FontAwesomeIcon icon={faUtensils} size="2x" />
+              <FontAwesomeIcon icon={faPaw} size="2x" />
             </div>
             <p>Wildlife</p>
           </div>
@@ -34,7 +34,7 @@ const Categories = () => {
           </div>
           <div className="category">
             <div className="icon-container">
-              <FontAwesomeIcon icon={faShoppingBag} size="2x" />
+              <FontAwesomeIcon icon={faHiking} size="2x" />
             </div>
             <p>Activities & <br />Experiences</p>
           </div>
