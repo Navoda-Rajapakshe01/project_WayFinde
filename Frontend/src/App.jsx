@@ -23,6 +23,7 @@ import ReserveVehicle from "./pages/ReserveVehicle";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanNewTrip from "./pages/PlanNewTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
+import { TripProvider } from "./context/TripContext";
 import TripDashboard from "./pages/TripDashboard";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
@@ -43,7 +44,10 @@ function App() {
 
           <Route path="/thingstodo" element={<ThingsToDo />} />
           <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
-          <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />} />
+          <Route
+            path="/things-to-do/:slug/:placeId"
+            element={<PlaceDetails />}
+          />
 
           <Route path="/logout" element={<Logout />} />
           <Route path="/tripdashboard" element={<TripDashboard />} />

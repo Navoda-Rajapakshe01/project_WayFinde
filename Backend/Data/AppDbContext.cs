@@ -46,6 +46,9 @@ namespace Backend.Data
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
 
+            modelBuilder.Entity<TripLocation>()
+            .HasKey(t => new { t.TripId, t.PlaceToVisitId });
+
 
             base.OnModelCreating(modelBuilder);
         }

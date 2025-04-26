@@ -90,6 +90,49 @@ namespace Backend.Migrations
                     b.ToTable("PlacesToVisit");
                 });
 
+            modelBuilder.Entity("Backend.Models.Trip", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TripName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Trips");
+                });
+
+            modelBuilder.Entity("Backend.Models.TripLocation", b =>
+                {
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PlaceToVisitId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TripId", "PlaceToVisitId");
+
+                    b.HasIndex("PlaceToVisitId");
+
+                    b.ToTable("TripLocations");
+                });
+
             modelBuilder.Entity("Backend.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -285,6 +328,36 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("District");
+                });
+
+            modelBuilder.Entity("Backend.Models.Trip", b =>
+                {
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.TripLocation", b =>
+                {
+                    b.HasOne("Backend.Models.PlaceToVisit", "PlaceToVisit")
+                        .WithMany()
+                        .HasForeignKey("PlaceToVisitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Trip", "Trip")
+                        .WithMany()
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlaceToVisit");
+
+                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>

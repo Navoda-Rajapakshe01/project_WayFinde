@@ -18,6 +18,26 @@ namespace Backend.Controllers
         {
             _context = context;
         }
+    // GET: api/places
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<PlaceToVisit>>> GetLocations()
+    {
+        
+
+        var places = await _context.PlacesToVisit
+            .Include(p => p.District)
+            .ToListAsync();
+
+        return Ok(places);
+    }
+
+    // GET: api/places/by-district/3
+    [HttpGet("by-district/{districtId}")]
+    public async Task<ActionResult<IEnumerable<PlaceToVisit>>> GetPlacesByDistrict(int districtId)
+    {
+        var places = await _context.PlacesToVisit
+            .Where(p => p.DistrictId == districtId)
+            .ToListAsync();
 
         // GET: api/places/by-district-name/nuwara-eliya
         [HttpGet("by-district-name/{slug}")]
@@ -56,4 +76,6 @@ namespace Backend.Controllers
             return Ok(place);
         }
     }
+
+    
 }

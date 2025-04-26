@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTrip } from "../context/TripContext";
 import { useNavigate } from "react-router-dom"; // Initialize useNavigate
 import axios from "axios";
 import "../pages/CSS/PlanNewTrip.css";
@@ -7,39 +8,36 @@ import { FaPlus, FaCheck } from "react-icons/fa"; // Icons for select/unselect
 import LocationPopup from "../components/PlanNewTrip/LocationPopup"; // Import LocationPopup component
 import DatePickerPopup from "../components/PlanNewTrip/DatePickerPopup"; // Import DatePickerPopup component
 import MapComponent from "../components/PlanNewTrip/MapComponent"; // Import MapComponent for Google Maps
-import useFetchPlaces from "./customHooks/useFetchPlaces";
 
 const PlanNewTrip = () => {
   const navigate = useNavigate();
-
-  const [selectedPlaces, setSelectedPlaces] = useState([]); // Track selected places
-  const [districts, setDistricts] = useState([]); // List of districts
-  const [selectedDistrict, setSelectedDistrict] = useState(null); // Selected district
-  const [startDate, setStartDate] = useState(null); // Start date
-  const [endDate, setEndDate] = useState(null); // End date
+  const [places, setPlaces] = useState([]); // List of allPlaces
   const [showPopup, setShowPopup] = useState(null); // Show location or dates popup
   const [map, setMap] = useState(null); // Google Map state
   const [markers, setMarkers] = useState([]); // Markers on the map
 
-  // Fetch places based on selected district using custom hook
-  const { places, loading, error } = useFetchPlaces(selectedDistrict);
+  const {
+    selectedPlaces,
+    setSelectedPlaces,
+    startingLocation,
+    setStartingLocation,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+  } = useTrip(); // ⬅️ Use shared state instead of local useState
 
   useEffect(() => {
     // Fetch available districts when the component mounts
     axios
-      .get("http://localhost:5000/api/districts")
+      .get("http://localhost:5030/api/places")
       .then((response) => {
-        setDistricts(response.data); // Set districts from the API
+        setPlaces(response.data); // Set districts from the API
       })
       .catch((error) => {
-        console.error("Error fetching districts:", error); // Error handling
+        console.error("Error fetching  locations!:", error); // Error handling
       });
   }, []);
-
-  // Handle district change and fetch places based on selected district
-  const handleDistrictChange = (districtId) => {
-    setSelectedDistrict(districtId);
-  };
 
   // Handle place selection and unselection
   const handleSelectPlace = (place) => {
@@ -51,28 +49,7 @@ const PlanNewTrip = () => {
     }
   };
 
-  // Handle form submission to save trip
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const tripData = {
-      tripName: "My Trip", // Default trip name (can be dynamic)
-      startDate,
-      endDate,
-      locations: selectedPlaces.map((place) => place.id), // Send selected place IDs
-    };
-
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/trips",
-        tripData
-      );
-      console.log("Trip saved:", response.data); // Log success
-      navigate("/upcoming-trips"); // Navigate to upcoming trips page
-    } catch (error) {
-      console.error("Error saving trip:", error); // Error handling
-    }
-  };
-  const handleNextClick = () => {
+  const handleContinueClick = () => {
     setShowPopup("location"); // Show location popup when Next is clicked
   };
   return (
@@ -99,10 +76,10 @@ const PlanNewTrip = () => {
             {places &&
               places.map((place) => (
                 <div key={place.id} className="card">
-                  <img src={place.image} alt={place.name} />
+                  <img src={place.MainImageUrl} alt={place.name} />
                   <div className="card-details">
                     <h4>{place.name}</h4>
-                    <p>{place.type}</p>
+                    <p>{place.description}</p>
                     <button
                       className="select-btn"
                       onClick={() => handleSelectPlace(place)} // Handle place selection
@@ -129,7 +106,7 @@ const PlanNewTrip = () => {
             {/* Next Button Below Map */}
             <div className="continue-btn-container">
               <button
-                onClick={handleNextClick} // Trigger the popup to open on Next button click
+                onClick={handleContinueClick} // Trigger the popup to open on Next button click
                 className="continue-btn"
               >
                 Continue
@@ -150,7 +127,7 @@ const PlanNewTrip = () => {
       {/* First Popup: Select Starting Location */}
       {showPopup === "location" && (
         <LocationPopup
-          places={places}
+          places={selectedPlaces}
           setShowPopup={setShowPopup}
           handleSelectPlace={handleSelectPlace}
         />

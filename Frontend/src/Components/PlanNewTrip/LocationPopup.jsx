@@ -1,5 +1,6 @@
 // LocationPopup.jsx
 import React, { useState } from "react";
+import { useTrip } from "../../context/TripContext";
 
 // LocationPopup Component
 const LocationPopup = ({ places, setShowPopup, handleSelectPlace }) => {
@@ -10,11 +11,14 @@ const LocationPopup = ({ places, setShowPopup, handleSelectPlace }) => {
     setSelectedLocation(e.target.value); // Update selected location
   };
 
+  const { setStartingLocation } = useTrip(); // ⬅️ Use shared setter
+
   // Validate and proceed
   const handleLocationContinue = () => {
     if (!selectedLocation) {
       alert("Please select a starting location!"); // Show error if no location selected
     } else {
+      setStartingLocation(selectedLocation); // ⬅️ Save starting location for later use
       handleSelectPlace(selectedLocation); // Handle place selection
       setShowPopup("dates"); // Proceed to the dates popup
     }
