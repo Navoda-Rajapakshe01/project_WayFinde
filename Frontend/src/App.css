@@ -1,3 +1,16 @@
+/* Base Variables */
+:root {
+  --primary-color: #14b9d5;
+  --primary-dark: #0E8A9E;
+  --primary-light: #5ED6E5;
+  --secondary-color: #14B9D5;
+  --text-muted: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(255, 255, 255, 0.2);
+  --transition: all 0.3s ease;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

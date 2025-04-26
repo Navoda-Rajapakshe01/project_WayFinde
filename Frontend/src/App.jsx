@@ -1,8 +1,9 @@
-import React from "react";
+
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import ThingsToDo from "./Pages/Thingstodo/ThingsToDo";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
+import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import Vehicle from "./pages/Vehicle";
 import Accommodation from "./pages/Accommodation";
 import { default as Blog, default as Blogs } from "./pages/Blog";
@@ -39,8 +40,11 @@ function App() {
           <Route path="/accommodation" element={<Accommodation />} />
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
+
           <Route path="/thingstodo" element={<ThingsToDo />} />
-          <Route path="/thingstodo/:districtId" element={<DistrictDetails />} />
+          <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
+          <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />} />
+
           <Route path="/logout" element={<Logout />} />
           <Route path="/tripdashboard" element={<TripDashboard />} />
           <Route path="/VehicleDetail" element={<VehicleDetail />} />
