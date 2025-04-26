@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node modules and builds
 node_modules
 dist
 dist-ssr
@@ -29,3 +30,13 @@ dist-ssr
 *.sln.docstates
 
 node_modules/
+
+# .NET build artifacts
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ref
+*.sourceinfo

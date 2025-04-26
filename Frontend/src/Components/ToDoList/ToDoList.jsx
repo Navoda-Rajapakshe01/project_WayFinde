@@ -1,26 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './TodoList.css';
 import TodoPopup from '../TodoPopup/TodoPopup';
+import axios from 'axios';
 
 const TodoList = () => {
-  const [notes, setNotes] = useState([
-
- 
-  ]);
-
+  const [notes, setNotes] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [filter, setFilter] = useState('ALL');
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // Add state for the popup
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  // ✅ GET from backend
+  useEffect(() => {
+    axios.get('http://localhost:5030/api/todo')
+      .then(res => {
+        const fetchedTodos = res.data.map(todo => ({
+          id: todo.id,
+          text: todo.description,
+          completed: todo.isCompleted
+        }));
+        setNotes(fetchedTodos);
+      })
+      .catch(err => console.error("GET error: ", err));
+  }, []);
+
+  // ✅ POST to backend
+  const handleAddNewNote = (newNoteText) => {
+    const newTodo = {
+      description: newNoteText,
+      isCompleted: false
+    };
+
+    axios.post('http://localhost:5030/api/todo', newTodo)
+      .then(res => {
+        const added = {
+          id: res.data.id,
+          text: res.data.description,
+          completed: res.data.isCompleted
+        };
+        setNotes([...notes, added]); // UI update
+        setIsPopupOpen(false); // Close popup
+      })
+      .catch(err => console.error("POST error: ", err));
+  };
 
   const toggleComplete = (id) => {
-    setNotes(notes.map(note => 
+    setNotes(notes.map(note =>
       note.id === id ? { ...note, completed: !note.completed } : note
     ));
   };
 
-  const handleSearchChange = (e) => {
-    setSearchText(e.target.value);
-  };
+  const handleSearchChange = (e) => setSearchText(e.target.value);
 
   const filteredNotes = notes.filter(note => {
     const matchesSearch = note.text.toLowerCase().includes(searchText.toLowerCase());
@@ -29,13 +58,6 @@ const TodoList = () => {
     if (filter === 'ACTIVE') return matchesSearch && !note.completed;
     return matchesSearch;
   });
-
-  // Add this function to handle new note addition
-  const handleAddNewNote = (newNoteText) => {
-    const newId = Math.max(...notes.map(note => note.id), 0) + 1;
-    setNotes([...notes, { id: newId, text: newNoteText, completed: false }]);
-    setIsPopupOpen(false); // Close the popup after adding a new note
-  };
 
   return (
     <div className="todo-list-container">
@@ -54,7 +76,7 @@ const TodoList = () => {
             <span className="search-icon">🔍</span>
           </button>
         </div>
-        
+
         <div className="filter-dropdown">
           <select 
             value={filter} 
@@ -67,7 +89,7 @@ const TodoList = () => {
           </select>
         </div>
       </div>
-      
+
       <div className="notes-list">
         {filteredNotes.map(note => (
           <div key={note.id} className="note-item">
@@ -84,17 +106,16 @@ const TodoList = () => {
             </label>
           </div>
         ))}
-     </div>
-      
+      </div>
+
       <button className="add-note-button" onClick={() => setIsPopupOpen(true)}>
         <span className="plus-icon">+</span>
       </button>
 
-      {/* Popup for adding a new note */}
       {isPopupOpen && (
         <TodoPopup 
           onClose={() => setIsPopupOpen(false)} 
-          onSave={handleAddNewNote} // Pass the handler for adding a new note
+          onSave={handleAddNewNote}
         />
       )}
     </div>

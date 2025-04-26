@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // useLocation for automatic active tab
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
 import "./MainNavbar.css";
+import "../../App.css"
 
 import {
   FaBook,
@@ -9,19 +10,28 @@ import {
   FaHome,
   FaHotel,
   FaPlaneDeparture,
+  FaUserCircle,
+  FaCog,
+  FaSignOutAlt,
+  FaComments,
+  FaSuitcase,
+  FaNewspaper,
+  FaPencilAlt
 } from "react-icons/fa";
 
 const MainNavbar = () => {
-  const location = useLocation(); // Use location to track current route
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Function to toggle the pop-up
-  const togglePopup = () => {
+  // Toggle profile dropdown
+  const togglePopup = (e) => {
+    e.stopPropagation();
     setIsOpen(!isOpen);
   };
 
-  // Close pop-up when clicking outside
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -36,6 +46,11 @@ const MainNavbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+  // Update active tab when location changes
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location]);
+
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
     { name: "Plan a Trip", icon: <FaPlaneDeparture />, path: "/plantrip" },
@@ -45,23 +60,30 @@ const MainNavbar = () => {
     { name: "Things To Do", icon: <FaBook />, path: "/thingstodo" },
   ];
 
-  // Update active tab when location changes
-  useEffect(() => {
-    setActiveTab(location.pathname);
-  }, [location]);
-  //Add the dynamic navigation
-  const navigate = useNavigate();
+  const profileMenuItems = [
+    { name: "Profile", icon: <FaUserCircle />, path: "/profile" },
+    { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
+    { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
+    { name: "Chat", icon: <FaComments />, path: "/chat" },
+    { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
+    { name: "Settings", icon: <FaCog />, path: "/settings" },
+    { name: "Logout", icon: <FaSignOutAlt />, path: "/logout" },
+  ];
 
   const handleNavigation = (path) => {
-    navigate(path); // Navigate dynamically based on the clicked item
+    navigate(path);
+    setIsOpen(false);
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-logo">
-          <img src={logo} alt="WAYFIND" />
+          <Link to="/">
+            <img src={logo || "/placeholder.svg"} alt="WAYFIND" />
+          </Link>
         </div>
+        
         <ul className="navbar-menu">
           {menuItems.map((item) => (
             <li
@@ -71,32 +93,54 @@ const MainNavbar = () => {
               }`}
             >
               <Link to={item.path} className="navbar-link">
-                {item.icon}
-                <span>{item.name}</span>
+                <span className="navbar-icon">{item.icon}</span>
+                <span className="navbar-text">{item.name}</span>
               </Link>
             </li>
           ))}
         </ul>
-        {/* Profile Section */}
+        
         <div className="navbar-profile" onClick={togglePopup}>
-          <img
-            src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-            alt="User Profile"
-            className="profile-img"
-          />
-        </div>
-        {/* Pop-up Section */}
-        {isOpen && (
-          <div className="profile-popup">
-            <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
-            <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
-            <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
-            <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
-            <p onClick={() => handleNavigation("/personalblog")}>📰 Blogs</p>
-            <p onClick={() => handleNavigation("/settings")}>⚙️ Settings</p>
-            <p onClick={() => handleNavigation("/logout")}>🔓 Logout</p>
+          <div className="profile-wrapper">
+            <img
+              src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+              alt="User Profile"
+              className="profile-img"
+            />
+            <span className="profile-indicator"></span>
           </div>
-        )}
+          
+          {isOpen && (
+            <div className="profile-popup">
+              <div className="popup-header">
+                <img
+                  src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                  alt="User Profile"
+                  className="popup-profile-img"
+                />
+                <div className="popup-user-info">
+                  <h4>John Doe</h4>
+                  <p>john.doe@example.com</p>
+                </div>
+              </div>
+              
+              <div className="popup-divider"></div>
+              
+              <div className="popup-menu">
+                {profileMenuItems.map((item) => (
+                  <div 
+                    key={item.name}
+                    className="popup-item"
+                    onClick={() => handleNavigation(item.path)}
+                  >
+                    <span className="popup-icon">{item.icon}</span>
+                    <span>{item.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
