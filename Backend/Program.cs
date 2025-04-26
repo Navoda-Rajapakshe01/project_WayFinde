@@ -34,7 +34,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"])),
             ValidateIssuerSigningKey = true,
-            
+
         };
     });
 
@@ -47,7 +47,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
         policy => policy
-            .WithOrigins("http://localhost:5173") 
+            .WithOrigins("http://localhost:5173", "https://localhost:5174", "https://localhost:5175")
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
@@ -68,7 +68,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     //app.MapOpenApi();
-   
+
     app.MapScalarApiReference();
 }
 
