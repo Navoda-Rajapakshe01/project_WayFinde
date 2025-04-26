@@ -17,7 +17,8 @@ namespace Backend.Data
         public DbSet<District> Districts { get; set; }
 
         // DbSet for PlaceToVisit
-        public DbSet<PlaceToVisit> PlacesToVisit { get; set; }
+        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,11 +35,11 @@ namespace Backend.Data
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
-            modelBuilder.Entity<PlaceToVisit>()
+            modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
 
-            modelBuilder.Entity<PlaceToVisit>()
+            modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
 
