@@ -1,3 +1,62 @@
-.login-form{
-    margin-top: 200px;
-}
+.login-page-container {
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background: url('https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .login-form-section {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255,255,255,0.9);
+    padding: 40px 32px;
+    border-radius: 12px;
+    margin: 40px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  
+  .login-form h2 {
+    text-align: center;
+    margin-bottom: 12px;
+  }
+  
+  .login-form input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .login-form button {
+    padding: 10px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .login-form button:hover {
+    background: #0056b3;
+  }
+  .CreateNew{
+    text-align: center;
+    
+  }
+  .CreateNew:hover{
+    cursor: pointer;
+  }

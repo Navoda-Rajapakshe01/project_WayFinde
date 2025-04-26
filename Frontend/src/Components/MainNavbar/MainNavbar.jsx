@@ -1,9 +1,4 @@
-import { useEffect, useState, useContext } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../Authentication/AuthContext/AuthContext";
-import logo from "../../assets/Images/logo.png";
-import "./MainNavbar.css";
-
+import { useContext, useEffect, useState } from "react";
 import {
   FaBook,
   FaBus,
@@ -11,21 +6,23 @@ import {
   FaHotel,
   FaPlaneDeparture,
 } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/Images/logo.png";
+import { AuthContext } from "../Authentication/AuthContext/AuthContext";
+import "./MainNavbar.css";
 
 const MainNavbar = () => {
-  const location = useLocation(); // Use location to track current route
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
 
-  const { user, logout } = useContext(AuthContext); // Use AuthContext to get user and logout function
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Function to toggle the pop-up
-  const togglePopup = () => {
-    setIsOpen(!isOpen);
-  };
+  // Toggle profile popup
+  const togglePopup = () => setIsOpen(!isOpen);
 
-  // Close pop-up when clicking outside
+  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -35,10 +32,14 @@ const MainNavbar = () => {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  // Update active tab on route change
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location]);
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -49,27 +50,23 @@ const MainNavbar = () => {
     { name: "Things To Do", icon: <FaBook />, path: "/thingstodo" },
   ];
 
-  // Update active tab when location changes
-  useEffect(() => {
-    setActiveTab(location.pathname);
-  }, [location]);
-
-  const handleNavigation = (path) => {
-    navigate(path); // Navigate dynamically based on the clicked item
-  };
+  const handleNavigation = (path) => navigate(path);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        {/* Logo Section */}
         <div className="navbar-logo">
           <img src={logo} alt="WAYFIND" />
         </div>
+
+        {/* Main Navigation Menu */}
         <ul className="navbar-menu">
           {menuItems.map((item) => (
             <li
               key={item.name}
-              className={`navbar-item ${
-                activeTab === item.path ? "active" : ""
+              className={`navbar-item${
+                activeTab === item.path ? " active" : ""
               }`}
             >
               <Link to={item.path} className="navbar-link">
@@ -79,42 +76,50 @@ const MainNavbar = () => {
             </li>
           ))}
         </ul>
-        {/* Profile Section */}
-        {user ? (
-          <div className="navbar-profile" onClick={togglePopup}>
-            <img
-              src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg" // Replace with user's profile image if available
-              alt="User Profile"
-              className="profile-img"
-            />
-            {isOpen && (
-              <div className="profile-popup">
-                <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
-                <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
-                <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
-                <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
-                <p onClick={() => handleNavigation("/personalblog")}>📰 Blogs</p>
-                <p onClick={() => handleNavigation("/settings")}>⚙️ Settings</p>
-                <p onClick={logout}>🔓 Logout</p>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="signButton">
-            <button
-              className="signInButton"
-              onClick={() => handleNavigation("/signin")}
-            >
-              Sign In
-            </button>
-            <button
-              className="signUpButton"
-              onClick={() => handleNavigation("/signup")}
-            >
-              Sign Up
-            </button>
-          </div>
-        )}
+
+        {/* Profile or Auth Buttons */}
+        <div className="navbar-auth-section">
+          {user ? (
+            <div className="navbar-profile" onClick={togglePopup}>
+              <img
+                src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                alt="User Profile"
+                className="profile-img"
+              />
+              {isOpen && (
+                <div className="profile-popup">
+                  <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
+                  <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
+                  <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
+                  <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
+                  <p onClick={() => handleNavigation("/personalblog")}>
+                    📰 Blogs
+                  </p>
+                  <p onClick={() => handleNavigation("/settings")}>
+                    ⚙️ Settings
+                  </p>
+                  <p onClick={logout}>🔓 Logout</p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <button
+                // className="navbar-link"
+                onClick={() => handleNavigation("/signin")}
+              >
+                Sign In
+              </button>
+              
+              {/* <button
+                className="navbar-link"
+                onClick={() => handleNavigation("/signup")}
+              >
+                Sign Up
+              </button> */}
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );

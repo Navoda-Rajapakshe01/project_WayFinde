@@ -1,14 +1,17 @@
 import axios from "axios";
 import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext/AuthContext";
-import "./SignIn.css"; // Import the CSS file for styling
+import "./SignIn.css";
+
 const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
-
-  const { setUser } = useContext(AuthContext); // Use the AuthContext to update the user state
+  const navigate = useNavigate();
+  const handleNavigation = (path) => navigate(path);
+  const { setUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,15 +31,12 @@ const Login = () => {
         throw new Error("No token received from server");
       }
 
-      // Save the token in localStorage
       localStorage.setItem("token", token);
 
-      // Decode the token to get user information
-      const decodedToken = JSON.parse(atob(token.split(".")[1])); // Decode the JWT payload
-      setUser(decodedToken); // Update the user state in the AuthContext
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      setUser(decodedToken);
 
-      alert("Login successful!");
-      window.location.href = "/profile"; // Redirect to the profile page
+      window.location.href = "/profile";
     } catch (error) {
       console.error(error);
       alert("Invalid credentials");
@@ -44,26 +44,33 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="login-form">
-      <h2>Login</h2>
-      <input
-        type="text"
-        name="username"
-        placeholder="Username"
-        value={formData.username}
-        onChange={handleChange}
-        
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-        
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div className="login-page-container">
+      <div className="login-form-section">
+        <form onSubmit={handleSubmit} className="login-form">
+          <h2>Login</h2>
+          <input
+            type="text"
+            name="username"
+            placeholder="Username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+          <button type="submit">Login</button>
+          <p className="CreateNew" onClick={() => handleNavigation("/signup")}>
+            Create a new Account
+          </p>
+        </form>
+      </div>
+    </div>
   );
 };
 
