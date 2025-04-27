@@ -8,21 +8,20 @@ import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import ThingsToDo from "./Pages/Thingstodo/ThingsToDo";
 import Accommodation from "./pages/Accommodation";
-import { default as Blog, default as Blogs } from "./pages/Blog";
-import Following from "./pages/Following";
-import Followers from "./pages/Follwers";
+import { default as Blog, default as Blogs } from "./pages/Blogs/Blog";
+import Following from "./pages/Profile/Following";
+import Followers from "./pages/Profile/Follwers";
 import Home from "./pages/Home";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import Vehicle from "./pages/Vehicle";
 
-import Chat from "./pages/Chat";
+import Chat from "./pages/Profile/Chat";
 
 
-import Logout from "./pages/Logout";
 import PaymentGateway from "./pages/PaymentGateway";
-import PersonalBlog from "./pages/PersonalBlog";
-import Profile from "./pages/Profile";
+import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import Profile from "./pages/Profile/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
 
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
@@ -36,7 +35,9 @@ import VehicleDetail from "./pages/VehicleDetail";
 
 function App() {
   return (
-    <AuthProvider> {/* Wrap the entire app with AuthProvider */}
+    <AuthProvider>
+      {" "}
+      {/* Wrap the entire app with AuthProvider */}
       <BrowserRouter>
         <MainNavbar />
         <Routes>
@@ -50,14 +51,17 @@ function App() {
 
           <Route path="/thingstodo" element={<ThingsToDo />} />
           <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
-          <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />} />
+          <Route
+            path="/things-to-do/:slug/:placeId"
+            element={<PlaceDetails />}
+          />
 
-          <Route path="/logout" element={<Logout />} />
+         
           <Route path="/tripdashboard" element={<TripDashboard />} />
           <Route path="/VehicleDetail" element={<VehicleDetail />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/personalBlog" element={<PersonalBlog />} />
-          <Route path="/logout" element={<Logout />} />
+        
           <Route path="/settings" element={<UserLogin />} />
           <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
           <Route path="/PaymentGateway" element={<PaymentGateway />} />

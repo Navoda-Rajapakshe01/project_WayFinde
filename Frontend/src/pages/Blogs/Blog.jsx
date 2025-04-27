@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import HeroSection from "../Components/HeroSection/HeroSection";
+//import { useState } from "react";
+import HeroSection from "../../Components/HeroSection/HeroSection";
 
 // import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
 
-import ImageGrid from "../Components/BlogComponents/ImageGrid/ImageGrid";
-import blogData from "../Components/BlogComponents/blogData.json";
-import "../pages/CSS/Blog.css";
+import ImageGrid from "../../Components/BlogComponents/ImageGrid/ImageGrid";
+import blogData from "../../Components/BlogComponents/blogData.json";
+import "../CSS/Blog.css"; // Import your CSS file for styling
 
 const backgroundImage = "/Blogimages/blogbackground1.jpg"; // Correct path from public folder
 
 const { latestBlogData, trendingBlogData, otherBlogData } = blogData;
 const Blog = () => {
-  const [visibleBlogs, setVisibleBlogs] = useState(otherBlogData.slice(0, 4)); // Show only 4 initially
+  //const [visibleBlogs, setVisibleBlogs] = useState(otherBlogData.slice(0, 4)); // Show only 4 initially
 
   // const handleShowMore = () => {
   //   setVisibleBlogs(otherBlogData.slice(0, visibleBlogs.length + 2)); // Load 2 more blogs each time

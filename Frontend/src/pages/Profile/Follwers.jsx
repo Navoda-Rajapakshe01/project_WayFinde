@@ -1,8 +1,8 @@
-import MainNavbar from "../Components/MainNavbar/MainNavbar";
-const Following = () => {
+
+const Followers = () => {
   return (
     <div className="page-container">
-      <MainNavbar />
+      
       <>
         <h1>Home Page</h1>
         <p>Welcome to our website!</p>
@@ -11,4 +11,4 @@ const Following = () => {
   );
 };
 
-export default Following;
+export default Followers;

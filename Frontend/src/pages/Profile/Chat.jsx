@@ -1,5 +1,5 @@
-import MainNavbar from "../Components/MainNavbar/MainNavbar";
-const Followers = () => {
+import MainNavbar from "../../Components/MainNavbar/MainNavbar";
+const Chat = () => {
   return (
     <div className="page-container">
       <MainNavbar />
@@ -11,4 +11,4 @@ const Followers = () => {
   );
 };
 
-export default Followers;
+export default Chat;
