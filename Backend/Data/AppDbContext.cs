@@ -12,12 +12,16 @@ namespace Backend.Data
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
         public DbSet<User> Users { get; set; }
+
+        //public DbSet<UserNew> UsersNew { get; set; }
+
         
         // DbSet for District
         public DbSet<District> Districts { get; set; }
 
         // DbSet for PlaceToVisit
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
