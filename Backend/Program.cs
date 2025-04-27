@@ -11,8 +11,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Adding the AppDbContext to connect with the SQL Server database
-
+// ➕ Add AppDbContext and connect to SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
 
@@ -71,8 +70,6 @@ if (app.Environment.IsDevelopment())
 
     app.MapScalarApiReference();
 }
-
-// ✅ HTTPS redirect & authorization middleware
 
 app.UseHttpsRedirection();
 

@@ -39,18 +39,25 @@ namespace Backend.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Districts");
                 });
 
-            modelBuilder.Entity("Backend.Models.PlaceToVisit", b =>
+            modelBuilder.Entity("Backend.Models.PlacesToVisit", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -59,12 +66,21 @@ namespace Backend.Migrations
                     b.Property<int>("DistrictId")
                         .HasColumnType("int");
 
+                    b.Property<string>("GoogleMapLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("History")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("MainImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OpeningHours")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -287,7 +303,7 @@ namespace Backend.Migrations
                     b.ToTable("VehicleReviews");
                 });
 
-            modelBuilder.Entity("Backend.Models.PlaceToVisit", b =>
+            modelBuilder.Entity("Backend.Models.PlacesToVisit", b =>
                 {
                     b.HasOne("Backend.Models.District", "District")
                         .WithMany()

@@ -9,24 +9,30 @@ import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import ThingsToDo from "./Pages/Thingstodo/ThingsToDo";
 import Accommodation from "./pages/Accommodation";
 import { default as Blog, default as Blogs } from "./pages/Blog";
-import Chat from "./pages/Chat";
 import Following from "./pages/Following";
 import Followers from "./pages/Follwers";
 import Home from "./pages/Home";
+import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
+import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
+import Vehicle from "./pages/Vehicle";
+
+import Chat from "./pages/Chat";
+
+
 import Logout from "./pages/Logout";
 import PaymentGateway from "./pages/PaymentGateway";
 import PersonalBlog from "./pages/PersonalBlog";
 import Profile from "./pages/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
-import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
+
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import TripDashboard from "./pages/TripDashboard";
-import Vehicle from "./pages/Vehicle";
+
+import SignIn from "./Components/Authentication/SignIn/SignIn";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-import SignIn from "./Components/Authentication/SignIn/SignIn";
 
 function App() {
   return (
@@ -41,8 +47,11 @@ function App() {
           <Route path="/accommodation" element={<Accommodation />} />
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
+
           <Route path="/thingstodo" element={<ThingsToDo />} />
-          <Route path="/thingstodo/:districtId" element={<DistrictDetails />} />
+          <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
+          <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />} />
+
           <Route path="/logout" element={<Logout />} />
           <Route path="/tripdashboard" element={<TripDashboard />} />
           <Route path="/VehicleDetail" element={<VehicleDetail />} />

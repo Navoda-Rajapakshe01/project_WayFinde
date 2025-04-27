@@ -20,12 +20,7 @@ namespace Backend.Data
         public DbSet<District> Districts { get; set; }
 
         // DbSet for PlaceToVisit
-        public DbSet<PlaceToVisit> PlacesToVisit { get; set; }
-
-         // Add the TodoItem DbSet here
-        public DbSet<TodoItem> TodoItems { get; set; }  // This is where we added it
-
-
+        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
 
 
 
@@ -44,11 +39,11 @@ namespace Backend.Data
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
-            modelBuilder.Entity<PlaceToVisit>()
+            modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
 
-            modelBuilder.Entity<PlaceToVisit>()
+            modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
 

@@ -1,9 +1,17 @@
+<<<<<<< HEAD
 import { Link, useLocation} from "react-router-dom";
+=======
+import { Link, useLocation } from "react-router-dom";
+>>>>>>> update-v2
 
 import "./ProfileHeadsection.css";
 
 const ProfileHeadSection = () => {
+<<<<<<< HEAD
   // const navigate = useNavigate(); // Used to redirect
+=======
+ 
+>>>>>>> update-v2
   const location = useLocation(); // Get current URL path
   const stats = [
     { name: "Posts", value: 10, path: "/posts" },

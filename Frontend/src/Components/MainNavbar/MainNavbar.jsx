@@ -2,9 +2,16 @@ import { useContext, useEffect, useState } from "react";
 import {
   FaBook,
   FaBus,
+  FaCog,
+  FaComments,
   FaHome,
   FaHotel,
+  FaNewspaper,
+  FaPencilAlt,
   FaPlaneDeparture,
+  FaSignOutAlt,
+  FaSuitcase,
+  FaUserCircle,
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
@@ -13,11 +20,12 @@ import "./MainNavbar.css";
 
 const MainNavbar = () => {
   const location = useLocation();
+
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const { user, logout } = useContext(AuthContext);
-  const navigate = useNavigate();
 
   // Toggle profile popup
   const togglePopup = () => setIsOpen(!isOpen);
@@ -50,6 +58,16 @@ const MainNavbar = () => {
     { name: "Things To Do", icon: <FaBook />, path: "/thingstodo" },
   ];
 
+  const profileMenuItems = [
+    { name: "Profile", icon: <FaUserCircle />, path: "/profile" },
+    { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
+    { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
+    { name: "Chat", icon: <FaComments />, path: "/chat" },
+    { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
+    { name: "Settings", icon: <FaCog />, path: "/settings" },
+    { name: "Logout", icon: <FaSignOutAlt />, path: { logout } },
+  ];
+
   const handleNavigation = (path) => navigate(path);
 
   return (
@@ -57,7 +75,9 @@ const MainNavbar = () => {
       <div className="navbar-container">
         {/* Logo Section */}
         <div className="navbar-logo">
-          <img src={logo} alt="WAYFIND" />
+          <Link to="/">
+            <img src={logo || "/placeholder.svg"} alt="WAYFIND" />
+          </Link>
         </div>
 
         {/* Main Navigation Menu */}
@@ -70,8 +90,8 @@ const MainNavbar = () => {
               }`}
             >
               <Link to={item.path} className="navbar-link">
-                {item.icon}
-                <span>{item.name}</span>
+                <span className="navbar-icon">{item.icon}</span>
+                <span className="navbar-text">{item.name}</span>
               </Link>
             </li>
           ))}
@@ -81,24 +101,43 @@ const MainNavbar = () => {
         <div className="navbar-auth-section">
           {user ? (
             <div className="navbar-profile" onClick={togglePopup}>
-              <img
-                src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-                alt="User Profile"
-                className="profile-img"
-              />
+              <div className="profile-wrapper">
+                <img
+                  src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                  alt="User Profile"
+                  className="profile-img"
+                />
+                <span className="profile-indicator"></span>
+              </div>
+
               {isOpen && (
                 <div className="profile-popup">
-                  <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
-                  <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
-                  <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
-                  <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
-                  <p onClick={() => handleNavigation("/personalblog")}>
-                    📰 Blogs
-                  </p>
-                  <p onClick={() => handleNavigation("/settings")}>
-                    ⚙️ Settings
-                  </p>
-                  <p onClick={logout}>🔓 Logout</p>
+                  <div className="popup-header">
+                    <img
+                      src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                      alt="User Profile"
+                      className="popup-profile-img"
+                    />
+                    <div className="popup-user-info">
+                      <h4>John Doe</h4>
+                      <p>john.doe@example.com</p>
+                    </div>
+                  </div>
+
+                  <div className="popup-divider"></div>
+
+                  <div className="popup-menu">
+                    {profileMenuItems.map((item) => (
+                      <div
+                        key={item.name}
+                        className="popup-item"
+                        onClick={() => handleNavigation(item.path)}
+                      >
+                        <span className="popup-icon">{item.icon}</span>
+                        <span>{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -110,7 +149,7 @@ const MainNavbar = () => {
               >
                 Sign In
               </button>
-              
+
               {/* <button
                 className="navbar-link"
                 onClick={() => handleNavigation("/signup")}
