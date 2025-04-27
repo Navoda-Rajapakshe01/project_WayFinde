@@ -65,7 +65,7 @@ const MainNavbar = () => {
     { name: "Chat", icon: <FaComments />, path: "/chat" },
     { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
     { name: "Settings", icon: <FaCog />, path: "/settings" },
-    { name: "Logout", icon: <FaSignOutAlt />, path: { logout } },
+    { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
   const handleNavigation = (path) => navigate(path);
@@ -131,7 +131,13 @@ const MainNavbar = () => {
                       <div
                         key={item.name}
                         className="popup-item"
-                        onClick={() => handleNavigation(item.path)}
+                        onClick={() => {
+                          if (item.name === "Logout") {
+                            logout();
+                          } else {
+                            handleNavigation(item.path);
+                          }
+                        }}
                       >
                         <span className="popup-icon">{item.icon}</span>
                         <span>{item.name}</span>

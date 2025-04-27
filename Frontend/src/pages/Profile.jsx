@@ -5,15 +5,12 @@ import { useContext } from "react";
 import { AuthContext } from "../Components/Authentication/AuthContext/AuthContext";
 
 const Profile = () => {
-<<<<<<< HEAD
   const { user } = useContext(AuthContext);
 
   if (!user) {
     return <p>Please log in to view your profile.</p>;
   }
   
-=======
->>>>>>> update-v2
   
 
   return (

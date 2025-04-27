@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 
 import "./Footer.css"; // Add styles for the footer
-=======
 import {
   Facebook,
   Instagram,
@@ -13,7 +11,6 @@ import {
 } from "lucide-react"; // Import icons
 import "../../App.css";
 import "./footer.css";
->>>>>>> update-v2
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
