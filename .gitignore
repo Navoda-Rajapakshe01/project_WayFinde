@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 .vs 
 /backend/.vs 
 .env 
 /Backend/.vs 
-=======
 # -------------------------------
 # Global
 # -------------------------------
@@ -67,4 +65,3 @@ project_WayFinde.sln
 # Git
 .git/
 .gitignore
->>>>>>> update-v2
