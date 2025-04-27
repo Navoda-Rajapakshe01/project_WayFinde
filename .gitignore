@@ -1,7 +1,7 @@
-.vs 
-/backend/.vs 
-.env 
-/Backend/.vs 
+#.vs 
+#/backend/.vs 
+#.env 
+#/Backend/.vs 
 # -------------------------------
 # Global
 # -------------------------------
