@@ -1,3 +1,5 @@
+
+import "./Footer.css"; // Add styles for the footer
 import {
   Facebook,
   Instagram,

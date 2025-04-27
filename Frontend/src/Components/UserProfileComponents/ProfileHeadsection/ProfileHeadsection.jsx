@@ -1,9 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
 
 import "./ProfileHeadsection.css";
 
 const ProfileHeadSection = () => {
- 
+  // const navigate = useNavigate(); // Used to redirect
   const location = useLocation(); // Get current URL path
   const stats = [
     { name: "Posts", value: 10, path: "/posts" },
