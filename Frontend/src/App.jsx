@@ -1,36 +1,44 @@
-import React from "react";
+// Import necessary modules
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider"; // Import AuthProvider
+import SignUp from "./Components/Authentication/SignUp/SignUp";
+import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
+import Footer from "./Components/Footer/Footer";
+import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import ThingsToDo from "./Pages/Thingstodo/ThingsToDo";
-import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
-import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
-import Vehicle from "./pages/Vehicle";
 import Accommodation from "./pages/Accommodation";
 import { default as Blog, default as Blogs } from "./pages/Blog";
 import Following from "./pages/Following";
 import Followers from "./pages/Follwers";
 import Home from "./pages/Home";
-import "./App.css";
-import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
-import Footer from "./Components/Footer/Footer";
-import MainNavbar from "./Components/MainNavbar/MainNavbar";
+import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
+import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
+import Vehicle from "./pages/Vehicle";
+
 import Chat from "./pages/Chat";
+
 import Logout from "./pages/Logout";
 import PaymentGateway from "./pages/PaymentGateway";
 import PersonalBlog from "./pages/PersonalBlog";
 import Profile from "./pages/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
+
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanNewTrip from "./pages/PlanNewTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import { TripProvider } from "./context/TripContext";
 import TripDashboard from "./pages/TripDashboard";
+
+import SignIn from "./Components/Authentication/SignIn/SignIn";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
+      {" "}
+      {/* Wrap the entire app with AuthProvider */}
       <BrowserRouter>
         <MainNavbar />
         <Routes>
@@ -56,21 +64,19 @@ function App() {
           <Route path="/personalBlog" element={<PersonalBlog />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/settings" element={<UserLogin />} />
-          {/* <Route path="/blog/:id" element={<Setting />} /> */}
-          {/* <Route path="/profile/:writerId" element={<Setting />} /> */}
-          {/* Dynamic route */}
           <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
           <Route path="/PaymentGateway" element={<PaymentGateway />} />
           <Route path="/VehicleBookingForm" element={<VehicleBookingForm />} />
           <Route path="/profile" element={<Profile />} />
-          {/* <Route path="/posts" element={<Posts />} /> */}
           <Route path="/profile/blog" element={<Blogs />} />
           <Route path="/profile/followers" element={<Followers />} />
           <Route path="/profile/following" element={<Following />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
         <Footer />
       </BrowserRouter>
-    </>
+    </AuthProvider>
   );
 }
 

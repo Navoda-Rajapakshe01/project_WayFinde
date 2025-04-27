@@ -12,6 +12,9 @@ namespace Backend.Data
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
         public DbSet<User> Users { get; set; }
+
+        //public DbSet<UserNew> UsersNew { get; set; }
+
         
         // DbSet for District
         public DbSet<District> Districts { get; set; }
@@ -20,8 +23,6 @@ namespace Backend.Data
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
 
 
-        public DbSet<Trip> Trips { get; set; }
-        public DbSet<TripLocation> TripLocations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,9 +46,6 @@ namespace Backend.Data
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
-
-            modelBuilder.Entity<TripLocation>()
-            .HasKey(t => new { t.TripId, t.PlaceToVisitId });
 
 
             base.OnModelCreating(modelBuilder);

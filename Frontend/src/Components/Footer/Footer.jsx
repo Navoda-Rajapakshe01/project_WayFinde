@@ -1,15 +1,16 @@
-import React from "react";
-import "./footer.css";
-import "../../App.css";
+
+import "./Footer.css"; // Add styles for the footer
 import {
   Facebook,
-  Twitter,
   Instagram,
   Linkedin,
-  MapPin,
   Mail,
+  MapPin,
   Phone,
+  Twitter,
 } from "lucide-react"; // Import icons
+import "../../App.css";
+import "./footer.css";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
