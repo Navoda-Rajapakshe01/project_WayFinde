@@ -1,7 +1,6 @@
 {
   "format": 1,
   "restore": {
-<<<<<<< HEAD
     "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Backend.csproj": {}
   },
   "projects": {
@@ -13,29 +12,12 @@
         "projectPath": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\Backend.csproj",
         "packagesPath": "C:\\Users\\Sajeewa\\.nuget\\packages\\",
         "outputPath": "D:\\A- Sajeewa\\2nd Year\\IS 2901 - Software Development Project\\Connect Travellers\\project_WayFinde\\Backend\\obj\\",
-=======
-    "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj": {}
-  },
-  "projects": {
-    "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj",
-        "projectName": "Backend",
-        "projectPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\Backend.csproj",
-        "packagesPath": "C:\\Users\\ACER\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\Backend\\obj\\",
->>>>>>> update-v2
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-<<<<<<< HEAD
           "C:\\Users\\Sajeewa\\AppData\\Roaming\\NuGet\\NuGet.Config",
-=======
-          "C:\\Users\\ACER\\AppData\\Roaming\\NuGet\\NuGet.Config",
->>>>>>> update-v2
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],

@@ -1,8 +1,10 @@
+// src/components/vehicle.jsx
 import React from "react";
 import MainNavbar from "../Components/MainNavbar/MainNavbar";
 import HeroSection from "../Components/HeroSection/HeroSection";
 import SearchVehicle from "../Components/SearchVehicle/SearchVehicle";
 import VehicleDealSection from "../Components/VehicleDealSection/VehicleDealSection";
+
 const Vehicle = () => {
   return (
     <>

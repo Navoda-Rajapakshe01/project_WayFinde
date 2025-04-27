@@ -1,3 +1,4 @@
+import React from "react";
 import HeroSection from "../Components/HeroSection/HeroSection";
 import MainNavbar from "../Components/MainNavbar/MainNavbar";
 import AccommodationDealSection from "../Components/AccommodationDealSection/AccommodationDealSection";
