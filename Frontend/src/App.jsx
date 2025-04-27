@@ -22,7 +22,7 @@ import Profile from "./pages/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanNewTrip from "./pages/PlanNewTrip";
-import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
+import OptimizedTripRoute from "./pages/OptimizedTripRoute";
 import { TripProvider } from "./context/TripContext";
 import TripDashboard from "./pages/TripDashboard";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
@@ -31,45 +31,50 @@ import VehicleDetail from "./pages/VehicleDetail";
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <MainNavbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/plantrip" element={<PlanNewTrip />} />
-          <Route path="/trip-planner" element={<OptimizedTripRoute />} />
-          <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
-          <Route path="/accommodation" element={<Accommodation />} />
-          <Route path="/vehicle" element={<Vehicle />} />
-          <Route path="/blog" element={<Blog />} />
+      <TripProvider>
+        <BrowserRouter>
+          <MainNavbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/plantrip" element={<PlanNewTrip />} />
+            <Route path="/trip-planner" element={<OptimizedTripRoute />} />
+            <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
+            <Route path="/accommodation" element={<Accommodation />} />
+            <Route path="/vehicle" element={<Vehicle />} />
+            <Route path="/blog" element={<Blog />} />
 
-          <Route path="/thingstodo" element={<ThingsToDo />} />
-          <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
-          <Route
-            path="/things-to-do/:slug/:placeId"
-            element={<PlaceDetails />}
-          />
+            <Route path="/thingstodo" element={<ThingsToDo />} />
+            <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
+            <Route
+              path="/things-to-do/:slug/:placeId"
+              element={<PlaceDetails />}
+            />
 
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/tripdashboard" element={<TripDashboard />} />
-          <Route path="/VehicleDetail" element={<VehicleDetail />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/personalBlog" element={<PersonalBlog />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/settings" element={<UserLogin />} />
-          {/* <Route path="/blog/:id" element={<Setting />} /> */}
-          {/* <Route path="/profile/:writerId" element={<Setting />} /> */}
-          {/* Dynamic route */}
-          <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
-          <Route path="/PaymentGateway" element={<PaymentGateway />} />
-          <Route path="/VehicleBookingForm" element={<VehicleBookingForm />} />
-          <Route path="/profile" element={<Profile />} />
-          {/* <Route path="/posts" element={<Posts />} /> */}
-          <Route path="/profile/blog" element={<Blogs />} />
-          <Route path="/profile/followers" element={<Followers />} />
-          <Route path="/profile/following" element={<Following />} />
-        </Routes>
-        <Footer />
-      </BrowserRouter>
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/tripdashboard" element={<TripDashboard />} />
+            <Route path="/VehicleDetail" element={<VehicleDetail />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/personalBlog" element={<PersonalBlog />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/settings" element={<UserLogin />} />
+            {/* <Route path="/blog/:id" element={<Setting />} /> */}
+            {/* <Route path="/profile/:writerId" element={<Setting />} /> */}
+            {/* Dynamic route */}
+            <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
+            <Route path="/PaymentGateway" element={<PaymentGateway />} />
+            <Route
+              path="/VehicleBookingForm"
+              element={<VehicleBookingForm />}
+            />
+            <Route path="/profile" element={<Profile />} />
+            {/* <Route path="/posts" element={<Posts />} /> */}
+            <Route path="/profile/blog" element={<Blogs />} />
+            <Route path="/profile/followers" element={<Followers />} />
+            <Route path="/profile/following" element={<Following />} />
+          </Routes>
+          <Footer />
+        </BrowserRouter>
+      </TripProvider>
     </>
   );
 }

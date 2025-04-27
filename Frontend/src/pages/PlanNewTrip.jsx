@@ -41,12 +41,45 @@ const PlanNewTrip = () => {
 
   // Handle place selection and unselection
   const handleSelectPlace = (place) => {
+    if (!place || !place.id) {
+      console.warn("Invalid Place clicked!", place);
+      return; // ✅ Skip if place is not valid
+    }
+
+    console.log("Clicked Place:", place);
+
     const isSelected = selectedPlaces.find((p) => p.id === place.id);
     if (isSelected) {
-      setSelectedPlaces(selectedPlaces.filter((p) => p.id !== place.id)); // Deselect place
+      setSelectedPlaces(selectedPlaces.filter((p) => p.id !== place.id)); // Deselect
+      removeMarkerFromMap(place);
     } else {
-      setSelectedPlaces([...selectedPlaces, place]); // Select place
+      setSelectedPlaces([...selectedPlaces, place]); // Select
+      addMarkerToMap(place);
     }
+  };
+
+  const addMarkerToMap = (place) => {
+    if (!map || !place.latitude || !place.longitude) return;
+
+    const marker = new window.google.maps.Marker({
+      position: { lat: place.latitude, lng: place.longitude },
+      map: map,
+      title: place.name,
+    });
+    setMarkers((prevMarkers) => [...prevMarkers, marker]);
+  };
+
+  const removeMarkerFromMap = (place) => {
+    if (!map) return;
+
+    const updatedMarkers = markers.filter((marker) => {
+      if (marker.getTitle() === place.name) {
+        marker.setMap(null); // Remove the marker from the map
+        return false;
+      }
+      return true;
+    });
+    setMarkers(updatedMarkers);
   };
 
   const handleContinueClick = () => {

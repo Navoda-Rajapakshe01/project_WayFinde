@@ -1,0 +1,34 @@
+/* src/components/OptimizedTrip/TripSummaryBox.css */
+
+.trip-summary {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  background: #f8f9fa;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.summary-box {
+  font-size: 12px;
+  font-weight: bold;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.summary-box h4 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.summary-box p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff;
+}

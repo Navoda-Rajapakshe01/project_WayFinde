@@ -1,0 +1,97 @@
+/* src/pages/Trip/OptimizedTrip/OptimizedTripRoute.css */
+
+.optimized-trip-route-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: auto;
+  margin-top: 15px;
+  font-family: "Poppins", sans-serif;
+}
+
+.page-header {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.page-header h2 {
+  font-weight: bold;
+  font-size: 22px;
+}
+
+.page-header p {
+  font-size: 15px;
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.content-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.trip-left-section {
+  width: 58%;
+  overflow-y: auto;
+  padding: 20px;
+  max-height: 600px;
+}
+
+.trip-right-section {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Reduced */
+}
+
+.trip-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.trip-actions button {
+  flex: 1;
+  margin: 0 5px;
+  margin-bottom: 10px;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-size: 14px;
+  border: none;
+  border-radius: 15px;
+  background: #27bc9b;
+  color: white;
+}
+
+.trip-actions button:hover {
+  background-color: #019874;
+}
+
+.complete-trip-btn {
+  align-self: flex-end;
+  background-color: #00b894;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.complete-trip-btn:hover {
+  background-color: #019874;
+}
+
+.trip-summary {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  border-radius: 15px;
+  margin-bottom: 15px;
+  background: #f8f9fa;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
