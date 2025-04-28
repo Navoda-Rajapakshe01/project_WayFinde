@@ -1,6 +1,7 @@
+import React from "react";
 import { useState } from "react";
 
-const SearchBar = ({ onSearch,placeHolder }) => {
+const SearchBar = ({ onSearch, placeHolder }) => {
   const [query, setQuery] = useState("");
 
   const handleChange = (e) => {
@@ -8,7 +9,6 @@ const SearchBar = ({ onSearch,placeHolder }) => {
     if (onSearch) {
       onSearch(e.target.value);
     }
-    
   };
 
   return (
