@@ -6,13 +6,12 @@ import SignIn from "./Components/Authentication/SignIn/SignIn";
 import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Footer from "./Components/Footer/Footer";
-import ThingsToDo from "./pages/ThingsToDo";
-import ThingstodoCategories from "./Components/ThingsToDo/ThingstodoCategories/Categories";
 import Accommodation from "./pages/Accommodation";
 import Blog from "./pages/Blog";
 import Following from "./pages/Following";
 import Followers from "./pages/Follwers";
 import Home from "./pages/Home";
+import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import Vehicle from "./pages/Vehicle";
@@ -48,7 +47,6 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
-          <Route path="/thingstodocategories" element={<ThingstodoCategories />}/>
           <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
           <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />}/>
           <Route path="/tripdashboard" element={<TripDashboard />} />
