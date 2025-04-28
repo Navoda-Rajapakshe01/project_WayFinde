@@ -1,27 +1,36 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; // useLocation for automatic active tab
-import logo from "../../assets/Images/logo.png";
-import "./MainNavbar.css";
-
+import { useContext, useEffect, useState } from "react";
 import {
   FaBook,
   FaBus,
+  FaCog,
+  FaComments,
   FaHome,
   FaHotel,
+  FaNewspaper,
+  FaPencilAlt,
   FaPlaneDeparture,
+  FaSignOutAlt,
+  FaSuitcase,
+  FaUserCircle,
 } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/Images/logo.png";
+import { AuthContext } from "../Authentication/AuthContext/AuthContext";
+import "./MainNavbar.css";
 
 const MainNavbar = () => {
-  const location = useLocation(); // Use location to track current route
+  const location = useLocation();
+
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // Function to toggle the pop-up
-  const togglePopup = () => {
-    setIsOpen(!isOpen);
-  };
+  const { user, logout } = useContext(AuthContext);
 
-  // Close pop-up when clicking outside
+  // Toggle profile popup
+  const togglePopup = () => setIsOpen(!isOpen);
+
+  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -31,10 +40,14 @@ const MainNavbar = () => {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  // Update active tab on route change
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location]);
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -45,58 +58,113 @@ const MainNavbar = () => {
     { name: "Things To Do", icon: <FaBook />, path: "/thingstodo" },
   ];
 
-  // Update active tab when location changes
-  useEffect(() => {
-    setActiveTab(location.pathname);
-  }, [location]);
-  //Add the dynamic navigation
-  const navigate = useNavigate();
+  const profileMenuItems = [
+    { name: "Profile", icon: <FaUserCircle />, path: "/profile" },
+    { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
+    { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
+    { name: "Chat", icon: <FaComments />, path: "/chat" },
+    { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
+    { name: "Settings", icon: <FaCog />, path: "/settings" },
+    { name: "Logout", icon: <FaSignOutAlt />, path: null },
+  ];
 
-  const handleNavigation = (path) => {
-    navigate(path); // Navigate dynamically based on the clicked item
-  };
+  const handleNavigation = (path) => navigate(path);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        {/* Logo Section */}
         <div className="navbar-logo">
-          <img src={logo} alt="WAYFIND" />
+          <Link to="/">
+            <img src={logo || "/placeholder.svg"} alt="WAYFIND" />
+          </Link>
         </div>
+
+        {/* Main Navigation Menu */}
         <ul className="navbar-menu">
           {menuItems.map((item) => (
             <li
               key={item.name}
-              className={`navbar-item ${
-                activeTab === item.path ? "active" : ""
+              className={`navbar-item${
+                activeTab === item.path ? " active" : ""
               }`}
             >
               <Link to={item.path} className="navbar-link">
-                {item.icon}
-                <span>{item.name}</span>
+                <span className="navbar-icon">{item.icon}</span>
+                <span className="navbar-text">{item.name}</span>
               </Link>
             </li>
           ))}
         </ul>
-        {/* Profile Section */}
-        <div className="navbar-profile" onClick={togglePopup}>
-          <img
-            src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-            alt="User Profile"
-            className="profile-img"
-          />
+
+        {/* Profile or Auth Buttons */}
+        <div className="navbar-auth-section">
+          {user ? (
+            <div className="navbar-profile" onClick={togglePopup}>
+              <div className="profile-wrapper">
+                <img
+                  src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                  alt="User Profile"
+                  className="profile-img"
+                />
+                <span className="profile-indicator"></span>
+              </div>
+
+              {isOpen && (
+                <div className="profile-popup">
+                  <div className="popup-header">
+                    <img
+                      src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                      alt="User Profile"
+                      className="popup-profile-img"
+                    />
+                    <div className="popup-user-info">
+                      <h4>John Doe</h4>
+                      <p>john.doe@example.com</p>
+                    </div>
+                  </div>
+
+                  <div className="popup-divider"></div>
+
+                  <div className="popup-menu">
+                    {profileMenuItems.map((item) => (
+                      <div
+                        key={item.name}
+                        className="popup-item"
+                        onClick={() => {
+                          if (item.name === "Logout") {
+                            logout();
+                          } else {
+                            handleNavigation(item.path);
+                          }
+                        }}
+                      >
+                        <span className="popup-icon">{item.icon}</span>
+                        <span>{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <button
+                // className="navbar-link"
+                onClick={() => handleNavigation("/signin")}
+              >
+                Sign In
+              </button>
+
+              {/* <button
+                className="navbar-link"
+                onClick={() => handleNavigation("/signup")}
+              >
+                Sign Up
+              </button> */}
+            </div>
+          )}
         </div>
-        {/* Pop-up Section */}
-        {isOpen && (
-          <div className="profile-popup">
-            <p onClick={() => handleNavigation("/profile")}>👤 Profile</p>
-            <p onClick={() => handleNavigation("/plantrip")}>✈️ Trips</p>
-            <p onClick={() => handleNavigation("/posts")}>📝 Posts</p>
-            <p onClick={() => handleNavigation("/chat")}>💬 Chat</p>
-            <p onClick={() => handleNavigation("/personalblog")}>📰 Blogs</p>
-            <p onClick={() => handleNavigation("/settings")}>⚙️ Settings</p>
-            <p onClick={() => handleNavigation("/logout")}>🔓 Logout</p>
-          </div>
-        )}
       </div>
     </nav>
   );

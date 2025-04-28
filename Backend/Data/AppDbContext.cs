@@ -12,6 +12,18 @@ namespace Backend.Data
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        //public DbSet<UserNew> UsersNew { get; set; }
+
+        
+        // DbSet for District
+        public DbSet<District> Districts { get; set; }
+
+        // DbSet for PlaceToVisit
+        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
+
+
 
 
         //Accommodations
@@ -106,6 +118,25 @@ namespace Backend.Data
                     IsAvailable = true
                 }
             );
+            modelBuilder.Entity<District>()
+                .Property(d => d.Name)
+                .IsRequired()
+                .HasMaxLength(100);  
+
+            modelBuilder.Entity<District>()
+                .Property(d => d.ImageUrl)
+                .IsRequired();
+
+            modelBuilder.Entity<PlacesToVisit>()
+                .Property(p => p.Name)
+                .IsRequired();
+
+            modelBuilder.Entity<PlacesToVisit>()
+                .Property(p => p.MainImageUrl)
+                .IsRequired();
+
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
