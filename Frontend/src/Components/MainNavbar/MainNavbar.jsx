@@ -20,12 +20,14 @@ import "./MainNavbar.css";
 
 const MainNavbar = () => {
   const location = useLocation();
-
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
 
   const { user, logout } = useContext(AuthContext);
+
+  const handleNavigation = (path) => navigate(path);
 
   // Toggle profile popup
   const togglePopup = () => setIsOpen(!isOpen);
@@ -68,7 +70,18 @@ const MainNavbar = () => {
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  const handleNavigation = (path) => navigate(path);
+  // Modal close handler
+  const closeModal = () => setShowSignInModal(false);
+
+  // Modal option handler
+  const handleSignInOption = (type) => {
+    setShowSignInModal(false);
+    if (type === "service") {
+      navigate("/signin?type=service");
+    } else {
+      navigate("/signin?type=user");
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -85,9 +98,7 @@ const MainNavbar = () => {
           {menuItems.map((item) => (
             <li
               key={item.name}
-              className={`navbar-item${
-                activeTab === item.path ? " active" : ""
-              }`}
+              className={`navbar-item${activeTab === item.path ? " active" : ""}`}
             >
               <Link to={item.path} className="navbar-link">
                 <span className="navbar-icon">{item.icon}</span>
@@ -150,22 +161,38 @@ const MainNavbar = () => {
           ) : (
             <div>
               <button
-                // className="navbar-link"
-                onClick={() => handleNavigation("/signin")}
+                onClick={() => setShowSignInModal(true)}
               >
                 Sign In
               </button>
-
-              {/* <button
-                className="navbar-link"
-                onClick={() => handleNavigation("/signup")}
-              >
-                Sign Up
-              </button> */}
+              {/* ...Sign Up button if needed... */}
             </div>
           )}
         </div>
       </div>
+      {/* Sign In Modal */}
+      {showSignInModal && (
+        <div className="signin-modal-overlay" onClick={closeModal}>
+          <div className="signin-modal" onClick={e => e.stopPropagation()}>
+            <h3>Sign In As</h3>
+            <div className="signin-options">
+              <button
+                className="signin-option-btn"
+                onClick={() => handleSignInOption("user")}
+              >
+                Normal User
+              </button>
+              <button
+                className="signin-option-btn"
+                onClick={() => handleSignInOption("service")}
+              >
+                Service Provider
+              </button>
+            </div>
+            <button className="close-modal-btn" onClick={closeModal}>Close</button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
