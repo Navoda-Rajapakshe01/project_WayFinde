@@ -1,10 +1,14 @@
 import React from "react";
-import { FaBed, FaUsers, FaBath, FaHome, FaMapMarkerAlt } from "react-icons/fa"; // Added FaMapMarkerAlt for location
+import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { FaBed, FaUsers, FaBath, FaHome, FaMapMarkerAlt } from "react-icons/fa";
 import "./AccommodationDealCard.css";
 
 const AccommodationDealCard = ({ accommodation }) => {
+  const navigate = useNavigate(); // ✅ Initialize navigate
+
   const handleViewNow = () => {
-    navigate("/Accommodationdeal/", { state: { AccommodationDealCard } });
+    // ✅ Navigate using accommodation.id
+    navigate(`/Accommodation/${accommodation.id}`);
   };
 
   return (
@@ -19,11 +23,13 @@ const AccommodationDealCard = ({ accommodation }) => {
         <p className="accommodation-price">
           ${accommodation.price} <span>/ night</span>
         </p>
+
         {/* Display Location */}
         <div className="accommodation-location">
           <FaMapMarkerAlt className="location-icon" />
           <span>{accommodation.location}</span>
         </div>
+
         <div className="accommodation-features">
           <div className="feature">
             <FaHome className="feature-icon" />
@@ -35,7 +41,7 @@ const AccommodationDealCard = ({ accommodation }) => {
           </div>
           <div className="feature">
             <FaBed className="feature-icon" />
-            <span>{accommodation.bedrooms} Bedrooms</span>
+            <span>{accommodation.rooms} Bedrooms</span>
           </div>
           <div className="feature">
             <FaBed className="feature-icon" />
@@ -43,9 +49,10 @@ const AccommodationDealCard = ({ accommodation }) => {
           </div>
           <div className="feature">
             <FaBath className="feature-icon" />
-            <span>{accommodation.baths} Baths</span>
+            <span>{accommodation.bathRooms} Baths</span>
           </div>
         </div>
+
         <button className="book-button" onClick={handleViewNow}>
           Book Now
         </button>

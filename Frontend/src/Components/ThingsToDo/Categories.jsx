@@ -12,7 +12,7 @@ const Categories = () => {
             <div className="icon-container">
               <FontAwesomeIcon icon={faUtensils} size="2x" />
             </div>
-            <p>Food</p>
+            <p>Wildlife</p>
           </div>
           <div className="category">
             <div className="icon-container">
@@ -30,13 +30,13 @@ const Categories = () => {
             <div className="icon-container">
               <FontAwesomeIcon icon={faLeaf} size="2x" />
             </div>
-            <p>Nature & Scenic</p>
+            <p>Nature & <br />Scenic</p>
           </div>
           <div className="category">
             <div className="icon-container">
               <FontAwesomeIcon icon={faShoppingBag} size="2x" />
             </div>
-            <p>Shopping</p>
+            <p>Activities & <br />Experiences</p>
           </div>
         </div>
       </div>

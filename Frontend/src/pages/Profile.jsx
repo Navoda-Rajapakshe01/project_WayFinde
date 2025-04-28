@@ -1,15 +1,17 @@
-import { useLocation } from "react-router-dom";
+
 import ProfileHeadSection from "../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "./CSS/Profile.css";
+import { useContext } from "react";
+import { AuthContext } from "../Components/Authentication/AuthContext/AuthContext";
 
 const Profile = () => {
-  const location = useLocation(); // Get current URL path
-  const stats = [
-    { name: "Posts", value: 10, path: "/profile/posts" },
-    { name: "Blogs", value: 5, path: "/profile/blogs" },
-    { name: "Followers", value: 100, path: "/profile/followers" },
-    { name: "Following", value: 120, path: "/profilefollowing" },
-  ];
+  const { user } = useContext(AuthContext);
+
+  if (!user) {
+    return <p>Please log in to view your profile.</p>;
+  }
+  
+  
 
   return (
     <div className="page-container">

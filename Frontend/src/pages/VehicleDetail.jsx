@@ -1,73 +1,99 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
-import AboutSection from "../Components/AboutSection/AboutSection"; // About Section Component
-import NameTag from "../Components/NameTag/NameTag"; // Name Tag Component
-import PhotoGallery from "../Components/PhotoGallery/PhotoGallery"; // Photo Gallery Component
+// src/pages/VehicleDetail.jsx
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import AboutSection from "../Components/AboutSection/AboutSection";
+import NameTag from "../Components/NameTag/NameTag";
+import PhotoGallery from "../Components/PhotoGallery/PhotoGallery";
 import ReserveNow from "../Components/ReserveNow/ReserveNow";
-import ReviewSection from "../Components/ReviewSection/ReviewSection"; // Review Section Component
+import ReviewSection from "../Components/ReviewSection/ReviewSection";
+import { getVehicle } from "../api";
 import "../pages/CSS/VehicleDetail.css";
 
 const VehicleDetail = () => {
-  const location = useLocation();
-  const vehicle = location.state?.vehicle; // Access the vehicle data passed via state
+  const { id } = useParams();
+
+  const [vehicle, setVehicle] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch vehicle data
+  useEffect(() => {
+    const fetchVehicle = async () => {
+      try {
+        setLoading(true);
+        const data = await getVehicle(id);
+        // Map backend response to frontend format
+        const mappedVehicle = {
+          ...data,
+          name: `${data.brand} ${data.model}`,
+          price: `$${data.pricePerDay.toFixed(2)}`,
+          images: data.images.map((img) => ({ url: img.imageUrl })),
+          reviews: data.reviews.map((rev) => ({
+            id: rev.id,
+            user: rev.reviewerName,
+            rating: rev.rating,
+            comment: rev.comment,
+            date: rev.datePosted,
+          })),
+          type: data.type,
+          passengers: data.numberOfPassengers,
+          fuelType: data.fuelType,
+          transmission: data.transmissionType,
+          location: data.location,
+          isAvailable: data.isAvailable,
+        };
+        setVehicle(mappedVehicle);
+        setLoading(false);
+      } catch (err) {
+        setError(
+          err.response?.status === 404
+            ? "Vehicle not found"
+            : "Failed to load vehicle"
+        );
+        setLoading(false);
+      }
+    };
+    fetchVehicle();
+
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }, [id]);
 
   // Handle "Contact Now" button click
   const handleContactNow = () => {
-    alert("Contact Now button clicked!"); // Replace with your logic
-
-    useEffect(() => {
-      window.scrollTo(0, 0); // Scroll to the top of the page
-    }, []);
+    alert("Contact Now button clicked!"); // Replace with actual logic
   };
 
-  // Mock data for reviews
-  const reviews = [
-    {
-      id: 1,
-      user: "John Doe",
-      rating: 4.5,
-      comment: "Great vehicle! Very comfortable and reliable.",
-      date: "2023-10-01",
-    },
-    {
-      id: 2,
-      user: "Jane Smith",
-      rating: 5,
-      comment: "Amazing experience. Highly recommended!",
-      date: "2023-10-05",
-    },
-    // Add more reviews...
-  ];
+  if (loading) return <div>Loading vehicle details...</div>;
+  if (error) return <div>{error}</div>;
+  if (!vehicle) return <div>Vehicle not found</div>;
+
+  // Calculate average rating
+  const averageRating = vehicle.reviews.length
+    ? (
+        vehicle.reviews.reduce((sum, rev) => sum + rev.rating, 0) /
+        vehicle.reviews.length
+      ).toFixed(1)
+    : 4.5;
+
+  // Owner details from backend
+  const ownerDetails = {
+    name: vehicle.ownerName,
+    city: vehicle.ownerCity,
+  };
 
   return (
     <div className="vehicle-detail">
-      {/* Name Tag Component */}
       <NameTag
-        name={vehicle?.name}
-        rating={4.5} // Replace with actual rating from data
-        price={vehicle?.price}
+        name={vehicle.name}
+        rating={averageRating}
+        price={vehicle.price}
         onContactNow={handleContactNow}
       />
-      {/* Photo Gallery */}
-      <PhotoGallery images={[vehicle?.image]} /> {/* Pass vehicle images */}
-      {/* About Section */}
-      <AboutSection
-        vehicleDetails={{
-          type: vehicle?.type,
-          passengers: vehicle?.passengers,
-          fuelType: vehicle?.fuelType,
-          transmission: vehicle?.transmission,
-          location: vehicle?.location,
-        }}
-        ownerDetails={{
-          name: "Owner Name", // Replace with actual owner name
-          city: "Owner City", // Replace with actual owner city
-        }}
-      />
-      {/* Review and Rating Section */}
-      <ReviewSection reviews={reviews} />
-      {/* Reserve Now Section */}
-      <ReserveNow />
+      <PhotoGallery images={vehicle.images} />
+      <AboutSection vehicleDetails={vehicle} ownerDetails={ownerDetails} />
+      <ReviewSection reviews={vehicle.reviews} vehicleId={vehicle.id} />
+      <ReserveNow vehicleId={vehicle.id} isAvailable={vehicle.isAvailable} />
     </div>
   );
 };
