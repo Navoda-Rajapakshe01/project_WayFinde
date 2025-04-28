@@ -3,40 +3,44 @@
   "WorkspaceRootPath": "C:\\Users\\dilsh\\Desktop\\2dclone\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\migrations\\20250424131034_updatetriplocationwithcompositekey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250424131034_updatetriplocationwithcompositekey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\migrations\\20250426054104_makefieldsnullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250426054104_makefieldsnullable.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\migrations\\20250425201859_updateplacestovisitmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250425201859_updateplacestovisitmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\migrations\\appdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\appdbcontextmodelsnapshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\district.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\district.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\placestovisit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\placestovisit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\trip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\trip.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\placescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\placescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250424131034_UpdateTripLocationWithCompositeKey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Backend\\Migrations\\20250424131034_UpdateTripLocationWithCompositeKey.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\models\\triplocation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\models\\triplocation.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\districtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\districtcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\route controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\route controller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\controller\\tripcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\controller\\tripcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|c:\\users\\dilsh\\desktop\\2dclone\\backend\\migrations\\20250420104503_addplacestovisit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{AB83E13E-1DFB-485E-8EA4-E0E41A8F9CB7}|Backend\\Backend.csproj|solutionrelative:backend\\migrations\\20250420104503_addplacestovisit.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,7 +54,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 9,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\appsettings.json",
               "RelativeDocumentMoniker": "Backend\\appsettings.json",
@@ -64,101 +68,120 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Program.cs",
-              "RelativeDocumentMoniker": "Backend\\Program.cs",
-              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Program.cs",
-              "RelativeToolTip": "Backend\\Program.cs",
-              "ViewState": "AgIAAAkAAABgZmZmZuYcwBcAAAArAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Backend\\Data\\AppDbContext.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Backend\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAcwDcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-25T02:51:07.205Z",
+              "WhenOpened": "2025-04-26T20:50:43.923Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
+              "Title": "20250426054104_MakeFieldsNullable.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250426054104_MakeFieldsNullable.cs",
+              "RelativeDocumentMoniker": "Backend\\Migrations\\20250426054104_MakeFieldsNullable.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250426054104_MakeFieldsNullable.cs",
+              "RelativeToolTip": "Backend\\Migrations\\20250426054104_MakeFieldsNullable.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-26T20:41:29.453Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "20250425201859_UpdatePlacesToVisitModel.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250425201859_UpdatePlacesToVisitModel.cs",
+              "RelativeDocumentMoniker": "Backend\\Migrations\\20250425201859_UpdatePlacesToVisitModel.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250425201859_UpdatePlacesToVisitModel.cs",
+              "RelativeToolTip": "Backend\\Migrations\\20250425201859_UpdatePlacesToVisitModel.cs",
+              "ViewState": "AgIAADYAAAAAMzMzMzMwwAkAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-26T20:41:05.848Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
               "Title": "20250424131034_UpdateTripLocationWithCompositeKey.cs",
               "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250424131034_UpdateTripLocationWithCompositeKey.cs",
               "RelativeDocumentMoniker": "Backend\\Migrations\\20250424131034_UpdateTripLocationWithCompositeKey.cs",
               "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250424131034_UpdateTripLocationWithCompositeKey.cs",
               "RelativeToolTip": "Backend\\Migrations\\20250424131034_UpdateTripLocationWithCompositeKey.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAIwBAAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T13:10:39.191Z"
+              "WhenOpened": "2025-04-26T20:39:38.116Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "TripLocation.cs",
-              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\TripLocation.cs",
-              "RelativeDocumentMoniker": "Backend\\Models\\TripLocation.cs",
-              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\TripLocation.cs",
-              "RelativeToolTip": "Backend\\Models\\TripLocation.cs",
-              "ViewState": "AgIAAAQAAACA////////vwwAAAAAAAAAAAAAAA==",
+              "Title": "AppDbContextModelSnapshot.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\AppDbContextModelSnapshot.cs",
+              "RelativeDocumentMoniker": "Backend\\Migrations\\AppDbContextModelSnapshot.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\AppDbContextModelSnapshot.cs",
+              "RelativeToolTip": "Backend\\Migrations\\AppDbContextModelSnapshot.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEcBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T18:00:17.421Z"
+              "WhenOpened": "2025-04-26T20:43:56.868Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "PlacesController.cs",
-              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\PlacesController.cs",
-              "RelativeDocumentMoniker": "Backend\\Controller\\PlacesController.cs",
-              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\PlacesController.cs*",
-              "RelativeToolTip": "Backend\\Controller\\PlacesController.cs*",
-              "ViewState": "AgIAAA8AAAAAOjMzMzMJwB4AAAAkAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "District.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\District.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\District.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\District.cs",
+              "RelativeToolTip": "Backend\\Models\\District.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T17:58:33.558Z",
+              "WhenOpened": "2025-04-26T20:39:21.492Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Trip.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\Trip.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\Trip.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\Trip.cs",
+              "RelativeToolTip": "Backend\\Models\\Trip.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAgPQ0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-26T20:39:00.833Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 6,
-              "Title": "Route Controller.cs",
-              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\Route Controller.cs",
-              "RelativeDocumentMoniker": "Backend\\Controller\\Route Controller.cs",
-              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\Route Controller.cs",
-              "RelativeToolTip": "Backend\\Controller\\Route Controller.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
+              "Title": "PlacestoVisit.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\PlacestoVisit.cs",
+              "RelativeDocumentMoniker": "Backend\\Models\\PlacestoVisit.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Models\\PlacestoVisit.cs",
+              "RelativeToolTip": "Backend\\Models\\PlacestoVisit.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T17:58:02.525Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "TripController.cs",
-              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\TripController.cs",
-              "RelativeDocumentMoniker": "Backend\\Controller\\TripController.cs",
-              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\TripController.cs",
-              "RelativeToolTip": "Backend\\Controller\\TripController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T17:51:57.931Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DistrictController.cs",
-              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\DistrictController.cs",
-              "RelativeDocumentMoniker": "Backend\\Controller\\DistrictController.cs",
-              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\DistrictController.cs",
-              "RelativeToolTip": "Backend\\Controller\\DistrictController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T17:58:40.2Z"
+              "WhenOpened": "2025-04-26T20:15:27.433Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "20250420104503_AddPlacesToVisit.cs",
-              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250420104503_AddPlacesToVisit.cs",
-              "RelativeDocumentMoniker": "Backend\\Migrations\\20250420104503_AddPlacesToVisit.cs",
-              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Migrations\\20250420104503_AddPlacesToVisit.cs",
-              "RelativeToolTip": "Backend\\Migrations\\20250420104503_AddPlacesToVisit.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAAAaAAAAAAAAAA==",
+              "Title": "PlacesController.cs",
+              "DocumentMoniker": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\PlacesController.cs",
+              "RelativeDocumentMoniker": "Backend\\Controller\\PlacesController.cs",
+              "ToolTip": "C:\\Users\\dilsh\\Desktop\\2dclone\\Backend\\Controller\\PlacesController.cs",
+              "RelativeToolTip": "Backend\\Controller\\PlacesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAE8AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-24T12:51:37.943Z"
+              "WhenOpened": "2025-04-26T19:45:43.866Z",
+              "EditorCaption": ""
             }
           ]
         }

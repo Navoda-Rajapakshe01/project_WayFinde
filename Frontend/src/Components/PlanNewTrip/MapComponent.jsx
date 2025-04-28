@@ -1,10 +1,8 @@
-// MapComponent.jsx
 import React, { useEffect } from "react";
 import "./MapComponent.css";
-// Importing useNavigate for navigation
 
-const MapComponent = ({ places, map, setMap, markers, setMarkers }) => {
-  const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
+const MapComponent = ({ map, setMap }) => {
+  const GOOGLE_MAPS_API_KEY = "AIzaSyDtkIpde5Pm3BZ6L8lf6_AwdEBcpzXjazg";
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -19,26 +17,6 @@ const MapComponent = ({ places, map, setMap, markers, setMarkers }) => {
     };
     document.body.appendChild(script);
   }, [setMap]);
-
-  const addMarker = (place) => {
-    if (!map) return;
-    const marker = new window.google.maps.Marker({
-      position: place.location,
-      map: map,
-      title: place.name,
-    });
-    setMarkers([...markers, marker]);
-  };
-
-  const removeMarker = (place) => {
-    const updatedMarkers = markers.filter(
-      (marker) => marker.getTitle() !== place.name
-    );
-    markers.forEach((marker) => {
-      if (marker.getTitle() === place.name) marker.setMap(null);
-    });
-    setMarkers(updatedMarkers);
-  };
 
   return (
     <div id="map" className="relative h-96 w-full rounded-lg shadow-md"></div>
