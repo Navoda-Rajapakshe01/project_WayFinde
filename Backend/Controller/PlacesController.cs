@@ -55,5 +55,20 @@ namespace Backend.Controllers
 
             return Ok(place);
         }
+
+        [HttpGet("by-category/{categoryId}")]
+        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByCategory(int categoryId)
+        {
+            // Fetch places that belong to the given categoryId
+            var places = await _context.PlacesToVisit
+            .Where(p => p.CategoryId == categoryId)  
+            .ToListAsync();
+
+            // If no places found, return a 404 Not Found
+            if (places == null || places.Count == 0)
+            return NotFound("No places found for this category");
+
+             return Ok(places);  
+        }
     }
 }

@@ -14,5 +14,9 @@ namespace Backend.Models
         // Foreign Key to District
         public int DistrictId { get; set; }
         public District District { get; set; }
+
+        // Foreign Key to Category
+        public int? CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }
