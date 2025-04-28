@@ -48,15 +48,9 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
-          <Route
-            path="/thingstodocategories"
-            element={<ThingstodoCategories />}
-          />
+          <Route path="/thingstodocategories" element={<ThingstodoCategories />}/>
           <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
-          <Route
-            path="/things-to-do/:slug/:placeId"
-            element={<PlaceDetails />}
-          />
+          <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />}/>
           <Route path="/tripdashboard" element={<TripDashboard />} />
           <Route path="/vehicle/:id" element={<VehicleDetail />} />
           <Route path="/accommodation/:id" element={<AccommodationDetail />} />
