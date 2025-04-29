@@ -1,4 +1,4 @@
-import MainNavbar from "../Components/MainNavbar/MainNavbar";
+import MainNavbar from "../../Components/MainNavbar/MainNavbar";
 const Post = () => {
   return (
     <div className="page-container">

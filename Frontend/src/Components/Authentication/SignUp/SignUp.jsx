@@ -9,6 +9,8 @@ const Register = () => {
     password: "",
     role: "",
   });
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate(); // Initialize navigate
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,14 +18,22 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
     try {
       await axios.post("https://localhost:7138/api/Auth/register", formData);
-      alert("User registered successfully!");
-      navigate("/profile");
+      setSuccess("Registration successful! Redirecting to sign in...");
+      setTimeout(() => {
+        navigate("/signin");
+      }, 1800); // Redirect after 1.8 seconds
       // Optionally redirect to sign in page
       // window.location.href = "/signin";
     } catch (error) {
       console.error(error);
+      setError(
+        error.response?.data?.message ||
+        "Registration failed. Please try again."
+      );
     }
   };
 

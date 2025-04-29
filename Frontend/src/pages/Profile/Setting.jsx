@@ -1,5 +1,5 @@
-import MainNavbar from "../Components/MainNavbar/MainNavbar";
-const Logout = () => {
+import MainNavbar from "../../Components/MainNavbar/MainNavbar";
+const Setting = () => {
   return (
     <div className="page-container">
       <MainNavbar />
@@ -9,4 +9,4 @@ const Logout = () => {
   );
 };
 
-export default Logout;
+export default Setting;
