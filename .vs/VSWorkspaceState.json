@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Backend"
+    "\\Backend",
+    "\\Frontend\\src",
+    "\\Frontend\\src\\pages"
   ],
-  "SelectedNode": "\\Backend\\Data",
+  "SelectedNode": "\\Backend\\obj",
   "PreviewInSolutionExplorer": false
 }
