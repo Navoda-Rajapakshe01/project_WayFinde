@@ -21,7 +21,7 @@ const NameTag = ({ name, rating, price }) => {
           <span>⭐ {rating}</span>
         </div>
         <p className="price">
-          ${price} <span>/ day</span>
+          {price} <span>/ day</span>
         </p>
       </div>
       <div className="name-tag-right">

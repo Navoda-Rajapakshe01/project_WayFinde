@@ -1,37 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import logo from "../../assets/Images/logo.png";
-import "./MainNavbar.css";
-import "../../App.css"
-
+import React from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   FaBook,
   FaBus,
+  FaCog,
+  FaComments,
   FaHome,
   FaHotel,
-  FaPlaneDeparture,
-  FaUserCircle,
-  FaCog,
-  FaSignOutAlt,
-  FaComments,
-  FaSuitcase,
   FaNewspaper,
-  FaPencilAlt
+  FaPencilAlt,
+  FaPlaneDeparture,
+  FaSignOutAlt,
+  FaSuitcase,
+  FaUserCircle,
 } from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/Images/logo.png";
+import { AuthContext } from "../Authentication/AuthContext/AuthContext";
+import "./MainNavbar.css";
 
 const MainNavbar = () => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
 
-  // Toggle profile dropdown
-  const togglePopup = (e) => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-  };
+  const { user, logout } = useContext(AuthContext);
 
-  // Close dropdown when clicking outside
+  const handleNavigation = (path) => navigate(path);
+
+  // Toggle profile popup
+  const togglePopup = () => setIsOpen(!isOpen);
+
+  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -41,12 +43,11 @@ const MainNavbar = () => {
         setIsOpen(false);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // Update active tab when location changes
+  // Update active tab on route change
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location]);
@@ -67,30 +68,38 @@ const MainNavbar = () => {
     { name: "Chat", icon: <FaComments />, path: "/chat" },
     { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
     { name: "Settings", icon: <FaCog />, path: "/settings" },
-    { name: "Logout", icon: <FaSignOutAlt />, path: "/logout" },
+    { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  const handleNavigation = (path) => {
-    navigate(path);
-    setIsOpen(false);
+  // Modal close handler
+  const closeModal = () => setShowSignInModal(false);
+
+  // Modal option handler
+  const handleSignInOption = (type) => {
+    setShowSignInModal(false);
+    if (type === "service") {
+      navigate("/signin?type=service");
+    } else {
+      navigate("/signin?type=user");
+    }
   };
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        {/* Logo Section */}
         <div className="navbar-logo">
           <Link to="/">
             <img src={logo || "/placeholder.svg"} alt="WAYFIND" />
           </Link>
         </div>
-        
+
+        {/* Main Navigation Menu */}
         <ul className="navbar-menu">
           {menuItems.map((item) => (
             <li
               key={item.name}
-              className={`navbar-item ${
-                activeTab === item.path ? "active" : ""
-              }`}
+              className={`navbar-item${activeTab === item.path ? " active" : ""}`}
             >
               <Link to={item.path} className="navbar-link">
                 <span className="navbar-icon">{item.icon}</span>
@@ -99,49 +108,92 @@ const MainNavbar = () => {
             </li>
           ))}
         </ul>
-        
-        <div className="navbar-profile" onClick={togglePopup}>
-          <div className="profile-wrapper">
-            <img
-              src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-              alt="User Profile"
-              className="profile-img"
-            />
-            <span className="profile-indicator"></span>
-          </div>
-          
-          {isOpen && (
-            <div className="profile-popup">
-              <div className="popup-header">
+
+        {/* Profile or Auth Buttons */}
+        <div className="navbar-auth-section">
+          {user ? (
+            <div className="navbar-profile" onClick={togglePopup}>
+              <div className="profile-wrapper">
                 <img
                   src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
                   alt="User Profile"
-                  className="popup-profile-img"
+                  className="profile-img"
                 />
-                <div className="popup-user-info">
-                  <h4>John Doe</h4>
-                  <p>john.doe@example.com</p>
-                </div>
+                <span className="profile-indicator"></span>
               </div>
-              
-              <div className="popup-divider"></div>
-              
-              <div className="popup-menu">
-                {profileMenuItems.map((item) => (
-                  <div 
-                    key={item.name}
-                    className="popup-item"
-                    onClick={() => handleNavigation(item.path)}
-                  >
-                    <span className="popup-icon">{item.icon}</span>
-                    <span>{item.name}</span>
+
+              {isOpen && (
+                <div className="profile-popup">
+                  <div className="popup-header">
+                    <img
+                      src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                      alt="User Profile"
+                      className="popup-profile-img"
+                    />
+                    <div className="popup-user-info">
+                      <h4>John Doe</h4>
+                      <p>john.doe@example.com</p>
+                    </div>
                   </div>
-                ))}
-              </div>
+
+                  <div className="popup-divider"></div>
+
+                  <div className="popup-menu">
+                    {profileMenuItems.map((item) => (
+                      <div
+                        key={item.name}
+                        className="popup-item"
+                        onClick={() => {
+                          if (item.name === "Logout") {
+                            logout();
+                          } else {
+                            handleNavigation(item.path);
+                          }
+                        }}
+                      >
+                        <span className="popup-icon">{item.icon}</span>
+                        <span>{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div>
+              <button
+                onClick={() => setShowSignInModal(true)}
+              >
+                Sign In
+              </button>
+              {/* ...Sign Up button if needed... */}
             </div>
           )}
         </div>
       </div>
+      {/* Sign In Modal */}
+      {showSignInModal && (
+        <div className="signin-modal-overlay" onClick={closeModal}>
+          <div className="signin-modal" onClick={e => e.stopPropagation()}>
+            <h3>Sign In As</h3>
+            <div className="signin-options">
+              <button
+                className="signin-option-btn"
+                onClick={() => handleSignInOption("user")}
+              >
+                Normal User
+              </button>
+              <button
+                className="signin-option-btn"
+                onClick={() => handleSignInOption("service")}
+              >
+                Service Provider
+              </button>
+            </div>
+            <button className="close-modal-btn" onClick={closeModal}>Close</button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
