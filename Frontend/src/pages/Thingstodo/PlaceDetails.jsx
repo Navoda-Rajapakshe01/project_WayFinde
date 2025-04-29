@@ -62,10 +62,6 @@ const PlaceDetails = () => {
 
   return (
     <div className="place-details-container">
-      {/* Back Button */}
-      <button className="back-button" onClick={() => window.history.back()}>
-        ← Back
-      </button>
 
       {/* Hero Image with Overlay Title */}
       <div className="hero-section">
