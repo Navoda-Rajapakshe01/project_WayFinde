@@ -23,6 +23,9 @@ namespace Backend.Data
         // DbSet for PlaceToVisit
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
 
+        // DbSet for Category
+        public DbSet<Category> Categories { get; set; }
+
         public DbSet<BlogImage> BlogImages { get; set; }
 
 
@@ -136,6 +139,11 @@ namespace Backend.Data
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
+            
+            modelBuilder.Entity<PlacesToVisit>()
+            .HasOne(p => p.Category)
+            .WithMany() 
+            .HasForeignKey(p => p.CategoryId);
 
 
             base.OnModelCreating(modelBuilder);
