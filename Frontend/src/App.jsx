@@ -18,8 +18,8 @@ import Vehicle from "./pages/Vehicle";
 import Chat from "./pages/Chat";
 import Logout from "./pages/Logout";
 import PaymentGateway from "./pages/PaymentGateway";
-import PersonalBlog from "./pages/PersonalBlog";
-import Profile from "./pages/Profile";
+import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import Profile from "./pages/Profile/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
@@ -54,7 +54,7 @@ function App() {
           <Route path="/accommodation/:id" element={<AccommodationDetail />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/personalBlog" element={<PersonalBlog />} />
-          <Route path="/logout" element={<Logout />} />
+        
           <Route path="/settings" element={<UserLogin />} />
           <Route path="/reservevehicle" element={<ReserveVehicle />} />
           <Route path="/paymentgateway" element={<PaymentGateway />} />

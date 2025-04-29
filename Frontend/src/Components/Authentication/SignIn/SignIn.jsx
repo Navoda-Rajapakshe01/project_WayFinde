@@ -9,6 +9,7 @@ const Login = () => {
     username: "",
     password: "",
   });
+  const [error, setError] = useState(""); // Add error state
   const navigate = useNavigate();
   const handleNavigation = (path) => navigate(path);
   const { setUser } = useContext(AuthContext);
@@ -19,6 +20,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(""); // Clear previous error
     try {
       const response = await axios.post(
         "https://localhost:7138/api/Auth/login",
@@ -36,10 +38,10 @@ const Login = () => {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       setUser(decodedToken);
 
-      window.location.href = "/profile";
+      window.location.href = "/";
     } catch (error) {
       console.error(error);
-      alert("Invalid credentials");
+      setError("Invalid credentials");
     }
   };
 
@@ -68,6 +70,7 @@ const Login = () => {
           <p className="CreateNew" onClick={() => handleNavigation("/signup")}>
             Create a new Account
           </p>
+          {error && <p className="error-message">{error}</p>}
         </form>
       </div>
     </div>

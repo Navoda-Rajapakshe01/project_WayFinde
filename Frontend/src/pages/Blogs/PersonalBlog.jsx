@@ -1,10 +1,10 @@
 import { FaComment, FaThumbsUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import BlogContent from "../Components/BlogComponents/BlogContent/BlogContent";
-import "./CSS/PersonalBlog.css";
+import BlogContent from "../../Components/BlogComponents/BlogContent/BlogContent";
+import "../CSS/PersonalBlog.css"; // Import your CSS file for styling
 const beachImage2 = "/Blogimages/beach2.jpg"; // Correct path from public folder
 const beachImage3 = "/Blogimages/beach3.jpg"; // Correct path from public folder
-const beachImage4 = "/Blogimages/beach4.jpg"; // Correct path from public folder
+//const beachImage4 = "/Blogimages/beach4.jpg"; // Correct path from public folder
 const PersonalBlog = () => {
   return (
     <div className="page-container-personalBlog">

@@ -12,7 +12,7 @@ namespace Backend.Data
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
 
         //public DbSet<UserNew> UsersNew { get; set; }
 
@@ -22,6 +22,8 @@ namespace Backend.Data
 
         // DbSet for PlaceToVisit
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
+
+        public DbSet<BlogImage> BlogImages { get; set; }
 
 
 
