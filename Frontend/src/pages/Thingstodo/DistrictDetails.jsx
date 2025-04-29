@@ -65,7 +65,10 @@ const DistrictDetails = () => {
       {error && !loading && (
         <div className="error-container">
           <p>{error}</p>
-          <button onClick={() => window.location.reload()} className="retry-button">
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
             Try Again
           </button>
         </div>
@@ -87,14 +90,16 @@ const DistrictDetails = () => {
                     alt={place.name}
                     className="place-image"
                   />
-                  {place.category && <span className="place-category">{place.category}</span>}
+                  {place.category && (
+                    <span className="place-category">{place.category}</span>
+                  )}
                 </div>
                 <div className="place-info">
                   <h3 className="place-name">{place.name}</h3>
                   <button
                     className="view-details-btn"
                     onClick={(e) => {
-                      e.stopPropagation(); 
+                      e.stopPropagation();
                       handleCardClick(place.id);
                     }}
                   >

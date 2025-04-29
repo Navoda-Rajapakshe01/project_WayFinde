@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPaw,
@@ -12,21 +12,25 @@ import {
 import "./Categories.css";
 
 const Categories = ({ places, setFilteredPlaces }) => {
+  const [selectedCategory, setSelectedCategory] = useState("All Places");
+
   const categoryMapping = {
-    Wildlife: 1, 
-    Resorts: 2, 
-    Historical: 3, 
-    Nature: 4, 
-    Adventure: 5, 
+    Wildlife: 1,
+    Resorts: 2,
+    Historical: 3,
+    Nature: 4,
+    Adventure: 5,
   };
 
-  const handleFilter = (selectedCategory) => {
-    if (selectedCategory === "All Places") {
-      setFilteredPlaces(places); // Show all places
+  const handleFilter = (categoryName) => {
+    setSelectedCategory(categoryName);
+
+    if (categoryName === "All Places") {
+      setFilteredPlaces(places); // Show all
     } else {
-      const selectedCategoryId = categoryMapping[selectedCategory];
+      const selectedCategoryId = categoryMapping[categoryName];
       const filtered = places.filter(
-        (place) => place.category_id === selectedCategoryId
+        (place) => Number(place.categoryId) === selectedCategoryId 
       );
       setFilteredPlaces(filtered);
     }
@@ -36,25 +40,34 @@ const Categories = ({ places, setFilteredPlaces }) => {
     <div className="categories-container">
       <div className="category-section">
         <div className="categories">
-          <div className="category" onClick={() => handleFilter("All Places")}>
+          <div
+            className={`category ${
+              selectedCategory === "All Places" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("All Places")}
+          >
             <div className="icon-container">
               <FontAwesomeIcon icon={faGlobe} size="2x" />
             </div>
             <p>All Places</p>
           </div>
-          <div className="category" onClick={() => handleFilter("Wildlife")}>
+          <div
+            className={`category ${
+              selectedCategory === "Wildlife" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Wildlife")}
+          >
             <div className="icon-container">
               <FontAwesomeIcon icon={faPaw} size="2x" />
             </div>
             <p>Wildlife</p>
           </div>
-          <div className="category" onClick={() => handleFilter("Resorts")}>
-            <div className="icon-container">
-              <FontAwesomeIcon icon={faUmbrellaBeach} size="2x" />
-            </div>
-            <p>Resorts</p>
-          </div>
-          <div className="category" onClick={() => handleFilter("Historical")}>
+          <div
+            className={`category ${
+              selectedCategory === "Historical" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Historical")}
+          >
             <div className="icon-container">
               <FontAwesomeIcon icon={faTheaterMasks} size="2x" />
             </div>
@@ -63,7 +76,12 @@ const Categories = ({ places, setFilteredPlaces }) => {
               Religious
             </p>
           </div>
-          <div className="category" onClick={() => handleFilter("Nature")}>
+          <div
+            className={`category ${
+              selectedCategory === "Nature" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Nature")}
+          >
             <div className="icon-container">
               <FontAwesomeIcon icon={faLeaf} size="2x" />
             </div>
@@ -72,7 +90,12 @@ const Categories = ({ places, setFilteredPlaces }) => {
               Scenic
             </p>
           </div>
-          <div className="category" onClick={() => handleFilter("Adventure")}>
+          <div
+            className={`category ${
+              selectedCategory === "Adventure" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Adventure")}
+          >
             <div className="icon-container">
               <FontAwesomeIcon icon={faHiking} size="2x" />
             </div>
