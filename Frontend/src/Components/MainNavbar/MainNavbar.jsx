@@ -57,7 +57,7 @@ const MainNavbar = () => {
     { name: "Accommodation", icon: <FaHotel />, path: "/accommodation" },
     { name: "Vehicle", icon: <FaBus />, path: "/vehicle" },
     { name: "Blog", icon: <FaBook />, path: "/blog" },
-    { name: "Things To Do", icon: <FaBook />, path: "/thingstodo" },
+    { name: "Places to Visit", icon: <FaBook />, path: "/thingstodo" },
   ];
 
   const profileMenuItems = [
