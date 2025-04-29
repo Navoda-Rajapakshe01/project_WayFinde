@@ -26,10 +26,10 @@ namespace Backend.Data
         // DbSet for Category
         public DbSet<Category> Categories { get; set; }
 
+        // DbSet for TodoItem
+        public DbSet<TodoItem> TodoItems { get; set; }
+        
         public DbSet<BlogImage> BlogImages { get; set; }
-
-
-
 
         //Accommodations
         public DbSet<Accommodation> Accommodations { get; set; }
@@ -144,6 +144,25 @@ namespace Backend.Data
             .HasOne(p => p.Category)
             .WithMany() 
             .HasForeignKey(p => p.CategoryId);
+
+            // TodoItem - TaskName and TaskDescription required
+            
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.TaskName)
+                .IsRequired()
+                .HasMaxLength(150); 
+           
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.TaskStatus)
+                .IsRequired();
+
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");  
+
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()"); 
 
 
             base.OnModelCreating(modelBuilder);
