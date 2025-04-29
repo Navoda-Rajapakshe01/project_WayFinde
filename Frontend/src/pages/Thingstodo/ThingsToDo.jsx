@@ -1,5 +1,5 @@
 "use client"
-
+import React from "react"
 import { useEffect, useState } from "react"
 import HeroSection from "../../Components/HeroSection/HeroSection"
 import MainNavbar from "../../Components/MainNavbar/MainNavbar"
