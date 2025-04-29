@@ -1,56 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import './TodoList.css';
 import TodoPopup from '../TodoPopup/TodoPopup';
-import axios from 'axios';
+import axios from 'axios';  // Import Axios for API requests
 
 const TodoList = () => {
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState([]);  // Empty array to store data from backend
   const [searchText, setSearchText] = useState('');
   const [filter, setFilter] = useState('ALL');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // ✅ GET from backend
+  // ✅ Fetch data from the backend (GET request)
   useEffect(() => {
-    axios.get('http://localhost:5030/api/todo')
+    axios.get('http://localhost:5030/api/todo')  // API endpoint
       .then(res => {
         const fetchedTodos = res.data.map(todo => ({
           id: todo.id,
-          text: todo.description,
-          completed: todo.isCompleted
+          text: todo.taskName,  // Use taskName from the API response
+          completed: todo.taskStatus === 'Completed' // Convert taskStatus to boolean
         }));
-        setNotes(fetchedTodos);
+        setNotes(fetchedTodos);  // Set the fetched data to state
       })
-      .catch(err => console.error("GET error: ", err));
+      .catch(err => console.error("GET error: ", err));  // Log error if any
   }, []);
 
-  // ✅ POST to backend
+  // ✅ Update task status (PUT request)
+  const handleTaskStatusChange = (id, currentStatus) => {
+    const newStatus = currentStatus === "Active" ? "Completed" : "Active";
+
+    axios.put(`http://localhost:5030/api/todo/ToggleStatus/${id}`, { taskStatus: newStatus })
+      .then(res => {
+        const updatedTask = res.data;
+        setNotes(notes.map(note => 
+          note.id === id ? { ...note, completed: newStatus === 'Completed' } : note
+        ));
+      })
+      .catch(err => console.error("PUT error: ", err));  // Log error if any
+  };
+
+  // Handle adding a new note
   const handleAddNewNote = (newNoteText) => {
     const newTodo = {
-      description: newNoteText,
-      isCompleted: false
+      taskName: newNoteText,  // taskName is sent in the request
+      taskStatus: 'Active',   // Default status when creating a new task
+      createdAt: new Date(),  // Send current time as createdAt
+      updatedAt: new Date()   // Send current time as updatedAt
     };
 
-    axios.post('http://localhost:5030/api/todo', newTodo)
+    axios.post('http://localhost:5030/api/todo', newTodo) // POST request to backend
       .then(res => {
         const added = {
           id: res.data.id,
-          text: res.data.description,
-          completed: res.data.isCompleted
+          text: res.data.taskName,
+          completed: res.data.taskStatus === 'Completed' // Convert taskStatus to boolean
         };
-        setNotes([...notes, added]); // UI update
-        setIsPopupOpen(false); // Close popup
+        setNotes([...notes, added]);  // Update frontend with new task
+        setIsPopupOpen(false);  // Close popup after adding
       })
-      .catch(err => console.error("POST error: ", err));
+      .catch(err => console.error("POST error: ", err));  // Log error if any
   };
 
-  const toggleComplete = (id) => {
-    setNotes(notes.map(note =>
-      note.id === id ? { ...note, completed: !note.completed } : note
-    ));
-  };
-
+  // Handle search input change
   const handleSearchChange = (e) => setSearchText(e.target.value);
 
+  // Filter notes based on search text and completion status
   const filteredNotes = notes.filter(note => {
     const matchesSearch = note.text.toLowerCase().includes(searchText.toLowerCase());
     if (filter === 'ALL') return matchesSearch;
@@ -62,12 +74,12 @@ const TodoList = () => {
   return (
     <div className="todo-list-container">
       <h2 className="todo-title">TODO LIST</h2>
-      
+
       <div className="search-filter-container">
         <div className="search-container">
-          <input 
-            type="text" 
-            placeholder="Search note..." 
+          <input
+            type="text"
+            placeholder="Search note..."
             value={searchText}
             onChange={handleSearchChange}
             className="search-input"
@@ -78,8 +90,8 @@ const TodoList = () => {
         </div>
 
         <div className="filter-dropdown">
-          <select 
-            value={filter} 
+          <select
+            value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="filter-select"
           >
@@ -94,10 +106,10 @@ const TodoList = () => {
         {filteredNotes.map(note => (
           <div key={note.id} className="note-item">
             <label className="checkbox-container">
-              <input 
-                type="checkbox" 
-                checked={note.completed} 
-                onChange={() => toggleComplete(note.id)}
+              <input
+                type="checkbox"
+                checked={note.completed}
+                onChange={() => handleTaskStatusChange(note.id, note.completed ? "Completed" : "Active")}  // Change status on checkbox click
               />
               <span className="custom-checkbox"></span>
               <span className={`note-text ${note.completed ? 'completed' : ''}`}>
@@ -113,8 +125,8 @@ const TodoList = () => {
       </button>
 
       {isPopupOpen && (
-        <TodoPopup 
-          onClose={() => setIsPopupOpen(false)} 
+        <TodoPopup
+          onClose={() => setIsPopupOpen(false)}
           onSave={handleAddNewNote}
         />
       )}
