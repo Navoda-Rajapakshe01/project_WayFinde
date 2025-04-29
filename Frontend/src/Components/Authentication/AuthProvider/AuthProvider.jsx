@@ -1,3 +1,4 @@
+import React from "react";
 import { jwtDecode } from "jwt-decode"; // Changed import syntax for v4.x
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
