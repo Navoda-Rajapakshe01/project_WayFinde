@@ -19,9 +19,9 @@ namespace Backend.Data
         // DbSet for PlaceToVisit
         public DbSet<PlaceToVisit> PlacesToVisit { get; set; }
 
-         // Add the TodoItem DbSet here
-        public DbSet<TodoItem> TodoItems { get; set; }  // This is where we added it
-
+        
+        // DbSet for TodoItem
+        public DbSet<TodoItem> TodoItems { get; set; }
 
 
 
@@ -47,6 +47,25 @@ namespace Backend.Data
             modelBuilder.Entity<PlaceToVisit>()
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
+
+            // TodoItem - TaskName and TaskDescription required
+            
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.TaskName)
+                .IsRequired()
+                .HasMaxLength(150); 
+           
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.TaskStatus)
+                .IsRequired();
+
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");  
+
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()"); 
 
 
             base.OnModelCreating(modelBuilder);
