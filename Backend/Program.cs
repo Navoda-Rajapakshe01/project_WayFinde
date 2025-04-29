@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ✅ Adding the AppDbContext to connect with the SQL Server database
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("JithmiConnection")));
 
 builder.Services.AddCors(options =>
 {

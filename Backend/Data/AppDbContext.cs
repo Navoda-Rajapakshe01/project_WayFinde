@@ -23,7 +23,8 @@ namespace Backend.Data
         // DbSet for TodoItem
         public DbSet<TodoItem> TodoItems { get; set; }
 
-
+        // DbSet for TravelBudget
+        public DbSet<TravelBudget> TravelBudgets { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,7 +67,21 @@ namespace Backend.Data
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()"); 
+ 
+            // TravelBudget - ExpenseDescription and Amount required
+            
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Description)
+                .IsRequired()
+                .HasMaxLength(200);  
 
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Amount)
+                .IsRequired();
+
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
 
             base.OnModelCreating(modelBuilder);
         }
