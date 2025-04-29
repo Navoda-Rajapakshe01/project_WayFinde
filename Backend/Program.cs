@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ➕ Add AppDbContext and connect to SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("JithmiConnection")));
 
 // ➕ Add UserDbContext and connect to SQL Server (for authentication)
 builder.Services.AddDbContext<UserDbContext>(options =>

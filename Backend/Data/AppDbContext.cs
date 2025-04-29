@@ -31,6 +31,8 @@ namespace Backend.Data
         
         public DbSet<BlogImage> BlogImages { get; set; }
 
+        // DbSet for TravelBudget
+        public DbSet<TravelBudget> TravelBudgets { get; set; } 
         //Accommodations
         public DbSet<Accommodation> Accommodations { get; set; }
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
@@ -163,7 +165,21 @@ namespace Backend.Data
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()"); 
+ 
+            // TravelBudget - ExpenseDescription and Amount required
+            
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Description)
+                .IsRequired()
+                .HasMaxLength(200);  
 
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Amount)
+                .IsRequired();
+
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
 
             base.OnModelCreating(modelBuilder);
         }
