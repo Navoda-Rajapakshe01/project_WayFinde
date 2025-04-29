@@ -1,23 +1,26 @@
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-import ThingsToDo from "./Pages/Thingstodo/ThingsToDo";
-import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
-import Vehicle from "./pages/Vehicle";
-import Accommodation from "./pages/Accommodation";
-import { default as Blog, default as Blogs } from "./pages/Blog";
-import Following from "./pages/Following";
-import Followers from "./pages/Follwers";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+
 import Home from "./pages/Home";
-import "./App.css";
+import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
+import SignUp from "./Components/Authentication/SignUp/SignUp";
+import SignIn from "./Components/Authentication/SignIn/SignIn";
 import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
-import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
-import Chat from "./pages/Chat";
-import Logout from "./pages/Logout";
+import Footer from "./Components/Footer/Footer";
+import Accommodation from "./pages/Accommodation";
+import Blog from "./pages/Blogs/Blog";
+import Following from "./pages/Profile/Following";
+import Followers from "./pages/Profile/Follwers";
+import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
+import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
+import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
+import Vehicle from "./pages/Vehicle";
+import Chat from "./pages/Profile/Chat";
 import PaymentGateway from "./pages/PaymentGateway";
-import PersonalBlog from "./pages/PersonalBlog";
-import Profile from "./pages/Profile"; 
+import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import Profile from "./pages/Profile/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
@@ -25,10 +28,15 @@ import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import TripDashboard from "./pages/TripDashboard";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
+import AccommodationDetail from "./pages/AccommodationDetail";
+
+import "./App.css";
 
 function App() {
   return (
-    <>
+    <AuthProvider>
+      {" "}
+      {/* Wrap the entire app with AuthProvider */}
       <BrowserRouter>
         <MainNavbar />
         <Routes>
@@ -40,30 +48,28 @@ function App() {
           <Route path="/vehicle" element={<Vehicle />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/thingstodo" element={<ThingsToDo />} />
-          <Route path="/thingstodo/:districtId" element={<DistrictDetails />} />
-          <Route path="/logout" element={<Logout />} />
+          <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
+          <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />}/>
           <Route path="/tripdashboard" element={<TripDashboard />} />
-          <Route path="/VehicleDetail" element={<VehicleDetail />} />
+          <Route path="/vehicle/:id" element={<VehicleDetail />} />
+          <Route path="/accommodation/:id" element={<AccommodationDetail />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/personalBlog" element={<PersonalBlog />} />
-          <Route path="/logout" element={<Logout />} />
+        
           <Route path="/settings" element={<UserLogin />} />
-          {/* <Route path="/blog/:id" element={<Setting />} /> */}
-          {/* <Route path="/profile/:writerId" element={<Setting />} /> */}
-          {/* Dynamic route */}
-          <Route path="/ReserveVehicle" element={<ReserveVehicle />} />
-          <Route path="/PaymentGateway" element={<PaymentGateway />} />
-          <Route path="/VehicleBookingForm" element={<VehicleBookingForm />} />
+          <Route path="/reservevehicle" element={<ReserveVehicle />} />
+          <Route path="/paymentgateway" element={<PaymentGateway />} />
+          <Route path="/vehiclebookingform" element={<VehicleBookingForm />} />
           <Route path="/profile" element={<Profile />} />
-          {/* <Route path="/posts" element={<Posts />} /> */}
-          <Route path="/profile/blog" element={<Blogs />} />
+          <Route path="/profile/blog" element={<Blog />} />
           <Route path="/profile/followers" element={<Followers />} />
           <Route path="/profile/following" element={<Following />} />
-
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
         <Footer />
       </BrowserRouter>
-    </>
+    </AuthProvider>
   );
 }
 

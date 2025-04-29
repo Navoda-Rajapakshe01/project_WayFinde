@@ -1,63 +1,48 @@
-# -------------------------------
-# Global
-# -------------------------------
-node_modules/
+# Ignore node modules at root level
+/node_modules/
+
+# Logs
 *.log
-*.tmp
-*.temp
-*.swp
-*.swo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+
+# Dependency directories
+**/node_modules
+
+# Build output
+dist/
+build/
+
+# IDEs and editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS-generated files
 .DS_Store
 Thumbs.db
 
-# -------------------------------
-# Frontend (React + Vite)
-# -------------------------------
-/Frontend/node_modules/
-Frontend/dist/
-Frontend/.vite/
-
-# Vite cache
-Frontend/.cache/
-Frontend/.parcel-cache/
-Frontend/.eslintcache
-
-# Env files
-Frontend/.env
-Frontend/.env.*.local
-
-# -------------------------------
-# Backend (.NET Core)
-# -------------------------------
-/Backend/bin/
-/Backend/obj/
-/Backend/.vs/
+# User-specific files
 *.user
-*.suo
+*.userosscache
+*.sln.docstates
 
-# Entity Framework generated files
-Backend/Migrations/*Snapshot.cs
-Backend/Migrations/*.Designer.cs
+# VS project files
+*.vcxproj.*
+*.vcproj.*
 
-# Local settings and secrets
-Backend/appsettings.json
-Backend/appsettings.Development.json
-
-# -------------------------------
-# Root level
-# -------------------------------
-/node_modules/
-.vs/
-.env
-.env.local
-*.local
-
-# Solution and build artifacts
-project_WayFinde.sln
-*.dbmdl
+# Backup files
 *.bak
-*.pdb
+*.tmp
 
-# Git
-.git/
-.gitignore
+# .NET build artifacts
+**/bin/
+**/obj/
