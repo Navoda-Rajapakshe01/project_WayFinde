@@ -1,0 +1,76 @@
+"use client"
+import React from "react"
+import { useState } from "react"
+import {
+  FaHome,
+  FaMapMarkerAlt,
+  FaCity,
+  FaUsers,
+  FaStar,
+  FaBlog,
+  FaCog,
+  FaSignOutAlt,
+  FaChartLine,
+  FaHotel,
+  FaCar,
+} from "react-icons/fa"
+
+const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
+  const [hoveredItem, setHoveredItem] = useState(null)
+
+  const menuItems = [
+    { id: "overview", label: "Dashboard", icon: <FaHome /> },
+    { id: "places", label: "Places", icon: <FaMapMarkerAlt /> },
+    { id: "districts", label: "Districts", icon: <FaCity /> },
+    { id: "users", label: "Users", icon: <FaUsers /> },
+    { id: "user-analytics", label: "User Analytics", icon: <FaChartLine /> },
+    { id: "accommodation", label: "Accommodation", icon: <FaHotel /> },
+    { id: "vehicles", label: "Vehicles", icon: <FaCar /> },
+    { id: "reviews", label: "Reviews", icon: <FaStar /> },
+    { id: "blog", label: "Blog", icon: <FaBlog /> },
+    { id: "settings", label: "Settings", icon: <FaCog /> },
+  ]
+
+  const handleLogout = () => {
+    // Implement logout functionality
+    console.log("Logging out...")
+  }
+
+  return (
+    <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""}`}>
+      <div className="sidebar-header">
+      </div>
+
+      <nav className="sidebar-nav">
+        <ul>
+          {menuItems.map((item) => (
+            <li
+              key={item.id}
+              className={activeSection === item.id ? "active" : ""}
+              onClick={() => setActiveSection(item.id)}
+              onMouseEnter={() => setHoveredItem(item.id)}
+              onMouseLeave={() => setHoveredItem(null)}
+            >
+              <div className="menu-item">
+                <span className="menu-icon">{item.icon}</span>
+                {!collapsed && <span className="menu-label">{item.label}</span>}
+              </div>
+              {collapsed && hoveredItem === item.id && <div className="tooltip">{item.label}</div>}
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="sidebar-footer">
+        <button className="logout-button" onClick={handleLogout}>
+          <span className="menu-icon">
+            <FaSignOutAlt />
+          </span>
+          {!collapsed && <span className="menu-label">Logout</span>}
+        </button>
+      </div>
+    </aside>
+  )
+}
+
+export default AdminSidebar
