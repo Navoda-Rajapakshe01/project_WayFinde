@@ -16,10 +16,9 @@ const Categories = ({ places, setFilteredPlaces }) => {
 
   const categoryMapping = {
     Wildlife: 1,
-    Resorts: 2,
-    Historical: 3,
-    Nature: 4,
-    Adventure: 5,
+    Historical: 2,
+    Nature: 3,
+    Adventure: 4,
   };
 
   const handleFilter = (categoryName) => {
@@ -30,7 +29,7 @@ const Categories = ({ places, setFilteredPlaces }) => {
     } else {
       const selectedCategoryId = categoryMapping[categoryName];
       const filtered = places.filter(
-        (place) => Number(place.categoryId) === selectedCategoryId 
+        (place) => Number(place.categoryId) === selectedCategoryId
       );
       setFilteredPlaces(filtered);
     }
