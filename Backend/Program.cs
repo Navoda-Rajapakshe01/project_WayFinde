@@ -8,15 +8,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ➕ Add AppDbContext and connect to SQL Server
+// Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("JithmiConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ➕ Add UserDbContext and connect to SQL Server (for authentication)
+// Register UserDbContext in the container
 builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ➕ Add Authentication with JWT Bearer
+
+// Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -32,53 +33,45 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// ➕ Add services to container
+// Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// ➕ Add CORS policy
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins(
-            "http://localhost:5173",
-            "https://localhost:5174",
-            "https://localhost:5175"
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod()
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials() 
     );
 });
 
-// ➕ Add Controllers
+// Add Controllers
 builder.Services.AddControllers();
 
-// ➕ Swagger for API Documentation
+// Swagger for API Documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ➡️ Build the App
+// Build the App
 var app = builder.Build();
 
+// Enable Swagger in Development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapScalarApiReference();
 }
+
+// Apply CORS policy BEFORE auth
+app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
 
-// ➡️ Authentication Middleware
 app.UseAuthentication();
-
-// ➡️ Apply CORS policy
-app.UseCors("AllowReactApp");
-
-// ➡️ Authorization Middleware
 app.UseAuthorization();
 
-// ➡️ Map Controllers
 app.MapControllers();
 
-// ➡️ Run the App
 app.Run();
