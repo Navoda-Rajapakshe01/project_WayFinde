@@ -15,6 +15,7 @@ import ReviewsManagement from "../../Components/AdminProfile/reviews-management"
 import BlogManagement from "../../Components/AdminProfile/blog-management"
 import SettingsPanel from "../../Components/AdminProfile/settings-panel"
 import "../CSS/AdminDashboard.css"
+import "../../App.css"
 
 const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState("overview")

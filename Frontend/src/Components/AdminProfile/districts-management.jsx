@@ -2,6 +2,8 @@
 import React from "react"
 import { useState, useEffect } from "react"
 import { FaPlus, FaEdit, FaTrash, FaSearch } from "react-icons/fa"
+import "../AdminProfile/districts-management.css"
+import "../../App.css"
 
 const DistrictsManagement = () => {
   const [districts, setDistricts] = useState([])

@@ -2,6 +2,8 @@
 import React from "react"
 import { useState, useEffect } from "react"
 import { FaMapMarkerAlt, FaUsers, FaStar, FaEye, FaArrowUp, FaArrowDown, FaHotel, FaCar } from "react-icons/fa"
+import "../AdminProfile/dashboard-overview.css"
+import "../../App.css"
 
 const DashboardOverview = () => {
   const [stats, setStats] = useState({

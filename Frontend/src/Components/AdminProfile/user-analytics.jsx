@@ -8,6 +8,8 @@ import {
   FaCalendarAlt,
   FaFilter,
 } from "react-icons/fa";
+import "../AdminProfile/user-analytics.css";
+import "../../App.css";
 
 const UserAnalytics = () => {
   const [analyticsData, setAnalyticsData] = useState(null);

@@ -1,6 +1,6 @@
-"use client"
-import React from "react"
-import { useState } from "react"
+"use client";
+import React from "react";
+import { useState } from "react";
 import {
   FaHome,
   FaMapMarkerAlt,
@@ -13,10 +13,12 @@ import {
   FaChartLine,
   FaHotel,
   FaCar,
-} from "react-icons/fa"
+} from "react-icons/fa";
+import "../AdminProfile/admin-sidebar.css";
+import "../../App.css";
 
 const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
-  const [hoveredItem, setHoveredItem] = useState(null)
+  const [hoveredItem, setHoveredItem] = useState(null);
 
   const menuItems = [
     { id: "overview", label: "Dashboard", icon: <FaHome /> },
@@ -29,17 +31,16 @@ const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
     { id: "reviews", label: "Reviews", icon: <FaStar /> },
     { id: "blog", label: "Blog", icon: <FaBlog /> },
     { id: "settings", label: "Settings", icon: <FaCog /> },
-  ]
+  ];
 
   const handleLogout = () => {
     // Implement logout functionality
-    console.log("Logging out...")
-  }
+    console.log("Logging out...");
+  };
 
   return (
     <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""}`}>
-      <div className="sidebar-header">
-      </div>
+      <div className="sidebar-header"></div>
 
       <nav className="sidebar-nav">
         <ul>
@@ -55,7 +56,9 @@ const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
                 <span className="menu-icon">{item.icon}</span>
                 {!collapsed && <span className="menu-label">{item.label}</span>}
               </div>
-              {collapsed && hoveredItem === item.id && <div className="tooltip">{item.label}</div>}
+              {collapsed && hoveredItem === item.id && (
+                <div className="tooltip">{item.label}</div>
+              )}
             </li>
           ))}
         </ul>
@@ -70,7 +73,7 @@ const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
         </button>
       </div>
     </aside>
-  )
-}
+  );
+};
 
-export default AdminSidebar
+export default AdminSidebar;

@@ -2,6 +2,8 @@
 import React from "react";
 import { useState } from "react";
 import { FaBars, FaBell, FaSearch, FaUser } from "react-icons/fa";
+import "../AdminProfile/admin-header.css";
+import "../../App.css";
 
 const AdminHeader = ({ toggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);

@@ -14,6 +14,8 @@ import {
   FaCheck,
   FaExclamationTriangle,
 } from "react-icons/fa";
+import "../AdminProfile/settings-panel.css";
+import "../../App.css";
 
 const SettingsPanel = () => {
   const [activeTab, setActiveTab] = useState("general");
