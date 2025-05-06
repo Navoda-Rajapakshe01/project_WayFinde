@@ -7,17 +7,6 @@
   gap: 20px;
 }
 
-.admin-header .sidebar-toggle {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  color: #7f8c8d; /* Muted dark text */
-  padding: 5px;
-}
-.admin-header .sidebar-toggle:hover {
-  color: #2c3e50; /* Darker text */
-}
-
 .admin-header .search-container {
   position: relative;
   display: flex;

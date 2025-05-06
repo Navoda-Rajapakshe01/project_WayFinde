@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useState } from "react";
-import { FaBars, FaBell, FaSearch, FaUser } from "react-icons/fa";
+import {  FaBell, FaSearch, FaUser } from "react-icons/fa";
 import "../AdminProfile/admin-header.css";
 import "../../App.css";
 
@@ -30,9 +30,6 @@ const AdminHeader = ({ toggleSidebar }) => {
   return (
     <header className="admin-header">
       <div className="header-left">
-        <button className="sidebar-toggle" onClick={toggleSidebar}>
-          <FaBars />
-        </button>
         <div className="search-container">
           <FaSearch className="search-icon" />
           <input type="text" placeholder="Search..." className="search-input" />

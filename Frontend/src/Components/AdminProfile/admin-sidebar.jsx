@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   FaHome,
   FaMapMarkerAlt,
@@ -17,7 +16,7 @@ import {
 import "../AdminProfile/admin-sidebar.css";
 import "../../App.css";
 
-const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
+const AdminSidebar = ({ activeSection, setActiveSection }) => {
   const [hoveredItem, setHoveredItem] = useState(null);
 
   const menuItems = [
@@ -34,12 +33,11 @@ const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
   ];
 
   const handleLogout = () => {
-    // Implement logout functionality
     console.log("Logging out...");
   };
 
   return (
-    <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""}`}>
+    <aside className="admin-sidebar">
       <div className="sidebar-header"></div>
 
       <nav className="sidebar-nav">
@@ -54,9 +52,9 @@ const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
             >
               <div className="menu-item">
                 <span className="menu-icon">{item.icon}</span>
-                {!collapsed && <span className="menu-label">{item.label}</span>}
+                <span className="menu-label">{item.label}</span>
               </div>
-              {collapsed && hoveredItem === item.id && (
+              {hoveredItem === item.id && (
                 <div className="tooltip">{item.label}</div>
               )}
             </li>
@@ -69,7 +67,7 @@ const AdminSidebar = ({ activeSection, setActiveSection, collapsed }) => {
           <span className="menu-icon">
             <FaSignOutAlt />
           </span>
-          {!collapsed && <span className="menu-label">Logout</span>}
+          <span className="menu-label">Logout</span>
         </button>
       </div>
     </aside>

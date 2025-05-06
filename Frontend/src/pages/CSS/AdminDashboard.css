@@ -33,42 +33,18 @@ img {
   min-height: 100vh;
 }
 
-.admin-sidebar {
-  width: 260px; 
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100vh;
-  background-color: #2c3e50; 
-  color: var(--text-muted); 
-  transition: width var(--transition);
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow);
-  border-right: 1px solid var(--border-color); /* Use user's border for dark bg element */
-}
-
-.admin-sidebar.collapsed {
-  width: 80px; /* Hardcoded layout */
-}
-
 .admin-main {
   flex-grow: 1;
-  margin-left: 260px; /* Hardcoded layout */
+  margin-left: 260px; 
   display: flex;
   flex-direction: column;
   transition: margin-left var(--transition);
 }
 
-.admin-dashboard.sidebar-collapsed .admin-main {
-  margin-left: 80px; /* Hardcoded layout */
-}
-
 .admin-header {
-  height: 65px; /* Hardcoded layout */
-  background-color: #ffffff; /* Default white background for header */
-  border-bottom: 1px solid #e0e0e0; /* Light border for light bg */
+  height: 65px;
+  background-color: #ffffff; 
+  border-bottom: 1px solid #e0e0e0; 
   padding: 0 25px;
   display: flex;
   align-items: center;
@@ -522,9 +498,6 @@ button:disabled {
   }
   .admin-sidebar .menu-item {
       justify-content: center;
-  }
-  .admin-dashboard.sidebar-collapsed .admin-main {
-      margin-left: 80px; /* Keep collapsed width */
   }
 }
 
