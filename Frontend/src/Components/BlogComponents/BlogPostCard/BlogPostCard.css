@@ -1,29 +1,107 @@
 .blog-post-card {
-  width: 100%;
-  max-width: 300px;
-  border: 1px solid #ddd;
+  background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 10px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08); 
   overflow: hidden;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column; 
 }
 
-.blog-post-card img {
+.blog-post-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+}
+
+.blog-card-image-wrapper {
   width: 100%;
-  height: 200px;
+  height: 220px; 
+  overflow: hidden;
+  position: relative; 
+}
+
+.blog-card-image {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.4s ease;
 }
 
-.blog-post-card .blog-post-info {
-  padding: 15px;
+.blog-post-card:hover .blog-card-image {
+  transform: scale(1.07);
 }
 
-.blog-post-card h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+.blog-card-category-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background-color: var(--primary-color, #14B9D5);
+  color: #ffffff;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  z-index: 1; 
 }
 
-.blog-post-card p {
-  font-size: 1rem;
-  color: #555;
+.blog-card-content {
+  padding: 20px 25px; 
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+}
+
+.blog-card-title {
+  font-size: 1.35rem;
+  font-weight: 700; 
+  color: var(--text-heading-color, #2c3e50);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.blog-card-metadata {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 15px; 
+  font-size: 0.8rem;
+  color: var(--text-muted, #718096);
+  margin-bottom: 15px;
+}
+
+.blog-card-metadata .meta-item {
+  display: flex;
+  align-items: center;
+}
+
+.blog-card-metadata .meta-item svg {
+  margin-right: 6px;
+  font-size: 0.9em;
+}
+
+.blog-card-excerpt {
+  font-size: 0.95rem;
+  color: var(--text-body-color, #555);
+  line-height: 1.65;
+  margin-bottom: 20px;
+  flex-grow: 1; 
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: calc(1.65em * 3); 
+}
+
+.blog-card-read-more {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--primary-color, #14B9D5);
+  text-align: right; 
+  margin-top: auto; 
+  padding-top: 10px; 
+  transition: color 0.3s ease;
 }

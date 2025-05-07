@@ -1,80 +1,117 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
-import BlogPostCard from "../BlogPostCard/BlogPostCard"; // Import the BlogPostCard component
+import { useNavigate } from "react-router-dom";
+import BlogPostCard from "../BlogPostCard/BlogPostCard";
 import "./BlogPostSection.css";
+import "../../../App.css";
 
-const BlogPostSection = () => {
+const BlogPostSection = ({
+  title = "Latest Stories from Our Travelers",
+  subtitle = "Insights, tips, and adventures shared by our vibrant community.",
+  showViewAllButton = true,
+}) => {
   const [blogPosts, setBlogPosts] = useState([]);
-  const [visiblePosts, setVisiblePosts] = useState(4); // Number of posts to show initially
-  const navigate = useNavigate(); // Initialize useNavigate for navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch blog posts (simulated here with static data)
     const posts = [
       {
         id: 1,
-        title: "Post 1",
-        content: "This is the content of the first post.",
-        image: "https://via.placeholder.com/150",
-        updatedAt: "2023-10-01", // Add a timestamp or date field
+        title: "A Hiker's Paradise: Conquering the Peaks of Ella",
+        // content: "This is the content of the first post. It talks about the wonderful experience...",
+        excerpt:
+          "Discover the breathtaking trails and panoramic views that make Ella a must-visit for any hiking enthusiast.",
+        image:
+          "https://via.placeholder.com/400x250/87CEFA/FFFFFF?text=Hiking+in+Ella", // Use compelling, relevant images
+        author: "Alex P.",
+        date: "2023-10-15", // Format: YYYY-MM-DD for easier sorting
+        updatedAt: "2023-10-15",
+        category: "Adventure", // Optional
+        slug: "hikers-paradise-ella", // For URL
       },
       {
         id: 2,
-        title: "Post 2",
-        content: "This is the content of the second post.",
-        image: "https://via.placeholder.com/150",
-        updatedAt: "2023-10-05",
+        title: "Culinary Journey Through Sri Lanka's Coastal Towns",
+        excerpt:
+          "From fresh seafood to spicy curries, explore the rich flavors that define Sri Lankan coastal cuisine.",
+        image:
+          "https://via.placeholder.com/400x250/90EE90/FFFFFF?text=Sri+Lankan+Food",
+        author: "Maria S.",
+        date: "2023-10-12",
+        updatedAt: "2023-10-12",
+        category: "Food & Culture",
+        slug: "sri-lankan-coastal-cuisine",
       },
       {
         id: 3,
-        title: "Post 3",
-        content: "This is the content of the third post.",
-        image: "https://via.placeholder.com/150",
-        updatedAt: "2023-10-03",
+        title: "Unveiling the Secrets of Ancient Sigiriya",
+        excerpt:
+          "Step back in time and explore the history, art, and legends surrounding the magnificent Sigiriya rock fortress.",
+        image:
+          "https://via.placeholder.com/400x250/ADD8E6/FFFFFF?text=Sigiriya+Fortress",
+        author: "John D.",
+        date: "2023-10-10",
+        updatedAt: "2023-10-10",
+        category: "History",
+        slug: "secrets-of-sigiriya",
       },
       {
         id: 4,
-        title: "Post 4",
-        content: "This is the content of the fourth post.",
-        image: "https://via.placeholder.com/150",
-        updatedAt: "2023-10-07",
-      },
-      {
-        id: 5,
-        title: "Post 5",
-        content: "This is the content of the fifth post.",
-        image: "https://via.placeholder.com/150",
-        updatedAt: "2023-10-02",
+        title: "Top 5 Secluded Beaches for a Relaxing Getaway",
+        excerpt:
+          "Escape the crowds and find your own slice of paradise with our guide to Sri Lanka's most beautiful hidden beaches.",
+        image:
+          "https://via.placeholder.com/400x250/FFB6C1/FFFFFF?text=Secluded+Beaches",
+        author: "Sarah L.",
+        date: "2023-10-08",
+        updatedAt: "2023-10-08",
+        category: "Travel Tips",
+        slug: "top-secluded-beaches",
       },
     ];
 
-    // Sort posts by the `updatedAt` field in descending order (newest first)
     const sortedPosts = posts.sort(
       (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
     );
 
     setBlogPosts(sortedPosts);
   }, []);
+  const postsToShow = 3;
+  const displayedPosts = blogPosts.slice(0, postsToShow);
 
-  // Function to handle "See More" button click
-  const handleSeeMoreClick = () => {
-    navigate("/Blog"); // Redirect to the blog posts page
-  };
+  if (displayedPosts.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="blog-post-section">
-      <h2>Blog Posts</h2>
-      <div className="blog-posts">
-        {blogPosts.slice(0, visiblePosts).map((post) => (
-          <BlogPostCard key={post.id} {...post} />
-        ))}
+    <section className="blog-section section-padding">
+      <div className="container">
+        <div className="homesection-header text-center">
+          <h2 className="homesection-title">{title}</h2>
+          {subtitle && <p className="homesection-subtitle">{subtitle}</p>}
+        </div>
+
+        <div className="blog-posts-grid">
+          {displayedPosts.map((post) => (
+            <BlogPostCard
+              key={post.id}
+              title={post.title}
+              excerpt={post.excerpt}
+              image={post.image}
+              author={post.author}
+              date={post.date}
+              category={post.category}
+              slug={post.slug}
+            />
+          ))}
+        </div>
+
+        {showViewAllButton && blogPosts.length > postsToShow && (
+          <div className="view-all-container text-center">
+          <a href="/blog" className="homebtn homebtn-outline">Read More Blogs</a>
       </div>
-      {visiblePosts < blogPosts.length && (
-        <button className="see-more" onClick={handleSeeMoreClick}>
-          See More
-        </button>
-      )}
-    </div>
+        )}
+      </div>
+    </section>
   );
 };
 

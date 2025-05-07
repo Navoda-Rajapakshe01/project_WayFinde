@@ -84,7 +84,7 @@ img {
 button {
   cursor: pointer;
   border: none;
-  border-radius: 6px; /* Hardcoded style */
+  border-radius: 6px; 
   padding: 10px 18px;
   font-size: 0.95rem;
   font-weight: 500;
