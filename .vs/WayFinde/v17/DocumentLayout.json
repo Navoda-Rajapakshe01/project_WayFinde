@@ -3,18 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\ACER\\Desktop\\WayFinde\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\ThingstodoCategories\\Categories.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frontend\\src\\Components\\ThingsToDo\\ThingstodoCategories\\Categories.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\Blogs\\Blogs.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frontend\\src\\Components\\ThingsToDo\\Blogs\\Blogs.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\BestLocations\\BestLocations.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frontend\\src\\Components\\ThingsToDo\\BestLocations\\BestLocations.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\App.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Frontend\\src\\App.jsx||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
     },
@@ -30,63 +18,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Blogs.jsx",
-              "DocumentMoniker": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\Blogs\\Blogs.jsx",
-              "RelativeDocumentMoniker": "Frontend\\src\\Components\\ThingsToDo\\Blogs\\Blogs.jsx",
-              "ToolTip": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\Blogs\\Blogs.jsx",
-              "RelativeToolTip": "Frontend\\src\\Components\\ThingsToDo\\Blogs\\Blogs.jsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2025-04-20T05:23:19.267Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "BestLocations.jsx",
-              "DocumentMoniker": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\BestLocations\\BestLocations.jsx",
-              "RelativeDocumentMoniker": "Frontend\\src\\Components\\ThingsToDo\\BestLocations\\BestLocations.jsx",
-              "ToolTip": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\BestLocations\\BestLocations.jsx*",
-              "RelativeToolTip": "Frontend\\src\\Components\\ThingsToDo\\BestLocations\\BestLocations.jsx*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2025-04-20T05:22:28.175Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "App.jsx",
               "DocumentMoniker": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\App.jsx",
               "RelativeDocumentMoniker": "Frontend\\src\\App.jsx",
               "ToolTip": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\App.jsx",
               "RelativeToolTip": "Frontend\\src\\App.jsx",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
               "WhenOpened": "2025-04-20T05:19:40.441Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Categories.jsx",
-              "DocumentMoniker": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\ThingstodoCategories\\Categories.jsx",
-              "RelativeDocumentMoniker": "Frontend\\src\\Components\\ThingsToDo\\ThingstodoCategories\\Categories.jsx",
-              "ToolTip": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\Components\\ThingsToDo\\ThingstodoCategories\\Categories.jsx",
-              "RelativeToolTip": "Frontend\\src\\Components\\ThingsToDo\\ThingstodoCategories\\Categories.jsx",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2025-04-20T05:19:09.426Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "ThingsToDo.jsx",
               "DocumentMoniker": "C:\\Users\\ACER\\Desktop\\WayFinde\\Frontend\\src\\pages\\Thingstodo\\ThingsToDo.jsx",
               "RelativeDocumentMoniker": "Frontend\\src\\pages\\Thingstodo\\ThingsToDo.jsx",
@@ -94,8 +43,7 @@
               "RelativeToolTip": "Frontend\\src\\pages\\Thingstodo\\ThingsToDo.jsx",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAD4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003663|",
-              "WhenOpened": "2025-04-08T09:24:32.997Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T09:24:32.997Z"
             }
           ]
         }
