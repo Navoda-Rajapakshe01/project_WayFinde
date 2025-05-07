@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import './DashboardSaves.css';
-import SavesComment from '../SavesComment/SavesComment'; // Import the SavesComment component
+import SavesComment from '../SavesComment/SavesComment';
+import ToDoShow from '../To-DoShow/To-DoShow';
+import BudgetShow from '../BudgetShow/BudgetShow';
 
 function DashboardSaves() {
   const [hotelComments, setHotelComments] = useState([]);
   const [vehicleComments, setVehicleComments] = useState([]);
+  const [showTodoPopup, setShowTodoPopup] = useState(false);
+  const [showBudgetPopup, setShowBudgetPopup] = useState(false);
 
   return (
     <div className="dashboard-saves-container">
@@ -20,12 +24,12 @@ function DashboardSaves() {
               <span>★★★★☆</span>
               <span>84</span>
             </div>
-
+            
             {/* Use the SavesComment component for hotel comments */}
-            <SavesComment 
-              section="hotel" 
-              comments={hotelComments} 
-              setComments={setHotelComments} 
+            <SavesComment
+              section="hotel"
+              comments={hotelComments}
+              setComments={setHotelComments}
             />
           </div>
         </div>
@@ -43,35 +47,57 @@ function DashboardSaves() {
               <span>3 Seats</span>
               <span>2 Bags</span>
             </div>
-
+            
             {/* Use the SavesComment component for vehicle comments */}
-            <SavesComment 
-              section="vehicle" 
-              comments={vehicleComments} 
-              setComments={setVehicleComments} 
+            <SavesComment
+              section="vehicle"
+              comments={vehicleComments}
+              setComments={setVehicleComments}
             />
           </div>
         </div>
       </div>
 
-      {/* Other Sections */}
+      {/* To-Do List Section */}
       <div className="saves-section">
         <h2>To-Do List</h2>
         <div className="to-do-card">
-          <p>Display the to-do list for the trip, outlining all tasks that need to be completed before and during the journey.
-            <button className="arrow-button">&gt;</button>
+          <p>
+            Display the to-do list for the trip, outlining all tasks that need to be completed before and during the journey.
+            <button
+              className="arrow-button"
+              onClick={() => setShowTodoPopup(true)}
+            >
+              &gt;
+            </button>
           </p>
         </div>
       </div>
 
+      {/* Budget Section */}
       <div className="saves-section">
         <h2>Travel Budget</h2>
         <div className="budget-card">
-          <p>Show the travel budget list, detailing all the expected expenses to ensure proper financial planning for trip. 
-            <button className="arrow-button">&gt;</button>
+          <p>
+            Show the travel budget list, detailing all the expected expenses to ensure proper financial planning for trip.
+            <button
+              className="arrow-button"
+              onClick={() => setShowBudgetPopup(true)}
+            >
+              &gt;
+            </button>
           </p>
         </div>
       </div>
+
+      {/* Conditionally render popups */}
+      {showTodoPopup && (
+        <ToDoShow onClose={() => setShowTodoPopup(false)} />
+      )}
+      
+      {showBudgetPopup && (
+        <BudgetShow onClose={() => setShowBudgetPopup(false)} />
+      )}
     </div>
   );
 }
