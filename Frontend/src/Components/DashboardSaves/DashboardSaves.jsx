@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './DashboardSaves.css';
+import SavesComment from '../SavesComment/SavesComment'; // Import the SavesComment component
 
 function DashboardSaves() {
+  const [hotelComments, setHotelComments] = useState([]);
+  const [vehicleComments, setVehicleComments] = useState([]);
+
   return (
     <div className="dashboard-saves-container">
+      {/* Hotel Section */}
       <div className="saves-section">
         <h2>Places to stay</h2>
         <div className="saves-card">
@@ -15,12 +20,18 @@ function DashboardSaves() {
               <span>★★★★☆</span>
               <span>84</span>
             </div>
-            <input type="text" placeholder="add a comment..." />
+
+            {/* Use the SavesComment component for hotel comments */}
+            <SavesComment 
+              section="hotel" 
+              comments={hotelComments} 
+              setComments={setHotelComments} 
+            />
           </div>
         </div>
       </div>
 
-      
+      {/* Vehicle Section */}
       <div className="saves-section">
         <h2>Vehicle Rent</h2>
         <div className="saves-card">
@@ -32,24 +43,33 @@ function DashboardSaves() {
               <span>3 Seats</span>
               <span>2 Bags</span>
             </div>
-           
-            <input type="text" placeholder="add a comment..." />
-            
+
+            {/* Use the SavesComment component for vehicle comments */}
+            <SavesComment 
+              section="vehicle" 
+              comments={vehicleComments} 
+              setComments={setVehicleComments} 
+            />
           </div>
         </div>
       </div>
 
+      {/* Other Sections */}
       <div className="saves-section">
-        <h2>To - Do List</h2>
+        <h2>To-Do List</h2>
         <div className="to-do-card">
-          <p>Display the to-do list for the trip, outlining all tasks that need to be completed before and during the journey.<button className="arrow-button">&gt;</button></p>
+          <p>Display the to-do list for the trip, outlining all tasks that need to be completed before and during the journey.
+            <button className="arrow-button">&gt;</button>
+          </p>
         </div>
       </div>
 
       <div className="saves-section">
         <h2>Travel Budget</h2>
         <div className="budget-card">
-          <p>Show the travel budget list, detailing all the expected expenses to ensure proper financial planning for trip. <button className="arrow-button">&gt;</button></p>
+          <p>Show the travel budget list, detailing all the expected expenses to ensure proper financial planning for trip. 
+            <button className="arrow-button">&gt;</button>
+          </p>
         </div>
       </div>
     </div>

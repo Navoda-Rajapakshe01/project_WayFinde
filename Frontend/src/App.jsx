@@ -1,5 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+
+import Home from "./pages/Home";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
@@ -7,16 +10,14 @@ import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Footer from "./Components/Footer/Footer";
 import Accommodation from "./pages/Accommodation";
-import Blog from "./pages/Blog";
-import Following from "./pages/Following";
-import Followers from "./pages/Follwers";
-import Home from "./pages/Home";
+import Blog from "./pages/Blogs/Blog";
+import Following from "./pages/Profile/Following";
+import Followers from "./pages/Profile/Follwers";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import Vehicle from "./pages/Vehicle";
-import Chat from "./pages/Chat";
-import Logout from "./pages/Logout";
+import Chat from "./pages/Profile/Chat";
 import PaymentGateway from "./pages/PaymentGateway";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import Profile from "./pages/Profile/Profile";

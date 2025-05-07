@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../CSS/DistrictDetails.css";
-import "../../App.css"; 
+import "../../App.css";
 import Categories from "../../Components/ThingsToDo/Categories";
 
 const DistrictDetails = () => {
   const { slug } = useParams(); // Get district slug
   const navigate = useNavigate(); // Hook for navigation
   const [places, setPlaces] = useState([]);
+  const [filteredPlaces, setFilteredPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -20,6 +21,7 @@ const DistrictDetails = () => {
         .get(`http://localhost:5030/api/places/by-district-name/${slug}`)
         .then((res) => {
           setPlaces(res.data);
+          setFilteredPlaces(res.data); // Show all by default
           setLoading(false);
         })
         .catch((err) => {
@@ -28,6 +30,8 @@ const DistrictDetails = () => {
           setLoading(false);
         });
     }
+
+    window.scrollTo(0, 0);
   }, [slug]);
 
   // Handle navigation to detailed page of the place
@@ -46,7 +50,7 @@ const DistrictDetails = () => {
 
       {/* Categories Component */}
       <div className="categories-wrapper">
-        <Categories />
+        <Categories places={places} setFilteredPlaces={setFilteredPlaces} />
       </div>
 
       {/* Loading State */}
@@ -61,7 +65,10 @@ const DistrictDetails = () => {
       {error && !loading && (
         <div className="error-container">
           <p>{error}</p>
-          <button onClick={() => window.location.reload()} className="retry-button">
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
             Try Again
           </button>
         </div>
@@ -70,8 +77,8 @@ const DistrictDetails = () => {
       {/* Places Grid */}
       {!loading && !error && (
         <div className="places-grid">
-          {places.length ? (
-            places.map((place) => (
+          {filteredPlaces.length ? (
+            filteredPlaces.map((place) => (
               <div
                 key={place.id}
                 className="place-card"
@@ -83,17 +90,16 @@ const DistrictDetails = () => {
                     alt={place.name}
                     className="place-image"
                   />
-                  {place.category && <span className="place-category">{place.category}</span>}
+                  {place.category && (
+                    <span className="place-category">{place.category}</span>
+                  )}
                 </div>
                 <div className="place-info">
                   <h3 className="place-name">{place.name}</h3>
-                  {place.shortDescription && (
-                    <p className="place-description">{place.shortDescription}</p>
-                  )}
                   <button
                     className="view-details-btn"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent triggering card click
+                      e.stopPropagation();
                       handleCardClick(place.id);
                     }}
                   >
@@ -103,7 +109,7 @@ const DistrictDetails = () => {
               </div>
             ))
           ) : (
-            <p className="no-places">No places available for this district.</p>
+            <p className="no-places">No places available for this category.</p>
           )}
         </div>
       )}

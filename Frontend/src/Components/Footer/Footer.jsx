@@ -1,4 +1,4 @@
-
+import React from "react";
 import "./Footer.css"; // Add styles for the footer
 import {
   Facebook,

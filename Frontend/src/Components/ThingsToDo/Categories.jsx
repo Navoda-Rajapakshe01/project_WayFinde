@@ -1,47 +1,112 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUtensils, faCompass, faTheaterMasks, faLeaf, faShoppingBag, faHeart } from '@fortawesome/free-solid-svg-icons';
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faPaw,
+  faCompass,
+  faTheaterMasks,
+  faLeaf,
+  faHiking,
+  faGlobe,
+  faUmbrellaBeach,
+} from "@fortawesome/free-solid-svg-icons";
 import "./Categories.css";
 
-const Categories = () => {
+const Categories = ({ places, setFilteredPlaces }) => {
+  const [selectedCategory, setSelectedCategory] = useState("All Places");
+
+  const categoryMapping = {
+    Wildlife: 1,
+    Historical: 2,
+    Nature: 3,
+    Adventure: 4,
+  };
+
+  const handleFilter = (categoryName) => {
+    setSelectedCategory(categoryName);
+
+    if (categoryName === "All Places") {
+      setFilteredPlaces(places); // Show all
+    } else {
+      const selectedCategoryId = categoryMapping[categoryName];
+      const filtered = places.filter(
+        (place) => Number(place.categoryId) === selectedCategoryId
+      );
+      setFilteredPlaces(filtered);
+    }
+  };
+
   return (
-    <div className='categories-container'>
+    <div className="categories-container">
       <div className="category-section">
         <div className="categories">
-          <div className="category">
+          <div
+            className={`category ${
+              selectedCategory === "All Places" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("All Places")}
+          >
             <div className="icon-container">
-              <FontAwesomeIcon icon={faUtensils} size="2x" />
+              <FontAwesomeIcon icon={faGlobe} size="2x" />
+            </div>
+            <p>All Places</p>
+          </div>
+          <div
+            className={`category ${
+              selectedCategory === "Wildlife" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Wildlife")}
+          >
+            <div className="icon-container">
+              <FontAwesomeIcon icon={faPaw} size="2x" />
             </div>
             <p>Wildlife</p>
           </div>
-          <div className="category">
-            <div className="icon-container">
-              <FontAwesomeIcon icon={faCompass} size="2x" />
-            </div>
-            <p>Adventure</p>
-          </div>
-          <div className="category">
+          <div
+            className={`category ${
+              selectedCategory === "Historical" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Historical")}
+          >
             <div className="icon-container">
               <FontAwesomeIcon icon={faTheaterMasks} size="2x" />
             </div>
-            <p>Historical</p>
+            <p>
+              Historical & <br />
+              Religious
+            </p>
           </div>
-          <div className="category">
+          <div
+            className={`category ${
+              selectedCategory === "Nature" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Nature")}
+          >
             <div className="icon-container">
               <FontAwesomeIcon icon={faLeaf} size="2x" />
             </div>
-            <p>Nature & <br />Scenic</p>
+            <p>
+              Nature & <br />
+              Scenic
+            </p>
           </div>
-          <div className="category">
+          <div
+            className={`category ${
+              selectedCategory === "Adventure" ? "active" : ""
+            }`}
+            onClick={() => handleFilter("Adventure")}
+          >
             <div className="icon-container">
-              <FontAwesomeIcon icon={faShoppingBag} size="2x" />
+              <FontAwesomeIcon icon={faHiking} size="2x" />
             </div>
-            <p>Activities & <br />Experiences</p>
+            <p>
+              Adventure & <br />
+              Activities
+            </p>
           </div>
         </div>
       </div>
-      </div>
+    </div>
   );
-}
+};
 
 export default Categories;
