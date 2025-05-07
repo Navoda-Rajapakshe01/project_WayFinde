@@ -103,7 +103,8 @@ button:disabled {
 .add-button,
 .save-button {
   background-color: var(--primary-color);
-  color: #ffffff; /* Assuming primary needs light text */
+  color: #ffffff;
+  border-radius: 10px;
 }
 .add-button:hover,
 .save-button:hover {
