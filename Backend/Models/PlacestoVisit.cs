@@ -1,5 +1,7 @@
 using Backend.Models;
+using Microsoft.EntityFrameworkCore;
 
+[Index(nameof(Name), nameof(DistrictId), IsUnique = true)]
 public class PlacesToVisit
 {
     public int Id { get; set; }

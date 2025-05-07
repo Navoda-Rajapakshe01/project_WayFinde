@@ -3,35 +3,41 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {
-  FaPlus,
-  FaEdit,
-  FaTrash,
-  FaSearch,
-  FaFilter,
-  FaImage,
-} from "react-icons/fa";
-import "./places-management.css"; // New CSS file for this component
-import "../../App.css"; // Assuming this holds global styles and CSS variables
+import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter } from "react-icons/fa";
+import "./places-management.css";
+import "../../App.css";
 
 const PlacesManagement = () => {
   const [places, setPlaces] = useState([]);
   const [districts, setDistricts] = useState([]);
+  const [categories, setCategories] = useState([]); // For categories
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
+  // Modal states
+  const [showModal, setShowModal] = useState(false);
+  const [newPlaceName, setNewPlaceName] = useState("");
+  const [newPlaceDescription, setNewPlaceDescription] = useState("");
+  const [newPlaceHistory, setNewPlaceHistory] = useState("");
+  const [newPlaceMainImageUrl, setNewPlaceMainImageUrl] = useState("");
+  const [newPlaceOpeningHours, setNewPlaceOpeningHours] = useState("");
+  const [newPlaceAddress, setNewPlaceAddress] = useState("");
+  const [newPlaceGoogleMapLink, setNewPlaceGoogleMapLink] = useState("");
+  const [newPlaceCategoryId, setNewPlaceCategoryId] = useState("");
+  const [formErrors, setFormErrors] = useState({});
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // Fetch districts first or in parallel
         await fetchDistricts();
+        await fetchCategories();
         await fetchPlaces();
       } catch (error) {
         console.error("Error loading initial data:", error);
-        // Potentially set an error state here to show to the user
       }
       setIsLoading(false);
     };
@@ -44,7 +50,19 @@ const PlacesManagement = () => {
       setDistricts(response.data);
     } catch (err) {
       console.error("Error fetching districts:", err);
-      // Optionally, set an error message for districts
+      Swal.fire("Error", "Failed to load districts.", "error");
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5030/api/places/categories"
+      );
+      setCategories(response.data);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+      Swal.fire("Error", "Failed to load categories.", "error");
     }
   };
 
@@ -54,7 +72,7 @@ const PlacesManagement = () => {
       setPlaces(response.data);
     } catch (err) {
       console.error("Error fetching places:", err);
-      // Optionally, set an error message for places
+      Swal.fire("Error", "Failed to load places.", "error");
     }
   };
 
@@ -83,9 +101,84 @@ const PlacesManagement = () => {
         });
       } catch (err) {
         console.error("Delete failed:", err);
-        Swal.fire("Error!", "Failed to delete the place.", "error");
+        Swal.fire("Error", "Failed to delete the place.", "error");
       }
     }
+  };
+
+  const handleAddPlace = async (e) => {
+    e.preventDefault();
+
+    // Reset form errors before validation
+    setFormErrors({});
+
+    let errors = {};
+
+    // Validate form fields
+    if (!newPlaceName) errors.name = "Name is required.";
+    if (!newPlaceMainImageUrl)
+      errors.mainImageUrl = "Main Image URL is required.";
+    if (!newPlaceDescription) errors.description = "Description is required.";
+    if (!newPlaceCategoryId) errors.categoryId = "Category is required.";
+
+    // Check if any errors exist
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    // Check for duplicate places (e.g., same name)
+    const isDuplicate = places.some(
+      (place) => place.name.toLowerCase() === newPlaceName.toLowerCase()
+    );
+
+    if (isDuplicate) {
+      Swal.fire(
+        "Duplicate",
+        "A place with this name already exists.",
+        "warning"
+      );
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5030/api/places", {
+        name: newPlaceName,
+        description: newPlaceDescription,
+        history: newPlaceHistory,
+        mainImageUrl: newPlaceMainImageUrl,
+        openingHours: newPlaceOpeningHours,
+        address: newPlaceAddress,
+        googleMapLink: newPlaceGoogleMapLink,
+        categoryId: newPlaceCategoryId,
+        districtId: selectedDistrict,
+      });
+
+      setPlaces([...places, response.data]);
+      setShowModal(false);
+      clearForm();
+      Swal.fire("Success", "Place added successfully!", "success");
+    } catch (error) {
+      console.error("Error adding place:", error);
+      Swal.fire(
+        "Error",
+        "Failed to add place. Please try again later.",
+        "error"
+      );
+    }
+  };
+
+  const clearForm = () => {
+    setNewPlaceName("");
+    setNewPlaceDescription("");
+    setNewPlaceHistory("");
+    setNewPlaceMainImageUrl("");
+    setNewPlaceOpeningHours("");
+    setNewPlaceAddress("");
+    setNewPlaceGoogleMapLink("");
+    setNewPlaceCategoryId("");
+    setSelectedDistrict("");
+    setFormErrors({});
   };
 
   const filteredPlaces = places
@@ -107,10 +200,7 @@ const PlacesManagement = () => {
     <div className="places-management">
       <div className="adminsection-header">
         <h1 className="page-title">Places Management</h1>
-        <button
-          className="add-button"
-          onClick={() => navigate("/admin/place/add")}
-        >
+        <button className="add-button" onClick={() => setShowModal(true)}>
           <FaPlus /> Add New Place
         </button>
       </div>
@@ -177,6 +267,140 @@ const PlacesManagement = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">Add New Place</h2>
+
+            <form onSubmit={handleAddPlace}>
+              <div className="form-group">
+                <select
+                  className="form-select"
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  required
+                >
+                  <option value="">Select District</option>
+                  {districts.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}
+                    </option>
+                  ))}
+                </select>
+
+                <label>
+                  Name: <span className="required">*</span>
+                  <input
+                    type="text"
+                    value={newPlaceName}
+                    onChange={(e) => setNewPlaceName(e.target.value)}
+                    required
+                  />
+                  {formErrors.name && (
+                    <p className="error-text">{formErrors.name}</p>
+                  )}
+                </label>
+
+                <label>
+                  Description: <span className="required">*</span>
+                  <textarea
+                    value={newPlaceDescription}
+                    onChange={(e) => setNewPlaceDescription(e.target.value)}
+                    required
+                  />
+                  {formErrors.description && (
+                    <p className="error-text">{formErrors.description}</p>
+                  )}
+                </label>
+
+                <label>
+                  History:
+                  <textarea
+                    value={newPlaceHistory}
+                    onChange={(e) => setNewPlaceHistory(e.target.value)}
+                  />
+                </label>
+
+                <label>
+                  Main Image URL: <span className="required">*</span>
+                  <input
+                    type="text"
+                    value={newPlaceMainImageUrl}
+                    onChange={(e) => setNewPlaceMainImageUrl(e.target.value)}
+                    required
+                  />
+                  {formErrors.mainImageUrl && (
+                    <p className="error-text">{formErrors.mainImageUrl}</p>
+                  )}
+                </label>
+
+                <label>
+                  Opening Hours:
+                  <input
+                    type="text"
+                    value={newPlaceOpeningHours}
+                    onChange={(e) => setNewPlaceOpeningHours(e.target.value)}
+                  />
+                </label>
+
+                <label>
+                  Address:
+                  <input
+                    type="text"
+                    value={newPlaceAddress}
+                    onChange={(e) => setNewPlaceAddress(e.target.value)}
+                  />
+                </label>
+
+                <label>
+                  Google Map Link:
+                  <input
+                    type="text"
+                    value={newPlaceGoogleMapLink}
+                    onChange={(e) => setNewPlaceGoogleMapLink(e.target.value)}
+                  />
+                </label>
+
+                <label>
+                  Category: <span className="required">*</span>
+                  <select
+                    value={newPlaceCategoryId}
+                    onChange={(e) => setNewPlaceCategoryId(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option
+                        key={category.categoryId}
+                        value={category.categoryId}
+                      >
+                        {category.categoryName}
+                      </option>
+                    ))}
+                  </select>
+                  {formErrors.categoryId && (
+                    <p className="error-text">{formErrors.categoryId}</p>
+                  )}
+                </label>
+
+                <div className="modal-buttons">
+                  <button type="submit" className="save-button">
+                    Save
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="cancel-button"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
