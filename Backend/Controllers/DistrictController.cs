@@ -1,27 +1,38 @@
 using Microsoft.AspNetCore.Mvc;
+using Backend.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Backend.Models; 
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using Backend.Data; 
+using Backend.Data;
 
-
-[Route("api/[controller]")]
-[ApiController]
-public class DistrictController : ControllerBase
+namespace Backend.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public DistrictController(AppDbContext context)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class DistrictController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    // GET: api/districts
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<District>>> GetDistricts()
-    {
-        var districts = await _context.Districts.ToListAsync();
-        return Ok(districts); 
+        public DistrictController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDistrictsWithPlacesCount()
+        {
+            var result = await _context.Districts
+                .Select(d => new DistrictWithPlacesCountDTO
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    ImageUrl = d.ImageUrl,
+                    Slug = d.Slug,
+                    PlacesCount = _context.PlacesToVisit.Count(p => p.DistrictId == d.Id)  // Get count of places directly
+                })
+                .ToListAsync();
+
+            return Ok(result);
+        }
     }
 }

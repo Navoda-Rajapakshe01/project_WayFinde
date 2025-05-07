@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models;
+using Backend.DTOs;
 
 namespace Backend.Data
 {
@@ -7,33 +8,27 @@ namespace Backend.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        //vehicles
+        // Vehicles
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
-        //public DbSet<User> Users { get; set; }
 
-        //public DbSet<UserNew> UsersNew { get; set; }
-
-        
-        // DbSet for District
+        // Places & Districts
         public DbSet<District> Districts { get; set; }
-
-        // DbSet for PlaceToVisit
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
-
-        // DbSet for Category
         public DbSet<Category> Categories { get; set; }
 
-        // DbSet for TodoItem
+        // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
-        
+
+        // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
 
-        // DbSet for TravelBudget
-        public DbSet<TravelBudget> TravelBudgets { get; set; } 
-        //Accommodations
+        // Travel Budget
+        public DbSet<TravelBudget> TravelBudgets { get; set; }
+
+        // Accommodations
         public DbSet<Accommodation> Accommodations { get; set; }
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
@@ -43,18 +38,19 @@ namespace Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Vehicle Price Precision
+            // DistrictWithPlacesCountDTO is a keyless DTO
+            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+
+            // Precision for PricePerDay
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.PricePerDay)
                 .HasPrecision(18, 2);
 
-            // Accommodation Price Precision
             modelBuilder.Entity<Accommodation>()
                 .Property(a => a.PricePerDay)
                 .HasPrecision(18, 2);
 
-
-            // Seed sample vehicle data
+            // Seed Vehicles
             modelBuilder.Entity<Vehicle>().HasData(
                 new Vehicle
                 {
@@ -90,7 +86,7 @@ namespace Backend.Data
                 }
             );
 
-            // Seed sample accommodation data
+            // Seed Accommodations
             modelBuilder.Entity<Accommodation>().HasData(
                 new Accommodation
                 {
@@ -104,14 +100,14 @@ namespace Backend.Data
                     Location = "Thennekumbura",
                     OwnerName = "Earl's regency group",
                     OwnerCity = "Kandy",
-                    Description ="stay in free, make your day comforable",
+                    Description = "stay in free, make your day comfortable",
                     PricePerDay = 56900m,
                     IsAvailable = true
                 },
                 new Accommodation
                 {
                     Id = 2,
-                    Name = "Sajeew Paradaise",
+                    Name = "Sajeew Paradise",
                     Type = "Cabana suite",
                     NumberOfGuests = 8,
                     NumberOfBedRooms = 3,
@@ -125,15 +121,18 @@ namespace Backend.Data
                     IsAvailable = true
                 }
             );
+
+            // District
             modelBuilder.Entity<District>()
                 .Property(d => d.Name)
                 .IsRequired()
-                .HasMaxLength(100);  
+                .HasMaxLength(100);
 
             modelBuilder.Entity<District>()
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
+            // PlacesToVisit
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
@@ -141,37 +140,35 @@ namespace Backend.Data
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
-            
-            modelBuilder.Entity<PlacesToVisit>()
-            .HasOne(p => p.Category)
-            .WithMany() 
-            .HasForeignKey(p => p.CategoryId);
 
-            // TodoItem - TaskName and TaskDescription required
-            
+            modelBuilder.Entity<PlacesToVisit>()
+                .HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryId);
+
+            // TodoItem
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
                 .IsRequired()
-                .HasMaxLength(150); 
-           
+                .HasMaxLength(150);
+
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskStatus)
                 .IsRequired();
 
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.CreatedAt)
-                .HasDefaultValueSql("GETDATE()");  
+                .HasDefaultValueSql("GETDATE()");
 
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.UpdatedAt)
-                .HasDefaultValueSql("GETDATE()"); 
- 
-            // TravelBudget - ExpenseDescription and Amount required
-            
+                .HasDefaultValueSql("GETDATE()");
+
+            // TravelBudget
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Description)
                 .IsRequired()
-                .HasMaxLength(200);  
+                .HasMaxLength(200);
 
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Amount)
@@ -180,8 +177,6 @@ namespace Backend.Data
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
-
-            base.OnModelCreating(modelBuilder);
         }
     }
 }
