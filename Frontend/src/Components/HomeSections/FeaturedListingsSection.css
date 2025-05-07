@@ -1,0 +1,71 @@
+.listings-container {
+      display: grid;
+      grid-template-columns: 1fr; 
+      gap: 40px; 
+  }
+  
+  @media (min-width: 992px) { 
+      .listings-container {
+          grid-template-columns: 1fr 1fr;
+      }
+  }
+  
+  
+  .listing-category-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 25px;
+    color: #444;
+     border-bottom: 2px solid var(--primary-color, #14B9D5);
+     padding-bottom: 10px;
+     display: inline-block;
+  }
+  
+  .featured-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .featured-item-card-link {
+      text-decoration: none;
+      color: inherit;
+  }
+  
+  .featured-item-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .featured-item-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .featured-item-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .featured-item-content {
+    padding: 15px;
+  }
+  
+  .featured-item-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  
+  .featured-item-details {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .view-all-container {
+      margin-top: 30px;
+  }
+  

@@ -1,29 +1,59 @@
 .location-card {
+  background-color: #ffffff;
+  border-radius: 10px; 
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07); 
+  overflow: hidden; 
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column; 
+}
+
+.location-card:hover {
+  transform: translateY(-5px); 
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.location-card-image-wrapper {
   width: 100%;
-  max-width: 300px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin: 10px;
-  overflow: hidden;
+  height: 220px; 
+  overflow: hidden; 
 }
 
-.location-card img {
+.location-card-image {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
+  height: 100%;
+  object-fit: cover; 
+  transition: transform 0.4s ease-in-out; 
 }
 
-.location-card .location-info {
-  padding: 15px;
+.location-card:hover .location-card-image {
+  transform: scale(1.08); 
 }
 
-.location-card h3 {
-  font-size: 1.2rem;
+.location-card-content {
+  padding: 20px; 
+  flex-grow: 1; 
+  text-align: left; 
+}
+
+.location-card-name {
+  font-size: 1.3rem; 
+  font-weight: 600; 
+  color: var(--text-heading-color, #333); 
   margin-bottom: 10px;
+  line-height: 1.3;
 }
 
-.location-card p {
-  font-size: 1rem;
-  color: #555;
+.location-card-description {
+  font-size: 0.95rem; 
+  color: var(--text-body-color, #555); 
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; 
+  line-clamp: 2; 
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: calc(1.6em * 2); 
 }

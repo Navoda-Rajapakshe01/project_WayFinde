@@ -36,6 +36,7 @@ const ThingsToDo = () => {
         backgroundImage="https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"
         placeHolder="Search Your Destination Here..."
         color="black"
+        showSearchBar={true}
       />
 
       <div className="content-section">
