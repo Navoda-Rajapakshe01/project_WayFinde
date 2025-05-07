@@ -68,7 +68,7 @@ const ThingsToDo = () => {
                   key={district.id}
                   name={district.name}
                   image={district.imageUrl}
-                  districtId={district.id}
+                  PlacesCount={district.placesCount}
                 />
               ))
             ) : (

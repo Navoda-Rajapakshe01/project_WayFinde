@@ -1,10 +1,10 @@
 import MainNavbar from "../Components/MainNavbar/MainNavbar";
 import React from 'react';
-import DashboardText from '../Components/DashboardText/DashboardText';
-import DashboardImage from "../Components/DashboardImage/DashboardImage";
-import DashboardMap from "../Components/DashboardMap/DashboardMap";
-import TabNavigation from "../Components/TabNavigation/TabNavigation";
-import WeatherWidget from "../Components/WeatherWidget/WeatherWidget";
+import DashboardText from '../Components/TripDashboardComponents/DashboardText/DashboardText';
+import DashboardImage from "../Components/TripDashboardComponents/DashboardImage/DashboardImage";
+import DashboardMap from "../Components/TripDashboardComponents/DashboardMap/DashboardMap";
+import TabNavigation from "../Components/TripDashboardComponents/TabNavigation/TabNavigation";
+import WeatherWidget from "../Components/TripDashboardComponents/WeatherWidget/WeatherWidget";
 
 const TripDashboard = () => {
   return (
@@ -17,6 +17,7 @@ const TripDashboard = () => {
       <DashboardMap />
       <TabNavigation/>
       <WeatherWidget/>
+     
       
       
      

@@ -14,7 +14,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Register UserDbContext in the container
 builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 
 // Add Authentication with JWT Bearer
