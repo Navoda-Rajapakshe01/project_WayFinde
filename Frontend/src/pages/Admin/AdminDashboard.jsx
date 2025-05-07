@@ -5,7 +5,6 @@ import AdminSidebar from "../../Components/AdminProfile/admin-sidebar";
 import AdminHeader from "../../Components/AdminProfile/admin-header";
 import DashboardOverview from "../../Components/AdminProfile/dashboard-overview";
 import PlacesManagement from "../../Components/AdminProfile/places-management";
-import DistrictsManagement from "../../Components/AdminProfile/districts-management";
 import UsersManagement from "../../Components/AdminProfile/users-management";
 import UserAnalytics from "../../Components/AdminProfile/user-analytics";
 import AccommodationManagement from "../../Components/AdminProfile/accommodation-management";
@@ -68,7 +67,6 @@ const AdminDashboard = () => {
         <div className="admin-content">
           {activeSection === "overview" && <DashboardOverview />}
           {activeSection === "places" && <PlacesManagement />}
-          {activeSection === "districts" && <DistrictsManagement />}
           {activeSection === "users" && <UsersManagement />}
           {activeSection === "user-analytics" && <UserAnalytics />}
           {activeSection === "accommodation" && <AccommodationManagement />}

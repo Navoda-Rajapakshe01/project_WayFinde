@@ -22,7 +22,6 @@ const AdminSidebar = ({ activeSection, setActiveSection }) => {
   const menuItems = [
     { id: "overview", label: "Dashboard", icon: <FaHome /> },
     { id: "places", label: "Places", icon: <FaMapMarkerAlt /> },
-    { id: "districts", label: "Districts", icon: <FaCity /> },
     { id: "users", label: "Users", icon: <FaUsers /> },
     { id: "user-analytics", label: "User Analytics", icon: <FaChartLine /> },
     { id: "accommodation", label: "Accommodation", icon: <FaHotel /> },

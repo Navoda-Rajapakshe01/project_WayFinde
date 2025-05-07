@@ -19,6 +19,16 @@ namespace Backend.Controllers
             _context = context;
         }
 
+        
+
+        // GET: api/places
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetAllPlaces()
+        {
+            var places = await _context.PlacesToVisit.ToListAsync();
+            return Ok(places);
+        }
+        
         // GET: api/places/by-district-name/nuwara-eliya
         [HttpGet("by-district-name/{slug}")]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
@@ -40,7 +50,7 @@ namespace Backend.Controllers
         }
 
         // GET: api/places/2 - For getting details of a single place
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<PlacesToVisit>> GetPlaceDetails(int id)
 
         {
@@ -70,5 +80,24 @@ namespace Backend.Controllers
 
              return Ok(places);  
         }
+
+        // DELETE: api/places/5
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeletePlace(int id)
+        {
+            var place = await _context.PlacesToVisit.FindAsync(id);
+
+            if (place == null)
+        {
+            return NotFound("Place not found");
+        }
+
+        _context.PlacesToVisit.Remove(place);
+        await _context.SaveChangesAsync();
+
+        return Ok("Place deleted successfully");
+        }
+
+
     }
 }
