@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Models;
+using Backend.DTOs;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -66,6 +67,15 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
+        // GET: api/categories
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            return Ok(categories);
+        }
+
+
         [HttpGet("by-category/{categoryId}")]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByCategory(int categoryId)
         {
@@ -80,6 +90,54 @@ namespace Backend.Controllers
 
              return Ok(places);  
         }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPlace([FromBody] AddPlaceDTO dto)
+        {
+            // Check if a place with the same name already exists
+            var existingPlace = await _context.PlacesToVisit
+            .FirstOrDefaultAsync(p => 
+                p.Name.ToLower() == dto.Name.ToLower().Trim() &&
+                p.DistrictId == dto.DistrictId);
+
+        if (existingPlace != null)
+        {
+            return Conflict("A place with the same name already exists in this district.");
+        }
+
+            // Check related entities exist
+            var district = await _context.Districts.FindAsync(dto.DistrictId);
+            if (district == null) return BadRequest("District not found.");
+
+            var category = dto.CategoryId.HasValue 
+                ? await _context.Categories.FindAsync(dto.CategoryId.Value)
+                : null;
+
+            if (dto.CategoryId.HasValue && category == null)
+                return BadRequest("Category not found.");
+
+            // Create the new place
+            var place = new PlacesToVisit
+            {
+                Name = dto.Name,
+                MainImageUrl = dto.MainImageUrl,
+                Description = dto.Description,
+                History = dto.History,
+                OpeningHours = dto.OpeningHours,
+                Address = dto.Address,
+                GoogleMapLink = dto.GoogleMapLink,
+                DistrictId = dto.DistrictId,
+                District = district,
+                CategoryId = dto.CategoryId,
+                Category = category!
+            };
+
+            _context.PlacesToVisit.Add(place);
+            await _context.SaveChangesAsync();
+
+            return Ok(place);
+        }
+
 
         // DELETE: api/places/5
         [HttpDelete("{id:int}")]

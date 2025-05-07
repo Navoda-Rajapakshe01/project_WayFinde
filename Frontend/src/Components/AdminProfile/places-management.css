@@ -109,3 +109,114 @@
   box-shadow: var(--shadow);
   margin-top: 25px;
 }
+
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Modal content */
+.modal-content {
+  background: #fff;
+  padding: 30px;
+  max-width: 600px;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Animation for modal */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Form fields and labels */
+label {
+  font-size: 1rem;
+  margin: 8px 0;
+  display: block;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* Required fields */
+.required {
+  color: red;
+  font-size: 1.2rem;
+}
+
+/* Buttons */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-button {
+  background-color: #4CAF50;
+  color: #fff;
+}
+
+.save-button:hover {
+  background-color: #45a049;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.cancel-button:hover {
+  background-color: #e53935;
+}
+
+/* Add some padding and margins for form items */
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  margin-bottom: 20px;
+}
