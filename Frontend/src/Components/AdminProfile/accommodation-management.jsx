@@ -199,7 +199,7 @@ const AccommodationManagement = () => {
 
   return (
     <div className="accommodation-management">
-      <div className="section-header">
+      <div className="adminsection-header">
         <h1 className="page-title">Accommodation Management</h1>
         <button className="add-button" onClick={handleAddAccommodation}>
           <FaPlus /> Add New Accommodation

@@ -71,7 +71,7 @@ img {
 }
 
 /* --- Section Header (Title + Button) --- */
-.section-header {
+.adminsection-header {
   display: flex;
   justify-content: space-between;
   align-items: center;

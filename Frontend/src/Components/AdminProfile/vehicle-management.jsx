@@ -188,7 +188,7 @@ const VehicleManagement = () => {
 
   return (
     <div className="vehicle-management">
-      <div className="section-header">
+      <div className="adminsection-header">
         <h1 className="page-title">Vehicle Management</h1>
         <button className="add-button" onClick={handleAddVehicle}>
           <FaPlus /> Add New Vehicle

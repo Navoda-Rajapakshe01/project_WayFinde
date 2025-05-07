@@ -160,7 +160,7 @@ const SettingsPanel = () => {
 
   return (
     <div className="settings-panel">
-      <div className="section-header">
+      <div className="adminsection-header">
         <h1 className="page-title">Settings</h1>
         <div className="settings-actions">
           {renderSaveStatus()}

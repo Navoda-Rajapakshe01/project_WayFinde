@@ -150,7 +150,7 @@ const ReviewsManagement = () => {
 
   return (
     <div className="reviews-management">
-      <div className="section-header">
+      <div className="adminsection-header">
         <h1 className="page-title">Reviews Management</h1>
       </div>
 
