@@ -18,7 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // ➕ Add UserDbContext and connect to SQL Server
 builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
