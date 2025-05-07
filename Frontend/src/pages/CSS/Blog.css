@@ -1,0 +1,16 @@
+.showMoreButton{
+    padding-top: 10px;
+    margin-top: 10px;
+    padding: 0.75rem 1.5rem;
+    background-color: #19b9df; /* Primary – Sky Blue */
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    
+}
+.showMoreButton:hover{
+    background-color: #3aa69b; /* Hover Effects – Teal Green */
+}

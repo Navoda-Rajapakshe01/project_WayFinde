@@ -1,16 +1,20 @@
+import React from "react";
 import SearchBar from "../Searchbar/Searchbar";
 import "./HeroSection.css";
 
-const HeroSection = () => {
+const HeroSection = ({ title, subtitle, backgroundImage, placeHolder }) => {
   return (
     <>
-      <div className="hero">
+      <div
+        className="hero"
+        style={{ backgroundImage: `url(${backgroundImage})` }}>
         <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Discover. Explore. Experience. <br />
-          Your Perfect Journey Starts Here!
+          {title}
+          {/* Discover. Explore. Experience. <br />
+          Your Perfect Journey Starts Here! */}
         </h1>
-        <p className="text-lg mb-6">Plan your trips easily</p> <br />
-        <SearchBar />
+        <p className="text-lg mb-6">{subtitle}</p> <br />
+        <SearchBar placeHolder={placeHolder} />
       </div>
     </>
   );

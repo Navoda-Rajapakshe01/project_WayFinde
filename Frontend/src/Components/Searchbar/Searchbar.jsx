@@ -1,6 +1,7 @@
+import React from "react";
 import { useState } from "react";
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = ({ onSearch, placeHolder }) => {
   const [query, setQuery] = useState("");
 
   const handleChange = (e) => {
@@ -16,7 +17,7 @@ const SearchBar = ({ onSearch }) => {
         type="text"
         value={query}
         onChange={handleChange}
-        placeholder="Search here..."
+        placeholder={placeHolder}
         className="w-full p-4 text-lg border border-gray-300 rounded-full focus:outline-none focus:ring-4 focus:ring-blue-400 shadow-md"
       />
     </div>
