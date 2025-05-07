@@ -1,0 +1,111 @@
+.places-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 25px;
+}
+
+.place-card-item {
+  background-color: #ffffff;
+  border-radius: 8px; 
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.place-card-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); 
+}
+
+.place-card-image-container {
+  height: 200px;
+  background-color: #f0f0f0; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.place-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease-in-out;
+}
+.place-card-item:hover .place-card-image {
+    transform: scale(1.05);
+}
+
+
+.place-card-no-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #a0aec0; 
+  height: 100%;
+  width: 100%;
+}
+
+.place-card-no-image svg {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.place-card-no-image span {
+  font-size: 0.9rem;
+}
+
+
+.place-card-content {
+  padding: 18px 20px;
+  flex-grow: 1;
+}
+
+.place-card-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50; 
+  line-height: 1.3;
+}
+
+.place-card-district,
+.place-card-category { 
+  font-size: 0.9rem;
+  color: #718096; 
+  margin-bottom: 4px;
+}
+
+.place-card-actions {
+  padding: 12px 20px;
+  border-top: 1px solid #e0e0e0; 
+  background-color: #f8f9fa; 
+  display: flex;
+  justify-content: flex-end; 
+  gap: 10px; 
+}
+.place-card-actions .edit-button,
+.place-card-actions .delete-button {
+  padding: 8px 12px; 
+  font-size: 0.9rem; 
+}
+.place-card-actions .edit-button span,
+.place-card-actions .delete-button span {
+    margin-left: 6px;
+}
+
+
+.no-data-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #7f8c8d; 
+  font-size: 1.1rem;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  margin-top: 25px;
+}
