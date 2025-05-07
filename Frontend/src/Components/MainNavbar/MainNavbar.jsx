@@ -1,5 +1,4 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaBook,
   FaBus,
@@ -17,7 +16,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
 import { AuthContext } from "../Authentication/AuthContext/AuthContext";
-import "./MainNavbar.css";
+import "../MainNavbar/MainNavbar.css";
 
 const MainNavbar = () => {
   const location = useLocation();
@@ -26,14 +25,13 @@ const MainNavbar = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
 
-  const { user, logout } = useContext(AuthContext);
+  const { user, loading, logout } = useContext(AuthContext);
+
+  if (loading) return null; 
 
   const handleNavigation = (path) => navigate(path);
-
-  // Toggle profile popup
   const togglePopup = () => setIsOpen(!isOpen);
 
-  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -47,7 +45,6 @@ const MainNavbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // Update active tab on route change
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location]);
@@ -71,10 +68,8 @@ const MainNavbar = () => {
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  // Modal close handler
   const closeModal = () => setShowSignInModal(false);
 
-  // Modal option handler
   const handleSignInOption = (type) => {
     setShowSignInModal(false);
     if (type === "service") {
@@ -99,7 +94,9 @@ const MainNavbar = () => {
           {menuItems.map((item) => (
             <li
               key={item.name}
-              className={`navbar-item${activeTab === item.path ? " active" : ""}`}
+              className={`navbar-item${
+                activeTab === item.path ? " active" : ""
+              }`}
             >
               <Link to={item.path} className="navbar-link">
                 <span className="navbar-icon">{item.icon}</span>
@@ -115,7 +112,7 @@ const MainNavbar = () => {
             <div className="navbar-profile" onClick={togglePopup}>
               <div className="profile-wrapper">
                 <img
-                  src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                  src={user.profileImg || "/default-profile.png"}
                   alt="User Profile"
                   className="profile-img"
                 />
@@ -126,13 +123,13 @@ const MainNavbar = () => {
                 <div className="profile-popup">
                   <div className="popup-header">
                     <img
-                      src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                      src={user.profileImg || "/default-profile.png"}
                       alt="User Profile"
                       className="popup-profile-img"
                     />
                     <div className="popup-user-info">
-                      <h4>John Doe</h4>
-                      <p>john.doe@example.com</p>
+                      <h4>{user.name || "User"}</h4>
+                      <p>{user.email || "user@example.com"}</p>
                     </div>
                   </div>
 
@@ -160,21 +157,18 @@ const MainNavbar = () => {
               )}
             </div>
           ) : (
-            <div>
-              <button
-                onClick={() => setShowSignInModal(true)}
-              >
-                Sign In
-              </button>
-              {/* ...Sign Up button if needed... */}
+            <div className="auth-buttons">
+              <button onClick={() => setShowSignInModal(true)}>Sign In</button>
+              <button onClick={() => navigate("/signup")}>Sign Up</button>
             </div>
           )}
         </div>
       </div>
+
       {/* Sign In Modal */}
       {showSignInModal && (
         <div className="signin-modal-overlay" onClick={closeModal}>
-          <div className="signin-modal" onClick={e => e.stopPropagation()}>
+          <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
               <button
@@ -190,7 +184,9 @@ const MainNavbar = () => {
                 Service Provider
               </button>
             </div>
-            <button className="close-modal-btn" onClick={closeModal}>Close</button>
+            <button className="close-modal-btn" onClick={closeModal}>
+              Close
+            </button>
           </div>
         </div>
       )}

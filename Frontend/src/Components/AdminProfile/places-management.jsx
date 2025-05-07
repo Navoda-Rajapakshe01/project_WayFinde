@@ -198,7 +198,7 @@ const PlacesManagement = () => {
 
   return (
     <div className="places-management">
-      <div className="section-header">
+      <div className="adminsection-header">
         <h1 className="page-title">Places Management</h1>
         <button className="add-button" onClick={() => setShowModal(true)}>
           <FaPlus /> Add New Place

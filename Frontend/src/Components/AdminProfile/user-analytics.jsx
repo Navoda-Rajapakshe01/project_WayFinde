@@ -113,7 +113,7 @@ const UserAnalytics = () => {
 
   return (
     <div className="user-analytics">
-      <div className="section-header">
+      <div className="adminsection-header">
         <h1 className="page-title">User Analytics</h1>
         <div className="analytics-filters">
           <div className="filter-item">
