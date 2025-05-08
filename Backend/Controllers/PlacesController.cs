@@ -138,11 +138,14 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
-
-        // PUT: api/places/1
-        [HttpPut("{id:int}")]
+        // PATCH: api/places/5
+        [HttpPatch("{id:int}")]
         public async Task<IActionResult> UpdatePlace(int id, [FromBody] UpdatePlaceDTO dto)
         {
+            // Check if the DTO is valid
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             // Find the place by its ID
             var place = await _context.PlacesToVisit
                 .Where(p => p.Id == id)
@@ -189,11 +192,19 @@ namespace Backend.Controllers
             place.CategoryId = dto.CategoryId;
             place.Category = category;
 
-            // Save changes to the database
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while updating the place.");
+            }
 
             return Ok(place);
         }
+
 
 
         // DELETE: api/places/5

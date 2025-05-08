@@ -108,7 +108,7 @@ const EditPlace = () => {
     };
 
     try {
-      await axios.put(`http://localhost:5030/api/places/${id}`, payload);
+      await axios.patch(`http://localhost:5030/api/places/${id}`, payload);
       Swal.fire({
         title: "Success!",
         text: "Place updated successfully.",
