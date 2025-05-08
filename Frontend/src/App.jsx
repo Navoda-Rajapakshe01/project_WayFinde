@@ -29,6 +29,15 @@ import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import PlacesManagement from "./Components/AdminProfile/places-management";
+import UsersManagement from "./Components/AdminProfile/users-management";
+import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
+import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
+import BlogManagement from "./Components/AdminProfile/blog-management";
+import ReviewsManagement from "./Components/AdminProfile/reviews-management";
+import UserAnalytics from "./Components/AdminProfile/user-analytics";
+import SettingsPanel from "./Components/AdminProfile/settings-panel";
+import EditPlace from "./Components/AdminProfile/edit-place";
 
 import "./App.css";
 
@@ -64,9 +73,21 @@ function AppRoutes() {
         <Route path="/profile/blog" element={<Blog />} />
         <Route path="/profile/followers" element={<Followers />} />
         <Route path="/profile/following" element={<Following />} />
-        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        
+        <Route path="/admin" element={<AdminDashboard />}>
+          <Route index element={<DashboardOverview />} />
+          <Route path="places-management" element={<PlacesManagement />} />
+          <Route path="users-management" element={<UsersManagement />} />
+          <Route path="vehicles-management" element={<VehiclesManagement />} />
+          <Route path="blog-management" element={<BlogManagement />} />
+          <Route path="reviews-management" element={<ReviewsManagement />} />
+          <Route path="user-analytics" element={<UserAnalytics />} />
+          <Route path="settings-panel" element={<SettingsPanel />} />
+          <Route path="edit-place/:id" element={<EditPlace />} />
+        </Route>
+
       </Routes>
 
       {!isAdminRoute && <Footer />}

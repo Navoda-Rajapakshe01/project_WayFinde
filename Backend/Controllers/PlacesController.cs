@@ -139,6 +139,63 @@ namespace Backend.Controllers
         }
 
 
+        // PUT: api/places/1
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdatePlace(int id, [FromBody] UpdatePlaceDTO dto)
+        {
+            // Find the place by its ID
+            var place = await _context.PlacesToVisit
+                .Where(p => p.Id == id)
+                .FirstOrDefaultAsync();
+
+            if (place == null)
+            {
+                return NotFound("Place not found");
+            }
+
+            // Check if a place with the same name exists in the district
+            var existingPlace = await _context.PlacesToVisit
+                .FirstOrDefaultAsync(p =>
+                    p.Name.ToLower() == dto.Name.ToLower().Trim() &&
+                    p.DistrictId == dto.DistrictId &&
+                    p.Id != id); // Ensure it’s not the same place being updated
+
+            if (existingPlace != null)
+            {
+                return Conflict("A place with the same name already exists in this district.");
+            }
+
+            // Check if related entities exist
+            var district = await _context.Districts.FindAsync(dto.DistrictId);
+            if (district == null) return BadRequest("District not found.");
+
+            var category = dto.CategoryId.HasValue
+                ? await _context.Categories.FindAsync(dto.CategoryId.Value)
+                : null;
+
+            if (dto.CategoryId.HasValue && category == null)
+                return BadRequest("Category not found.");
+
+            // Update the place details
+            place.Name = dto.Name;
+            place.Description = dto.Description;
+            place.History = dto.History;
+            place.OpeningHours = dto.OpeningHours;
+            place.Address = dto.Address;
+            place.GoogleMapLink = dto.GoogleMapLink;
+            place.MainImageUrl = dto.MainImageUrl;
+            place.DistrictId = dto.DistrictId;
+            place.District = district;
+            place.CategoryId = dto.CategoryId;
+            place.Category = category;
+
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            return Ok(place);
+        }
+
+
         // DELETE: api/places/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePlace(int id)
