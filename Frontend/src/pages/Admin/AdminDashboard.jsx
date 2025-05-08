@@ -1,17 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import AdminSidebar from "../../Components/AdminProfile/admin-sidebar";
 import AdminHeader from "../../Components/AdminProfile/admin-header";
-import DashboardOverview from "../../Components/AdminProfile/dashboard-overview";
-import PlacesManagement from "../../Components/AdminProfile/places-management";
-import UsersManagement from "../../Components/AdminProfile/users-management";
-import UserAnalytics from "../../Components/AdminProfile/user-analytics";
-import AccommodationManagement from "../../Components/AdminProfile/accommodation-management";
-import VehicleManagement from "../../Components/AdminProfile/vehicle-management";
-import ReviewsManagement from "../../Components/AdminProfile/reviews-management";
-import BlogManagement from "../../Components/AdminProfile/blog-management";
-import SettingsPanel from "../../Components/AdminProfile/settings-panel";
 import "../CSS/AdminDashboard.css";
 import "../../App.css";
 
@@ -19,7 +10,9 @@ const AdminDashboard = () => {
   const [activeSection, setActiveSection] = useState("overview");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Check authentication status
   useEffect(() => {
@@ -38,12 +31,19 @@ const AdminDashboard = () => {
     checkAuth();
   }, []);
 
+  // Redirect unauthenticated users
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      // navigate("/admin/login");
+      // navigate("/admin/login"); // Uncomment in real auth
       console.log("User not authenticated, would redirect to login");
     }
   }, [isLoading, isAuthenticated, navigate]);
+
+  // Update activeSection based on URL path
+  useEffect(() => {
+    const section = location.pathname.split("/")[2] || "overview";
+    setActiveSection(section);
+  }, [location.pathname]);
 
   if (isLoading) {
     return (
@@ -63,17 +63,8 @@ const AdminDashboard = () => {
 
       <div className="admin-main">
         <AdminHeader />
-
         <div className="admin-content">
-          {activeSection === "overview" && <DashboardOverview />}
-          {activeSection === "places" && <PlacesManagement />}
-          {activeSection === "users" && <UsersManagement />}
-          {activeSection === "user-analytics" && <UserAnalytics />}
-          {activeSection === "accommodation" && <AccommodationManagement />}
-          {activeSection === "vehicles" && <VehicleManagement />}
-          {activeSection === "reviews" && <ReviewsManagement />}
-          {activeSection === "blog" && <BlogManagement />}
-          {activeSection === "settings" && <SettingsPanel />}
+          <Outlet context={{ activeSection, setActiveSection }} />
         </div>
       </div>
     </div>

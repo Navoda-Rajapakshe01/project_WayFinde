@@ -4,13 +4,14 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter } from "react-icons/fa";
+import "../AdminProfile/edit-place"
 import "./places-management.css";
 import "../../App.css";
 
 const PlacesManagement = () => {
   const [places, setPlaces] = useState([]);
   const [districts, setDistricts] = useState([]);
-  const [categories, setCategories] = useState([]); // For categories
+  const [categories, setCategories] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -251,7 +252,7 @@ const PlacesManagement = () => {
                 <div className="place-card-actions action-buttons">
                   <button
                     className="edit-button"
-                    onClick={() => navigate(`/admin/place/${place.id}/edit`)}
+                    onClick={() => navigate(`/admin/edit-place/${place.id}`)}
                     title="Edit Place"
                   >
                     <FaEdit /> <span>Edit</span>
