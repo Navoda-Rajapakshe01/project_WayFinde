@@ -1,7 +1,11 @@
-import React, { useRef, useState } from "react";
+import React from 'react';
+import { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaComment } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "./ImageGrid.css";
+import PropTypes from 'prop-types'; 
+
+
 
 const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
   const navigate = useNavigate();
@@ -247,9 +251,39 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
             </button>
           </div>
         </div>
+        
       </div>
     </div>
   );
+};
+
+ImageGrid.propTypes = {
+  latestBlogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      topic: PropTypes.string.isRequired,
+      writerName: PropTypes.string.isRequired,
+      briefDescription: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+
+  trendingBlogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      topic: PropTypes.string.isRequired,
+      writerName: PropTypes.string.isRequired,
+      briefDescription: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+
+  otherBlogs: PropTypes.arrayOf(
+    PropTypes.shape({
+      img: PropTypes.string.isRequired,
+      topic: PropTypes.string.isRequired,
+      writerName: PropTypes.string.isRequired,
+      briefDescription: PropTypes.string.isRequired,
+    })
+  ).isRequired,
 };
 
 export default ImageGrid;

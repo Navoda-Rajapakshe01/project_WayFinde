@@ -46,7 +46,7 @@ Thumbs.db
 # .NET build artifacts
 **/bin/
 **/obj/
-
+.vs
 /.vs
 /appsettings.json
 /appsettings.Development.json
