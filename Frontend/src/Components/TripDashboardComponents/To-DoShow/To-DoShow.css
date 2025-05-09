@@ -1,0 +1,233 @@
+.todo-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .todo-popup-content {
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 900px;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.3s ease-out forwards;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  .close-button:hover {
+    color: #000;
+  }
+  
+  .todo-content-container {
+    display: flex;
+    flex-direction: row;
+    min-height: 500px;
+  }
+  
+  .todo-details {
+    flex: 3;
+    padding: 30px;
+  }
+  
+  .todo-details h2 {
+    font-size: 26px;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    font-weight: 700;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+    display: inline-block;
+  }
+  
+  .add-task-section {
+    display: flex;
+    margin-bottom: 25px;
+  }
+  
+  .task-input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px 0 0 8px;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  
+  .task-input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  }
+  
+  .add-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 0 8px 8px 0;
+    padding: 0 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    height: 38px;
+    align-items: center;
+    margin-top: 10px;
+    justify-content: center;
+  }
+  
+  .add-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .todo-lists-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .todo-section h3 {
+    font-size: 18px;
+    color: #34495e;
+    margin-bottom: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+  }
+  
+  .todo-list {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 100px;
+  }
+  
+  .todo-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+  }
+  
+  .todo-item:last-child {
+    border-bottom: none;
+  }
+  
+  .todo-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .todo-checkbox {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #95a5a6;
+    margin-right: 10px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .todo-checkbox.checked {
+    color: #27ae60;
+  }
+  
+  .todo-text {
+    font-size: 16px;
+    color: #333;
+    flex: 1;
+  }
+  
+  .todo-item.completed .todo-text {
+    text-decoration: line-through;
+    color: #95a5a6;
+  }
+  
+  .empty-message {
+    color: #95a5a6;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+  .todo-image-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    background-color: #ecf0f1;
+    border-radius: 0 16px 16px 0;
+    overflow: hidden;
+  }
+  
+  .todo-image {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .todo-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease; 
+  }
+  
+  .todo-image img:hover {
+    transform: scale(1.05); 
+  }
+  .image-caption {
+    background-color: rgba(23, 88, 131, 0.9);
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-weight: 500;
+  }
+  
+  .image-caption p {
+    margin: 0;
+    font-size: 18px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .todo-content-container {
+      flex-direction: column;
+    }
+    
+    .todo-image-container {
+      border-radius: 0 0 16px 16px;
+      max-height: 200px;
+    }
+  }

@@ -1,0 +1,195 @@
+.settings-panel .settings-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.settings-panel .status-message {
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* Hardcoded status colors */
+.status-message.saving {
+  color: #3498db;
+} /* Blue */
+.status-message.success {
+  color: #27ae60;
+} /* Green */
+.status-message.error {
+  color: #c0392b;
+} /* Red */
+
+.settings-container {
+  display: flex;
+  gap: 25px;
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  flex-wrap: wrap;
+}
+.settings-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+  width: 200px;
+}
+.settings-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border-radius: 6px;
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  transition: var(--transition);
+}
+.settings-tab svg {
+  font-size: 1.1rem;
+  width: 20px;
+}
+.settings-tab:hover {
+  background-color: #f1f3f5;
+  color: #2c3e50;
+}
+.settings-tab.active {
+  background-color: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+.settings-content {
+  flex-grow: 1;
+  min-width: 300px;
+}
+.settings-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 15px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.settings-section-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2c3e50;
+}
+.settings-section-header .reset-button {
+  font-size: 0.85rem;
+  padding: 6px 10px;
+}
+
+/* Settings Form */
+.settings-form .form-group {
+  margin-bottom: 25px;
+}
+.settings-form .form-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  color: #2c3e50;
+}
+.settings-form .form-section-title:first-of-type {
+  margin-top: 0;
+}
+.settings-form .input-help {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  margin-top: 6px;
+}
+.settings-form .checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.settings-form .checkbox-group input[type="checkbox"] {
+  width: auto;
+  height: 18px;
+  width: 18px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+.settings-form .checkbox-group label {
+  margin: 0;
+  font-weight: 400;
+  cursor: pointer;
+  color: #495057;
+}
+.settings-form .input-with-button {
+  display: flex;
+  gap: 10px;
+}
+.settings-form .input-with-button input {
+  flex-grow: 1;
+}
+.settings-form .input-with-button button {
+  flex-shrink: 0;
+  background-color: #f1f3f5;
+  color: #7f8c8d;
+  border: 1px solid #dee2e6;
+}
+.settings-form .input-with-button button:hover {
+  background-color: #e9ecef;
+}
+.settings-form .form-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.settings-form .info-display {
+  font-size: 0.95rem;
+  color: #5a6268;
+  background-color: #f8f9fa;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+.test-email-button,
+.backup-now-button,
+.optimize-button,
+.clear-cache-button {
+  background-color: var(--secondary-color); /* Use primary/secondary */
+  color: #ffffff;
+}
+.test-email-button:hover,
+.backup-now-button:hover,
+.optimize-button:hover,
+.clear-cache-button:hover {
+  background-color: var(--primary-dark);
+}
+.optimize-button,
+.clear-cache-button {
+  background-color: #6c757d;
+} /* Gray */
+.optimize-button:hover,
+.clear-cache-button:hover {
+  background-color: #5a6268;
+}
+
+@media (max-width: 768px) {
+  .settings-container {
+    flex-direction: column;
+  }
+  .settings-tabs {
+    flex-direction: row;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    gap: 10px;
+  }
+  .settings-tab {
+    flex-shrink: 0;
+  }
+}

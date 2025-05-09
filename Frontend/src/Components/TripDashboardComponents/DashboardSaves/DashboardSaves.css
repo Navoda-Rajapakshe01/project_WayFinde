@@ -1,0 +1,159 @@
+.dashboard-saves-container {
+  max-width: 700px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  margin-left: 2%;
+}
+
+.saves-section {
+  margin-bottom: 40px;
+}
+
+.saves-section h2 {
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+.saves-card {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.saves-card img {
+  width: 230px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.hotel-details, .vehicle-details {
+  padding: 15px;
+  flex-grow: 1;
+}
+
+.hotel-details h3 {
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.rating span {
+  font-size: 16px;
+  color: #ffcc00;
+  margin-right: 5px;
+}
+
+.availability {
+  color: #28a745;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.vehicle-specs {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+input[type='text'] {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.to-do-card,
+.budget-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+
+/* New: Row layout for text + button side by side */
+.card-content-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Text block stays full width inside card row */
+.card-content-row p {
+  flex: 1;
+  margin: 0;
+  font-size: 13px;
+}
+
+/* Updated Show button */
+.show-button {
+  background-color: #b6b9bd;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+  white-space: nowrap; /* Keeps text in one line */
+}
+
+.show-button:hover {
+  background-color: #0056b3;
+}
+
+/* Remove the old arrow-button styles if no longer needed */
+.arrow-button {
+  display: none;
+}
+
+button {
+  background-color: #b6b9bd;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .saves-section {
+    flex-direction: column;
+  }
+
+  .saves-card {
+    flex-direction: column;
+  }
+
+  .saves-card img {
+    width: 100%;
+    height: auto;
+  }
+
+  /* Stack text and button on small screens */
+  .card-content-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .show-button {
+    margin-top: 10px;
+    width: 100%;
+  }
+}

@@ -1,5 +1,5 @@
 import React from "react";
-import "./Footer.css"; // Add styles for the footer
+import "./Footer.css"; 
 import {
   Facebook,
   Instagram,
@@ -8,7 +8,7 @@ import {
   MapPin,
   Phone,
   Twitter,
-} from "lucide-react"; // Import icons
+} from "lucide-react";
 import "../../App.css";
 import "./footer.css";
 

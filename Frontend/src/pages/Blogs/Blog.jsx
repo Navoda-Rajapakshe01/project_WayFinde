@@ -1,22 +1,18 @@
 import React from "react";
-//import { useState } from "react";
+import { useEffect } from "react";
 import HeroSection from "../../Components/HeroSection/HeroSection";
-
-// import backgroundImage from "../assets/Images/Blogimages/blogbackground1.jpg";
-
 import ImageGrid from "../../Components/BlogComponents/ImageGrid/ImageGrid";
 import blogData from "../../Components/BlogComponents/blogData.json";
-import "../CSS/Blog.css"; // Import your CSS file for styling
+import "../CSS/Blog.css"; 
 
-const backgroundImage = "/Blogimages/blogbackground1.jpg"; // Correct path from public folder
+const backgroundImage = "/Blogimages/blogbackground1.jpg";
 
 const { latestBlogData, trendingBlogData, otherBlogData } = blogData;
 const Blog = () => {
-  //const [visibleBlogs, setVisibleBlogs] = useState(otherBlogData.slice(0, 4)); // Show only 4 initially
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  // const handleShowMore = () => {
-  //   setVisibleBlogs(otherBlogData.slice(0, visibleBlogs.length + 2)); // Load 2 more blogs each time
-  // };
   return (
     <div className="page-container">
       <HeroSection
@@ -28,6 +24,7 @@ const Blog = () => {
         subtitle="Explore our latest blog posts and get inspired."
         backgroundImage={backgroundImage}
         placeHolder="Search blog posts..."
+        showSearchBar={true}
       />
       <ImageGrid
         latestBlogs={latestBlogData}

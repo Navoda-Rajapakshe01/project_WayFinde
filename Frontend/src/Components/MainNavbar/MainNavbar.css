@@ -11,7 +11,7 @@ html {
 .navbar {
   width: 100%;
   background-color: #14b9d5;
-  padding: 12px 0;
+  padding: 10px 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,8 +27,8 @@ html {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1200px;
-  padding: 0 20px;
+  max-width: 1500px;
+  padding: 0 10px;
   box-sizing: border-box;
 }
 
@@ -36,6 +36,7 @@ html {
 .navbar-logo {
   display: flex;
   align-items: center;
+  
 }
 
 .navbar-logo img {
@@ -55,6 +56,7 @@ html {
   gap: 15px;
   margin: 0;
   padding: 0;
+  margin-left: 50px;
 }
 
 .navbar-item {
@@ -63,7 +65,7 @@ html {
   align-items: center;
   justify-content: center;
   padding: 8px 15px;
-  border-radius: 25px;
+  border-radius: 20px;
   transition: all 0.2s ease;
 }
 
@@ -273,6 +275,29 @@ html {
   cursor: pointer;
   font-size: 1rem;
 }
+
+.auth-section {
+  margin-left: 70px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  font-size: 16px;
+  color: white;
+}
+
+.auth-buttons button {
+  margin-left: 20px;
+  padding: px 12px;
+  border: 1px solid white;
+  background-color: #14b9d5;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.auth-buttons button:hover {
+  background-color: #0ea5c6;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 992px) {
   .navbar-menu {

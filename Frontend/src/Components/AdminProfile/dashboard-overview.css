@@ -1,0 +1,241 @@
+.dashboard-overview .stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background-color: #ffffff; /* White background */
+  border-radius: 6px; /* Hardcoded */
+  padding: 20px 25px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+}
+
+.stat-icon {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.6rem;
+  color: white;
+  flex-shrink: 0;
+}
+/* Unique colors for icons (Using Primary or Hardcoded) */
+.stat-icon.places {
+  background-color: var(--primary-color);
+}
+.stat-icon.users {
+  background-color: #9b59b6;
+} /* Hardcoded Purple */
+.stat-icon.accommodations {
+  background-color: #e67e22;
+} /* Hardcoded Orange */
+.stat-icon.vehicles {
+  background-color: #1abc9c;
+} /* Hardcoded Turquoise */
+.stat-icon.reviews {
+  background-color: #f1c40f;
+} /* Hardcoded Yellow */
+.stat-icon.visits {
+  background-color: #2ecc71;
+} /* Hardcoded Green */
+
+.stat-details h3 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #7f8c8d;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+.stat-details .stat-value {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #2c3e50;
+  line-height: 1.2;
+}
+.stat-details .stat-change {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.stat-change.increase {
+  color: #27ae60;
+} /* Hardcoded Success */
+.stat-change.decrease {
+  color: #c0392b;
+} /* Hardcoded Danger */
+.stat-change span {
+  color: #7f8c8d;
+  font-weight: 400;
+}
+
+/* Dashboard Grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+.dashboard-card {
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 25px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.card-header h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  color: #2c3e50;
+}
+.card-header .time-selector,
+.card-header .view-all-btn {
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #7f8c8d;
+}
+.card-header .view-all-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  padding: 5px;
+}
+.card-header .view-all-btn:hover {
+  text-decoration: underline;
+}
+.chart-container {
+  padding: 25px;
+  flex-grow: 1;
+  min-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Basic Chart Placeholder Styles */
+.chart-placeholder {
+  border: 1px dashed #e0e0e0;
+  padding: 20px;
+  text-align: center;
+  color: #7f8c8d;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.chart-bars {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  height: 180px;
+  gap: 5%;
+  margin-bottom: 15px;
+}
+.chart-month {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+.chart-bar-container {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  gap: 4px;
+}
+.chart-bar {
+  background-color: var(--primary-light);
+  width: 15px;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.5s ease-out;
+}
+.chart-bar.visits {
+  background-color: var(--primary-color);
+}
+.chart-bar.reviews {
+  background-color: #f39c12;
+} /* Hardcoded warning */
+.chart-bar.signups {
+  background-color: #2ecc71;
+} /* Hardcoded success */
+.chart-label {
+  font-size: 0.8rem;
+  margin-top: 5px;
+  color: #7f8c8d;
+}
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 15px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.legend-color.visits {
+  background-color: var(--primary-color);
+}
+.legend-color.reviews {
+  background-color: #f39c12;
+} /* Hardcoded warning */
+.legend-color.signups {
+  background-color: #2ecc71;
+} /* Hardcoded success */
+
+/* Table inside card */
+.dashboard-card .data-table {
+  margin: 0;
+}
+.dashboard-card .table-container {
+  box-shadow: none;
+  border-radius: 0 0 6px 6px;
+  border-top: 1px solid #e0e0e0;
+}
+.dashboard-card .data-table th,
+.dashboard-card .data-table td {
+  padding: 12px 25px;
+  white-space: normal;
+}
+.dashboard-card .data-table thead th {
+  position: static;
+}
+.recent-users .data-table td:nth-child(2) {
+  word-break: break-all;
+}

@@ -1,5 +1,4 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaBook,
   FaBus,
@@ -17,8 +16,10 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
 import { AuthContext } from "../Authentication/AuthContext/AuthContext";
+
 import { ProfileImageContext } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import "./MainNavbar.css";
+
 
 const MainNavbar = () => {
   const { profileImage } = useContext(ProfileImageContext);
@@ -29,14 +30,13 @@ const MainNavbar = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
 
-  const { user, logout } = useContext(AuthContext);
+  const { user, loading, logout } = useContext(AuthContext);
+
+  if (loading) return null; 
 
   const handleNavigation = (path) => navigate(path);
-
-  // Toggle profile popup
   const togglePopup = () => setIsOpen(!isOpen);
 
-  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -50,7 +50,6 @@ const MainNavbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // Update active tab on route change
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location]);
@@ -74,10 +73,8 @@ const MainNavbar = () => {
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  // Modal close handler
   const closeModal = () => setShowSignInModal(false);
 
-  // Modal option handler
   const handleSignInOption = (type) => {
     setShowSignInModal(false);
     if (type === "service") {
@@ -120,7 +117,7 @@ const MainNavbar = () => {
             <div className="navbar-profile" onClick={togglePopup}>
               <div className="profile-wrapper">
                 <img
-                  src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                  src={user.profileImg || "/default-profile.png"}
                   alt="User Profile"
                   className="profile-img"
                 />
@@ -131,14 +128,18 @@ const MainNavbar = () => {
                 <div className="profile-popup">
                   <div className="popup-header">
                     <img
+
                       src={profileImage}
+
                       alt="User Profile"
                       className="profile-img"
                     />
                     <span className="profile-indicator"></span>
                     <div className="popup-user-info">
+
                       <h4>{user?.username}</h4>
                       <p>@{user?.email}</p>
+
                     </div>
                   </div>
 
@@ -166,13 +167,16 @@ const MainNavbar = () => {
               )}
             </div>
           ) : (
+
             <div>
               <button onClick={() => setShowSignInModal(true)}>Sign In</button>
               {/* ...Sign Up button if needed... */}
+
             </div>
           )}
         </div>
       </div>
+
       {/* Sign In Modal */}
       {showSignInModal && (
         <div className="signin-modal-overlay" onClick={closeModal}>

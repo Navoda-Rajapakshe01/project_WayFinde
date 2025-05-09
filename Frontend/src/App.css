@@ -39,10 +39,46 @@
   }
 }
 
-.card {
-  padding: 2em;
-}
-
 .read-the-docs {
   color: #888;
+}
+
+/* Home Section Styles */
+.homesection-padding { 
+  padding: 60px 0; 
+}
+
+.homesection-title { 
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.homesection-subtitle { 
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 40px;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.homebtn {
+  display: inline-block;
+  padding: 10px 25px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.homebtn-outline {
+  border-color: var(--primary-color, #14B9D5);
+  color: var(--primary-color, #14B9D5);
+}
+.homebtn-outline:hover {
+  background-color: var(--primary-color, #14B9D5);
+  color: #fff;
 }
