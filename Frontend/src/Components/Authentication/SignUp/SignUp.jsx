@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "./SignUp.css"; // Make sure your CSS matches the SignIn page
 
@@ -7,7 +7,8 @@ const Register = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    role: "",
+    email: "",
+    // role: "",
   });
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -32,7 +33,7 @@ const Register = () => {
       console.error(error);
       setError(
         error.response?.data?.message ||
-        "Registration failed. Please try again."
+          "Registration failed. Please try again."
       );
     }
   };
@@ -60,12 +61,20 @@ const Register = () => {
           />
           <input
             type="text"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+          {/* <input
+            type="text"
             name="role"
             placeholder="Role"
             value={formData.role}
             onChange={handleChange}
             required
-          />
+          /> */}
           <button type="submit">Register</button>
         </form>
       </div>

@@ -11,6 +11,7 @@ import {
 } from "lucide-react"; // Import icons
 import "../../App.css";
 import "./footer.css";
+import React from "react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();

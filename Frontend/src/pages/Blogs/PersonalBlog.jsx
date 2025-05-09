@@ -1,3 +1,4 @@
+import React from "react";
 import { FaComment, FaThumbsUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import BlogContent from "../../Components/BlogComponents/BlogContent/BlogContent";

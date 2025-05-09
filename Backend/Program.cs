@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ➕ Add AppDbContext and connect to SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ServerConnection")));
 
 // ➕ Add UserDbContext and connect to SQL Server (for authentication)
 builder.Services.AddDbContext<UserDbContext>(options =>
@@ -34,6 +34,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // ➕ Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 // ➕ Add CORS policy
 builder.Services.AddCors(options =>
@@ -46,6 +48,7 @@ builder.Services.AddCors(options =>
         )
         .AllowAnyHeader()
         .AllowAnyMethod()
+        .AllowCredentials()
     );
 });
 
@@ -64,6 +67,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapScalarApiReference();
+}
+else
+{
+    // For production, you might want a more restrictive CORS policy
+    // or comment this out if you don't need CORS in production
+    app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
 }
 
 app.UseHttpsRedirection();
