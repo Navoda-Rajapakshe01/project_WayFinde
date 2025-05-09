@@ -75,7 +75,7 @@ function AppRoutes() {
         <Route path="/profile/following" element={<Following />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
-        
+
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />
@@ -99,7 +99,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-
+        <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
   );
