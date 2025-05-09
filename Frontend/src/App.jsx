@@ -19,18 +19,17 @@ import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import Vehicle from "./pages/Vehicle";
 import Chat from "./pages/Profile/Chat";
 import PaymentGateway from "./pages/PaymentGateway";
-import Followers from "./pages/Profile/Follwers";
-import Following from "./pages/Profile/Following";
+import PersonalBlog from "./pages/Blogs/PersonalBlog";
+
 import Profile from "./pages/Profile/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
-import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
-import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
-import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
+
+
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import TripDashboard from "./pages/TripDashboard";
-import Vehicle from "./pages/Vehicle";
+import AccommodationDetail from "./pages/AccommodationDetail";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
 import Setting from "./pages/Profile/Setting";
