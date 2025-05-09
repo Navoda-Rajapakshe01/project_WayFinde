@@ -1,14 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { X } from 'lucide-react';
 import './BudgetShow.css';
 
-const BudgetShow = ({ onClose, expenses }) => {
+const BudgetShow = ({ onClose }) => {
+  const [expenses, setExpenses] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
 
+  // ✅ Fetch expenses data from the backend
   useEffect(() => {
-    if (expenses && expenses.length > 0) {
+    axios.get('http://localhost:5030/api/TravelBudget')  // Change the URL if needed
+      .then((res) => {
+        setExpenses(res.data); // Set the fetched expenses into the state
+      })
+      .catch((err) => {
+        console.error("GET error: ", err); // Handle errors
+      });
+  }, []);
+
+  // ✅ Calculate total budget when expenses change
+  useEffect(() => {
+    if (expenses.length > 0) {
       const total = expenses.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
       setTotalBudget(total);
+    } else {
+      setTotalBudget(0);
     }
   }, [expenses]);
 
@@ -42,12 +58,16 @@ const BudgetShow = ({ onClose, expenses }) => {
                   <span>Description</span>
                   <span>Amount</span>
                 </div>
-                {expenses && expenses.map((item, index) => (
-                  <div key={index} className="budget-item">
-                    <span className="item-name">{item.description}</span>
-                    <span className="item-amount">Rs {item.amount}</span>
-                  </div>
-                ))}
+                {expenses.length > 0 ? (
+                  expenses.map((item, index) => (
+                    <div key={index} className="budget-item">
+                      <span className="item-name">{item.description}</span>
+                      <span className="item-amount">Rs {item.amount}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="empty-message">No expenses found.</p>
+                )}
               </div>
             </div>
           </div>

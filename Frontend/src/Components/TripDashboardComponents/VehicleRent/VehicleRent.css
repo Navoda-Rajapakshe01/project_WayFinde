@@ -1,31 +1,12 @@
 .vehicle-rent-container {
   padding: 20px;
   font-family: Arial, sans-serif;
-  max-width: 57%; /* Ensure the container takes only half of the screen */
+  width: 55%; /* Take up half of the screen width */
   margin-left: 0; /* Align to the left of the page */
+  margin-right: auto; /* Keep it left-aligned */
 }
 
-.header-tabs {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.tab {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 10px 20px;
-  margin-right: 10px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-.tab.active {
-  background-color: #000;
-  color: #fff;
-}
-
-.filter-section {
+.search-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -35,91 +16,97 @@
   border-radius: 10px;
 }
 
-.location-input, .date-input, .vehicle-type-dropdown {
+.location-input,
+.date-input {
   display: flex;
   flex-direction: column;
   margin-right: 20px;
   font-size: 0.9rem;
 }
 
-.location-input input, .date-input input, .vehicle-type-dropdown select {
+.location-input input,
+.date-input input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-.vehicles-list {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Show 2 vehicles per row */
-  gap: 20px;
+.vehicle-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Space between cards */
 }
 
 .vehicle-card {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 48%; /* Set each card to take 48% width of the container (allowing 2 cards per row) */
+  border-radius: 8px;
   overflow: hidden;
-  text-align: center;
-  padding: 20px;
+  background-color: white;
+  position: relative;
+  box-shadow: 0 4px 8px rgba(104, 90, 90, 0.1);
+  transform: none !important;
+  will-change: auto;
+}
+
+.vehicle-image {
+  height: 150px; /* Make the image area smaller */
+  background-size: cover;
+  width:500px ;
+  background-position: center;
   position: relative;
 }
 
-.vehicle-card img {
-  width: 100%;
-  height: auto;
+.save-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(111, 111, 144, 0.7); /* Blue background initially */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transform: none !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.save-button-active {
+  background-color: rgba(0, 0, 255, 1); /* Solid blue when active */
 }
 
 .vehicle-info {
-  padding: 10px 0;
+  padding: 10px; /* Reduced padding */
 }
 
-.vehicle-info h3 {
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+.vehicle-name {
+  font-size: 16px; /* Smaller font size */
+  font-weight: bold;
+  margin: 0;
+  color: #333;
 }
 
-.vehicle-details {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-}
-
-.vehicle-rating {
-  font-size: 0.9rem;
+.vehicle-reviews {
+  font-size: 12px; /* Smaller font size */
   color: #666;
-  margin-bottom: 15px;
+  margin-top: 5px;
 }
 
-.book-now-button {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 0.8rem;
+/* Media Query for Smaller Screens */
+@media (max-width: 1200px) {
+  .place-card {
+    width: 45%; /* Reduce to 45% width on medium screens */
+  }
 }
 
-.book-now-button.unavailable-button {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
+@media (max-width: 768px) {
+  .vehicle-card {
+    width: 100%; /* Full width on smaller screens */
+  }
 
-.availability-status {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  padding: 5px 10px;
-  border-radius: 10px;
-  font-size: 0.8rem;
-  color: #fff;
-}
-
-.availability-status.available {
-  background-color: #28a745;
-}
-
-.availability-status.unavailable {
-  background-color: #dc3545;
+  .places-cards-container {
+    justify-content: center; /* Center cards on small screens */
+  }
 }
