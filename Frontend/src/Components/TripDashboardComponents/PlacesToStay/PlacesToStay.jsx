@@ -1,108 +1,69 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './PlacesToStay.css';
 
+function PlacesToStay() {
+  const [places, setPlaces] = useState(null); // To hold the travel places data
+  const [savedPlaces, setSavedPlaces] = useState([]); // To store the saved places
 
-function PlaceToStay() {
-  const hotels = [
-    {
-      id: 1,
-      name: 'Galle Fort Hotel',
-      rating: 4.5,
-      reviews: 136,
-      imageSrc: 'https://images.unsplash.com/photo-1566073771259-6a8506099945',
-      label: 'Hotel'
-    },
-    {
-      id: 2,
-      name: 'The Heritage Galle Fort',
-      rating: 4.3,
-      reviews: 98,
-      imageSrc: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4',
-      label: 'Hotel'  
-    },
-    {
-      id: 3,
-      name: 'Blue Beach Suite',
-      rating: 4.7,
-      reviews: 56,
-      imageSrc: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39',
-      label: 'Hotel'
-    },
-    {
-      id: 4,
-      name: 'The Bartizan Galle Fort',
-      rating: 4.4,
-      reviews: 84,
-      imageSrc: 'https://images.unsplash.com/photo-1590490360182-c33d57733427',
-      label: 'Hotel'
-    },
-    {
-      id: 5,
-      name: 'Mango House',
-      rating: 4.6,
-      reviews: 74,
-      imageSrc: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb',
-      label: 'Hotel'
-    },
-    {
-      id: 6,
-      name: 'Radisson Blu Resort',
-      rating: 4.8,
-      reviews: 219,
-      imageSrc: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d',
-      label: 'Hotel'
-    }
-  ];
+  // Fetch places details when the component mounts
+  useEffect(() => {
+    // API URL to fetch places
+    fetch('http://localhost:5030/api/TravelBudget') // Use your updated API URL
+      .then((response) => response.json()) // Convert the response into JSON
+      .then((data) => {
+        setPlaces(data); // Set the fetched places data into state
+      })
+      .catch((error) => console.error('Error fetching travel places:', error));
+  }, []);
 
-  const renderStars = (rating) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
+  // Show loading state while the data is being fetched
+  if (!places) {
+    return <div>Loading...</div>; // Show loading text if no data is loaded yet
+  }
 
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(<i key={`full-${i}`} className="fas fa-star"></i>);
-    }
-
-    if (hasHalfStar) {
-      stars.push(<i key="half" className="fas fa-star-half-alt"></i>);
-    }
-
-    const remainingStars = 5 - stars.length;
-    for (let i = 0; i < remainingStars; i++) {
-      stars.push(<i key={`empty-${i}`} className="fas fa-star"></i>);
-    }
-
-    return stars;
+  // Function to toggle the save state
+  const toggleSave = (placeId, e) => {
+    e.stopPropagation(); // Prevent event bubbling
+    
+    setSavedPlaces((prevSavedPlaces) => {
+      if (prevSavedPlaces.includes(placeId)) {
+        return prevSavedPlaces.filter((id) => id !== placeId); // Remove from saved places
+      } else {
+        return [...prevSavedPlaces, placeId]; // Add to saved places
+      }
+    });
   };
 
   return (
-    <div className="places-to-stay-container">
- 
-      
-      {/* Hotel Grid */}
-      <div className="hotel-grid">
-        {hotels.map((hotel) => (
-          <div key={hotel.id} className="hotel-card">
-            <div 
-              className="hotel-image" 
-              style={{ backgroundImage: `url(${hotel.imageSrc})` }}
+    <div className="place-to-stay-container">
+      {/* Search District Button Above the Cards */}
+      <div className="search-district-container">
+        <button className="search-district-button">Search District</button>
+      </div>
+
+      {/* Render each travel place item */}
+      <div className="places-cards-container">
+        {places.map((item, index) => (
+          <div key={index} className="place-card">
+            {/* Main Image */}
+            <div
+              className="place-image"
+              style={{ backgroundImage: `url(${item.mainImageUrl})` }}
             >
-              <span className="hotel-label">{hotel.label}</span>
-              <button className="favorite-button">
-                <i className="fas fa-heart"></i>
+              {/* Save Button */}
+              <button
+                className={`save-button ${savedPlaces.includes(item.id) ? 'save-button-active' : ''}`}
+                onClick={(e) => toggleSave(item.id, e)}
+                aria-label="Save this place"
+              >
+                <span>+</span> Add
               </button>
             </div>
-            <div className="hotel-info">
-              <h3 className="hotel-name">{hotel.name}</h3>
-              <div className="hotel-rating">
-                <div className="star-rating">
-                  {renderStars(hotel.rating)}
-                </div>
-                <span className="review-count">{hotel.reviews}</span>
-              </div>
-              <div className="hotel-score">
-                <span className="score-value">{hotel.rating.toFixed(1)}</span> / 5 (good)
-              </div>
+
+            {/* Place Information */}
+            <div className="place-info">
+              <h3 className="place-name">{item.name}</h3>
+              <p className="place-reviews">{item.reviews} reviews</p>
             </div>
           </div>
         ))}
@@ -111,4 +72,4 @@ function PlaceToStay() {
   );
 }
 
-export default PlaceToStay;
+export default PlacesToStay;
