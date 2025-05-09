@@ -73,7 +73,7 @@ const MainNavbar = () => {
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  const closeModal = () => setShowSignInModal(false);
+ // const closeModal = () => setShowSignInModal(false);
 
   const handleSignInOption = (type) => {
     setShowSignInModal(false);
@@ -169,7 +169,7 @@ const MainNavbar = () => {
           ) : (
 
             <div>
-              <button onClick={() => setShowSignInModal(true)}>Sign In</button>
+              <button onClick={() => handleSignInOption(true)}>Sign In</button>
               {/* ...Sign Up button if needed... */}
 
             </div>
@@ -177,7 +177,7 @@ const MainNavbar = () => {
         </div>
       </div>
 
-      {/* Sign In Modal */}
+      {/* Sign In Modal
       {showSignInModal && (
         <div className="signin-modal-overlay" onClick={closeModal}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
@@ -201,7 +201,7 @@ const MainNavbar = () => {
             </button>
           </div>
         </div>
-      )}
+      )} */}
     </nav>
   );
 };
