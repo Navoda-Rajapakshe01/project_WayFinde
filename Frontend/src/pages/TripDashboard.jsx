@@ -17,6 +17,7 @@ const TripDashboard = () => {
       <DashboardMap />
       <TabNavigation/>
       <WeatherWidget/>
+     
       
       
      
