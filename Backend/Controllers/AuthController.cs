@@ -107,8 +107,7 @@ namespace Backend.Controller
                 user.Id,
                 user.Username,
                 user.Email,
-                user.Role,
-                user.ServiceType
+                user.ProfilePictureUrl
             });
         }
 
