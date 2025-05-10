@@ -9,7 +9,6 @@
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.503.0",
     "react-datepicker": "^8.1.0",
-    "react-hook-form": "^7.55.0",
-    "sweetalert2": "^11.21.0"
+    "react-hook-form": "^7.55.0"
   }
 }
