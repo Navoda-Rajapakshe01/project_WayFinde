@@ -1,4 +1,3 @@
-import React from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../Components/Authentication/AuthContext/AuthContext";
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";

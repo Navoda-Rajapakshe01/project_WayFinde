@@ -33,7 +33,7 @@ const Register = () => {
       console.error(error);
       setError(
         error.response?.data?.message ||
-          "Registration failed. Please try again."
+        "Registration failed. Please try again."
       );
     }
   };
