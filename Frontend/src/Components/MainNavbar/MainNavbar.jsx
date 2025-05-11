@@ -16,13 +16,14 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
 import { AuthContext } from "../Authentication/AuthContext/AuthContext";
-
 import { ProfileImageContext } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import "./MainNavbar.css";
 
-
 const MainNavbar = () => {
-  const { profileImage } = useContext(ProfileImageContext);
+  // Use a default value for profileImage if context is undefined
+  const profileImageContext = useContext(ProfileImageContext);
+  const profileImage =
+    profileImageContext?.profileImage || "/default-profile.png";
 
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
@@ -30,9 +31,20 @@ const MainNavbar = () => {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
 
-  const { user, loading, logout } = useContext(AuthContext);
+  // Handle potential undefined context with default values
+  const authContext = useContext(AuthContext);
+  const user = authContext?.user || null;
+  const loading = authContext?.loading || false;
+  const logout =
+    authContext?.logout ||
+    (() => {
+      console.warn("Logout function not available");
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    });
 
-  if (loading) return null; 
+  // Skip rendering during loading
+  if (loading) return null;
 
   const handleNavigation = (path) => navigate(path);
   const togglePopup = () => setIsOpen(!isOpen);
@@ -128,18 +140,14 @@ const MainNavbar = () => {
                 <div className="profile-popup">
                   <div className="popup-header">
                     <img
-
                       src={profileImage}
-
                       alt="User Profile"
                       className="profile-img"
                     />
                     <span className="profile-indicator"></span>
                     <div className="popup-user-info">
-
-                      <h4>{user?.username}</h4>
-                      <p>@{user?.email}</p>
-
+                      <h4>{user?.username || "User"}</h4>
+                      <p>@{user?.email || "user@example.com"}</p>
                     </div>
                   </div>
 
@@ -167,11 +175,9 @@ const MainNavbar = () => {
               )}
             </div>
           ) : (
-
             <div>
               <button onClick={() => setShowSignInModal(true)}>Sign In</button>
               {/* ...Sign Up button if needed... */}
-
             </div>
           )}
         </div>

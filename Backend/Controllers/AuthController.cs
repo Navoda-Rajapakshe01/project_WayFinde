@@ -21,7 +21,7 @@ namespace Backend.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(IAuthService authService) : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
@@ -48,24 +48,35 @@ namespace Backend.Controller
             Role = string.Empty
         };
 
-        
+
 
         [HttpPost("register")]
-        public async Task<ActionResult<UserNew>> Register([FromBody] UserDtoRegister request)
+        public async Task<IActionResult> Register([FromBody] UserDtoRegister request)
         {
-            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+            // Basic validation
+            if (string.IsNullOrWhiteSpace(request.Username) ||
+                string.IsNullOrWhiteSpace(request.Password) ||
+                string.IsNullOrWhiteSpace(request.Email))
             {
-                return BadRequest("Username and password are required.");
+                return BadRequest("Username, password, and email are required.");
             }
 
-            var user = await authService.RegisterAsync(request);
-            if (user == null)
+            try
             {
-                return BadRequest("User already exists.");
-            }
+                var user = await _authService.RegisterAsync(request);
+                if (user == null)
+                {
+                    return BadRequest("User already exists.");
+                }
 
-            return Ok(user);
+                return Ok("User registered successfully.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
+
         [HttpPost("Login")]
         public async Task<ActionResult<string>> Login([FromBody] UserDtoLogin request)
         {
@@ -76,7 +87,7 @@ namespace Backend.Controller
             }
 
             // Call the login service to authenticate the user and generate a token
-            var token = await authService.LoginAsync(request);
+            var token = await _authService.LoginAsync(request);
             if (token == null)
             {
                 return Unauthorized(new { message = "Invalid username or password." });
@@ -90,7 +101,7 @@ namespace Backend.Controller
             });
         }
 
-        [Authorize]
+        [Authorize(Roles = "normaluser")]
         [HttpGet]
         public IActionResult AuthenticatedOnlyEndpoint()
         {
@@ -112,7 +123,8 @@ namespace Backend.Controller
                 user.Id,
                 user.Username,
                 user.Email,
-                user.ProfilePictureUrl
+                user.Role,
+                user.ServiceType
             });
         }
 
@@ -168,7 +180,7 @@ namespace Backend.Controller
 
             return Ok(new { profilePictureUrl = imageUrl });
         }
-        
+
 
 
         [Authorize(Roles = "Admin")]

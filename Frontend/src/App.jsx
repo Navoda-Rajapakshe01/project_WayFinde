@@ -1,43 +1,44 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import Home from "./pages/Home";
+import BlogManagement from "./Components/AdminProfile/blog-management";
+import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
+import EditPlace from "./Components/AdminProfile/edit-place";
+import PlacesManagement from "./Components/AdminProfile/places-management";
+import ReviewsManagement from "./Components/AdminProfile/reviews-management";
+import SettingsPanel from "./Components/AdminProfile/settings-panel";
+import UserAnalytics from "./Components/AdminProfile/user-analytics";
+import UsersManagement from "./Components/AdminProfile/users-management";
+import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
-import SignUp from "./Components/Authentication/SignUp/SignUp";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
+import SignUp from "./Components/Authentication/SignUp/SignUp";
 import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
-import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Footer from "./Components/Footer/Footer";
+import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import Accommodation from "./pages/Accommodation";
+import AccommodationDetail from "./pages/AccommodationDetail";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
+import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import Home from "./pages/Home";
+import PaymentGateway from "./pages/PaymentGateway";
+import Chat from "./pages/Profile/Chat";
 import Following from "./pages/Profile/Following";
 import Followers from "./pages/Profile/Follwers";
-import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
-import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
-import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
-import Vehicle from "./pages/Vehicle";
-import Chat from "./pages/Profile/Chat";
-import PaymentGateway from "./pages/PaymentGateway";
-import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import Profile from "./pages/Profile/Profile";
 import ReserveVehicle from "./pages/ReserveVehicle";
+import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
+import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
+import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import TripDashboard from "./pages/TripDashboard";
+import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-import AccommodationDetail from "./pages/AccommodationDetail";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import PlacesManagement from "./Components/AdminProfile/places-management";
-import UsersManagement from "./Components/AdminProfile/users-management";
-import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
-import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
-import BlogManagement from "./Components/AdminProfile/blog-management";
-import ReviewsManagement from "./Components/AdminProfile/reviews-management";
-import UserAnalytics from "./Components/AdminProfile/user-analytics";
-import SettingsPanel from "./Components/AdminProfile/settings-panel";
-import EditPlace from "./Components/AdminProfile/edit-place";
+import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 
 import "./App.css";
 
@@ -87,7 +88,6 @@ function AppRoutes() {
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
         </Route>
-
       </Routes>
 
       {!isAdminRoute && <Footer />}
@@ -97,11 +97,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <ProfileImageProvider>
+          <AppRoutes />
+        </ProfileImageProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
