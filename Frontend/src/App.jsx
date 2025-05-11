@@ -37,7 +37,7 @@ import Setting from "./pages/Profile/Setting";
 // ✅ Import ProfileImageProvider
 import { ProfileImageProvider } from './Components/UserProfileComponents/ProfileImageContext/ProfileImageContext';
 
-
+import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import PlacesManagement from "./Components/AdminProfile/places-management";
 import UsersManagement from "./Components/AdminProfile/users-management";
