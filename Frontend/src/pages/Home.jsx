@@ -16,7 +16,7 @@ function Home() {
       />
 
       {/* 1. Services Overview Section */}
-      <ServicesOverviewSection />
+      {/* <ServicesOverviewSection /> */}
 
       {/* 2. Popular Destinations */}
       <LocationSection
