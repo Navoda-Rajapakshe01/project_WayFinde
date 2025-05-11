@@ -9,6 +9,11 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Backend.Data;
+using Microsoft.EntityFrameworkCore;
+
 
 
 
@@ -20,6 +25,21 @@ namespace Backend.Controller
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
+        private readonly Cloudinary _cloudinary;
+        private readonly UserDbContext _context;
+
+        public AuthController(
+             Cloudinary cloudinary,
+             UserDbContext context,
+             IAuthService authService,
+             IUserService userService)
+        {
+            _cloudinary = cloudinary;
+            _context = context;
+            _authService = authService;
+            _userService = userService;
+        }
+
 
         public static UserNew user = new()
         {
@@ -28,11 +48,7 @@ namespace Backend.Controller
             Role = string.Empty
         };
 
-        public AuthController(IAuthService authService, IUserService userService)
-        {
-            _authService = authService;
-            _userService = userService;
-        }
+        
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserDtoRegister request)
@@ -125,6 +141,46 @@ namespace Backend.Controller
 
             return Ok("Profile updated successfully");
         }
+
+        [HttpPost("upload-profile-picture")]
+        public async Task<IActionResult> UploadProfilePicture([FromForm] IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            // Upload to Cloudinary (or your storage)
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(image.FileName, image.OpenReadStream()),
+                Folder = "profile_pictures"
+            };
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
+                return StatusCode(500, "Cloudinary upload failed.");
+
+            string imageUrl = uploadResult.SecureUrl.ToString();
+
+            // ✅ Extract user ID from token claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User not authenticated.");
+
+            int userId;
+            if (!int.TryParse(userIdClaim.Value, out userId))
+                return BadRequest("Invalid user ID.");
+
+            // Save image URL to user's profile
+            var user = await _context.UsersNew.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found.");
+
+            user.ProfilePictureUrl = imageUrl;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { profilePictureUrl = imageUrl });
+        }
+        
 
 
         [Authorize(Roles = "Admin")]

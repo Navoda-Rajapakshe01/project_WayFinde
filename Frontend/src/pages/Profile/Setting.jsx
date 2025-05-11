@@ -1,12 +1,11 @@
-import React, { useState, useRef, useContext } from 'react';
-import '../CSS/Setting.css'; // Import your CSS file for styling
-import { ProfileImageContext } from '../../Components/UserProfileComponents/ProfileImageContext/ProfileImageContext';
-
+import React, { useContext, useRef, useState } from "react";
+import { ProfileImageContext } from "../../Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
+import "../CSS/Setting.css"; // Import your CSS file for styling
 
 const ProfileSettings = () => {
   const { profileImage, setProfileImage } = useContext(ProfileImageContext);
-  const [bio, setBio] = useState('');
-  const [reason, setReason] = useState('');
+  const [bio, setBio] = useState("");
+  const [reason, setReason] = useState("");
   const fileInputRef = useRef(null);
   const maxBioLength = 150;
 
@@ -14,11 +13,31 @@ const ProfileSettings = () => {
     fileInputRef.current.click();
   };
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Optionally show preview
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+
+      // Prepare form data
+      const formData = new FormData();
+      formData.append("image", file);
+
+      // Send to backend
+      const res = await fetch(
+        "https://localhost:7138/api/user/upload-profile-picture",
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include", // if you use cookies/auth
+        }
+      );
+      const data = await res.json();
+      if (data.profilePictureUrl) {
+        setProfileImage(data.profilePictureUrl);
+        // Optionally update user context here
+      }
     }
   };
 
@@ -26,16 +45,18 @@ const ProfileSettings = () => {
     <div className="profile-settings">
       <div className="profile-picture-section">
         <img
-          src={profileImage}
+          src={profileImage || "/default-profile.png"}
           alt="Profile"
           className="profile-picture"
         />
-        <h2 onClick={handleImageClick} className="clickable-text">Change profile picture</h2>
+        <h2 onClick={handleImageClick} className="clickable-text">
+          Change profile picture
+        </h2>
         <input
           type="file"
           accept="image/*"
           ref={fileInputRef}
-          style={{ display: 'none' }}
+          style={{ display: "none" }}
           onChange={handleImageChange}
         />
       </div>
@@ -48,7 +69,9 @@ const ProfileSettings = () => {
           maxLength={maxBioLength}
           onChange={(e) => setBio(e.target.value)}
         />
-        <div className="char-count">{bio.length}/{maxBioLength}</div>
+        <div className="char-count">
+          {bio.length}/{maxBioLength}
+        </div>
       </div>
 
       <div className="password-section">
