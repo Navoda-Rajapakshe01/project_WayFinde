@@ -16,9 +16,14 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
 import { AuthContext } from "../Authentication/AuthContext/AuthContext";
-import "../MainNavbar/MainNavbar.css";
+
+import { ProfileImageContext } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
+import "./MainNavbar.css";
+
 
 const MainNavbar = () => {
+  const { profileImage } = useContext(ProfileImageContext);
+
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
@@ -123,13 +128,18 @@ const MainNavbar = () => {
                 <div className="profile-popup">
                   <div className="popup-header">
                     <img
-                      src={user.profileImg || "/default-profile.png"}
+
+                      src={profileImage}
+
                       alt="User Profile"
-                      className="popup-profile-img"
+                      className="profile-img"
                     />
+                    <span className="profile-indicator"></span>
                     <div className="popup-user-info">
-                      <h4>{user.name || "User"}</h4>
-                      <p>{user.email || "user@example.com"}</p>
+
+                      <h4>{user?.username}</h4>
+                      <p>@{user?.email}</p>
+
                     </div>
                   </div>
 
