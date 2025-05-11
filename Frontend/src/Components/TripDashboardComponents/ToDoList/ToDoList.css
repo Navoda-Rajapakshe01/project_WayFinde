@@ -58,11 +58,11 @@
   
   .filter-select {
     padding: 8px 12px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #fcfcfc;
     border-radius: 4px;
-    background-color: #10b981;
-    color: white;
-    font-size: 13px;
+    background-color: #057c54;
+    color: rgb(17, 5, 5);
+    font-size: 15px;
     cursor: pointer;
     outline: none;
   }
@@ -75,7 +75,7 @@
   
   .note-item {
     padding: 10px 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #8c8080;
   }
   
   .checkbox-container {
