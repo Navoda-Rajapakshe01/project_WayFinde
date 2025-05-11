@@ -48,25 +48,17 @@ namespace Backend.Services
 
         public async Task<UserNew?> RegisterAsync(UserDtoRegister request)
         {
-            // Check if username already exists
+            // Check if a user with the same username already exists
             if (await context.UsersNew.AnyAsync(u => u.Username == request.Username))
             {
-                throw new Exception("Username is already taken.");
+                return null;
             }
 
-            // Check if email already exists
-            if (await context.UsersNew.AnyAsync(u => u.Email == request.Email))
-            {
-                throw new Exception("Email is already registered.");
-            }
-
-            // Create user and hash password
             var user = new UserNew
             {
                 Username = request.Username,
-                Email = request.Email,
-                Role = "NormalUser",
-                PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password)
+                PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password),
+                Role = request.Role // Assign the role from the request
             };
 
             context.UsersNew.Add(user);
@@ -80,7 +72,6 @@ namespace Backend.Services
             var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Role,user.Role)
                 };

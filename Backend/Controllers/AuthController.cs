@@ -16,11 +16,8 @@ namespace Backend.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController(IAuthService authService) : ControllerBase
     {
-        private readonly IAuthService _authService;
-        private readonly IUserService _userService;
-
         public static UserNew user = new()
         {
             Username = string.Empty,
@@ -28,39 +25,22 @@ namespace Backend.Controller
             Role = string.Empty
         };
 
-        public AuthController(IAuthService authService, IUserService userService)
-        {
-            _authService = authService;
-            _userService = userService;
-        }
-
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDtoRegister request)
+        public async Task<ActionResult<UserNew>> Register([FromBody] UserDtoRegister request)
         {
-            // Basic validation
-            if (string.IsNullOrWhiteSpace(request.Username) ||
-                string.IsNullOrWhiteSpace(request.Password) ||
-                string.IsNullOrWhiteSpace(request.Email))
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
             {
-                return BadRequest("Username, password, and email are required.");
+                return BadRequest("Username and password are required.");
             }
 
-            try
+            var user = await authService.RegisterAsync(request);
+            if (user == null)
             {
-                var user = await _authService.RegisterAsync(request);
-                if (user == null)
-                {
-                    return BadRequest("User already exists.");
-                }
+                return BadRequest("User already exists.");
+            }
 
-                return Ok("User registered successfully.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            return Ok(user);
         }
-
         [HttpPost("Login")]
         public async Task<ActionResult<string>> Login([FromBody] UserDtoLogin request)
         {
@@ -71,7 +51,7 @@ namespace Backend.Controller
             }
 
             // Call the login service to authenticate the user and generate a token
-            var token = await _authService.LoginAsync(request);
+            var token = await authService.LoginAsync(request);
             if (token == null)
             {
                 return Unauthorized(new { message = "Invalid username or password." });
@@ -85,46 +65,12 @@ namespace Backend.Controller
             });
         }
 
-        [Authorize(Roles = "normaluser")]
+        [Authorize]
         [HttpGet]
         public IActionResult AuthenticatedOnlyEndpoint()
         {
             return Ok("You are authenticated!");
         }
-
-        [Authorize]
-        [HttpGet("profile")]
-        public async Task<IActionResult> GetProfile()
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = await _userService.GetUserByIdAsync(userId);
-
-            if (user == null)
-                return NotFound();
-
-            return Ok(new
-            {
-                user.Id,
-                user.Username,
-                user.Email,
-                user.ProfilePictureUrl
-            });
-        }
-
-        [HttpPut("update-profile")]
-        [Authorize]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
-        {
-            var userId = User.FindFirst("id")?.Value;
-            if (userId == null || !Guid.TryParse(userId, out Guid userGuid))
-                return Unauthorized();
-
-            var result = await _userService.UpdateUserAsync(userGuid, updateProfileDto.Username, updateProfileDto.Email, updateProfileDto.ProfilePictureUrl);
-            if (!result) return NotFound("User not found");
-
-            return Ok("Profile updated successfully");
-        }
-
 
         [Authorize(Roles = "Admin")]
         [HttpGet("Admin-only")]
