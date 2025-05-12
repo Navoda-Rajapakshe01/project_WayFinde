@@ -85,16 +85,10 @@ const MainNavbar = () => {
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  const closeModal = () => setShowSignInModal(false);
-
-  const handleSignInOption = (type) => {
-    setShowSignInModal(false);
-    if (type === "service") {
-      navigate("/signin?type=service");
-    } else {
-      navigate("/signin?type=user");
-    }
+  const handleSignIn = () => {
+    navigate("/signin");
   };
+
 
   return (
     <nav className="navbar">
@@ -129,7 +123,7 @@ const MainNavbar = () => {
             <div className="navbar-profile" onClick={togglePopup}>
               <div className="profile-wrapper">
                 <img
-                  src={user.profileImg || "/default-profile.png"}
+                  src={user.profileImg || "Frontend/public/DefaultProfileImage.jpg"}
                   alt="User Profile"
                   className="profile-img"
                 />
@@ -176,15 +170,15 @@ const MainNavbar = () => {
             </div>
           ) : (
             <div>
-              <button onClick={() => setShowSignInModal(true)}>Sign In</button>
-              {/* ...Sign Up button if needed... */}
-            </div>
+            <button onClick={handleSignIn}>Sign In</button>
+            
+          </div>
           )}
         </div>
       </div>
 
       {/* Sign In Modal */}
-      {showSignInModal && (
+      {/* {showSignInModal && (
         <div className="signin-modal-overlay" onClick={closeModal}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
@@ -206,8 +200,8 @@ const MainNavbar = () => {
               Close
             </button>
           </div>
-        </div>
-      )}
+        </div> */}
+      {/* )} */}
     </nav>
   );
 };

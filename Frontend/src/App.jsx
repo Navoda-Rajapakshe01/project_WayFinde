@@ -39,6 +39,7 @@ import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
+import UserProfileSettings from "./pages/Profile/Setting";
 
 import "./App.css";
 
@@ -66,7 +67,7 @@ function AppRoutes() {
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/personalBlog" element={<PersonalBlog />} />
-        <Route path="/settings" element={<UserLogin />} />
+        <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
         <Route path="/vehiclebookingform" element={<VehicleBookingForm />} />

@@ -6,6 +6,9 @@ const ProfileSettings = () => {
   const { profileImage, setProfileImage } = useContext(ProfileImageContext);
   const [bio, setBio] = useState("");
   const [reason, setReason] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+  const [showSaveButton, setShowSaveButton] = useState(false);
   const fileInputRef = useRef(null);
   const maxBioLength = 150;
 
@@ -13,39 +16,54 @@ const ProfileSettings = () => {
     fileInputRef.current.click();
   };
 
-  const handleImageChange = async (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Optionally show preview
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
-
-      // Prepare form data
-      const formData = new FormData();
-      formData.append("image", file);
-
-      // Send to backend
-      const res = await fetch(
-        "https://localhost:7138/api/user/upload-profile-picture",
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include", // if you use cookies/auth
-        }
-      );
-      const data = await res.json();
-      if (data.profilePictureUrl) {
-        setProfileImage(data.profilePictureUrl);
-        // Optionally update user context here
-      }
+      setSelectedFile(file);
+      setPreviewImage(URL.createObjectURL(file));
+      setShowSaveButton(true);
     }
+  };
+
+  // This function uploads to backend, which uploads to Cloudinary and saves URL in DB
+  const handleSaveProfileImage = async () => {
+    if (!selectedFile) return;
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+
+    const res = await fetch(
+      "https://localhost:7138/api/user/upload-profile-picture",
+      {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      }
+    );
+    const data = await res.json();
+    if (data.profilePictureUrl) {
+      setProfileImage(data.profilePictureUrl); // Update context
+      setPreviewImage(null);
+      setSelectedFile(null);
+      setShowSaveButton(false);
+    }
+  };
+
+  // Optionally, add a cancel button to discard changes
+  const handleCancel = () => {
+    setPreviewImage(null);
+    setSelectedFile(null);
+    setShowSaveButton(false);
   };
 
   return (
     <div className="profile-settings">
       <div className="profile-picture-section">
         <img
-          src={profileImage || "/default-profile.png"}
+          src={
+            previewImage ||
+            profileImage ||
+            "Frontend/public/DefaultProfileImage.jpg"
+          }
           alt="Profile"
           className="profile-picture"
         />
@@ -59,6 +77,16 @@ const ProfileSettings = () => {
           style={{ display: "none" }}
           onChange={handleImageChange}
         />
+        {showSaveButton && (
+          <div>
+            <button className="btn change-btn" onClick={handleSaveProfileImage}>
+              Save
+            </button>
+            <button className="btn cancel-btn" onClick={handleCancel}>
+              Cancel
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="bio-section">
@@ -69,9 +97,11 @@ const ProfileSettings = () => {
           maxLength={maxBioLength}
           onChange={(e) => setBio(e.target.value)}
         />
+
         <div className="char-count">
           {bio.length}/{maxBioLength}
         </div>
+        <button className="btn change-btn">Done</button>
       </div>
 
       <div className="password-section">
@@ -97,4 +127,4 @@ const ProfileSettings = () => {
   );
 };
 
-export default Setting;
+export default ProfileSettings;
