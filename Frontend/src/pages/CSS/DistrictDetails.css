@@ -47,7 +47,7 @@
 }
 
 /* Grid for displaying place cards */
-.places-grid {
+.Districtplaces-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
@@ -55,7 +55,7 @@
 }
 
 /* Individual place card styles */
-.place-card {
+.Districtplace-card {
   background-color: var(--background);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -68,30 +68,30 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.place-card:hover {
+.Districtplace-card:hover {
   transform: translateY(-10px);
   box-shadow: var(--box-shadow-hover);
 }
 
-.place-image-container {
+.Districtplace-image-container {
   position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
 }
 
-.place-image {
+.Districtplace-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
 
-.place-card:hover .place-image {
+.Districtplace-card:hover .place-image {
   transform: scale(1.1);
 }
 
-.place-category {
+.Districtplace-category {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -104,14 +104,14 @@
   text-transform: uppercase;
 }
 
-.place-info {
+.Districtplace-info {
   padding: 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-.place-name {
+.Districtplace-name {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 10px;
@@ -121,7 +121,7 @@
   white-space: nowrap;
 }
 
-.place-description {
+.Districtplace-description {
   color: var(--text-light);
   font-size: 0.95rem;
   line-height: 1.5;

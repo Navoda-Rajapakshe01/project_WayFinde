@@ -76,26 +76,26 @@ const DistrictDetails = () => {
 
       {/* Places Grid */}
       {!loading && !error && (
-        <div className="places-grid">
+        <div className="Districtplaces-grid">
           {filteredPlaces.length ? (
             filteredPlaces.map((place) => (
               <div
                 key={place.id}
-                className="place-card"
+                className="Districtplace-card"
                 onClick={() => handleCardClick(place.id)}
               >
-                <div className="place-image-container">
+                <div className="Districtplace-image-container">
                   <img
                     src={place.mainImageUrl || "/placeholder.jpg"}
                     alt={place.name}
                     className="place-image"
                   />
                   {place.category && (
-                    <span className="place-category">{place.category}</span>
+                    <span className="Districtplace-category">{place.category}</span>
                   )}
                 </div>
-                <div className="place-info">
-                  <h3 className="place-name">{place.name}</h3>
+                <div className="Districtplace-info">
+                  <h3 className="Districtplace-name">{place.name}</h3>
                   <button
                     className="view-details-btn"
                     onClick={(e) => {
