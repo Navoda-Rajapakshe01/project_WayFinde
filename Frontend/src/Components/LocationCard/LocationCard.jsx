@@ -1,3 +1,4 @@
+import React from "react";
 import { useNavigate } from "react-router-dom"; // For navigation on card click
 import "./LocationCard.css";
 import "../../App.css"
