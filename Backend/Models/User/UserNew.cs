@@ -16,9 +16,6 @@ namespace Backend.Models
         [Required]
         public string Role { get; set; } = "NormalUser";
         [Required]
-       
-        
-
         public string? ServiceType { get; set; } = string.Empty;
         public string? ProfilePictureUrl { get; set; } = string.Empty;
 

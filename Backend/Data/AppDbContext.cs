@@ -14,7 +14,7 @@ namespace Backend.Data
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
 
-        // Places & Districts
+        // Places & DistrictsF
         public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }

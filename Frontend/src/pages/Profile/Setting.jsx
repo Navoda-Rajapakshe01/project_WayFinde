@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useContext, useRef, useState } from "react";
 import { ProfileImageContext } from "../../Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import "../CSS/Setting.css"; // Import your CSS file for styling
@@ -11,7 +12,47 @@ const ProfileSettings = () => {
   const [showSaveButton, setShowSaveButton] = useState(false);
   const fileInputRef = useRef(null);
   const maxBioLength = 150;
+  const [currentPassword, setCurrentPassword] = useState("");
+const [newPassword, setNewPassword] = useState("");
+const [confirmPassword, setConfirmPassword] = useState("");
+const [passwordError, setPasswordError] = useState("");
+const [passwordSuccess, setPasswordSuccess] = useState("");
 
+
+const handleChangePassword = async () => {
+  setPasswordError("");
+  setPasswordSuccess("");
+
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    setPasswordError("All fields are required.");
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    setPasswordError("New passwords do not match.");
+    return;
+  }
+
+  const handleBioSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        "http://localhost:5030/api/profile/update-bio",
+        { bio },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      alert("Bio saved successfully!");
+      console.log("Bio update response:", response.data);
+    } catch (error) {
+      console.error("Error saving bio:", error.response?.data || error.message);
+      alert("Failed to save bio");
+    }
+  };
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
@@ -28,23 +69,50 @@ const ProfileSettings = () => {
   // This function uploads to backend, which uploads to Cloudinary and saves URL in DB
   const handleSaveProfileImage = async () => {
     if (!selectedFile) return;
+
     const formData = new FormData();
     formData.append("image", selectedFile);
 
-    const res = await fetch(
-      "https://localhost:7138/api/user/upload-profile-picture",
-      {
-        method: "POST",
-        body: formData,
-        credentials: "include",
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        "http://localhost:5030/api/profile/upload-profile-picture",
+        {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const errorText = await res.text(); // fallback for non-JSON errors
+        throw new Error(
+          `Upload failed: ${res.status} ${res.statusText} - ${errorText}`
+        );
       }
-    );
-    const data = await res.json();
-    if (data.profilePictureUrl) {
-      setProfileImage(data.profilePictureUrl); // Update context
-      setPreviewImage(null);
-      setSelectedFile(null);
-      setShowSaveButton(false);
+
+      const contentType = res.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+
+        if (data.profilePictureUrl) {
+          setProfileImage(data.profilePictureUrl); // Update context
+          setPreviewImage(null);
+          setSelectedFile(null);
+          setShowSaveButton(false);
+        }
+      } else {
+        throw new Error(
+          "Expected JSON response but received something else or nothing."
+        );
+      }
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      alert("Failed to upload image. Check console for details.");
     }
   };
 
@@ -101,7 +169,9 @@ const ProfileSettings = () => {
         <div className="char-count">
           {bio.length}/{maxBioLength}
         </div>
-        <button className="btn change-btn">Done</button>
+        <button className="btn change-btn" onClick={handleBioSave}>
+          Done
+        </button>
       </div>
 
       <div className="password-section">

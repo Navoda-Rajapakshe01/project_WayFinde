@@ -10,7 +10,8 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
-  const [showSignInModal, setShowSignInModal] = useState(false); // 🛠️ Fixed: initialize modal state
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext);
 
@@ -21,44 +22,86 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
+      // Make the login request
       const response = await axios.post(
         "http://localhost:5030/api/Auth/login",
-        formData
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
+      // Check if we have a token in the response
       const token = response.data.token;
-
       if (!token) {
         throw new Error("No token received from server");
       }
 
+      // Store the token
       localStorage.setItem("token", token);
 
-      const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      setUser(decodedToken);
+      try {
+        // Decode the token and extract user info
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+        
+        // Fetch user profile with the token
+        const profileRes = await axios.get(
+          "http://localhost:5030/api/profile/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      window.location.href = "/";
+        // Combine token info with profile data
+        const userProfile = {
+          ...decodedToken,
+          ...profileRes.data,
+        };
+        
+        // Update context and local storage
+        setUser(userProfile);
+        localStorage.setItem("userProfile", JSON.stringify(userProfile));
+        
+        // Redirect to home page
+        window.location.href = "/";
+      } catch (profileError) {
+        console.error("Error fetching profile:", profileError);
+        // Even if profile fetch fails, we can still log in with basic token info
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+        setUser(decodedToken);
+        window.location.href = "/";
+      }
     } catch (error) {
-      console.error(error);
-      setError("Invalid credentials");
+      console.error("Login error:", error);
+      if (error.response) {
+        // The server responded with a status code outside the 2xx range
+        setError(error.response.data.message || "Invalid credentials");
+      } else if (error.request) {
+        // The request was made but no response was received
+        setError("No response from server. Please check your connection.");
+      } else {
+        // Something happened in setting up the request
+        setError("Error during login. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // 🛠️ New function to handle modal sign-in option
+  // Handle registration option selection
   const handleSignInOption = (type) => {
     setShowSignInModal(false);
+    // Navigate to signup with the role parameter
     navigate(`/signup?role=${type}`);
-    if (type === "user") {
-      navigate("/signup"); // Navigate to user registration
-    } else if (type === "service") {
-      navigate("/signup"); // You can differentiate routes if needed
-    }
   };
-
-  const openModal = () => setShowSignInModal(true);
-  const closeModal = () => setShowSignInModal(false);
 
   return (
     <div className="login-page-container">
@@ -81,8 +124,10 @@ const Login = () => {
             onChange={handleChange}
             required
           />
-          <button type="submit">Login</button>
-          <p className="CreateNew" onClick={openModal}>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
+          <p className="CreateNew" onClick={() => setShowSignInModal(true)}>
             Create a new Account
           </p>
           {error && <p className="error-message">{error}</p>}
@@ -90,7 +135,7 @@ const Login = () => {
       </div>
 
       {showSignInModal && (
-        <div className="signin-modal-overlay" onClick={closeModal}>
+        <div className="signin-modal-overlay" onClick={() => setShowSignInModal(false)}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
@@ -107,7 +152,7 @@ const Login = () => {
                 Service Provider
               </button>
             </div>
-            <button className="close-modal-btn" onClick={closeModal}>
+            <button className="close-modal-btn" onClick={() => setShowSignInModal(false)}>
               Close
             </button>
           </div>
