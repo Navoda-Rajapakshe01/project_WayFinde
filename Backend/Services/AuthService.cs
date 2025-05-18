@@ -55,7 +55,7 @@ namespace Backend.Services
             }
 
             // Check if email already exists
-            if (await context.UsersNew.AnyAsync(u => u.Email == request.Email))
+            if (await context.UsersNew.AnyAsync(u => u.ContactEmail == request.ContactEmail))
             {
                 throw new Exception("Email is already registered.");
             }
@@ -64,7 +64,7 @@ namespace Backend.Services
             var user = new UserNew
             {
                 Username = request.Username,
-                Email = request.Email,
+                ContactEmail = request.ContactEmail,
                 Role = request.Role,
                 ServiceType = request.ServiceType,
                 PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password)
@@ -81,7 +81,7 @@ namespace Backend.Services
             var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Email, user.ContactEmail),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Role,user.Role),
                     new Claim("ServiceType", user.ServiceType ?? string.Empty),

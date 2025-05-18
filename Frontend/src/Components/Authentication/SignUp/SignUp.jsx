@@ -12,9 +12,9 @@ const Register = () => {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
-    email: "",
+    contactEmail: "",
     role: initialRole,
-    ServiceType: "",
+    serviceType: initialRole === "ServiceProvider" ? "" : null,
   });
 
   const [success, setSuccess] = useState("");
@@ -30,18 +30,49 @@ const Register = () => {
     setError("");
     setSuccess("");
 
+    // Create a copy of the form data for the API request
+    const apiData = { ...formData };
+
+    // If user is not a service provider, send empty string for serviceType
+    if (apiData.role !== "ServiceProvider") {
+      apiData.serviceType = "";
+    }
+
     try {
-      await axios.post("https://localhost:7138/api/Auth/register", formData);
+      // Log the data being sent to help debug
+      console.log("Sending registration data:", apiData);
+
+      const response = await axios.post(
+        "https://localhost:7138/api/Auth/register",
+        apiData
+      );
+      console.log("Registration response:", response.data);
+
       setSuccess("Registration successful! Redirecting to sign in...");
       setTimeout(() => {
         navigate("/signin");
       }, 1800);
     } catch (error) {
-      console.error(error);
-      setError(
-        error.response?.data?.message ||
-          "Registration failed. Please try again."
-      );
+      console.error("Registration error:", error);
+
+      // Improved error handling
+      if (error.response) {
+        // The server responded with a status code outside the 2xx range
+        console.error("Error response data:", error.response.data);
+        setError(
+          typeof error.response.data === "string"
+            ? error.response.data
+            : "Registration failed. Please check your information and try again."
+        );
+      } else if (error.request) {
+        // The request was made but no response was received
+        setError(
+          "No response from server. Please check your connection and try again."
+        );
+      } else {
+        // Something happened in setting up the request
+        setError("Registration failed. Please try again later.");
+      }
     }
   };
 
@@ -70,10 +101,10 @@ const Register = () => {
           />
 
           <input
-            type="text"
-            name="email"
+            type="email" // Changed to email type for better validation
+            name="contactEmail"
             placeholder="Email"
-            value={formData.email}
+            value={formData.contactEmail}
             onChange={handleChange}
             required
           />
@@ -93,8 +124,8 @@ const Register = () => {
           {/* Conditional service type dropdown */}
           {formData.role === "ServiceProvider" && (
             <select
-              name="ServiceType"
-              value={formData.ServiceType}
+              name="serviceType"
+              value={formData.serviceType}
               onChange={handleChange}
               required
             >

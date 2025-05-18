@@ -28,7 +28,7 @@ namespace Backend.Services
             if (user == null) return false;
 
             user.Username = username;
-            user.Email = email;
+            user.ContactEmail = email;
             user.ProfilePictureUrl = profilePicture;
 
             await _context.SaveChangesAsync();

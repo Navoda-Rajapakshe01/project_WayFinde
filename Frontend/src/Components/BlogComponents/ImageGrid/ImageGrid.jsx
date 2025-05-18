@@ -35,14 +35,14 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="custom-container">
       {/* Latest Blogs Section */}
       <div>
-        <h2 className="text-2xl font-bold mb-4">Latest Blogs</h2>
-        <div className="relative flex items-center">
+        <h2 className="LatestBlogsHeading">Latest Blogs</h2>
+        <div className="ScrollButtonsSection">
           {/* 🔹 Scroll Left Button */}
           <button
-            className="absolute left-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            className="ScrollButtonLeft"
             onClick={()=>handleScrollLeft(scrollContainerRefLatest)}
           >
             <FaChevronLeft />
@@ -51,39 +51,39 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           {/* Blog Cards in Horizontal Scroll */}
           <div
             ref={scrollContainerRefLatest}
-            className="flex overflow-x-auto space-x-4 scrollbar-hide p-2"
+            className="scroll-container"
             style={{ scrollBehavior: "smooth" }}
           >
             {latestBlogs.map((blog, index) => (
               <div
                 key={index}
-                className="min-w-[300px] p-4 shadow-2xl rounded-lg cursor-pointer"
+                className="blog-card"
                 onClick={() => handleNavigate(index)}
               >
                 <img
                   src={blog.img}
                   alt={blog.topic}
-                  className="w-full h-40 object-cover rounded-lg"
+                  className="blog-image"
                 />
-                <p className="text-gray-600">
+                <p className="paragraph-muted">
                   <Link
                     to={`/profile/${blog.writerName}`}
-                    className="text-blue-500 hover:underline"
+                    className="profile-link"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {blog.writerName}
                   </Link>
                 </p>
-                <h3 className="font-semibold">{blog.topic}</h3>
-                <p className="text-gray-600">{blog.briefDescription}</p>
-                <p className="inline-flex items-center space-x-2">
+                <h3 className="blog-title">{blog.topic}</h3>
+                <p className="blog-description">{blog.briefDescription}</p>
+                <p className="blog-meta">
                   <span>Date</span>
-                  <span className="flex items-center gap-1">
-                    <FaComment className="text-xl" />
+                  <span className="meta-item">
+                    <FaComment className="icon" />
                     <span>Comments</span>
                   </span>
-                  <span className="flex items-center gap-1">
-                    <FaComment className="text-xl" />
+                  <span className="meta-item">
+                    <FaComment className="icon" />
                     <span>Likes</span>
                   </span>
                 </p>
@@ -93,7 +93,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
 
           {/* 🔹 Scroll Right Button */}
           <button
-            className="absolute right-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            className="scroll-button-right"
             onClick={()=>handleScrollRight(scrollContainerRefLatest)}
           >
             <FaChevronRight />
@@ -102,12 +102,12 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
       </div>
 
       {/* Trending Blogs Section */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Trending Blogs</h2>
-        <div className="relative flex items-center">
+      <div className="TrendingBlogsSection">
+        <h2 className="TrendingBlogsHeading">Trending Blogs</h2>
+        <div className="ScrollButtonsSection">
           {/* 🔹 Scroll Left Button */}
           <button
-            className="absolute left-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            className="ScrollButtonLeft"
             onClick={()=>handleScrollLeft(scrollContainerRefTrending)}
           >
             <FaChevronLeft />
@@ -116,39 +116,38 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           {/* Blog Cards in Horizontal Scroll */}
           <div
             ref={scrollContainerRefTrending}
-            className="flex overflow-x-auto space-x-4 scrollbar-hide p-2"
+            className="scroll-container"
             style={{ scrollBehavior: "smooth" }}
           >
             {trendingBlogs.map((blog, index) => (
               <div
                 key={index}
-                className="min-w-[300px] p-4 shadow-2xl rounded-lg cursor-pointer"
+                className="blog-card"
                 onClick={() => handleNavigate(index)}
               >
                 <img
                   src={blog.img}
                   alt={blog.topic}
-                  className="w-full h-40 object-cover rounded-lg"
+                  className="blog-image"
                 />
-                <p className="text-gray-600">
+                <p className="paragraph-muted">
                   <Link
                     to={`/profile/${blog.writerName}`}
-                    className="text-blue-500 hover:underline"
+                    className="profile-link"
                     onClick={(e) => e.stopPropagation()}
                   >
                     {blog.writerName}
                   </Link>
                 </p>
-                <h3 className="font-semibold">{blog.topic}</h3>
-                <p className="text-gray-600">{blog.briefDescription}</p>
-                <p className="inline-flex items-center space-x-2">
-                  <span>Date</span>
-                  <span className="flex items-center gap-1">
-                    <FaComment className="text-xl" />
+                <h3 className="blog-title">{blog.topic}</h3>
+                <p className="blog-description">{blog.briefDescription}</p>
+                <p className="blog-meta">
+                <span className="meta-item">
+                    <FaComment className="icon" />
                     <span>Comments</span>
                   </span>
-                  <span className="flex items-center gap-1">
-                    <FaComment className="text-xl" />
+                  <span className="meta-item">
+                    <FaComment className="icon" />
                     <span>Likes</span>
                   </span>
                 </p>
@@ -157,7 +156,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           </div>
 
           <button
-            className="absolute right-0 z-10 bg-gray-200 p-2 rounded-full shadow-md"
+            className="scroll-button-right"
             onClick={()=>handleScrollRight(scrollContainerRefTrending)}
           >
             <FaChevronRight />
@@ -166,49 +165,48 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
       </div>
 
       {/* Other Blogs Section */}
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Other Blogs</h2>
-        <div className="grid grid-cols-2 gap-y-6 gap-x-6 ml-25 mr-25">
+      <div className="OtherBlogsSection">
+        <h2 className="TrendingBlogsHeading">Other Blogs</h2>
+        <div className="other-blog-grid">
           {currentBlogs.map((blog, index) => (
             <div
               key={index}
-              className="p-4 shadow-2xl rounded-lg cursor-pointer"
+              className="blog-card"
               onClick={() => handleNavigate(index)}
             >
               <img
                 src={blog.img}
                 alt={blog.topic}
-                className="w-full h-40 object-cover rounded-lg"
+                className="blog-image"
               />
-              <p className="text-gray-600">
+              <p className="paragraph-muted">
                 <Link
                   to={`/profile/${blog.writerName}`}
-                  className="text-blue-500 hover:underline"
+                  className="tprofile-link"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {blog.writerName}
                 </Link>
               </p>
-              <h3 className="font-semibold">{blog.topic}</h3>
-              <p className="text-gray-600">{blog.briefDescription}</p>
-              <p className="inline-flex items-center space-x-2">
-                <span>Date</span>
-                <span className="flex items-center gap-1">
-                  <FaComment className="text-xl" />
-                  <span>Comments</span>
-                </span>
-                <span className="flex items-center gap-1">
-                  <FaComment className="text-xl" />
-                  <span>Likes</span>
-                </span>
-              </p>
+              <h3 className="blog-title">{blog.topic}</h3>
+                <p className="blog-description">{blog.briefDescription}</p>
+                <p className="blog-meta">
+                <span className="meta-item">
+                    <FaComment className="icon" />
+                    <span>Comments</span>
+                  </span>
+                  <span className="meta-item">
+                    <FaComment className="icon" />
+                    <span>Likes</span>
+                  </span>
+                </p>
             </div>
           ))}
         </div>
 
         {/* Pagination Buttons */}
-        <div className="pagination">
-          <div className="flex justify-center mt-4">
+        <div className="pagination button">
+          <div className="pagination-container">
             {/* Previous button */}
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
@@ -219,15 +217,15 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
             </button>
 
             {/* Pagination Numbers */}
-            <div className="flex items-center space-x-2">
+            <div className="pagination-number-container">
               {[...Array(totalPages)].map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentPage(index + 1)}
                   className={`px-3 py-1 rounded-lg ${
                     currentPage === index + 1
-                      ? "bg-blue-500 text-white active"
-                      : "bg-gray-300 text-black"
+                      ? "pagination-page active"
+                      : "pagination-page"
                   }`}
                 >
                   {index + 1}

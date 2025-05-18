@@ -56,7 +56,7 @@ namespace Backend.Controller
             // Basic validation
             if (string.IsNullOrWhiteSpace(request.Username) ||
                 string.IsNullOrWhiteSpace(request.Password) ||
-                string.IsNullOrWhiteSpace(request.Email))
+                string.IsNullOrWhiteSpace(request.ContactEmail))
             {
                 return BadRequest("Username, password, and email are required.");
             }
@@ -113,6 +113,11 @@ namespace Backend.Controller
         public async Task<IActionResult> GetProfile()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return BadRequest("User ID is missing or invalid.");
+            }
             var user = await _userService.GetUserByIdAsync(userId);
 
             if (user == null)
@@ -122,7 +127,7 @@ namespace Backend.Controller
             {
                 user.Id,
                 user.Username,
-                user.Email,
+                user.ContactEmail,
                 user.Role,
                 user.ServiceType
             });
@@ -136,7 +141,7 @@ namespace Backend.Controller
             if (userId == null || !Guid.TryParse(userId, out Guid userGuid))
                 return Unauthorized();
 
-            var result = await _userService.UpdateUserAsync(userGuid, updateProfileDto.Username, updateProfileDto.Email, updateProfileDto.ProfilePictureUrl);
+            var result = await _userService.UpdateUserAsync(userGuid, updateProfileDto.Username, updateProfileDto.ContactEmail, updateProfileDto.ProfilePictureUrl);
             if (!result) return NotFound("User not found");
 
             return Ok("Profile updated successfully");
