@@ -13,8 +13,8 @@ const Register = () => {
     username: "",
     password: "",
     contactEmail: "",
-    role: initialRole,
-    serviceType: initialRole === "ServiceProvider" ? "" : null,
+    role: initialRole, // Set the initial role based on query parameter
+    serviceType: "",
   });
 
   const [success, setSuccess] = useState("");
@@ -43,8 +43,13 @@ const Register = () => {
       console.log("Sending registration data:", apiData);
 
       const response = await axios.post(
-        "https://localhost:7138/api/Auth/register",
-        apiData
+        "http://localhost:5030/api/Auth/register",
+        apiData,
+        {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
       );
       console.log("Registration response:", response.data);
 
@@ -55,15 +60,16 @@ const Register = () => {
     } catch (error) {
       console.error("Registration error:", error);
 
-      // Improved error handling
+      // Enhanced error handling
       if (error.response) {
         // The server responded with a status code outside the 2xx range
         console.error("Error response data:", error.response.data);
-        setError(
-          typeof error.response.data === "string"
-            ? error.response.data
-            : "Registration failed. Please check your information and try again."
-        );
+        const errorMessage = typeof error.response.data === "string"
+          ? error.response.data
+          : error.response.data?.message || error.response.data?.title || 
+            "Registration failed. Please check your information and try again.";
+            
+        setError(errorMessage);
       } else if (error.request) {
         // The request was made but no response was received
         setError(
@@ -101,7 +107,7 @@ const Register = () => {
           />
 
           <input
-            type="email" // Changed to email type for better validation
+            type="email"
             name="contactEmail"
             placeholder="Email"
             value={formData.contactEmail}

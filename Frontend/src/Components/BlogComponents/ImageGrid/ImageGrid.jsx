@@ -17,7 +17,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
   const totalPages = Math.ceil(otherBlogs.length / blogsPerPage);
 
   const handleNavigate = (index) => {
-    navigate(`/blog/blog${index + 1}`); // Navigate dynamically
+    navigate(`/blog/${index + 1}`); // Navigate dynamically
   };
 
   // 🔹 Scroll Left
@@ -43,7 +43,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           {/* 🔹 Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={()=>handleScrollLeft(scrollContainerRefLatest)}
+            onClick={() => handleScrollLeft(scrollContainerRefLatest)}
           >
             <FaChevronLeft />
           </button>
@@ -60,11 +60,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
                 className="blog-card"
                 onClick={() => handleNavigate(index)}
               >
-                <img
-                  src={blog.img}
-                  alt={blog.topic}
-                  className="blog-image"
-                />
+                <img src={blog.img} alt={blog.topic} className="blog-image" />
                 <p className="paragraph-muted">
                   <Link
                     to={`/profile/${blog.writerName}`}
@@ -94,7 +90,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           {/* 🔹 Scroll Right Button */}
           <button
             className="scroll-button-right"
-            onClick={()=>handleScrollRight(scrollContainerRefLatest)}
+            onClick={() => handleScrollRight(scrollContainerRefLatest)}
           >
             <FaChevronRight />
           </button>
@@ -108,7 +104,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           {/* 🔹 Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={()=>handleScrollLeft(scrollContainerRefTrending)}
+            onClick={() => handleScrollLeft(scrollContainerRefTrending)}
           >
             <FaChevronLeft />
           </button>
@@ -125,11 +121,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
                 className="blog-card"
                 onClick={() => handleNavigate(index)}
               >
-                <img
-                  src={blog.img}
-                  alt={blog.topic}
-                  className="blog-image"
-                />
+                <img src={blog.img} alt={blog.topic} className="blog-image" />
                 <p className="paragraph-muted">
                   <Link
                     to={`/profile/${blog.writerName}`}
@@ -142,7 +134,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
                 <h3 className="blog-title">{blog.topic}</h3>
                 <p className="blog-description">{blog.briefDescription}</p>
                 <p className="blog-meta">
-                <span className="meta-item">
+                  <span className="meta-item">
                     <FaComment className="icon" />
                     <span>Comments</span>
                   </span>
@@ -157,7 +149,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
 
           <button
             className="scroll-button-right"
-            onClick={()=>handleScrollRight(scrollContainerRefTrending)}
+            onClick={() => handleScrollRight(scrollContainerRefTrending)}
           >
             <FaChevronRight />
           </button>
@@ -174,11 +166,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
               className="blog-card"
               onClick={() => handleNavigate(index)}
             >
-              <img
-                src={blog.img}
-                alt={blog.topic}
-                className="blog-image"
-              />
+              <img src={blog.img} alt={blog.topic} className="blog-image" />
               <p className="paragraph-muted">
                 <Link
                   to={`/profile/${blog.writerName}`}
@@ -189,17 +177,17 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
                 </Link>
               </p>
               <h3 className="blog-title">{blog.topic}</h3>
-                <p className="blog-description">{blog.briefDescription}</p>
-                <p className="blog-meta">
+              <p className="blog-description">{blog.briefDescription}</p>
+              <p className="blog-meta">
                 <span className="meta-item">
-                    <FaComment className="icon" />
-                    <span>Comments</span>
-                  </span>
-                  <span className="meta-item">
-                    <FaComment className="icon" />
-                    <span>Likes</span>
-                  </span>
-                </p>
+                  <FaComment className="icon" />
+                  <span>Comments</span>
+                </span>
+                <span className="meta-item">
+                  <FaComment className="icon" />
+                  <span>Likes</span>
+                </span>
+              </p>
             </div>
           ))}
         </div>

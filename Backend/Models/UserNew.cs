@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
 {
@@ -8,12 +9,15 @@ namespace Backend.Models
         [Required]
         public string Username { get; set; } = string.Empty;
         [Required]
-        public string Role { get; set; } = "NormalUser";
-        [Required]
+        [Column("Password")]
         public string PasswordHash { get; set; } = string.Empty;
         [Required]
         public string ContactEmail { get; set; } = string.Empty;
         [Required]
+        public string Role { get; set; } = "NormalUser";
+        [Required]
+       
+        
 
         public string? ServiceType { get; set; } = string.Empty;
         public string? ProfilePictureUrl { get; set; } = string.Empty;

@@ -48,32 +48,52 @@ namespace Backend.Services
 
         public async Task<UserNew?> RegisterAsync(UserDtoRegister request)
         {
-            // Check if username already exists
-            if (await context.UsersNew.AnyAsync(u => u.Username == request.Username))
+            try
             {
-                throw new Exception("Username is already taken.");
+                // Check if username already exists
+                if (await context.UsersNew.AnyAsync(u => u.Username == request.Username))
+                {
+                    throw new Exception("Username is already taken.");
+                }
+
+                // Check if email already exists
+                if (await context.UsersNew.AnyAsync(u => u.ContactEmail == request.ContactEmail))
+                {
+                    throw new Exception("Email is already registered.");
+                }
+
+                // Create user and hash password
+                var user = new UserNew
+                {
+                    Username = request.Username,
+                    ContactEmail = request.ContactEmail,
+                    Role = request.Role,
+                    ServiceType = request.ServiceType ?? "", // Ensure ServiceType is never null
+                    PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password)
+                };
+
+                // Add user to context and save changes
+                await context.UsersNew.AddAsync(user);
+
+                // Save changes with explicit try/catch to get detailed error
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    // Log the inner exception for debugging
+                    Console.WriteLine($"Database error: {dbEx.InnerException?.Message}");
+                    throw new Exception($"Database error: {dbEx.InnerException?.Message}");
+                }
+
+                return user;
             }
-
-            // Check if email already exists
-            if (await context.UsersNew.AnyAsync(u => u.ContactEmail == request.ContactEmail))
+            catch (Exception ex)
             {
-                throw new Exception("Email is already registered.");
+                // Re-throw with clear message
+                throw new Exception($"User registration failed: {ex.Message}");
             }
-
-            // Create user and hash password
-            var user = new UserNew
-            {
-                Username = request.Username,
-                ContactEmail = request.ContactEmail,
-                Role = request.Role,
-                ServiceType = request.ServiceType,
-                PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password)
-            };
-
-            context.UsersNew.Add(user);
-            await context.SaveChangesAsync();
-
-            return user;
         }
 
         private string CreateToken(UserNew user)

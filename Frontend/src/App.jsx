@@ -13,9 +13,9 @@ import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
-import UserLogin from "./Components/Authentication/UserLogin/UserLogin";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
+import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import Accommodation from "./pages/Accommodation";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -27,6 +27,7 @@ import Chat from "./pages/Profile/Chat";
 import Following from "./pages/Profile/Following";
 import Followers from "./pages/Profile/Follwers";
 import Profile from "./pages/Profile/Profile";
+import UserProfileSettings from "./pages/Profile/Setting";
 import ReserveVehicle from "./pages/ReserveVehicle";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
@@ -38,8 +39,6 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
-import UserProfileSettings from "./pages/Profile/Setting";
 
 import "./App.css";
 
@@ -65,8 +64,8 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/personalBlog" element={<PersonalBlog />} />
+        <Route path="/chat" element={<PersonalBlog/>} />
+        <Route path="/blog/:id" element={<PersonalBlog />} />
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
