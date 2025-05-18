@@ -24,6 +24,7 @@ namespace Backend.Data
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
