@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter } from "react-icons/fa";
-import "../AdminProfile/edit-place"
+import "../AdminProfile/edit-place";
 import "./places-management.css";
 import "../../App.css";
 
@@ -198,17 +198,17 @@ const PlacesManagement = () => {
   }
 
   return (
-    <div className="places-management">
-      <div className="adminsection-header">
-        <h1 className="page-title">Places Management</h1>
-        <button className="add-button" onClick={() => setShowModal(true)}>
+    <div className="pm-container">
+      <div className="pm-header">
+        <h1 className="pm-title">Places Management</h1>
+        <button className="pm-add-btn" onClick={() => setShowModal(true)}>
           <FaPlus /> Add New Place
         </button>
       </div>
 
-      <div className="filter-bar">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
+      <div className="pm-filter-bar">
+        <div className="pm-search-box">
+          <FaSearch className="pm-icon" />
           <input
             type="text"
             placeholder="Search places by name..."
@@ -216,8 +216,8 @@ const PlacesManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="filter-dropdown">
-          <FaFilter className="filter-icon" />
+        <div className="pm-filter-select">
+          <FaFilter className="pm-icon" />
           <select
             value={selectedDistrict}
             onChange={(e) => setSelectedDistrict(e.target.value)}
@@ -233,34 +233,30 @@ const PlacesManagement = () => {
       </div>
 
       {filteredPlaces.length === 0 ? (
-        <div className="no-data-message">
+        <div className="pm-no-results">
           <p>No places found matching your criteria.</p>
         </div>
       ) : (
-        <div className="places-grid">
+        <div className="pm-grid">
           {filteredPlaces.map((place) => {
             const districtName =
               districts.find((d) => d.id === place.districtId)?.name || "N/A";
             return (
-              <div key={place.id} className="place-card-item">
-                <div className="place-card-content">
-                  <h3 className="place-card-name">{place.name}</h3>
-                  <p className="place-card-district">
-                    District: {districtName}
-                  </p>
+              <div key={place.id} className="pm-card">
+                <div className="pm-card-content">
+                  <h3 className="pm-place-name">{place.name}</h3>
+                  <p className="pm-place-district">District: {districtName}</p>
                 </div>
-                <div className="place-card-actions action-buttons">
+                <div className="pm-actions">
                   <button
-                    className="edit-button"
+                    className="pm-edit-btn"
                     onClick={() => navigate(`/admin/edit-place/${place.id}`)}
-                    title="Edit Place"
                   >
                     <FaEdit /> <span>Edit</span>
                   </button>
                   <button
-                    className="delete-button"
+                    className="pm-delete-btn"
                     onClick={() => deletePlace(place.id)}
-                    title="Delete Place"
                   >
                     <FaTrash /> <span>Delete</span>
                   </button>
@@ -272,14 +268,14 @@ const PlacesManagement = () => {
       )}
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2 className="modal-title">Add New Place</h2>
+        <div className="pm-modal-overlay">
+          <div className="pm-modal">
+            <h2 className="pm-modal-title">Add New Place</h2>
 
-            <form onSubmit={handleAddPlace}>
-              <div className="form-group">
+            <form onSubmit={handleAddPlace} className="pm-form">
+              <div className="pm-form-group">
                 <select
-                  className="form-select"
+                  className="pm-form-select"
                   value={selectedDistrict}
                   onChange={(e) => setSelectedDistrict(e.target.value)}
                   required
@@ -293,27 +289,25 @@ const PlacesManagement = () => {
                 </select>
 
                 <label>
-                  Name: <span className="required">*</span>
+                  Name: <span className="pm-required">*</span>
                   <input
                     type="text"
                     value={newPlaceName}
                     onChange={(e) => setNewPlaceName(e.target.value)}
-                    required
                   />
                   {formErrors.name && (
-                    <p className="error-text">{formErrors.name}</p>
+                    <p className="pm-error">{formErrors.name}</p>
                   )}
                 </label>
 
                 <label>
-                  Description: <span className="required">*</span>
+                  Description: <span className="pm-required">*</span>
                   <textarea
                     value={newPlaceDescription}
                     onChange={(e) => setNewPlaceDescription(e.target.value)}
-                    required
                   />
                   {formErrors.description && (
-                    <p className="error-text">{formErrors.description}</p>
+                    <p className="pm-error">{formErrors.description}</p>
                   )}
                 </label>
 
@@ -326,15 +320,14 @@ const PlacesManagement = () => {
                 </label>
 
                 <label>
-                  Main Image URL: <span className="required">*</span>
+                  Main Image URL: <span className="pm-required">*</span>
                   <input
                     type="text"
                     value={newPlaceMainImageUrl}
                     onChange={(e) => setNewPlaceMainImageUrl(e.target.value)}
-                    required
                   />
                   {formErrors.mainImageUrl && (
-                    <p className="error-text">{formErrors.mainImageUrl}</p>
+                    <p className="pm-error">{formErrors.mainImageUrl}</p>
                   )}
                 </label>
 
@@ -366,11 +359,10 @@ const PlacesManagement = () => {
                 </label>
 
                 <label>
-                  Category: <span className="required">*</span>
+                  Category: <span className="pm-required">*</span>
                   <select
                     value={newPlaceCategoryId}
                     onChange={(e) => setNewPlaceCategoryId(e.target.value)}
-                    required
                   >
                     <option value="">Select Category</option>
                     {categories.map((category) => (
@@ -383,18 +375,18 @@ const PlacesManagement = () => {
                     ))}
                   </select>
                   {formErrors.categoryId && (
-                    <p className="error-text">{formErrors.categoryId}</p>
+                    <p className="pm-error">{formErrors.categoryId}</p>
                   )}
                 </label>
 
-                <div className="modal-buttons">
-                  <button type="submit" className="save-button">
+                <div className="pm-modal-actions">
+                  <button type="submit" className="pm-save-btn">
                     Save
                   </button>
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="cancel-button"
+                    className="pm-cancel-btn"
                   >
                     Cancel
                   </button>
