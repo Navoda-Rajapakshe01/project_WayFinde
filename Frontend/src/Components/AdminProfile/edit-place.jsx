@@ -275,12 +275,16 @@ const EditPlace = () => {
           </div>
 
           <div className="ep-form-actions">
-            <Link to="/admin/places-management" className="ep-cancel-button">
-              Cancel
-            </Link>
+            <button
+              type="button"
+              className="admincancel-button"
+              onClick={() => navigate("/admin/places-management")}
+            >
+              Back
+            </button>
             <button
               type="submit"
-              className="ep-save-button"
+              className="adminsave-button"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Updating..." : "Update Place"}

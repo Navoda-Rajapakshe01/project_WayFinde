@@ -6,6 +6,7 @@ import axios from "axios";
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter } from "react-icons/fa";
 import "../AdminProfile/edit-place";
 import "./places-management.css";
+import "../../pages/CSS/AdminDashboard.css";
 import "../../App.css";
 
 const PlacesManagement = () => {
@@ -82,10 +83,11 @@ const PlacesManagement = () => {
       title: "Are you sure?",
       text: "You won’t be able to undo this!",
       icon: "warning",
+      confirmButtonText: "Yes, delete it!",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+
     });
 
     if (result.isConfirmed) {
@@ -198,17 +200,17 @@ const PlacesManagement = () => {
   }
 
   return (
-    <div className="pm-container">
-      <div className="pm-header">
-        <h1 className="pm-title">Places Management</h1>
-        <button className="pm-add-btn" onClick={() => setShowModal(true)}>
+    <div className="places-management">
+      <div className="adminsection-header">
+        <h1 className="page-title">Places Management</h1>
+        <button className="adminadd-button" onClick={() => setShowModal(true)}>
           <FaPlus /> Add New Place
         </button>
       </div>
 
-      <div className="pm-filter-bar">
-        <div className="pm-search-box">
-          <FaSearch className="pm-icon" />
+      <div className="adminfilter-bar">
+        <div className="adminsearch-box">
+          <FaSearch className="adminsearch-icon" />
           <input
             type="text"
             placeholder="Search places by name..."
@@ -216,8 +218,8 @@ const PlacesManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="pm-filter-select">
-          <FaFilter className="pm-icon" />
+        <div className="adminfilter-dropdown">
+          <FaFilter className="adminfilter-icon" />
           <select
             value={selectedDistrict}
             onChange={(e) => setSelectedDistrict(e.target.value)}
@@ -233,30 +235,34 @@ const PlacesManagement = () => {
       </div>
 
       {filteredPlaces.length === 0 ? (
-        <div className="pm-no-results">
+        <div className="no-data-message">
           <p>No places found matching your criteria.</p>
         </div>
       ) : (
-        <div className="pm-grid">
+        <div className="places-grid">
           {filteredPlaces.map((place) => {
             const districtName =
               districts.find((d) => d.id === place.districtId)?.name || "N/A";
             return (
-              <div key={place.id} className="pm-card">
-                <div className="pm-card-content">
-                  <h3 className="pm-place-name">{place.name}</h3>
-                  <p className="pm-place-district">District: {districtName}</p>
+              <div key={place.id} className="place-card-item">
+                <div className="place-card-content">
+                  <h3 className="place-card-name">{place.name}</h3>
+                  <p className="place-card-district">
+                    District: {districtName}
+                  </p>
                 </div>
-                <div className="pm-actions">
+                <div className="place-card-actions action-buttons">
                   <button
-                    className="pm-edit-btn"
+                    className="adminedit-button"
                     onClick={() => navigate(`/admin/edit-place/${place.id}`)}
+                    title="Edit Place"
                   >
                     <FaEdit /> <span>Edit</span>
                   </button>
                   <button
-                    className="pm-delete-btn"
+                    className="admindelete-button"
                     onClick={() => deletePlace(place.id)}
+                    title="Delete Place"
                   >
                     <FaTrash /> <span>Delete</span>
                   </button>
@@ -268,14 +274,14 @@ const PlacesManagement = () => {
       )}
 
       {showModal && (
-        <div className="pm-modal-overlay">
-          <div className="pm-modal">
-            <h2 className="pm-modal-title">Add New Place</h2>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2 className="modal-title">Add New Place</h2>
 
-            <form onSubmit={handleAddPlace} className="pm-form">
-              <div className="pm-form-group">
+            <form onSubmit={handleAddPlace}>
+              <div className="form-group">
                 <select
-                  className="pm-form-select"
+                  className="form-select"
                   value={selectedDistrict}
                   onChange={(e) => setSelectedDistrict(e.target.value)}
                   required
@@ -289,25 +295,27 @@ const PlacesManagement = () => {
                 </select>
 
                 <label>
-                  Name: <span className="pm-required">*</span>
+                  Name: <span className="required">*</span>
                   <input
                     type="text"
                     value={newPlaceName}
                     onChange={(e) => setNewPlaceName(e.target.value)}
+                    required
                   />
                   {formErrors.name && (
-                    <p className="pm-error">{formErrors.name}</p>
+                    <p className="error-text">{formErrors.name}</p>
                   )}
                 </label>
 
                 <label>
-                  Description: <span className="pm-required">*</span>
+                  Description: <span className="required">*</span>
                   <textarea
                     value={newPlaceDescription}
                     onChange={(e) => setNewPlaceDescription(e.target.value)}
+                    required
                   />
                   {formErrors.description && (
-                    <p className="pm-error">{formErrors.description}</p>
+                    <p className="error-text">{formErrors.description}</p>
                   )}
                 </label>
 
@@ -320,14 +328,15 @@ const PlacesManagement = () => {
                 </label>
 
                 <label>
-                  Main Image URL: <span className="pm-required">*</span>
+                  Main Image URL: <span className="required">*</span>
                   <input
                     type="text"
                     value={newPlaceMainImageUrl}
                     onChange={(e) => setNewPlaceMainImageUrl(e.target.value)}
+                    required
                   />
                   {formErrors.mainImageUrl && (
-                    <p className="pm-error">{formErrors.mainImageUrl}</p>
+                    <p className="error-text">{formErrors.mainImageUrl}</p>
                   )}
                 </label>
 
@@ -359,10 +368,11 @@ const PlacesManagement = () => {
                 </label>
 
                 <label>
-                  Category: <span className="pm-required">*</span>
+                  Category: <span className="required">*</span>
                   <select
                     value={newPlaceCategoryId}
                     onChange={(e) => setNewPlaceCategoryId(e.target.value)}
+                    required
                   >
                     <option value="">Select Category</option>
                     {categories.map((category) => (
@@ -375,20 +385,20 @@ const PlacesManagement = () => {
                     ))}
                   </select>
                   {formErrors.categoryId && (
-                    <p className="pm-error">{formErrors.categoryId}</p>
+                    <p className="error-text">{formErrors.categoryId}</p>
                   )}
                 </label>
 
-                <div className="pm-modal-actions">
-                  <button type="submit" className="pm-save-btn">
-                    Save
-                  </button>
+                <div className="modal-buttons">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="pm-cancel-btn"
+                    className="admincancel-button"
                   >
                     Cancel
+                  </button>
+                  <button type="submit" className="adminsave-button">
+                    Save
                   </button>
                 </div>
               </div>
