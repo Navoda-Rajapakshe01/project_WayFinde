@@ -1,12 +1,17 @@
-﻿using Backend.Models;
+﻿using Backend.Models.User;
+using Backend.Models;
+using Backend.DTOs;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Backend.Data;
 using Backend.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Controllers
 {
@@ -30,6 +35,7 @@ namespace Backend.Controllers
             _authService = authService;
             _userService = userService;
         }
+
         [HttpPut("update-profile")]
         [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
@@ -50,7 +56,6 @@ namespace Backend.Controllers
             if (image == null || image.Length == 0)
                 return BadRequest("No file uploaded.");
 
-            // Upload to Cloudinary (or your storage)
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(image.FileName, image.OpenReadStream()),
@@ -63,16 +68,13 @@ namespace Backend.Controllers
 
             string imageUrl = uploadResult.SecureUrl.ToString();
 
-            // ✅ Extract user ID from token claims
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized("User not authenticated.");
 
-         
             if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
                 return BadRequest("Invalid user ID.");
 
-            // Save image URL to user's profile
             var user = await _context.UsersNew.FindAsync(userId);
             if (user == null)
                 return NotFound("User not found.");
@@ -82,54 +84,39 @@ namespace Backend.Controllers
 
             return Ok(new { profilePictureUrl = imageUrl });
         }
+
         [HttpPut("update-bio")]
         [Authorize]
         public async Task<IActionResult> UpdateBio([FromBody] BioUpdateDto bioDto)
         {
+            if (bioDto == null || string.IsNullOrEmpty(bioDto.Bio))
+                return BadRequest("Bio content is required.");
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User not authenticated.");
+
+            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
+                return BadRequest("Invalid user ID.");
+
+            var user = await _context.UsersNew.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found.");
+
+            user.Bio = bioDto.Bio;
+
             try
             {
-                // Validate input
-                if (bioDto == null || string.IsNullOrEmpty(bioDto.Bio))
-                {
-                    return BadRequest("Bio content is required.");
-                }
-
-                // Get authenticated user
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null)
-                    return Unauthorized("User not authenticated.");
-
-                if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
-                    return BadRequest("Invalid user ID.");
-
-                // Find user in database
-                var user = await _context.UsersNew.FindAsync(userId);
-                if (user == null)
-                    return NotFound("User not found.");
-
-                // Update bio
-                user.Bio = bioDto.Bio;
-
-                // Save changes with detailed error handling
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    return Ok("Bio updated successfully.");
-                }
-                catch (DbUpdateException dbEx)
-                {
-                    // Log the specific database error
-                    Console.WriteLine($"Database error: {dbEx.InnerException?.Message}");
-                    return StatusCode(500, $"Database error: {dbEx.InnerException?.Message}");
-                }
+                await _context.SaveChangesAsync();
+                return Ok("Bio updated successfully.");
             }
-            catch (Exception ex)
+            catch (DbUpdateException dbEx)
             {
-                // Log any other errors
-                Console.WriteLine($"Error updating bio: {ex.Message}");
-                return StatusCode(500, "An error occurred while updating the bio.");
+                Console.WriteLine($"Database error: {dbEx.InnerException?.Message}");
+                return StatusCode(500, $"Database error: {dbEx.InnerException?.Message}");
             }
         }
+
         [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> GetCurrentUserProfile()
@@ -138,12 +125,9 @@ namespace Backend.Controllers
             if (userIdClaim == null)
                 return Unauthorized("User not authenticated.");
 
-            // ✅ Convert the claim value to a Guid
             if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
                 return BadRequest("Invalid user ID format.");
 
-
-            // ✅ Pass the Guid to FindAsync
             var user = await _context.UsersNew.FindAsync(userId);
             if (user == null)
                 return NotFound("User not found.");
@@ -158,6 +142,34 @@ namespace Backend.Controllers
             });
         }
 
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto model)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+
+            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
+                return BadRequest("Invalid user ID");
+
+            var user = await _context.UsersNew.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            // Use ASP.NET Core Identity password hasher
+            var hasher = new PasswordHasher<UserNew>();
+            var verificationResult = hasher.VerifyHashedPassword(user, user.PasswordHash, model.CurrentPassword);
+
+            if (verificationResult == PasswordVerificationResult.Failed)
+                return BadRequest("Current password is incorrect.");
+
+            // Update to new hashed password
+            user.PasswordHash = hasher.HashPassword(user, model.NewPassword);
+            await _context.SaveChangesAsync();
+
+            return Ok("Password changed successfully.");
+        }
 
     }
 }

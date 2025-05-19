@@ -1,5 +1,6 @@
 ﻿
 using Backend.Models;
+using Backend.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -150,6 +151,26 @@ namespace Backend.Controller
         {
             return Ok("You are an admin!");
         }
+
+        [Authorize]
+        [HttpDelete("delete-account")]
+        public async Task<IActionResult> DeleteAccount()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized();
+
+            var userId = Guid.Parse(userIdClaim.Value);
+            var user = await _context.UsersNew.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            _context.UsersNew.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok("User deleted successfully.");
+        }
+
 
 
     }

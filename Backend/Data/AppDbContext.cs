@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models;
+
 using Backend.DTOs;
 
 namespace Backend.Data
@@ -34,6 +35,9 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
+
+        // User Profile
+        public DbSet<Post> Posts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
