@@ -34,6 +34,7 @@ const ThingsToDo = () => {
       <MainNavbar />
       <HeroSection
         title={<>Discover & Explore: Unmissable Experiences Await!</>}
+        subtitle={<>Get inspired by Sri Lanka’s beauty and plan your perfect escape.</>}
         backgroundImage="https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"
         placeHolder="Search Your Destination Here..."
         color="black"
