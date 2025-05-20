@@ -201,13 +201,13 @@ const AccommodationManagement = () => {
     <div className="accommodation-management">
       <div className="adminsection-header">
         <h1 className="page-title">Accommodation Management</h1>
-        <button className="add-button" onClick={handleAddAccommodation}>
+        <button className="adminadd-button" onClick={handleAddAccommodation}>
           <FaPlus /> Add New Accommodation
         </button>
       </div>
 
-      <div className="filter-bar">
-        <div className="search-box">
+      <div className="adminfilter-bar">
+        <div className="adminsearch-box">
           <FaSearch className="search-icon" />
           <input
             type="text"
@@ -217,8 +217,8 @@ const AccommodationManagement = () => {
           />
         </div>
 
-        <div className="filters">
-          <div className="filter-dropdown">
+        <div className="adminfilters">
+          <div className="adminfilter-dropdown">
             <FaFilter className="filter-icon" />
             <select
               value={selectedType}
@@ -233,7 +233,7 @@ const AccommodationManagement = () => {
             </select>
           </div>
 
-          <div className="filter-dropdown">
+          <div className="adminfilter-dropdown">
             <FaFilter className="filter-icon" />
             <select
               value={selectedStatus}
@@ -289,11 +289,11 @@ const AccommodationManagement = () => {
                 </td>
                 <td>{accommodation.joinDate}</td>
                 <td>
-                  <div className="action-buttons">
+                  <div className="adminaction-buttons">
                     {accommodation.status === "pending" && (
                       <>
                         <button
-                          className="approve-button"
+                          className="adminapprove-button"
                           onClick={() =>
                             handleApproveAccommodation(accommodation.id)
                           }
@@ -302,7 +302,7 @@ const AccommodationManagement = () => {
                           <FaCheck />
                         </button>
                         <button
-                          className="reject-button"
+                          className="adminreject-button"
                           onClick={() =>
                             handleRejectAccommodation(accommodation.id)
                           }
@@ -313,14 +313,14 @@ const AccommodationManagement = () => {
                       </>
                     )}
                     <button
-                      className="edit-button"
+                      className="adminedit-button"
                       onClick={() => handleEditAccommodation(accommodation)}
                       title="Edit"
                     >
                       <FaEdit />
                     </button>
                     <button
-                      className="delete-button"
+                      className="admindelete-button"
                       onClick={() =>
                         handleDeleteAccommodation(accommodation.id)
                       }
@@ -346,7 +346,7 @@ const AccommodationManagement = () => {
                   : "Add New Accommodation"}
               </h2>
               <button
-                className="close-button"
+                className="adminclose-button"
                 onClick={() => setShowAddModal(false)}
               >
                 ×
@@ -444,7 +444,7 @@ const AccommodationManagement = () => {
               >
                 Cancel
               </button>
-              <button className="save-button">Save Accommodation</button>
+              <button className="adminsave-button">Save Accommodation</button>
             </div>
           </div>
         </div>

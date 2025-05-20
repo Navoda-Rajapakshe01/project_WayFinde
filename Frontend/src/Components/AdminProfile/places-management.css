@@ -183,38 +183,11 @@ select:focus {
 /* Buttons */
 .modal-buttons {
   display: flex;
-  justify-content: space-between;
   margin-top: 20px;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.save-button {
-  background-color: #4CAF50;
-  color: #fff;
-}
-
-.save-button:hover {
-  background-color: #45a049;
-}
-
-.cancel-button {
-  background-color: #f44336;
-  color: #fff;
-}
-
-.cancel-button:hover {
-  background-color: #e53935;
-}
-
-/* Add some padding and margins for form items */
 .modal-content input,
 .modal-content textarea,
 .modal-content select {

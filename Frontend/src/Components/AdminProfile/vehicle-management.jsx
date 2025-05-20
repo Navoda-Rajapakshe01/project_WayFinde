@@ -190,14 +190,14 @@ const VehicleManagement = () => {
     <div className="vehicle-management">
       <div className="adminsection-header">
         <h1 className="page-title">Vehicle Management</h1>
-        <button className="add-button" onClick={handleAddVehicle}>
+        <button className="adminadd-button" onClick={handleAddVehicle}>
           <FaPlus /> Add New Vehicle
         </button>
       </div>
 
-      <div className="filter-bar">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
+      <div className="adminfilter-bar">
+        <div className="adminsearch-box">
+          <FaSearch className="adminsearch-icon" />
           <input
             type="text"
             placeholder="Search vehicles..."
@@ -206,9 +206,9 @@ const VehicleManagement = () => {
           />
         </div>
 
-        <div className="filters">
-          <div className="filter-dropdown">
-            <FaFilter className="filter-icon" />
+        <div className="adminfilters">
+          <div className="adminfilter-dropdown">
+            <FaFilter className="adminfilter-icon" />
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
@@ -270,18 +270,18 @@ const VehicleManagement = () => {
                 </td>
                 <td>{vehicle.joinDate}</td>
                 <td>
-                  <div className="action-buttons">
+                  <div className="adminaction-buttons">
                     {vehicle.status === "pending" && (
                       <>
                         <button
-                          className="approve-button"
+                          className="adminapprove-button"
                           onClick={() => handleApproveVehicle(vehicle.id)}
                           title="Approve"
                         >
                           <FaCheck />
                         </button>
                         <button
-                          className="reject-button"
+                          className="adminreject-button"
                           onClick={() => handleRejectVehicle(vehicle.id)}
                           title="Reject"
                         >
@@ -290,14 +290,14 @@ const VehicleManagement = () => {
                       </>
                     )}
                     <button
-                      className="edit-button"
+                      className="adminedit-button"
                       onClick={() => handleEditVehicle(vehicle)}
                       title="Edit"
                     >
                       <FaEdit />
                     </button>
                     <button
-                      className="delete-button"
+                      className="admindelete-button"
                       onClick={() => handleDeleteVehicle(vehicle.id)}
                       title="Delete"
                     >
@@ -317,7 +317,7 @@ const VehicleManagement = () => {
             <div className="modal-header">
               <h2>{currentVehicle ? "Edit Vehicle" : "Add New Vehicle"}</h2>
               <button
-                className="close-button"
+                className="adminclose-button"
                 onClick={() => setShowAddModal(false)}
               >
                 ×
@@ -419,12 +419,12 @@ const VehicleManagement = () => {
             </div>
             <div className="modal-footer">
               <button
-                className="cancel-button"
+                className="admincancel-button"
                 onClick={() => setShowAddModal(false)}
               >
                 Cancel
               </button>
-              <button className="save-button">Save Vehicle</button>
+              <button className="adminsave-button">Save Vehicle</button>
             </div>
           </div>
         </div>
