@@ -6,7 +6,6 @@ import {
   FaMapMarkerAlt,
   FaUsers,
   FaStar,
-  FaBlog,
   FaCog,
   FaSignOutAlt,
   FaChartLine,
@@ -57,12 +56,6 @@ const AdminSidebar = ({ activeSection }) => {
       label: "Reviews",
       icon: <FaStar />,
       path: "/admin/reviews-management",
-    },
-    {
-      id: "blog",
-      label: "Blog",
-      icon: <FaBlog />,
-      path: "/admin/blog-management",
     },
     {
       id: "settings",

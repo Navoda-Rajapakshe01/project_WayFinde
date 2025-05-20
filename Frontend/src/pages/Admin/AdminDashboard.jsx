@@ -18,7 +18,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); 
         setIsAuthenticated(true);
         setIsLoading(false);
       } catch (error) {
@@ -34,7 +34,6 @@ const AdminDashboard = () => {
   // Redirect unauthenticated users
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      // navigate("/admin/login"); // Uncomment in real auth
       console.log("User not authenticated, would redirect to login");
     }
   }, [isLoading, isAuthenticated, navigate]);

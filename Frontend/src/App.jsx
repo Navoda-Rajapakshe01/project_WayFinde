@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import BlogManagement from "./Components/AdminProfile/blog-management";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -82,7 +81,6 @@ function AppRoutes() {
           <Route path="places-management" element={<PlacesManagement />} />
           <Route path="users-management" element={<UsersManagement />} />
           <Route path="vehicles-management" element={<VehiclesManagement />} />
-          <Route path="blog-management" element={<BlogManagement />} />
           <Route path="reviews-management" element={<ReviewsManagement />} />
           <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
