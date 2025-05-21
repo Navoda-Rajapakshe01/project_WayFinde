@@ -132,14 +132,30 @@ namespace Backend.Controllers
             if (user == null)
                 return NotFound("User not found.");
 
+
+            // Fetch blogs created by this user
+            var userBlogs = await _context.Blogs
+                .Where(b => b.UserId == userId)
+                .Select(b => new
+                {
+                    b.Title,
+                    b.Author,
+                   
+                    b.Location,
+                    BlogUrl = b.BlogUrl,
+                    CoverImageUrl = b.CoverImageUrl,
+                    b.CreatedAt
+                })
+                .ToListAsync();
+
             return Ok(new
             {
                 user.Id,
                 user.Username,
                 user.ContactEmail,
                 user.Bio,
-                user.ProfilePictureUrl
-                
+                user.ProfilePictureUrl,
+                Blogs = userBlogs
             });
         }
 

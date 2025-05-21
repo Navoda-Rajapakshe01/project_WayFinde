@@ -1,63 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaCommentAlt, FaThumbsUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "../CSS/ProfileBlogs.css";
 
-const blogs = [
-  {
-    name: "Name1",
-    topic: "Topic 1",
-    description: "Description",
-    image: "/beach1.jpg",
-  },
-  {
-    name: "Name2",
-    topic: "Topic 2",
-    description: "Another description",
-    image: "Frontend/public/beach1.jpg",
-  },
-  {
-    name: "Name3",
-    topic: "Topic 3",
-    description: "Yet another description",
-    image: "Frontend/public/beach1.jpg",
-  },
-  {
-    name: "Name4",
-    topic: "Topic 4",
-    description: "Final description",
-    image: "Frontend/public/beach1.jpg",
-  },
-  {
-    name: "Name1",
-    topic: "Topic 1",
-    description: "Description",
-    image: "/beach1.jpg",
-  },
-  {
-    name: "Name2",
-    topic: "Topic 2",
-    description: "Another description",
-    image: "Frontend/public/beach1.jpg",
-  },
-  {
-    name: "Name3",
-    topic: "Topic 3",
-    description: "Yet another description",
-    image: "Frontend/public/beach1.jpg",
-  },
-  {
-    name: "Name4",
-    topic: "Topic 4",
-    description: "Final description",
-    image: "Frontend/public/beach1.jpg",
-  },
-];
-
 const ProfileSettings = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+  // Fetch user profile and blogs from backend
+  useEffect(() => {
+    const fetchProfileAndBlogs = async () => {
+      try {
+        const res = await fetch("http://localhost:5030/api/blog/me", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+
+        const data = await res.json();
+        setUser(data);
+        setBlogs(data.blogs || []);
+      } catch (error) {
+        console.error("Error fetching profile and blogs:", error.message);
+      }
+    };
+
+    fetchProfileAndBlogs();
+  }, []);
 
   const handleFileClick = () => {
     navigate("/uploadNewBlog"); // Navigate to your blog upload page
@@ -65,29 +41,37 @@ const ProfileSettings = () => {
 
   return (
     <div>
-      <ProfileHeadSection />
+      <ProfileHeadSection user={user} />
+
       <div className="carousel-container">
-        {blogs.map((blog, index) => (
-          <div className="blog-card" key={index}>
-            <img src={blog.image} alt="Blog" className="blog-image" />
-            <div className="blog-content">
-              <p className="blog-name">{blog.name}</p>
-              <p className="blog-topic">
-                <strong>{blog.topic}</strong>
-              </p>
-              <p className="blog-description">{blog.description}</p>
-              <div className="blog-actions">
-                <span>
-                  <FaCommentAlt className="icon" /> Comments
-                </span>
-                <span>
-                  <FaThumbsUp className="icon" /> Likes
-                </span>
+        {blogs.length === 0 ? (
+          <p style={{ textAlign: "center", marginTop: "2rem" }}>
+            No blogs uploaded yet.
+          </p>
+        ) : (
+          blogs.map((blog, index) => (
+            <div className="blog-card" key={index}>
+              <img src={blog.coverImageUrl} alt="Blog" className="blog-image" />
+              <div className="blog-content">
+                <p className="blog-name">{blog.title}</p>
+                <p className="blog-topic">
+                  <strong>{blog.location}</strong>
+                </p>
+                <p className="blog-description">Author: {blog.author}</p>
+                <div className="blog-actions">
+                  <span>
+                    <FaCommentAlt className="icon" /> Comments
+                  </span>
+                  <span>
+                    <FaThumbsUp className="icon" /> Likes
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
+
       <div className="profile-settings">
         <div className="button-wrapper">
           <button onClick={handleFileClick} className="UploadBlogButton">

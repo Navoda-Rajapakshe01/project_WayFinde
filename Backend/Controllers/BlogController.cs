@@ -38,81 +38,79 @@ namespace Backend.Controllers
             _userService = userService;
         }
 
-        [HttpGet("blogs/{id}")]
-        public async Task<IActionResult> GetBlogById(string id)
-        {
-            var blog = await _userService.GetUserByIdAsync(id);
-            if (blog == null)
-            {
-                return NotFound();
-            }
-            return Ok(blog);
-        }
-        [HttpPost("blogs")]
-        public async Task<IActionResult> CreateBlog([FromBody] Blog blog)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            // Save the blog to the database
-            // ...
-            return CreatedAtAction(nameof(GetBlogById), new { id = blog.Id }, blog);
-        }
-
         [HttpPost("upload-blogs")]
-        public async Task<IActionResult> UploadBlog([FromForm] IFormFile document, [FromForm] IFormFile image, [FromForm] string title, [FromForm] string author, [FromForm] string location)
+        [Authorize] // Add the Authorize attribute to ensure the user is authenticated
+        public async Task<IActionResult> UploadBlog([FromForm] UploadBlogDto uploadDto)
         {
-            if (document == null || image == null)
-                return BadRequest("Document and image are required.");
-
-            // Upload document
-            var docUploadParams = new RawUploadParams
+            try
             {
-                File = new FileDescription(document.FileName, document.OpenReadStream()),
-                Folder = "blog_documents"
-            };
-            var docResult = await _cloudinary.UploadAsync(docUploadParams);
-            if (docResult.StatusCode != HttpStatusCode.OK)
-                return StatusCode(500, "Document upload failed.");
+                if (uploadDto.Document == null || uploadDto.Image == null)
+                    return BadRequest("Document and image are required.");
 
-            // Upload image
-            var imageUploadParams = new ImageUploadParams
+                // Upload document
+                var docUploadParams = new RawUploadParams
+                {
+                    File = new FileDescription(uploadDto.Document.FileName, uploadDto.Document.OpenReadStream()),
+                    Folder = "blog_documents"
+                };
+                var docResult = await _cloudinary.UploadAsync(docUploadParams);
+                if (docResult.StatusCode != HttpStatusCode.OK)
+                    return StatusCode(500, "Document upload failed.");
+
+                // Upload image
+                var imageUploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(uploadDto.Image.FileName, uploadDto.Image.OpenReadStream()),
+                    Folder = "blog_images"
+                };
+                var imageResult = await _cloudinary.UploadAsync(imageUploadParams);
+                if (imageResult.StatusCode != HttpStatusCode.OK)
+                    return StatusCode(500, "Image upload failed.");
+
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                    return Unauthorized("Invalid or missing user ID.");
+
+                var blog = new Blog
+                {
+                    Title = uploadDto.Title,
+                    Author = uploadDto.Author,
+                    Location = uploadDto.Location,
+                    BlogUrl = docResult.SecureUrl.ToString(),
+                    CoverImageUrl = imageResult.SecureUrl.ToString(),
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Blogs.Add(blog);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Blog uploaded successfully",
+                    blogUrl = blog.BlogUrl,
+                    imageUrl = blog.CoverImageUrl
+                });
+            }
+            catch (Exception ex)
             {
-                File = new FileDescription(image.FileName, image.OpenReadStream()),
-                Folder = "blog_images"
-            };
-            var imageResult = await _cloudinary.UploadAsync(imageUploadParams);
-            if (imageResult.StatusCode != HttpStatusCode.OK)
-                return StatusCode(500, "Image upload failed.");
-
-            // Get user ID
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-                return Unauthorized("Invalid or missing user ID.");
-
-            // Create new blog record (adjust your Blog model accordingly)
-            var blog = new Blog
-            {
-                Title = title,
-                Author = author,
-                Location = location,
-                BlogUrl = docResult.SecureUrl.ToString(),
-                CoverImageUrl = imageResult.SecureUrl.ToString(),
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _context.Blogs.Add(blog);
-            await _context.SaveChangesAsync();
-
-            return Ok(new
-            {
-                message = "Blog uploaded successfully",
-                blogUrl = blog.BlogUrl,
-                imageUrl = blog.CoverImageUrl
-            });
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
+        // Make sure you have a GET endpoint for Swagger to detect
+        [HttpGet]
+        public async Task<IActionResult> GetBlogs()
+        {
+            try
+            {
+                var blogs = await _context.Blogs.ToListAsync();
+                return Ok(blogs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

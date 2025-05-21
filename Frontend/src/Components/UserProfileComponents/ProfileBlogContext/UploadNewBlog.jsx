@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../../../pages/CSS/UploadNewBlog.css";
+import { useNavigate } from "react-router-dom";
+
 
 const BlogForm = () => {
   const [formData, setFormData] = useState({
@@ -35,8 +37,10 @@ const BlogForm = () => {
       if (response.ok) {
         console.log("Uploaded successfully:", result);
         alert("Blog uploaded!");
+        navigate("/profile");
       } else {
-        throw new Error(result.message || "Upload failed.");
+        const errorData = await response.json();
+      alert("Error uploading blog: " + errorData.message);
       }
     } catch (error) {
       console.error("Error uploading blog:", error);
@@ -54,6 +58,7 @@ const BlogForm = () => {
     }
   };
   
+  const navigate = useNavigate();
 
   
 
@@ -67,7 +72,7 @@ const BlogForm = () => {
         <label>Author</label>
         <input type="text" name="author" onChange={handleChange} required />
 
-        <label>Category</label>
+        <label>Location</label>
         <input type="text" name="category" onChange={handleChange} />
 
         <label>Upload Document</label>
