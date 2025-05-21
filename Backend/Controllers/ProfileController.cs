@@ -139,6 +139,7 @@ namespace Backend.Controllers
                 user.ContactEmail,
                 user.Bio,
                 user.ProfilePictureUrl
+                
             });
         }
 

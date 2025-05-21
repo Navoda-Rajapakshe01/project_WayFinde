@@ -39,6 +39,8 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
+import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
+import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 
 import "./App.css";
 
@@ -76,6 +78,8 @@ function AppRoutes() {
         <Route path="/profile/following" element={<Following />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
+        <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />

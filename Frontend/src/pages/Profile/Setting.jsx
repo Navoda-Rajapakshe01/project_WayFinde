@@ -19,26 +19,30 @@ const ProfileSettings = () => {
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
   useEffect(() => {
-    fetchBio();
+    fetchProfileDetails();
   }, []);
 
-  const fetchBio = async () => {
+  const fetchProfileDetails = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "http://localhost:5030/api/profile/me",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get("http://localhost:5030/api/profile/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-      const fetchedBio = response.data.bio;
-      setBio(fetchedBio || "");
-      console.log("Fetched bio:", fetchedBio);
+      const { profilePictureUrl, bio } = response.data;
+      setBio(bio || "");
+      setProfileImage(
+        profilePictureUrl || "Frontend/public/DefaultProfileImage.jpg"
+      );
+      console.log("Fetched bio:", bio);
+      console.log("Fetched profile picture:", profilePictureUrl);
     } catch (error) {
-      console.error("Error fetching bio:", error.response?.data || error.message);
+      console.error(
+        "Error fetching profile:",
+        error.response?.data || error.message
+      );
       alert("Failed to load bio");
     }
   };
@@ -101,7 +105,9 @@ const ProfileSettings = () => {
       }
     } catch (error) {
       console.error(error);
-      setPasswordError(error.response?.data || "Failed to change password. Try again.");
+      setPasswordError(
+        error.response?.data || "Failed to change password. Try again."
+      );
     }
   };
 
@@ -126,13 +132,16 @@ const ProfileSettings = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5030/api/profile/upload-profile-picture", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        "http://localhost:5030/api/profile/upload-profile-picture",
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!res.ok) {
         const errorText = await res.text();
