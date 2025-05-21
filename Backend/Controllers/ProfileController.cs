@@ -1,5 +1,5 @@
-﻿using Backend.Models.User;
-using Backend.Models;
+﻿using Backend.Models;
+
 using Backend.DTOs;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
@@ -22,11 +22,11 @@ namespace Backend.Controllers
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly Cloudinary _cloudinary;
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
         public ProfileController(
              Cloudinary cloudinary,
-             UserDbContext context,
+             AppDbContext context,
              IAuthService authService,
              IUserService userService)
         {

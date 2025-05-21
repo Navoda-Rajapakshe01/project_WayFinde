@@ -20,9 +20,9 @@
 
 // export default Profile;
 // src/components/ProfilePage.jsx
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "../CSS/Profile.css";
-import axios from "axios";
 
 const ProfilePage = () => {
   const [username, setUsername] = useState("");

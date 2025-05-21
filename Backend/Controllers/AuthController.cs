@@ -27,11 +27,11 @@ namespace Backend.Controller
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly Cloudinary _cloudinary;
-        private readonly UserDbContext _context;
+        private readonly AppDbContext _context;
 
         public AuthController(
              Cloudinary cloudinary,
-             UserDbContext context,
+             AppDbContext context,
              IAuthService authService,
              IUserService userService)
         {
