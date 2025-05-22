@@ -24,10 +24,6 @@
   transition: transform 0.5s ease;
 }
 
-.hero-section:hover .hero-image {
-  transform: scale(1.05);
-}
-
 .hero-overlay {
   position: absolute;
   bottom: 0;
@@ -60,8 +56,8 @@
 .main-content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-top: 20px;
+  gap: 60px;
+  margin-top: 40px;
 }
 
 /* Left Column */
@@ -112,11 +108,12 @@
 
 /* Featured Image */
 .featured-image-container {
-  width: 100%;
-  height: 350px;
+  width: 80%;
+  height: 300px;
   overflow: hidden;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
+  margin: 0 auto;
 }
 
 .featured-image {
@@ -199,14 +196,14 @@
 }
 
 .wishlist-button.added {
-  background: linear-gradient(145deg, #28a745, #218838);
+  background: linear-gradient(145deg,var(--primary-dark), var(--primary-color));
   box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
 }
 
 /* Info Cards */
 .info-cards {
   display: table-row;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .info-card {

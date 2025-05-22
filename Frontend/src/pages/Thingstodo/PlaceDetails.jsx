@@ -168,15 +168,6 @@ const PlaceDetails = () => {
         </div>
 
         <div className="content-wrapper">
-          <div className="wishlist-container">
-            <button
-              className={`wishlist-button ${wishlistAdded ? "added" : ""}`}
-              onClick={handleWishlistClick}
-            >
-              {wishlistAdded ? "✓ Added to Wishlist" : "+ Add to Wishlist"}
-            </button>
-          </div>
-
           <div className="main-content-grid">
             <div className="left-column">
               <div className="section description-section">
@@ -186,6 +177,14 @@ const PlaceDetails = () => {
             </div>
 
             <div className="right-column">
+              <div className="wishlist-container">
+                <button
+                  className={`wishlist-button ${wishlistAdded ? "added" : ""}`}
+                  onClick={handleWishlistClick}
+                >
+                  {wishlistAdded ? "✓ Added to Wishlist" : "+ Add to Wishlist"}
+                </button>
+              </div>
               <div className="featured-image-container">
                 <img
                   src={place.galleryImages?.[activeImage] || place.mainImageUrl}
@@ -393,11 +392,9 @@ const PlaceDetails = () => {
             <div className="custom-modal-header">
               <h3>All Reviews</h3>
               <div className="custom-modal-close">
-                <span
-                onClick={() => setShowAllReviewsModal(false)}
-              >
-                &times;
-              </span>
+                <span onClick={() => setShowAllReviewsModal(false)}>
+                  &times;
+                </span>
               </div>
             </div>
             <div className="custom-modal-body">
