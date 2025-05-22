@@ -16,18 +16,35 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../assets/Images/logo.png";
 import { AuthContext } from "../Authentication/AuthContext/AuthContext";
-import "../MainNavbar/MainNavbar.css";
+import { ProfileImageContext } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
+import "./MainNavbar.css";
 
 const MainNavbar = () => {
+  // Use a default value for profileImage if context is undefined
+  const profileImageContext = useContext(ProfileImageContext);
+  const profileImage =
+    profileImageContext?.profileImage || "/default-profile.png";
+
   const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
 
-  const { user, loading, logout } = useContext(AuthContext);
+  // Handle potential undefined context with default values
+  const authContext = useContext(AuthContext);
+  const user = authContext?.user || null;
+  const loading = authContext?.loading || false;
+  const logout =
+    authContext?.logout ||
+    (() => {
+      console.warn("Logout function not available");
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    });
 
-  if (loading) return null; 
+  // Skip rendering during loading
+  if (loading) return null;
 
   const handleNavigation = (path) => navigate(path);
   const togglePopup = () => setIsOpen(!isOpen);
@@ -68,16 +85,10 @@ const MainNavbar = () => {
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  const closeModal = () => setShowSignInModal(false);
-
-  const handleSignInOption = (type) => {
-    setShowSignInModal(false);
-    if (type === "service") {
-      navigate("/signin?type=service");
-    } else {
-      navigate("/signin?type=user");
-    }
+  const handleSignIn = () => {
+    navigate("/signin");
   };
+
 
   return (
     <nav className="navbar">
@@ -112,7 +123,7 @@ const MainNavbar = () => {
             <div className="navbar-profile" onClick={togglePopup}>
               <div className="profile-wrapper">
                 <img
-                  src={user.profileImg || "/default-profile.png"}
+                  src={user.profileImg || "Frontend/public/DefaultProfileImage.jpg"}
                   alt="User Profile"
                   className="profile-img"
                 />
@@ -123,13 +134,14 @@ const MainNavbar = () => {
                 <div className="profile-popup">
                   <div className="popup-header">
                     <img
-                      src={user.profileImg || "/default-profile.png"}
+                      src={profileImage}
                       alt="User Profile"
-                      className="popup-profile-img"
+                      className="profile-img"
                     />
+                    <span className="profile-indicator"></span>
                     <div className="popup-user-info">
-                      <h4>{user.name || "User"}</h4>
-                      <p>{user.email || "user@example.com"}</p>
+                      <h4>{user?.username || "User"}</h4>
+                      <p>@{user?.email || "user@example.com"}</p>
                     </div>
                   </div>
 
@@ -157,16 +169,16 @@ const MainNavbar = () => {
               )}
             </div>
           ) : (
-            <div className="auth-buttons">
-              <button onClick={() => setShowSignInModal(true)}>Sign In</button>
-              <button onClick={() => navigate("/signup")}>Sign Up</button>
-            </div>
+            <div>
+            <button onClick={handleSignIn}>Sign In</button>
+            
+          </div>
           )}
         </div>
       </div>
 
       {/* Sign In Modal */}
-      {showSignInModal && (
+      {/* {showSignInModal && (
         <div className="signin-modal-overlay" onClick={closeModal}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
@@ -188,8 +200,8 @@ const MainNavbar = () => {
               Close
             </button>
           </div>
-        </div>
-      )}
+        </div> */}
+      {/* )} */}
     </nav>
   );
 };

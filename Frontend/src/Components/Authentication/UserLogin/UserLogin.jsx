@@ -1,4 +1,5 @@
 import axios from "axios";
+import React from "react";
 import { useState } from "react";
 import "../UserLogin/UserLogin.css";
 const UserForm = () => {
@@ -27,7 +28,7 @@ const UserForm = () => {
 
     try {
       const response = await axios.post(
-        "https://localhost:7138/api/user",
+        "http://localhost:5030/api/user",
         formData
       );
 

@@ -21,5 +21,6 @@ public class PlacesToVisit
     public int? CategoryId { get; set; }
     public required Category Category { get; set; }
 
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
 
 }

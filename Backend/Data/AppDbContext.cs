@@ -18,12 +18,14 @@ namespace Backend.Data
         public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Review> Reviews { get; set; }
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
@@ -149,6 +151,12 @@ namespace Backend.Data
                 .HasOne(p => p.Category)
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Place)
+                .WithMany(p => p.Reviews)
+                .HasForeignKey(r => r.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             // TodoItem
             modelBuilder.Entity<TodoItem>()
