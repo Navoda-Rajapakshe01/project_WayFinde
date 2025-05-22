@@ -20,4 +20,6 @@ public class PlacesToVisit
 
     public int? CategoryId { get; set; }
     public required Category Category { get; set; }
+
+
 }

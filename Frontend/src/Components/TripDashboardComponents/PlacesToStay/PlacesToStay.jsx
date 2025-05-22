@@ -36,11 +36,7 @@ function PlacesToStay() {
 
   return (
     <div className="place-to-stay-container">
-      {/* Search District Button Above the Cards */}
-      <div className="search-district-container">
-        <button className="search-district-button">Search District</button>
-      </div>
-
+      
       {/* Render each travel place item */}
       <div className="places-cards-container">
         {places.map((item, index) => (

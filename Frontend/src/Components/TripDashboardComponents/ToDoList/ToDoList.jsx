@@ -9,7 +9,7 @@ const TodoList = () => {
   const [filter, setFilter] = useState('ALL');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // ✅ Fetch data from the backend (GET request)
+  //Fetch data from the backend (GET request)
   useEffect(() => {
     axios.get('http://localhost:5030/api/todo')  // API endpoint
       .then(res => {
@@ -23,7 +23,7 @@ const TodoList = () => {
       .catch(err => console.error("GET error: ", err));  // Log error if any
   }, []);
 
-  // ✅ Update task status (PUT request)
+  //Update task status (PUT request)
   const handleTaskStatusChange = (id, currentStatus) => {
     const newStatus = currentStatus === "Active" ? "Completed" : "Active";
 
@@ -102,9 +102,9 @@ const TodoList = () => {
         </div>
       </div>
 
-      <div className="notes-list">
+      <div className="notes-lists">
         {filteredNotes.map(note => (
-          <div key={note.id} className="note-item">
+          <div key={note.id} className="note-items">
             <label className="checkbox-container">
               <input
                 type="checkbox"

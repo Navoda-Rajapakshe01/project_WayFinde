@@ -224,6 +224,13 @@ namespace Backend.Controllers
         return Ok("Place deleted successfully");
         }
 
+        // GET: api/places/count
+        [HttpGet("count")]
+        public async Task<IActionResult> GetPlaceCount()
+        {
+            var count = await _context.PlacesToVisit.CountAsync();
+            return Ok(count);
+        }
 
     }
 }
