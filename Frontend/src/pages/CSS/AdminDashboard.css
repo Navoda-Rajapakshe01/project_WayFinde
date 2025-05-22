@@ -303,16 +303,16 @@ button:disabled {
 
 
 /* --- Rating Display --- */
-.rating {
+.adminrating {
   display: flex;
   align-items: center;
   gap: 5px;
 }
-.rating-stars {
+.adminrating-stars {
   color: #f39c12; 
   font-size: 1.1em;
 }
-.rating-value {
+.adminrating-value {
   font-size: 0.9em;
   font-weight: 500;
   color: #7f8c8d; 
