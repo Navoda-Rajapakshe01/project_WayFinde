@@ -87,7 +87,6 @@ const PlacesManagement = () => {
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-
     });
 
     if (result.isConfirmed) {
@@ -239,37 +238,57 @@ const PlacesManagement = () => {
           <p>No places found matching your criteria.</p>
         </div>
       ) : (
-        <div className="places-grid">
-          {filteredPlaces.map((place) => {
-            const districtName =
-              districts.find((d) => d.id === place.districtId)?.name || "N/A";
-            return (
-              <div key={place.id} className="place-card-item">
-                <div className="place-card-content">
-                  <h3 className="place-card-name">{place.name}</h3>
-                  <p className="place-card-district">
-                    District: {districtName}
-                  </p>
-                </div>
-                <div className="place-card-actions action-buttons">
-                  <button
-                    className="adminedit-button"
-                    onClick={() => navigate(`/admin/edit-place/${place.id}`)}
-                    title="Edit Place"
-                  >
-                    <FaEdit /> <span>Edit</span>
-                  </button>
-                  <button
-                    className="admindelete-button"
-                    onClick={() => deletePlace(place.id)}
-                    title="Delete Place"
-                  >
-                    <FaTrash /> <span>Delete</span>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Place Name</th>
+                <th>District</th>
+                <th>Category</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPlaces.map((place, index) => {
+                const districtName =
+                  districts.find((d) => d.id === place.districtId)?.name ||
+                  "N/A";
+                const categoryName =
+                  categories.find((c) => c.categoryId === place.categoryId)
+                    ?.categoryName || "N/A";
+
+                return (
+                  <tr key={place.id}>
+                    <td>{index + 1}</td>
+                    <td>{place.name}</td>
+                    <td>{districtName}</td>
+                    <td>{categoryName}</td>
+                    <td>
+                      <div className="adminaction-buttons">
+                        <button
+                          className="adminedit-button"
+                          onClick={() =>
+                            navigate(`/admin/edit-place/${place.id}`)
+                          }
+                          title="Edit Place"
+                        >
+                          <FaEdit /> 
+                        </button>
+                        <button
+                          className="admindelete-button"
+                          onClick={() => deletePlace(place.id)}
+                          title="Delete Place"
+                        >
+                          <FaTrash /> 
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 

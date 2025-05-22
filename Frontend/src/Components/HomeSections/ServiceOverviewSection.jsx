@@ -51,7 +51,7 @@ const ServicesOverviewSection = () => {
   return (
     <section className="services-overview-section homesection-padding">
       <div className="container">
-        <h2 className="homesection-title text-center">What WayFinde Offers</h2>
+        <h2 className="homesection-title text-center">What WayFind Offers</h2>
         <p className="homesection-subtitle text-center">
           Everything you need for an unforgettable travel experience, all in one
           place.
