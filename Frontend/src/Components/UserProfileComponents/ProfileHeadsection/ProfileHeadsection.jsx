@@ -1,11 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-
+import { NavLink, useNavigate } from "react-router-dom";
 
 const ProfileHeadSection = () => {
   const [username, setUsername] = useState("");
   const [profilePictureUrl, setProfilePictureUrl] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -70,7 +71,12 @@ const ProfileHeadSection = () => {
             <br />
             🌍 Always looking for the next great adventure.
           </p>
-          <button className="edit-profile-btn">Edit Profile</button>
+          <button
+            className="edit-profile-btn"
+            onClick={() => navigate("/settings")}
+          >
+            Edit Profile
+          </button>
         </div>
       </div>
 
@@ -94,8 +100,6 @@ const ProfileHeadSection = () => {
           Bookings
         </NavLink>
       </div>
-
-      
     </div>
   );
 };

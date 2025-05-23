@@ -41,6 +41,7 @@ import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
 import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
+import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 
 import "./App.css";
 
@@ -67,7 +68,7 @@ function AppRoutes() {
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
         <Route path="/chat" element={<PersonalBlog/>} />
-        <Route path="/blog/:id" element={<PersonalBlog />} />
+        {/* <Route path="/blog/:id" element={<PersonalBlog />} /> */}
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
@@ -80,6 +81,7 @@ function AppRoutes() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
+        <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />

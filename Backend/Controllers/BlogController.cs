@@ -112,5 +112,33 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        // DELETE: api/blogs/{id}
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteBlog(int id)
+        {
+            // Add validation
+            if (id <= 0)
+            {
+                return BadRequest(new { message = "Invalid blog ID" });
+            }
+
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
+            {
+                return NotFound(new { message = "Blog not found" });
+            }
+
+            // Optional: Check if the user owns this blog
+            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // if (blog.UserId != userId) 
+            // {
+            //     return Forbid(new { message = "You can only delete your own blogs" });
+            // }
+
+            _context.Blogs.Remove(blog);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Blog deleted successfully" });
+        }
     }
 }
