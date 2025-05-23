@@ -251,6 +251,5 @@ namespace Backend.Controllers
             return Ok(popularPlaces);
         }
 
-
     }
 }

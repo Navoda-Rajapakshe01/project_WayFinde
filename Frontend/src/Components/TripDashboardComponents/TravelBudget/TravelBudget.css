@@ -87,7 +87,7 @@
   font-size: 14px;
   display: inline-block;
   box-sizing: border-box;
-  margin-bottom: 5px;
+  margin-bottom:1px;
 }
 
 .expenses-list {
@@ -110,18 +110,34 @@
 }
 
 .expense-amount {
-  flex: 1;
+  flex: none;
   text-align: right;
   font-size: 14px;
   color: #333;
+  margin-right: 16px; /* add space between amount and button */
 }
 
 .delete-expense-button {
-  background: none;
-  border: none;
+  background: #ffe5e5;
+  border: 1px solid #f44;
   cursor: pointer;
   font-size: 15px;
   color: #f44;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.delete-expense-button:hover {
+  background: #f44;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  
+}
+
+.delete-expense-button:active {
+  transform: scale(0.95);
 }
 
 .total-amount {

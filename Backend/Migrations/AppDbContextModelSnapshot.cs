@@ -288,6 +288,37 @@ namespace Backend.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("CreatedTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("NoteDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoteTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DashboardNotes");
+                });
+
             modelBuilder.Entity("Backend.Models.District", b =>
                 {
                     b.Property<int>("Id")

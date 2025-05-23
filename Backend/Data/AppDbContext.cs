@@ -30,11 +30,15 @@ namespace Backend.Data
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
+        //Dashboard Notes (NEW)
+        public DbSet<DashboardNote> DashboardNote { get; set; }
+
         // Accommodations
         public DbSet<Accommodation> Accommodations { get; set; }
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
+        public object Amenities { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -185,6 +189,29 @@ namespace Backend.Data
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
+
+            // DashboardNote rules
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.NoteTitle)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.NoteDescription)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.CreatedDate)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.CreatedTime)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.UserId)
+                .IsRequired();
         }
     }
 }
