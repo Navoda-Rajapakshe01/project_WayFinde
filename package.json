@@ -11,5 +11,14 @@
     "lucide-react": "^0.503.0",
     "react-datepicker": "^8.1.0",
     "react-hook-form": "^7.55.0"
-  }
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.27.1"
+  },
+  "babel": {
+  "presets": [
+    ["@babel/preset-react", { "runtime": "automatic" }]
+  ]
+}
+
 }
