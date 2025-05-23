@@ -101,13 +101,31 @@ const PlaceDetails = () => {
       });
   };
 
-  const renderStars = (value, onClickFn, onHoverFn, onLeaveFn) => {
-    const roundedValue = Math.round(value);
+  const renderStaticStars = (value) => {
+  return [1, 2, 3, 4, 5].map((star) => {
+    if (value >= star) {
+      return <span key={star} className="star active">★</span>; 
+    } else if (value >= star - 0.5) {
+      return <span key={star} className="star half">★</span>; 
+    } else {
+      return <span key={star} className="star inactive">★</span>; 
+    }
+  });
+};
+
+
+  const renderInteractiveStars = (
+    value,
+    hoverValue,
+    onClickFn,
+    onHoverFn,
+    onLeaveFn
+  ) => {
     return [1, 2, 3, 4, 5].map((star) => (
       <span
         key={star}
         className={`star ${
-          star <= (hoverRating || roundedValue) ? "active" : "inactive"
+          star <= (hoverValue) ? "active" : "inactive"
         }`}
         onClick={() => onClickFn && onClickFn(star)}
         onMouseEnter={() => onHoverFn && onHoverFn(star)}
@@ -247,7 +265,7 @@ const PlaceDetails = () => {
                 <div className="average-rating">
                   <span className="rating-number">{averageRating}</span>
                   <div className="rating-stars">
-                    {renderStars(averageRating)}
+                    {renderStaticStars(averageRating)}
                   </div>
                   <span className="rating-count">
                     ({reviews.length} reviews)
@@ -310,8 +328,9 @@ const PlaceDetails = () => {
                 <div className="form-group">
                   <label>Your Rating</label>
                   <div className="rating-selector">
-                    {renderStars(
+                    {renderInteractiveStars(
                       rating,
+                      hoverRating,
                       (val) => setRating(val),
                       (val) => setHoverRating(val),
                       () => setHoverRating(0)

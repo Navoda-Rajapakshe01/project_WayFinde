@@ -427,17 +427,21 @@
 }
 
 .star {
-  font-size: 1.8rem;
-  cursor: pointer;
-  transition: transform 0.2s ease;
+  color: #ddd; /* default color for inactive */
+  font-size: 20px;
+  display: inline-block;
+  position: relative;
 }
 
 .star.active {
-  color: #ffb700;
+  color: #ffc107; /* full star color */
 }
 
-.star.inactive {
-  color: #ddd;
+.star.half {
+  background: linear-gradient(90deg, #ffc107 50%, #ddd 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .star:hover {
