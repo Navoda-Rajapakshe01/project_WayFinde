@@ -30,10 +30,6 @@ const AdminHeader = ({ toggleSidebar }) => {
   return (
     <header className="admin-header">
       <div className="header-left">
-        <div className="search-container">
-          <FaSearch className="search-icon" />
-          <input type="text" placeholder="Search..." className="search-input" />
-        </div>
       </div>
 
       <div className="header-right">

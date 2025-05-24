@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   FaGlobe,
   FaEnvelope,
-  FaKey,
   FaShieldAlt,
   FaBell,
   FaDatabase,
@@ -45,15 +44,6 @@ const SettingsPanel = () => {
     senderName: "WayFinde Travellers",
     senderEmail: "notifications@wayfinde.com",
     enableEmailNotifications: true,
-  });
-
-  const [apiSettings, setApiSettings] = useState({
-    googleMapsApiKey: "AIza*****************",
-    weatherApiKey: "abcd*****************",
-    currencyApiKey: "efgh*****************",
-    paymentGateway: "stripe",
-    stripePublicKey: "pk_test_*****************",
-    stripeSecretKey: "sk_test_*****************",
   });
 
   const [securitySettings, setSecuritySettings] = useState({
@@ -165,7 +155,7 @@ const SettingsPanel = () => {
         <div className="settings-actions">
           {renderSaveStatus()}
           <button
-            className="save-button"
+            className="adminsave-button"
             onClick={handleSaveSettings}
             disabled={saveStatus === "saving"}
           >
@@ -189,12 +179,6 @@ const SettingsPanel = () => {
             onClick={() => setActiveTab("email")}
           >
             <FaEnvelope /> Email
-          </button>
-          <button
-            className={`settings-tab ${activeTab === "api" ? "active" : ""}`}
-            onClick={() => setActiveTab("api")}
-          >
-            <FaKey /> API Keys
           </button>
           <button
             className={`settings-tab ${
@@ -577,146 +561,6 @@ const SettingsPanel = () => {
                     </span>
                   )}
                 </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "api" && (
-            <div className="settings-section">
-              <div className="settings-section-header">
-                <h2>API Integration Settings</h2>
-                <button
-                  className="reset-button"
-                  onClick={() => handleResetSettings("API")}
-                >
-                  <FaUndo /> Reset to Default
-                </button>
-              </div>
-
-              <div className="settings-form">
-                <div className="form-group">
-                  <label htmlFor="googleMapsApiKey">Google Maps API Key</label>
-                  <div className="input-with-button">
-                    <input
-                      type="password"
-                      id="googleMapsApiKey"
-                      value={apiSettings.googleMapsApiKey}
-                      onChange={(e) =>
-                        setApiSettings({
-                          ...apiSettings,
-                          googleMapsApiKey: e.target.value,
-                        })
-                      }
-                    />
-                    <button className="show-button">Show</button>
-                  </div>
-                  <p className="input-help">
-                    Used for maps and location services throughout the platform.
-                  </p>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="weatherApiKey">Weather API Key</label>
-                  <div className="input-with-button">
-                    <input
-                      type="password"
-                      id="weatherApiKey"
-                      value={apiSettings.weatherApiKey}
-                      onChange={(e) =>
-                        setApiSettings({
-                          ...apiSettings,
-                          weatherApiKey: e.target.value,
-                        })
-                      }
-                    />
-                    <button className="show-button">Show</button>
-                  </div>
-                  <p className="input-help">
-                    Used to display weather information for destinations.
-                  </p>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="currencyApiKey">
-                    Currency Conversion API Key
-                  </label>
-                  <div className="input-with-button">
-                    <input
-                      type="password"
-                      id="currencyApiKey"
-                      value={apiSettings.currencyApiKey}
-                      onChange={(e) =>
-                        setApiSettings({
-                          ...apiSettings,
-                          currencyApiKey: e.target.value,
-                        })
-                      }
-                    />
-                    <button className="show-button">Show</button>
-                  </div>
-                  <p className="input-help">
-                    Used for currency conversion in pricing displays.
-                  </p>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="paymentGateway">Payment Gateway</label>
-                  <select
-                    id="paymentGateway"
-                    value={apiSettings.paymentGateway}
-                    onChange={(e) =>
-                      setApiSettings({
-                        ...apiSettings,
-                        paymentGateway: e.target.value,
-                      })
-                    }
-                  >
-                    <option value="stripe">Stripe</option>
-                    <option value="paypal">PayPal</option>
-                    <option value="razorpay">Razorpay</option>
-                    <option value="manual">Manual Payment</option>
-                  </select>
-                </div>
-
-                {apiSettings.paymentGateway === "stripe" && (
-                  <>
-                    <div className="form-group">
-                      <label htmlFor="stripePublicKey">Stripe Public Key</label>
-                      <div className="input-with-button">
-                        <input
-                          type="password"
-                          id="stripePublicKey"
-                          value={apiSettings.stripePublicKey}
-                          onChange={(e) =>
-                            setApiSettings({
-                              ...apiSettings,
-                              stripePublicKey: e.target.value,
-                            })
-                          }
-                        />
-                        <button className="show-button">Show</button>
-                      </div>
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="stripeSecretKey">Stripe Secret Key</label>
-                      <div className="input-with-button">
-                        <input
-                          type="password"
-                          id="stripeSecretKey"
-                          value={apiSettings.stripeSecretKey}
-                          onChange={(e) =>
-                            setApiSettings({
-                              ...apiSettings,
-                              stripeSecretKey: e.target.value,
-                            })
-                          }
-                        />
-                        <button className="show-button">Show</button>
-                      </div>
-                    </div>
-                  </>
-                )}
               </div>
             </div>
           )}
