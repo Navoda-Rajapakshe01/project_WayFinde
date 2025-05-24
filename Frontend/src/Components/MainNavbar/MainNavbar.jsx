@@ -1,4 +1,9 @@
+<<<<<<< Updated upstream
 import { useContext, useEffect, useState } from "react";
+=======
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
+>>>>>>> Stashed changes
 import {
   FaBook,
   FaBus,
@@ -20,6 +25,7 @@ import "./MainNavbar.css";
 
 const MainNavbar = () => {
   const location = useLocation();
+<<<<<<< Updated upstream
 
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
@@ -29,6 +35,93 @@ const MainNavbar = () => {
 
   // Toggle profile popup
   const togglePopup = () => setIsOpen(!isOpen);
+=======
+  const navigate = useNavigate();
+
+  // States
+  const [activeTab, setActiveTab] = useState(location.pathname);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [profileData, setProfileData] = useState({
+    profileImage: "/default-profile.png",
+    username: "",
+    contactEmail: "",
+  });
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+
+  // Context
+  const profileImageContext = useContext(ProfileImageContext);
+  const profileImageFromContext =
+    profileImageContext?.profileImage || "/default-profile.png";
+
+  // Handle potential undefined context with default values
+  const authContext = useContext(AuthContext);
+  const user = authContext?.user || null;
+  const loading = authContext?.loading || false;
+  const logout =
+    authContext?.logout ||
+    (() => {
+      console.warn("Logout function not available");
+      localStorage.removeItem("token");
+      localStorage.removeItem("userProfile");
+      window.location.href = "/";
+    });
+
+  // Fetch user profile data when user is available
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (!user) return;
+
+      setIsLoadingProfile(true);
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("Authentication token not found");
+        }
+
+        const response = await axios.get(
+          "http://localhost:5030/api/profile/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setProfileData({
+          profileImage: response.data.profileImage || profileImageFromContext,
+          username: response.data.username || user?.username || "User",
+          contactEmail:
+            response.data.contactemail ||
+            user?.contactemail ||
+            "user@example.com",
+        });
+      } catch (err) {
+        console.error("Error fetching profile data:", err);
+
+        // Fallback to context data if available
+        setProfileData({
+          profileImage: profileImageFromContext,
+          username: user?.username || "User",
+          contactEmail: user?.contactemail || "user@example.com",
+        });
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchProfileData();
+  }, [user, profileImageFromContext]);
+
+  // Skip rendering during loading
+  if (loading) return null;
+
+  // Set active tab based on location
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location]);
+>>>>>>> Stashed changes
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -44,10 +137,31 @@ const MainNavbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
+<<<<<<< Updated upstream
   // Update active tab on route change
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location]);
+=======
+  const handleNavigation = (path) => {
+    navigate(path);
+    setIsOpen(false); // Close popup after navigation
+  };
+
+  const togglePopup = () => setIsOpen(!isOpen);
+
+  const handleSignIn = () => {
+    navigate("/signin");
+  };
+
+  // const handleSignInOption = (type) => {
+  //   setShowSignInModal(false);
+  //   navigate(/signup?role=${type});
+  // };
+
+  // const openModal = () => setShowSignInModal(true);
+  // const closeModal = () => setShowSignInModal(false);
+>>>>>>> Stashed changes
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -67,8 +181,15 @@ const MainNavbar = () => {
     { name: "Settings", icon: <FaCog />, path: "/settings" },
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
+<<<<<<< Updated upstream
 
   const handleNavigation = (path) => navigate(path);
+=======
+  console.log("Auth loading:", loading);
+  console.log("User:", user);
+  console.log("Token:", localStorage.getItem("token"));
+  console.log("Role:", localStorage.getItem("role"));
+>>>>>>> Stashed changes
 
   return (
     <nav className="navbar">
@@ -76,7 +197,14 @@ const MainNavbar = () => {
         {/* Logo Section */}
         <div className="navbar-logo">
           <Link to="/">
-            <img src={logo || "/placeholder.svg"} alt="WAYFIND" />
+            <img
+              src={logo || "/placeholder.svg"}
+              alt="WAYFIND"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/placeholder.svg";
+              }}
+            />
           </Link>
         </div>
 
@@ -87,8 +215,7 @@ const MainNavbar = () => {
               key={item.name}
               className={`navbar-item${
                 activeTab === item.path ? " active" : ""
-              }`}
-            >
+              }`}>
               <Link to={item.path} className="navbar-link">
                 <span className="navbar-icon">{item.icon}</span>
                 <span className="navbar-text">{item.name}</span>
@@ -103,9 +230,17 @@ const MainNavbar = () => {
             <div className="navbar-profile" onClick={togglePopup}>
               <div className="profile-wrapper">
                 <img
+<<<<<<< Updated upstream
                   src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+=======
+                  src={profileData.profileImage || "/default-profile.png"}
+>>>>>>> Stashed changes
                   alt="User Profile"
                   className="profile-img"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/default-profile.png";
+                  }}
                 />
                 <span className="profile-indicator"></span>
               </div>
@@ -114,6 +249,7 @@ const MainNavbar = () => {
                 <div className="profile-popup">
                   <div className="popup-header">
                     <img
+<<<<<<< Updated upstream
                       src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
                       alt="User Profile"
                       className="popup-profile-img"
@@ -121,6 +257,19 @@ const MainNavbar = () => {
                     <div className="popup-user-info">
                       <h4>John Doe</h4>
                       <p>john.doe@example.com</p>
+=======
+                      src={profileData.profileImage}
+                      alt="User Profile"
+                      className="profile-img"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/default-profile.png";
+                      }}
+                    />
+                    <div className="popup-user-info">
+                      <h4>{profileData.username}</h4>
+                      <p>@{profileData.contactEmail}</p>
+>>>>>>> Stashed changes
                     </div>
                   </div>
 
@@ -137,8 +286,7 @@ const MainNavbar = () => {
                           } else {
                             handleNavigation(item.path);
                           }
-                        }}
-                      >
+                        }}>
                         <span className="popup-icon">{item.icon}</span>
                         <span>{item.name}</span>
                       </div>
@@ -148,6 +296,7 @@ const MainNavbar = () => {
               )}
             </div>
           ) : (
+<<<<<<< Updated upstream
             <div>
               <button
                 // className="navbar-link"
@@ -162,10 +311,45 @@ const MainNavbar = () => {
               >
                 Sign Up
               </button> */}
+=======
+            <div className="auth-buttons">
+              <button className="signin-btn" onClick={handleSignIn}>
+                Sign In
+              </button>
+>>>>>>> Stashed changes
             </div>
           )}
         </div>
       </div>
+<<<<<<< Updated upstream
+=======
+
+      {/* Sign In Modal
+      {showSignInModal && (
+        <div className="signin-modal-overlay" onClick={closeModal}>
+          <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Sign In As</h3>
+            <div className="signin-options">
+              <button
+                className="signin-option-btn"
+                onClick={() => handleSignInOption("user")}
+              >
+                Normal User
+              </button>
+              <button
+                className="signin-option-btn"
+                onClick={() => handleSignInOption("service")}
+              >
+                Service Provider
+              </button>
+            </div>
+            <button className="close-modal-btn" onClick={closeModal}>
+              Close
+            </button>
+          </div>
+        </div>
+      )} */}
+>>>>>>> Stashed changes
     </nav>
   );
 };

@@ -20,7 +20,10 @@ const ThingsToDo = () => {
 
   return (
     <div className="page-container">
+<<<<<<< Updated upstream
       <MainNavbar />
+=======
+>>>>>>> Stashed changes
       <HeroSection
         title={<>Discover & Explore: Unmissable Experiences Await!</>}
         backgroundImage="https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"
@@ -28,6 +31,7 @@ const ThingsToDo = () => {
         color="black"
       />
 
+<<<<<<< Updated upstream
       <div>
         <h2
           style={{
@@ -54,6 +58,54 @@ const ThingsToDo = () => {
             />
           ))}
         </section>
+=======
+      <div className="content-section">
+        <div className="section-header">
+          <h2 className="section-title">Explore by District</h2>
+          <p className="section-subtitle">
+            Discover the unique charm and attractions of each region
+          </p>
+        </div>
+
+        {loading && (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading districts...</p>
+          </div>
+        )}
+
+        {error && !loading && (
+          <div className="error-container">
+            <p>{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="retry-button">
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && (
+          <section className="district-container">
+            {districts.length > 0 ? (
+              districts.map((district) => (
+                <DistrictCard
+                  key={district.id}
+                  name={district.name}
+                  image={district.imageUrl}
+                  PlacesCount={district.placesCount}
+                />
+              ))
+            ) : (
+              <div className="no-districts">
+                <p>
+                  No districts available at the moment. Please check back later.
+                </p>
+              </div>
+            )}
+          </section>
+        )}
+>>>>>>> Stashed changes
       </div>
     </div>
   );

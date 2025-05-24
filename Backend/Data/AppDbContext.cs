@@ -12,18 +12,19 @@ namespace Backend.Data
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<VehicleAmenity> VehicleAmenities { get; set; }
 
-        //public DbSet<UserNew> UsersNew { get; set; }
 
-        
-        // DbSet for District
+        // Places & Districts
         public DbSet<District> Districts { get; set; }
 
         // DbSet for PlaceToVisit
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
 
+        // Blogs
+        public DbSet<BlogImage> BlogImages { get; set; }
 
 
         //Accommodations
@@ -59,9 +60,6 @@ namespace Backend.Data
                     FuelType = "Petrol",
                     TransmissionType = "Automatic",
                     Location = "Colombo",
-                    OwnerName = "John Doe",
-                    OwnerCity = "Colombo",
-                    Description = "A comfortable and fuel-efficient city car.",
                     PricePerDay = 45.00m,
                     IsAvailable = true
                 },
@@ -75,9 +73,6 @@ namespace Backend.Data
                     FuelType = "Hybrid",
                     TransmissionType = "Automatic",
                     Location = "Kandy",
-                    OwnerName = "Jane Smith",
-                    OwnerCity = "Kandy",
-                    Description = "Perfect for short family trips and hill country.",
                     PricePerDay = 38.50m,
                     IsAvailable = true
                 }
@@ -135,8 +130,65 @@ namespace Backend.Data
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
 
+            modelBuilder.Entity<PlacesToVisit>()
+                .HasOne(p => p.Category)
+                .WithMany()
+                .HasForeignKey(p => p.CategoryId);
 
-            base.OnModelCreating(modelBuilder);
+            // TodoItem
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.TaskName)
+                .IsRequired()
+                .HasMaxLength(150);
+
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.TaskStatus)
+                .IsRequired();
+
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<TodoItem>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            // TravelBudget
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Description)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Amount)
+                .IsRequired();
+
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            // DashboardNote rules
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.NoteTitle)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.NoteDescription)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.CreatedDate)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.CreatedTime)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.UserId)
+                .IsRequired();
         }
     }
 }

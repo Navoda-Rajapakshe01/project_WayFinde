@@ -1,18 +1,23 @@
 import axios from "axios";
+<<<<<<< Updated upstream
 import { useState } from "react";
+=======
+import { useState, useContext } from "react";
+import { AuthContext } from "../../Authentication/AuthContext/AuthContext";
+import { useNavigate } from "react-router-dom";
+>>>>>>> Stashed changes
 import "../UserLogin/UserLogin.css";
-const UserForm = () => {
+
+const UserLogin = () => {
   const [formData, setFormData] = useState({
-    // id: "",
-    fullName: "",
     email: "",
-    age: "",
+    password: "",
   });
-
-  console.log("API URL:", import.meta.env.VITE_API_URL);
-
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,78 +29,96 @@ const UserForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError("");
+    setMessage("");
 
     try {
       const response = await axios.post(
+<<<<<<< Updated upstream
         "https://localhost:7138/api/user",
+=======
+        "http://localhost:5030/api/user",
+        "http://localhost:5030/api/auth/login",
+>>>>>>> Stashed changes
         formData
       );
 
-      if (response.status === 200 || response.status === 201) {
-        setMessage("User added successfully.");
-        setError("");
-        setFormData({ fullName: "", email: "", age: "" });
+      if (response.data.token) {
+        await login(response.data);
+
+        setMessage("Login successful! Redirecting...");
+
+        const role = response.data.user.role;
+
+        const redirectPath =
+          role === "Admin"
+            ? "/admin"
+            : role === "VehicleSupplier"
+            ? "/vehicle"
+            : role === "AccommodationSupplier"
+            ? "/accommodation"
+            : "/";
+
+        setTimeout(() => navigate(redirectPath), 1500);
       } else {
-        setMessage("");
-        setError("Failed to add user. Please try again.");
+        setError("Invalid response from server");
       }
     } catch (err) {
-      console.error("Axios error:", err); // <-- This will give you the real cause!
-      setMessage("");
-      setError("An error occurred. Please check your connection.");
+      console.error("Login error:", err);
+      setError(
+        err.response?.data?.message ||
+          "Login failed. Please check your credentials and try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="registration_form">
+    <div className="login-container">
+      <h2>User Login</h2>
       <form onSubmit={handleSubmit}>
-        {/* <div>
-          <label>ID: </label>
-          <input
-            type="number"
-            name="id"
-            value={formData.id}
-            onChange={handleChange}
-          />
-        </div> */}
-
-        <div>
-          <label>Full Name: </label>
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Email: </label>
+        <div className="form-group">
+          <label>Email:</label>
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
+            required
           />
         </div>
 
-        <div>
-          <label>Age: </label>
+        <div className="form-group">
+          <label>Password:</label>
           <input
-            type="number"
-            name="age"
-            value={formData.age}
+            type="password"
+            name="password"
+            value={formData.password}
             onChange={handleChange}
+            required
           />
         </div>
 
-        <button type="submit">Submit</button>
-      </form>
+        <button type="submit" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
 
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
+        {message && <p className="success-message">{message}</p>}
+        {error && <p className="error-message">{error}</p>}
+
+        <div className="login-links">
+          <p>
+            Don't have an account? <a href="/signup">Sign up</a>
+          </p>
+          <p>
+            Forgot password? <a href="/forgot-password">Reset it</a>
+          </p>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default UserForm;
+export default UserLogin;

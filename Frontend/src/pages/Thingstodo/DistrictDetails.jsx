@@ -20,6 +20,10 @@ const DistrictDetails = () => {
         .get(`http://localhost:5030/api/places/by-district-name/${slug}`)
         .then((res) => {
           setPlaces(res.data);
+<<<<<<< Updated upstream
+=======
+          setFilteredPlaces(res.data); // Show all by default
+>>>>>>> Stashed changes
           setLoading(false);
         })
         .catch((err) => {
@@ -46,7 +50,11 @@ const DistrictDetails = () => {
 
       {/* Categories Component */}
       <div className="categories-wrapper">
+<<<<<<< Updated upstream
         <Categories />
+=======
+        <Categories places={places} setFilteredPlaces={setFilteredPlaces} />
+>>>>>>> Stashed changes
       </div>
 
       {/* Loading State */}
@@ -61,7 +69,14 @@ const DistrictDetails = () => {
       {error && !loading && (
         <div className="error-container">
           <p>{error}</p>
+<<<<<<< Updated upstream
           <button onClick={() => window.location.reload()} className="retry-button">
+=======
+          <button
+            onClick={() => window.location.reload()}
+            className="retry-button"
+          >
+>>>>>>> Stashed changes
             Try Again
           </button>
         </div>
@@ -70,8 +85,13 @@ const DistrictDetails = () => {
       {/* Places Grid */}
       {!loading && !error && (
         <div className="places-grid">
+<<<<<<< Updated upstream
           {places.length ? (
             places.map((place) => (
+=======
+          {filteredPlaces.length ? (
+            filteredPlaces.map((place) => (
+>>>>>>> Stashed changes
               <div
                 key={place.id}
                 className="place-card"
@@ -83,6 +103,7 @@ const DistrictDetails = () => {
                     alt={place.name}
                     className="place-image"
                   />
+<<<<<<< Updated upstream
                   {place.category && <span className="place-category">{place.category}</span>}
                 </div>
                 <div className="place-info">
@@ -90,6 +111,14 @@ const DistrictDetails = () => {
                   {place.shortDescription && (
                     <p className="place-description">{place.shortDescription}</p>
                   )}
+=======
+                  {place.category && (
+                    <span className="place-category">{place.category}</span>
+                  )}
+                </div>
+                <div className="place-info">
+                  <h3 className="place-name">{place.name}</h3>
+>>>>>>> Stashed changes
                   <button
                     className="view-details-btn"
                     onClick={(e) => {
@@ -103,7 +132,11 @@ const DistrictDetails = () => {
               </div>
             ))
           ) : (
+<<<<<<< Updated upstream
             <p className="no-places">No places available for this district.</p>
+=======
+            <p className="no-places">No places available for this category.</p>
+>>>>>>> Stashed changes
           )}
         </div>
       )}

@@ -1,20 +1,22 @@
 ﻿using Backend.Data;
-using Scalar.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Backend.Services;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ➕ Add AppDbContext and connect to SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ➕ Add UserDbContext and connect to SQL Server (for authentication)
+// Register UserDbContext for dependency injection
 builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register VehicleReservationService
+builder.Services.AddScoped<VehicleReservationService>();
 
 // ➕ Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -39,14 +41,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins(
-            "http://localhost:5173",
-            "https://localhost:5174",
-            "https://localhost:5175"
-        )
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-    );
+        policy.WithOrigins("http://localhost:5173") // Allow the frontend React app to communicate with the backend
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
 // ➕ Add Controllers
@@ -63,12 +61,15 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.MapScalarApiReference();
 }
 
+// Apply CORS policy BEFORE auth
+app.UseCors("AllowReactApp"); // Ensure this line is before UseAuthentication
+
+// Enable HTTPS redirection
 app.UseHttpsRedirection();
 
-// ➡️ Authentication Middleware
+// Enable Authentication and Authorization middleware
 app.UseAuthentication();
 
 // ➡️ Apply CORS policy
@@ -80,5 +81,5 @@ app.UseAuthorization();
 // ➡️ Map Controllers
 app.MapControllers();
 
-// ➡️ Run the App
+// Start the app
 app.Run();

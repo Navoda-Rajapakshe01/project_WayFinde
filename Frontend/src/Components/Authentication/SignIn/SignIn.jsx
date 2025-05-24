@@ -1,3 +1,4 @@
+import React from "react";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +10,10 @@ const Login = () => {
     username: "",
     password: "",
   });
+<<<<<<< Updated upstream
+=======
+  const [error, setError] = useState(""); // Add error state
+>>>>>>> Stashed changes
   const navigate = useNavigate();
   const handleNavigation = (path) => navigate(path);
   const { setUser } = useContext(AuthContext);
@@ -19,6 +24,10 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+<<<<<<< Updated upstream
+=======
+    setError(""); // Clear previous error
+>>>>>>> Stashed changes
     try {
       const response = await axios.post(
         "https://localhost:7138/api/Auth/login",

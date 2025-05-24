@@ -36,6 +36,12 @@ namespace Backend.Migrations.UserDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< Updated upstream
+=======
+                    b.Property<string>("UrlImages")
+                        .HasColumnType("nvarchar(max)");
+
+>>>>>>> Stashed changes
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

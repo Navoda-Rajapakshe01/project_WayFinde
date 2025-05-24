@@ -1,3 +1,7 @@
+<<<<<<< Updated upstream
+=======
+import React from "react";
+>>>>>>> Stashed changes
 import { jwtDecode } from "jwt-decode"; // Changed import syntax for v4.x
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
