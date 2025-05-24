@@ -3,6 +3,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -25,7 +26,6 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      // Make the login request
       const response = await axios.post(
         "http://localhost:5030/api/Auth/login",
         formData,
@@ -37,58 +37,18 @@ const Login = () => {
         }
       );
 
-      // Check if we have a token in the response
       const token = response.data.token;
-      if (!token) {
-        throw new Error("No token received from server");
-      }
+      if (!token) throw new Error("No token received from server");
 
-      // Store the token
       localStorage.setItem("token", token);
-
-      try {
-        // Decode the token and extract user info
-        const decodedToken = JSON.parse(atob(token.split(".")[1]));
-        
-        // Fetch user profile with the token
-        const profileRes = await axios.get(
-          "http://localhost:5030/api/profile/me",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        // Combine token info with profile data
-        const userProfile = {
-          ...decodedToken,
-          ...profileRes.data,
-        };
-        
-        // Update context and local storage
-        setUser(userProfile);
-        localStorage.setItem("userProfile", JSON.stringify(userProfile));
-        
-        // Redirect to home page
-        window.location.href = "/";
-      } catch (profileError) {
-        console.error("Error fetching profile:", profileError);
-        // Even if profile fetch fails, we can still log in with basic token info
-        const decodedToken = JSON.parse(atob(token.split(".")[1]));
-        setUser(decodedToken);
-        window.location.href = "/";
-      }
+      await handleProfileFetch(token);
     } catch (error) {
       console.error("Login error:", error);
       if (error.response) {
-        // The server responded with a status code outside the 2xx range
         setError(error.response.data.message || "Invalid credentials");
       } else if (error.request) {
-        // The request was made but no response was received
         setError("No response from server. Please check your connection.");
       } else {
-        // Something happened in setting up the request
         setError("Error during login. Please try again.");
       }
     } finally {
@@ -96,10 +56,52 @@ const Login = () => {
     }
   };
 
-  // Handle registration option selection
+  // Google login success handler
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    const googleToken = credentialResponse.credential;
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5030/api/Auth/google", // Your backend endpoint
+        { token: googleToken },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const jwt = response.data.token;
+      localStorage.setItem("token", jwt);
+      await handleProfileFetch(jwt);
+    } catch (err) {
+      console.error("Google login error:", err);
+      setError("Google login failed. Please try again.");
+    }
+  };
+
+  const handleProfileFetch = async (token) => {
+    try {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      const profileRes = await axios.get(
+        "http://localhost:5030/api/profile/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const userProfile = {
+        ...decodedToken,
+        ...profileRes.data,
+      };
+      setUser(userProfile);
+      localStorage.setItem("userProfile", JSON.stringify(userProfile));
+      window.location.href = "/";
+    } catch (profileError) {
+      console.error("Profile fetch error:", profileError);
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      setUser(decodedToken);
+      window.location.href = "/";
+    }
+  };
+
   const handleSignInOption = (type) => {
     setShowSignInModal(false);
-    // Navigate to signup with the role parameter
     navigate(`/signup?role=${type}`);
   };
 
@@ -127,6 +129,14 @@ const Login = () => {
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>
+
+          <div style={{ marginTop: "1rem" }}>
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={() => setError("Google login failed")}
+            />
+          </div>
+
           <p className="CreateNew" onClick={() => setShowSignInModal(true)}>
             Create a new Account
           </p>
@@ -139,16 +149,10 @@ const Login = () => {
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
-              <button
-                className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}
-              >
+              <button className="signin-option-btn" onClick={() => handleSignInOption("user")}>
                 Normal User
               </button>
-              <button
-                className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}
-              >
+              <button className="signin-option-btn" onClick={() => handleSignInOption("service")}>
                 Service Provider
               </button>
             </div>

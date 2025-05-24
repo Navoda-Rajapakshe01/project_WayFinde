@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 import BlogManagement from "./Components/AdminProfile/blog-management";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
@@ -103,6 +104,7 @@ function AppRoutes() {
 
 function App() {
   return (
+    <GoogleOAuthProvider clientId="114068341710-2i1qkqgprej37t78umijsckchgktcljm.apps.googleusercontent.com">
     <BrowserRouter>
       <AuthProvider>
         <ProfileImageProvider>
@@ -110,6 +112,7 @@ function App() {
         </ProfileImageProvider>
       </AuthProvider>
     </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 
