@@ -6,8 +6,8 @@
 }
 
 .stat-card {
-  background-color: #ffffff; /* White background */
-  border-radius: 6px; /* Hardcoded */
+  background-color: #ffffff; 
+  border-radius: 6px; 
   padding: 20px 25px;
   display: flex;
   align-items: center;
@@ -17,7 +17,7 @@
 }
 .stat-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .stat-icon {
@@ -31,25 +31,24 @@
   color: white;
   flex-shrink: 0;
 }
-/* Unique colors for icons (Using Primary or Hardcoded) */
 .stat-icon.places {
   background-color: var(--primary-color);
 }
 .stat-icon.users {
   background-color: #9b59b6;
-} /* Hardcoded Purple */
+} 
 .stat-icon.accommodations {
   background-color: #e67e22;
-} /* Hardcoded Orange */
+} 
 .stat-icon.vehicles {
   background-color: #1abc9c;
-} /* Hardcoded Turquoise */
+} 
 .stat-icon.reviews {
   background-color: #f1c40f;
-} /* Hardcoded Yellow */
+} 
 .stat-icon.visits {
   background-color: #2ecc71;
-} /* Hardcoded Green */
+} 
 
 .stat-details h3 {
   font-size: 0.95rem;
@@ -73,10 +72,10 @@
 }
 .stat-change.increase {
   color: #27ae60;
-} /* Hardcoded Success */
+} 
 .stat-change.decrease {
   color: #c0392b;
-} /* Hardcoded Danger */
+} 
 .stat-change span {
   color: #7f8c8d;
   font-weight: 400;
@@ -181,10 +180,10 @@
 }
 .chart-bar.reviews {
   background-color: #f39c12;
-} /* Hardcoded warning */
+} 
 .chart-bar.signups {
   background-color: #2ecc71;
-} /* Hardcoded success */
+} 
 .chart-label {
   font-size: 0.8rem;
   margin-top: 5px;
@@ -214,10 +213,10 @@
 }
 .legend-color.reviews {
   background-color: #f39c12;
-} /* Hardcoded warning */
+} 
 .legend-color.signups {
   background-color: #2ecc71;
-} /* Hardcoded success */
+} 
 
 /* Table inside card */
 .dashboard-card .data-table {

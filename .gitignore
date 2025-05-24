@@ -50,4 +50,8 @@ Thumbs.db
 /.vs
 /appsettings.json
 /appsettings.Development.json
+<<<<<<< HEAD
 .vs/ 
+=======
+.vs
+>>>>>>> a2f5817ccb8d2d5f564c67a6f147aa573fd9db52

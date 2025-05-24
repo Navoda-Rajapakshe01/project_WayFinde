@@ -24,10 +24,10 @@ const TodoPopup = ({ onClose, onSave }) => {
           className="popup-input"
         />
         <div className="popup-buttons">
-          <button onClick={onClose} className="popup-button close-button">
+          <button onClick={onClose} className="popup-button closes-button">
             Cancel
           </button>
-          <button onClick={handleSave} className="popup-button save-button">
+          <button onClick={handleSave} className="popup-button saves-button">
             Apply
           </button>
         </div>

@@ -1,8 +1,8 @@
 "use client";
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import swal from "sweetalert2";
 import "../CSS/PlaceDetails.css";
 import "../../App.css";
 
@@ -20,9 +20,15 @@ const PlaceDetails = () => {
   const [reviewName, setReviewName] = useState("");
   const [reviewEmail, setReviewEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showGuestModal, setShowGuestModal] = useState(false);
+  const [showAllReviewsModal, setShowAllReviewsModal] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+    const user = JSON.parse(localStorage.getItem("user"));
+    setCurrentUser(user);
+
     axios
       .get(`http://localhost:5030/api/places/${placeId}`)
       .then((res) => {
@@ -33,18 +39,18 @@ const PlaceDetails = () => {
         console.error("Failed to fetch place details:", err);
         setError("Failed to load place details. Please try again later.");
         setLoading(false);
-      }),
-      axios
-        .get(`http://localhost:5030/api/places/${placeId}/reviews`)
-        .then((res) => setReviews(res.data))
-        .catch((err) => console.error("Failed to fetch reviews:", err));
+      });
 
-      window.scrollTo(0, 0);
+    axios
+      .get(`http://localhost:5030/api/places/${placeId}/reviews`)
+      .then((res) => setReviews(res.data))
+      .catch((err) => console.error("Failed to fetch reviews:", err));
+
+    window.scrollTo(0, 0);
   }, [placeId]);
 
   const handleWishlistClick = () => {
     setWishlistAdded(!wishlistAdded);
-    // Here you would typically make an API call to update the wishlist status
   };
 
   const handleImageClick = (index) => {
@@ -52,17 +58,30 @@ const PlaceDetails = () => {
   };
 
   const handleSubmitReview = () => {
-    if (!newReview && rating === 0) {
-      return alert("Please write a review and select a rating");
+    if (!newReview.trim() && rating === 0) {
+      swal.fire({
+        title: "Please provide a review or rating",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return;
     }
 
-    setSubmitting(true);
+    if (!currentUser) {
+      setShowGuestModal(true);
+      return;
+    }
 
+    submitReview(currentUser.name || "Anonymous", currentUser.email || "");
+  };
+
+  const submitReview = (name, email) => {
+    setSubmitting(true);
     const reviewData = {
       comment: newReview,
       rating,
-      name: reviewName || "Anonymous",
-      email: reviewEmail || undefined,
+      name,
+      email,
     };
 
     axios
@@ -83,11 +102,12 @@ const PlaceDetails = () => {
   };
 
   const renderStars = (value, onClickFn, onHoverFn, onLeaveFn) => {
+    const roundedValue = Math.round(value);
     return [1, 2, 3, 4, 5].map((star) => (
       <span
         key={star}
         className={`star ${
-          star <= (hoverRating || value) ? "active" : "inactive"
+          star <= (hoverRating || roundedValue) ? "active" : "inactive"
         }`}
         onClick={() => onClickFn && onClickFn(star)}
         onMouseEnter={() => onHoverFn && onHoverFn(star)}
@@ -97,6 +117,13 @@ const PlaceDetails = () => {
       </span>
     ));
   };
+
+  const averageRating = reviews.length
+    ? (
+        reviews.reduce((sum, review) => sum + (review.rating || 0), 0) /
+        reviews.length
+      ).toFixed(1)
+    : "0.0";
 
   if (loading) {
     return (
@@ -124,207 +151,277 @@ const PlaceDetails = () => {
 
   if (!place) return null;
 
-  // Calculate average rating
-  const averageRating = reviews.length
-    ? (
-        reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
-      ).toFixed(1)
-    : 0;
-
   return (
-    <div className="place-details-container">
-      {/* Hero Image with Overlay Title */}
-      <div className="hero-section">
-        <img
-          src={place.mainImageUrl || "/placeholder.svg"}
-          alt={place.name}
-          className="hero-image"
-        />
-        <div className="hero-overlay">
-          <h1 className="hero-title">{place.name}</h1>
-          <p className="hero-subtitle">{place.address}</p>
+    <>
+      <div className="place-details-container">
+        {/* Hero Section */}
+        <div className="hero-section">
+          <img
+            src={place.mainImageUrl || "/placeholder.svg"}
+            alt={place.name}
+            className="hero-image"
+          />
+          <div className="hero-overlay">
+            <h1 className="hero-title">{place.name}</h1>
+            <p className="hero-subtitle">{place.address}</p>
+          </div>
+        </div>
+
+        <div className="content-wrapper">
+          <div className="main-content-grid">
+            <div className="left-column">
+              <div className="section description-section">
+                <h2 className="section-title">About this place</h2>
+                <p>{place.description}</p>
+              </div>
+            </div>
+
+            <div className="right-column">
+              <div className="wishlist-container">
+                <button
+                  className={`wishlist-button ${wishlistAdded ? "added" : ""}`}
+                  onClick={handleWishlistClick}
+                >
+                  {wishlistAdded ? "✓ Added to Wishlist" : "+ Add to Wishlist"}
+                </button>
+              </div>
+              <div className="featured-image-container">
+                <img
+                  src={place.galleryImages?.[activeImage] || place.mainImageUrl}
+                  alt={`Featured view of ${place.name}`}
+                  className="featured-image"
+                />
+              </div>
+
+              {place.galleryImages?.length > 0 && (
+                <div className="gallery-section">
+                  {place.galleryImages.map((imgUrl, index) => (
+                    <img
+                      key={index}
+                      src={imgUrl || "/placeholder.svg"}
+                      alt={`Gallery ${index + 1}`}
+                      className={`gallery-image ${
+                        activeImage === index ? "active" : ""
+                      }`}
+                      onClick={() => handleImageClick(index)}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="info-cards">
+                <div className="info-card">
+                  <h3>🕒 Opening Hours</h3>
+                  <p>{place.openingHours}</p>
+                </div>
+                <div className="info-card">
+                  <h3>📍 Address</h3>
+                  <p>{place.address}</p>
+                </div>
+                <div className="info-card">
+                  <h3>🔗 Directions</h3>
+                  <a
+                    href={place.googleMapLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-link"
+                  >
+                    View on Google Maps
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {place.history && (
+            <div className="section history-section">
+              <h2 className="section-title">History</h2>
+              <p>{place.history}</p>
+            </div>
+          )}
+
+          <div className="reviews-ratings-section">
+            <div className="reviews-header">
+              <h2 className="reviews-title">Reviews & Ratings</h2>
+              <div className="reviews-summary">
+                <div className="average-rating">
+                  <span className="rating-number">{averageRating}</span>
+                  <div className="rating-stars">
+                    {renderStars(averageRating)}
+                  </div>
+                  <span className="rating-count">
+                    ({reviews.length} reviews)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="reviews-list">
+              <h3>What People Say</h3>
+              {reviews.length > 0 ? (
+                <>
+                  {reviews
+                    .filter((r) => r.comment?.trim())
+                    .slice(0, 2)
+                    .map((review, index) => (
+                      <div key={index} className="review-card">
+                        <div className="review-header">
+                          <div className="reviewer-info">
+                            <div className="reviewer-avatar">
+                              {review.name
+                                ? review.name.charAt(0).toUpperCase()
+                                : "A"}
+                            </div>
+                            <h4 className="reviewer-name">
+                              {review.name || "Anonymous"}
+                            </h4>
+                          </div>
+                          <div className="review-date">
+                            {review.createdAt
+                              ? new Date(review.createdAt).toLocaleDateString()
+                              : "Recently"}
+                          </div>
+                        </div>
+                        <p className="review-comment">{review.comment}</p>
+                      </div>
+                    ))}
+
+                  {reviews.filter((r) => r.comment?.trim()).length > 2 && (
+                    <div className="show-more">
+                      <span
+                        className="show-more-link"
+                        onClick={() => setShowAllReviewsModal(true)}
+                      >
+                        Show More
+                      </span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="no-reviews">
+                  <p>No reviews yet. Be the first to share your experience!</p>
+                </div>
+              )}
+            </div>
+
+            <div className="review-form-container">
+              <h3>Share Your Experience</h3>
+              <div className="review-form">
+                <div className="form-group">
+                  <label>Your Rating</label>
+                  <div className="rating-selector">
+                    {renderStars(
+                      rating,
+                      (val) => setRating(val),
+                      (val) => setHoverRating(val),
+                      () => setHoverRating(0)
+                    )}
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Your Review</label>
+                  <textarea
+                    placeholder="Share your experience with this place..."
+                    value={newReview}
+                    onChange={(e) => setNewReview(e.target.value)}
+                  ></textarea>
+                </div>
+                <button
+                  className="submit-review-btn"
+                  onClick={handleSubmitReview}
+                  disabled={submitting}
+                >
+                  {submitting ? "Submitting..." : "Submit Review"}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="content-wrapper">
-        {/* Wishlist Button */}
-        <div className="wishlist-container">
-          <button
-            className={`wishlist-button ${wishlistAdded ? "added" : ""}`}
-            onClick={handleWishlistClick}
-          >
-            {wishlistAdded ? "✓ Added to Wishlist" : "+ Add to Wishlist"}
-          </button>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="main-content-grid">
-          {/* Left Column - Description */}
-          <div className="left-column">
-            <div className="section description-section">
-              <h2 className="section-title">About this place</h2>
-              <p>{place.description}</p>
-            </div>
-          </div>
-
-          {/* Right Column - Gallery and Info Cards */}
-          <div className="right-column">
-            <div className="featured-image-container">
-              <img
-                src={place.galleryImages?.[activeImage] || place.mainImageUrl}
-                alt={`Featured view of ${place.name}`}
-                className="featured-image"
-              />
-            </div>
-
-            {/* Gallery of Small Images */}
-            {place.galleryImages?.length > 0 && (
-              <div className="gallery-section">
-                {place.galleryImages.map((imgUrl, index) => (
-                  <img
-                    key={index}
-                    src={imgUrl || "/placeholder.svg"}
-                    alt={`Gallery ${index + 1}`}
-                    className={`gallery-image ${
-                      activeImage === index ? "active" : ""
-                    }`}
-                    onClick={() => handleImageClick(index)}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* Info Cards */}
-            <div className="info-cards">
-              <div className="info-card">
-                <h3>🕒 Opening Hours</h3>
-                <p>{place.openingHours}</p>
-              </div>
-              <div className="info-card">
-                <h3>📍 Address</h3>
-                <p>{place.address}</p>
-              </div>
-              <div className="info-card">
-                <h3>🔗 Directions</h3>
-                <a
-                  href={place.googleMapLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="map-link"
-                >
-                  View on Google Maps
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-         {/* History Section */}
-        {place.history && (
-              <div className="section history-section">
-                <h2 className="section-title">History</h2>
-                <p>{place.history}</p>
-              </div>
-            )}
-
-        {/* Reviews and Ratings Section */}
-        <div className="reviews-ratings-section">
-          <div className="reviews-header">
-            <h2 className="reviews-title">Reviews & Ratings</h2>
-            <div className="reviews-summary">
-              <div className="average-rating">
-                <span className="rating-number">{averageRating}</span>
-                <div className="rating-stars">{renderStars(averageRating)}</div>
-                <span className="rating-count">({reviews.length} reviews)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Review Form */}
-          <div className="review-form-container">
-            <h3>Share Your Experience</h3>
-            <div className="review-form">
-              <div className="form-row">
-              </div>
-              <div className="form-group">
-                <label htmlFor="reviewRating">Your Rating</label>
-                <div className="rating-selector">
-                  {renderStars(
-                    rating,
-                    (value) => setRating(value),
-                    (value) => setHoverRating(value),
-                    () => setHoverRating(0)
-                  )}
-                </div>
-              </div>
-              <div className="form-group">
-                <label htmlFor="reviewText">Your Review</label>
-                <textarea
-                  id="reviewText"
-                  placeholder="Share your experience with this place..."
-                  value={newReview}
-                  onChange={(e) => setNewReview(e.target.value)}
-                ></textarea>
-              </div>
+      {/* Guest Modal */}
+      {showGuestModal && (
+        <div className="guest-modal-backdrop">
+          <div className="guest-modal">
+            <h3>Enter your details to submit a review</h3>
+            <input
+              type="text"
+              placeholder="Your Name"
+              value={reviewName}
+              onChange={(e) => setReviewName(e.target.value)}
+            />
+            <input
+              type="email"
+              placeholder="Your Email"
+              value={reviewEmail}
+              onChange={(e) => setReviewEmail(e.target.value)}
+            />
+            <div className="guest-modal-actions">
               <button
-                className="submit-review-btn"
-                onClick={handleSubmitReview}
-                disabled={submitting}
+                className="cancel-guest-btn"
+                onClick={() => setShowGuestModal(false)}
               >
-                {submitting ? "Submitting..." : "Submit Review"}
+                Cancel
+              </button>
+              <button
+                className="submit-guest-btn"
+                onClick={() => {
+                  if (!reviewName.trim()) {
+                    alert("Name is required");
+                    return;
+                  }
+                  if (!reviewEmail.trim()) {
+                    alert("Email is required");
+                    return;
+                  }
+                  setShowGuestModal(false);
+                  submitReview(reviewName.trim(), reviewEmail.trim());
+                }}
+              >
+                Submit
               </button>
             </div>
           </div>
+        </div>
+      )}
 
-          {/* Existing Reviews */}
-          <div className="reviews-list">
-            <h3>What People Say</h3>
-            {reviews.length > 0 ? (
-              reviews.map((review, index) => (
-                <div key={index} className="review-card">
-                  <div className="review-header">
-                    <div className="reviewer-info">
-                      <div className="reviewer-avatar">
-                        {review.name
-                          ? review.name.charAt(0).toUpperCase()
-                          : "A"}
-                      </div>
-                      <div>
-                        <h4 className="reviewer-name">
-                          {review.name || "Anonymous"}
-                        </h4>
-                        <div className="review-rating">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <span
-                              key={star}
-                              className={`star ${
-                                star <= review.rating ? "active" : "inactive"
-                              }`}
-                            >
-                              ★
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="review-date">
-                      {review.createdAt
-                        ? new Date(review.createdAt).toLocaleDateString()
-                        : "Recently"}
-                    </div>
-                  </div>
-                  <p className="review-comment">{review.comment}</p>
-                </div>
-              ))
-            ) : (
-              <div className="no-reviews">
-                <p>No reviews yet. Be the first to share your experience!</p>
+      {/* All Reviews Modal */}
+      {showAllReviewsModal && (
+        <div className="custom-modal-backdrop">
+          <div className="custom-modal">
+            <div className="custom-modal-header">
+              <h3>All Reviews</h3>
+              <div className="custom-modal-close">
+                <span onClick={() => setShowAllReviewsModal(false)}>
+                  &times;
+                </span>
               </div>
-            )}
+            </div>
+            <div className="custom-modal-body">
+              {reviews
+                .filter((r) => r.comment?.trim())
+                .map((r, idx) => (
+                  <div key={idx} className="review-card">
+                    <strong>{r.name || "Anonymous"}</strong>
+                    <span
+                      style={{
+                        float: "right",
+                        fontSize: "12px",
+                        color: "gray",
+                      }}
+                    >
+                      {r.createdAt
+                        ? new Date(r.createdAt).toLocaleDateString()
+                        : "Recently"}
+                    </span>
+                    <p style={{ margin: "5px 0" }}>{r.comment}</p>
+                  </div>
+                ))}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
