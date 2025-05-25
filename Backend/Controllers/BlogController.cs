@@ -112,5 +112,12 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> PostBlog([FromBody] Blog post)
+        {
+            _context.Blogs.Add(post);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Blog saved" });
+        }
     }
 }

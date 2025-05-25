@@ -39,6 +39,10 @@ const ProfileSettings = () => {
     navigate("/uploadNewBlog"); // Navigate to your blog upload page
   };
 
+  const writeBlog = () => {
+    navigate("/blogEditor"); // Navigate to your blog upload page
+  };
+
   return (
     <div>
       <ProfileHeadSection user={user} />
@@ -76,6 +80,9 @@ const ProfileSettings = () => {
         <div className="button-wrapper">
           <button onClick={handleFileClick} className="UploadBlogButton">
             Upload Blog Document (.doc/.docx)
+          </button>
+          <button onClick={writeBlog} className="UploadBlogButton">
+            Write blog
           </button>
         </div>
       </div>

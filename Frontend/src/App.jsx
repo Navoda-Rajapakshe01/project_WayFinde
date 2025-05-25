@@ -15,15 +15,17 @@ import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
+import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import Accommodation from "./pages/Accommodation";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
+import BlogEditor from "./pages/Blogs/BlogEditor";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
 import PaymentGateway from "./pages/PaymentGateway";
-import Chat from "./pages/Profile/Chat";
 import Following from "./pages/Profile/Following";
 import Followers from "./pages/Profile/Follwers";
 import Profile from "./pages/Profile/Profile";
@@ -39,8 +41,6 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
-import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 
 import "./App.css";
 
@@ -66,7 +66,7 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-        <Route path="/chat" element={<PersonalBlog/>} />
+        <Route path="/chat" element={<PersonalBlog />} />
         <Route path="/blog/:id" element={<PersonalBlog />} />
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
@@ -80,6 +80,7 @@ function AppRoutes() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
+        <Route path="/blogEditor" element={<BlogEditor />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
