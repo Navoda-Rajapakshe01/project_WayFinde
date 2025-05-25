@@ -5,6 +5,9 @@ import axios from "axios";
 import swal from "sweetalert2";
 import "../CSS/PlaceDetails.css";
 import "../../App.css";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 
 const PlaceDetails = () => {
   const { placeId } = useParams();
@@ -23,6 +26,9 @@ const PlaceDetails = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [showGuestModal, setShowGuestModal] = useState(false);
   const [showAllReviewsModal, setShowAllReviewsModal] = useState(false);
+  const isLoggedIn = document.cookie.includes("authToken=");
+  const [showGallery, setShowGallery] = useState(false);
+  const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -53,8 +59,29 @@ const PlaceDetails = () => {
     setWishlistAdded(!wishlistAdded);
   };
 
-  const handleImageClick = (index) => {
-    setActiveImage(index);
+  const fetchGalleryImages = async (placeId) => {
+    try {
+      const response = await axios.get(`/api/places/${placeId}/images`);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch images", error);
+      return [];
+    }
+  };
+
+  const openGalleryPopup = async () => {
+    const images = await fetchGalleryImages(placeId);
+    if (images.length > 0) {
+      setGalleryImages(images);
+      setShowGallery(true);
+    } else {
+      swal.fire({
+        title: "No images available",
+        text: "This place has no additional images.",
+        icon: "info",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   const handleSubmitReview = () => {
@@ -101,13 +128,44 @@ const PlaceDetails = () => {
       });
   };
 
-  const renderStars = (value, onClickFn, onHoverFn, onLeaveFn) => {
-    const roundedValue = Math.round(value);
+  // Function to render static stars
+  const renderStaticStars = (value) => {
+    return [1, 2, 3, 4, 5].map((star) => {
+      if (value >= star) {
+        return (
+          <span key={star} className="star active">
+            ★
+          </span>
+        );
+      } else if (value >= star - 0.5) {
+        return (
+          <span key={star} className="star half">
+            ★
+          </span>
+        );
+      } else {
+        return (
+          <span key={star} className="star inactive">
+            ★
+          </span>
+        );
+      }
+    });
+  };
+
+  // Function to render interactive stars
+  const renderInteractiveStars = (
+    value,
+    hoverValue,
+    onClickFn,
+    onHoverFn,
+    onLeaveFn
+  ) => {
     return [1, 2, 3, 4, 5].map((star) => (
       <span
         key={star}
         className={`star ${
-          star <= (hoverRating || roundedValue) ? "active" : "inactive"
+          star <= (hoverValue || value) ? "active" : "inactive"
         }`}
         onClick={() => onClickFn && onClickFn(star)}
         onMouseEnter={() => onHoverFn && onHoverFn(star)}
@@ -118,6 +176,7 @@ const PlaceDetails = () => {
     ));
   };
 
+  // Calculate average rating
   const averageRating = reviews.length
     ? (
         reviews.reduce((sum, review) => sum + (review.rating || 0), 0) /
@@ -156,14 +215,18 @@ const PlaceDetails = () => {
       <div className="place-details-container">
         {/* Hero Section */}
         <div className="hero-section">
-          <img
-            src={place.mainImageUrl || "/placeholder.svg"}
-            alt={place.name}
-            className="hero-image"
-          />
           <div className="hero-overlay">
-            <h1 className="hero-title">{place.name}</h1>
-            <p className="hero-subtitle">{place.address}</p>
+            <div className="hero-lottie">
+              <DotLottieReact
+                src="https://lottie.host/adaf9694-f292-4ed0-8108-61064b3d164b/t3082gROJl.lottie"
+                loop
+                autoplay
+              />
+            </div>
+            <div className="hero-content">
+              <h1 className="hero-title">{place.name}</h1>
+              <p className="hero-subtitle">{place.address}</p>
+            </div>
           </div>
         </div>
 
@@ -181,31 +244,38 @@ const PlaceDetails = () => {
                 <button
                   className={`wishlist-button ${wishlistAdded ? "added" : ""}`}
                   onClick={handleWishlistClick}
+                  style={{ visibility: isLoggedIn ? "visible" : "hidden" }}
                 >
                   {wishlistAdded ? "✓ Added to Wishlist" : "+ Add to Wishlist"}
                 </button>
               </div>
-              <div className="featured-image-container">
+
+              <div
+                className="featured-image-wrapper"
+                onClick={openGalleryPopup}
+              >
                 <img
                   src={place.galleryImages?.[activeImage] || place.mainImageUrl}
                   alt={`Featured view of ${place.name}`}
                   className="featured-image"
                 />
+                <div className="overlay">See more images...</div>
               </div>
 
-              {place.galleryImages?.length > 0 && (
-                <div className="gallery-section">
-                  {place.galleryImages.map((imgUrl, index) => (
-                    <img
-                      key={index}
-                      src={imgUrl || "/placeholder.svg"}
-                      alt={`Gallery ${index + 1}`}
-                      className={`gallery-image ${
-                        activeImage === index ? "active" : ""
-                      }`}
-                      onClick={() => handleImageClick(index)}
+              {showGallery && (
+                <div className="popup-gallery">
+                  <div className="popup-content">
+                    <FontAwesomeIcon
+                      className="popup-close"
+                      onClick={() => setShowGallery(false)}
+                      icon={faTimes}
                     />
-                  ))}
+                    <div className="image-grid">
+                      {galleryImages.map((img, i) => (
+                        <img key={i} src={img} alt={`Gallery ${i + 1}`} />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -247,7 +317,7 @@ const PlaceDetails = () => {
                 <div className="average-rating">
                   <span className="rating-number">{averageRating}</span>
                   <div className="rating-stars">
-                    {renderStars(averageRating)}
+                    {renderStaticStars(averageRating)}
                   </div>
                   <span className="rating-count">
                     ({reviews.length} reviews)
@@ -310,8 +380,9 @@ const PlaceDetails = () => {
                 <div className="form-group">
                   <label>Your Rating</label>
                   <div className="rating-selector">
-                    {renderStars(
+                    {renderInteractiveStars(
                       rating,
+                      hoverRating,
                       (val) => setRating(val),
                       (val) => setHoverRating(val),
                       () => setHoverRating(0)
@@ -367,11 +438,19 @@ const PlaceDetails = () => {
                 className="submit-guest-btn"
                 onClick={() => {
                   if (!reviewName.trim()) {
-                    alert("Name is required");
+                    swal.fire({
+                      title: "Name is required",
+                      icon: "warning",
+                      confirmButtonText: "OK",
+                    });
                     return;
                   }
                   if (!reviewEmail.trim()) {
-                    alert("Email is required");
+                    swal.fire({
+                      title: "Email is required",
+                      icon: "warning",
+                      confirmButtonText: "OK",
+                    });
                     return;
                   }
                   setShowGuestModal(false);
