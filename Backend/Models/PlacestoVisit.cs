@@ -22,5 +22,6 @@ public class PlacesToVisit
     public required Category Category { get; set; }
 
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
+    public ICollection<PlaceImage> PlaceImage { get; set; }
 
 }
