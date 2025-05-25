@@ -1,10 +1,25 @@
-import React, { useRef, useState, useEffect } from "react";
 import {
-  Bold, Italic, Underline, Strikethrough, Subscript, Superscript,
-  AlignLeft, AlignCenter, AlignRight, AlignJustify,
-  Undo, Redo, Image, Code, List, ListOrdered,
-  Eraser, Link, Droplet
+  AlignCenter,
+  AlignJustify,
+  AlignLeft,
+  AlignRight,
+  Bold,
+  Code,
+  Droplet,
+  Eraser,
+  Image,
+  Italic,
+  Link,
+  List,
+  ListOrdered,
+  Redo,
+  Strikethrough,
+  Subscript,
+  Superscript,
+  Underline,
+  Undo,
 } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import "../CSS/BlogEditor.css";
 
 function BlogEditor() {
@@ -30,6 +45,8 @@ function BlogEditor() {
     }
   };
 
+  const [blogImages, setBlogImages] = useState([]);
+
   const handleImageUpload = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
@@ -40,12 +57,32 @@ function BlogEditor() {
       const file = e.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageUrl = e.target.result;
-        executeCommand('insertImage', imageUrl);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("image", file);
+
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch(
+          "http://localhost:5030/api/blog/upload-image",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
+        );
+
+        const data = await response.json();
+        if (response.ok && data.imageUrl) {
+          setBlogImages((prev) => [...prev, data.imageUrl]);
+          executeCommand("insertImage", data.imageUrl);
+        } else {
+          alert("Image upload failed");
+        }
+      } catch (err) {
+        console.error(err);
+      }
     };
   };
 
@@ -69,22 +106,34 @@ function BlogEditor() {
       return;
     }
 
-    const blog = { title, content };
+    const blog = {
+      title,
+      blogUrl: content,
+      imageUrls: blogImages, // ✅ new field
+      tags: [], // fill if needed
+      author: "Author Name", // dynamic if you have auth
+    };
 
     try {
-      const response = await fetch("https://yourapi.com/api/blogs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(blog),
-      });
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        "http://localhost:5030/api/blog/save-blogs",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(blog),
+        }
+      );
 
       if (response.ok) {
         alert("Blog submitted successfully!");
         setTitle("");
         setContent("");
-        if (editorRef.current) {
-          editorRef.current.innerHTML = "";
-        }
+        setBlogImages([]);
+        editorRef.current.innerHTML = "";
       } else {
         alert("Error submitting blog");
       }
@@ -121,7 +170,7 @@ function BlogEditor() {
         {/* Toolbar */}
         <div className="editor-toolbar">
           <select
-            onChange={(e) => executeCommand('formatBlock', e.target.value)}
+            onChange={(e) => executeCommand("formatBlock", e.target.value)}
             className="toolbar-select"
             defaultValue=""
           >
@@ -132,41 +181,118 @@ function BlogEditor() {
           </select>
 
           {/* Formatting */}
-          <ToolbarButton onClick={() => executeCommand('bold')} title="Bold"><Bold size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('italic')} title="Italic"><Italic size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('underline')} title="Underline"><Underline size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('strikeThrough')} title="Strikethrough"><Strikethrough size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('subscript')} title="Subscript"><Subscript size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('superscript')} title="Superscript"><Superscript size={16} /></ToolbarButton>
+          <ToolbarButton onClick={() => executeCommand("bold")} title="Bold">
+            <Bold size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("italic")}
+            title="Italic"
+          >
+            <Italic size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("underline")}
+            title="Underline"
+          >
+            <Underline size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("strikeThrough")}
+            title="Strikethrough"
+          >
+            <Strikethrough size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("subscript")}
+            title="Subscript"
+          >
+            <Subscript size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("superscript")}
+            title="Superscript"
+          >
+            <Superscript size={16} />
+          </ToolbarButton>
 
           <div className="toolbar-divider"></div>
 
           {/* Alignment */}
-          <ToolbarButton onClick={() => executeCommand('justifyLeft')} title="Align Left"><AlignLeft size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('justifyCenter')} title="Align Center"><AlignCenter size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('justifyRight')} title="Align Right"><AlignRight size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('justifyFull')} title="Justify"><AlignJustify size={16} /></ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("justifyLeft")}
+            title="Align Left"
+          >
+            <AlignLeft size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("justifyCenter")}
+            title="Align Center"
+          >
+            <AlignCenter size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("justifyRight")}
+            title="Align Right"
+          >
+            <AlignRight size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("justifyFull")}
+            title="Justify"
+          >
+            <AlignJustify size={16} />
+          </ToolbarButton>
 
           <div className="toolbar-divider"></div>
 
           {/* Lists */}
-          <ToolbarButton onClick={() => executeCommand('insertUnorderedList')} title="Bullet List"><List size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('insertOrderedList')} title="Numbered List"><ListOrdered size={16} /></ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("insertUnorderedList")}
+            title="Bullet List"
+          >
+            <List size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("insertOrderedList")}
+            title="Numbered List"
+          >
+            <ListOrdered size={16} />
+          </ToolbarButton>
 
           <div className="toolbar-divider"></div>
 
           {/* Utilities */}
-          <ToolbarButton onClick={handleImageUpload} title="Insert Image"><Image size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('formatBlock', 'pre')} title="Code Block"><Code size={16} /></ToolbarButton>
-          <ToolbarButton onClick={handleInsertLink} title="Insert Link"><Link size={16} /></ToolbarButton>
-          <ToolbarButton onClick={handleTextColorChange} title="Text Color"><Droplet size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('removeFormat')} title="Clear Formatting"><Eraser size={16} /></ToolbarButton>
+          <ToolbarButton onClick={handleImageUpload} title="Insert Image">
+            <Image size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("formatBlock", "pre")}
+            title="Code Block"
+          >
+            <Code size={16} />
+          </ToolbarButton>
+          <ToolbarButton onClick={handleInsertLink} title="Insert Link">
+            <Link size={16} />
+          </ToolbarButton>
+          <ToolbarButton onClick={handleTextColorChange} title="Text Color">
+            <Droplet size={16} />
+          </ToolbarButton>
+          <ToolbarButton
+            onClick={() => executeCommand("removeFormat")}
+            title="Clear Formatting"
+          >
+            <Eraser size={16} />
+          </ToolbarButton>
 
           <div className="toolbar-divider"></div>
 
           {/* Undo / Redo */}
-          <ToolbarButton onClick={() => executeCommand('undo')} title="Undo"><Undo size={16} /></ToolbarButton>
-          <ToolbarButton onClick={() => executeCommand('redo')} title="Redo"><Redo size={16} /></ToolbarButton>
+          <ToolbarButton onClick={() => executeCommand("undo")} title="Undo">
+            <Undo size={16} />
+          </ToolbarButton>
+          <ToolbarButton onClick={() => executeCommand("redo")} title="Redo">
+            <Redo size={16} />
+          </ToolbarButton>
         </div>
 
         {/* Editor */}
@@ -183,7 +309,7 @@ function BlogEditor() {
 
       {/* Character Counter */}
       <div className="character-counter">
-        Characters: {content.replace(/<[^>]*>/g, '').length}
+        Characters: {content.replace(/<[^>]*>/g, "").length}
       </div>
 
       <div className="button-container">

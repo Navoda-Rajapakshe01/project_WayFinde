@@ -102,10 +102,10 @@ namespace Backend.Controllers
         }
 
         [HttpPost("save-blogs")]
-        [Authorize] // requires authentication
+        [Authorize]
         public async Task<IActionResult> CreateBlog([FromBody] Blog blog)
         {
-            if (blog == null || string.IsNullOrWhiteSpace(blog.Title))
+            if (blog == null || string.IsNullOrWhiteSpace(blog.Title) || string.IsNullOrWhiteSpace(blog.BlogUrl))
             {
                 return BadRequest("Invalid blog data.");
             }
@@ -120,14 +120,24 @@ namespace Backend.Controllers
             blog.UserId = userId;
             blog.CreatedAt = DateTime.UtcNow;
 
+            // Ensure tags list is not null
+            blog.Tags ??= new List<string>();
+
+            // Optional: Set fallback cover image if none provided
+            if (string.IsNullOrEmpty(blog.CoverImageUrl))
+            {
+                blog.CoverImageUrl = "https://your-default-image-url.com/default.jpg";
+            }
+
             _context.Blogs.Add(blog);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Blog saved successfully", blog.Id });
         }
 
+
         [HttpPost("upload-image")]
-        [Authorize] // Optional, if you want only logged-in users uploading images
+        [Authorize]
         public async Task<IActionResult> UploadImage(IFormFile image)
         {
             if (image == null || image.Length == 0)
@@ -143,17 +153,23 @@ namespace Backend.Controllers
 
                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-                if (uploadResult.StatusCode != HttpStatusCode.OK)
+                if (uploadResult.StatusCode != HttpStatusCode.OK || string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
+                {
                     return StatusCode(500, "Image upload to Cloudinary failed.");
+                }
 
-                // Return just the image URL (what Quill needs)
-                return Ok(new { imageUrl = uploadResult.SecureUrl.ToString() });
+                return Ok(new
+                {
+                    imageUrl = uploadResult.SecureUrl.ToString(),
+                    originalFilename = uploadResult.OriginalFilename
+                });
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
 
         // Make sure you have a GET endpoint for Swagger to detect

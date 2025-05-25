@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.DTOs;
+using System.Text.Json;
 
 namespace Backend.Data
 {
@@ -24,6 +25,13 @@ namespace Backend.Data
             //     .HasOne<UserNew>()
             //     .WithMany()
             //     .HasForeignKey(b => b.UserId);
+
+            // Configure the ImageUrls property for Blog
+            modelBuilder.Entity<Blog>()
+                .Property(b => b.ImageUrls)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
         }
     }
 }
