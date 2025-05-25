@@ -1,6 +1,6 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
-
 import BlogManagement from "./Components/AdminProfile/blog-management";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
@@ -80,7 +80,10 @@ function AppRoutes() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
-        <Route path="/blogEditor" element={<BlogEditor />} />
+        <Route
+          path="/profile/profileBlogs/blogEditor"
+          element={<BlogEditor />}
+        />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
@@ -102,13 +105,15 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ProfileImageProvider>
-          <AppRoutes />
-        </ProfileImageProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <GoogleOAuthProvider clientId="114068341710-2i1qkqgprej37t78umijsckchgktcljm.apps.googleusercontent.com">
+      <BrowserRouter>
+        <AuthProvider>
+          <ProfileImageProvider>
+            <AppRoutes />
+          </ProfileImageProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 

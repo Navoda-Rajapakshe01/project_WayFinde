@@ -34,7 +34,7 @@ const ProfileSettings = () => {
       const { profilePictureUrl, bio } = response.data;
       setBio(bio || "");
       setProfileImage(
-        profilePictureUrl || "Frontend/public/DefaultProfileImage.jpg"
+        profilePictureUrl || "defaultprofilepicture.png"
       );
       console.log("Fetched bio:", bio);
       console.log("Fetched profile picture:", profilePictureUrl);
@@ -180,7 +180,7 @@ const ProfileSettings = () => {
           src={
             previewImage ||
             profileImage ||
-            "Frontend/public/DefaultProfileImage.jpg"
+            "defaultprofilepicture.png"
           }
           alt="Profile"
           className="profile-picture"

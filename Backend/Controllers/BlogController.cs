@@ -25,17 +25,20 @@ namespace Backend.Controllers
         private readonly IUserService _userService;
         private readonly Cloudinary _cloudinary;
         private readonly AppDbContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public BlogController(
              Cloudinary cloudinary,
              AppDbContext context,
              IAuthService authService,
-             IUserService userService)
+             IUserService userService,
+             IHttpContextAccessor httpContextAccessor)
         {
             _cloudinary = cloudinary;
             _context = context;
             _authService = authService;
             _userService = userService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost("upload-blogs")]
@@ -97,6 +100,61 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpPost("save-blogs")]
+        [Authorize] // requires authentication
+        public async Task<IActionResult> CreateBlog([FromBody] Blog blog)
+        {
+            if (blog == null || string.IsNullOrWhiteSpace(blog.Title))
+            {
+                return BadRequest("Invalid blog data.");
+            }
+
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
+            {
+                return Unauthorized("Invalid or missing user ID.");
+            }
+
+            blog.UserId = userId;
+            blog.CreatedAt = DateTime.UtcNow;
+
+            _context.Blogs.Add(blog);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Blog saved successfully", blog.Id });
+        }
+
+        [HttpPost("upload-image")]
+        [Authorize] // Optional, if you want only logged-in users uploading images
+        public async Task<IActionResult> UploadImage(IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+                return BadRequest("No image file provided.");
+
+            try
+            {
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(image.FileName, image.OpenReadStream()),
+                    Folder = "quill_blog_images"
+                };
+
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+                if (uploadResult.StatusCode != HttpStatusCode.OK)
+                    return StatusCode(500, "Image upload to Cloudinary failed.");
+
+                // Return just the image URL (what Quill needs)
+                return Ok(new { imageUrl = uploadResult.SecureUrl.ToString() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
 
         // Make sure you have a GET endpoint for Swagger to detect
         [HttpGet]

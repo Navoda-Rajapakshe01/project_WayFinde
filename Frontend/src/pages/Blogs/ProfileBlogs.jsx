@@ -14,7 +14,7 @@ const ProfileSettings = () => {
   useEffect(() => {
     const fetchProfileAndBlogs = async () => {
       try {
-        const res = await fetch("http://localhost:5030/api/blog/me", {
+        const res = await fetch("http://localhost:5030/api/profile/me", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -40,7 +40,7 @@ const ProfileSettings = () => {
   };
 
   const writeBlog = () => {
-    navigate("/blogEditor"); // Navigate to your blog upload page
+    navigate("/profile/profileBlogs/blogEditor"); // Navigate to your blog upload page
   };
 
   return (

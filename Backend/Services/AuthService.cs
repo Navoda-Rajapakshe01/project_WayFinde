@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Google.Apis.Auth;
 
 namespace Backend.Services
 {
@@ -96,6 +97,35 @@ namespace Backend.Services
                 throw new Exception($"User registration failed: {ex.Message}");
             }
         }
+
+        public async Task<string> GoogleLoginAsync(string googleToken)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(googleToken, new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { configuration["Google:ClientId"] } // Put your Google Client ID in appsettings.json
+            });
+
+            var existingUser = await context.UsersNew.FirstOrDefaultAsync(u => u.ContactEmail == payload.Email);
+
+            if (existingUser == null)
+            {
+                var newUser = new UserNew
+                {
+                    Username = payload.Email, // Or payload.Name if you want full name
+                    ContactEmail = payload.Email,
+                    Role = "User", // Default role, change as needed
+                    ServiceType = "", // Or derive from payload if needed
+                    PasswordHash = "" // No password needed for Google users
+                };
+
+                context.UsersNew.Add(newUser);
+                await context.SaveChangesAsync();
+                existingUser = newUser;
+            }
+
+            return CreateToken(existingUser);
+        }
+
 
         private string CreateToken(UserNew user)
         {

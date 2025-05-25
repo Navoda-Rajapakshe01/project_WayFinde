@@ -6,6 +6,6 @@ namespace Backend.Services
     {
         Task<UserNew?> RegisterAsync(UserDtoRegister request);
         Task<string?>LoginAsync(UserDtoLogin request);
-
+        Task<string> GoogleLoginAsync(string googleToken);
     }
 }
