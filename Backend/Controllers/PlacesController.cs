@@ -20,7 +20,7 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        
+
 
         // GET: api/places
         [HttpGet]
@@ -29,7 +29,7 @@ namespace Backend.Controllers
             var places = await _context.PlacesToVisit.ToListAsync();
             return Ok(places);
         }
-        
+
         // GET: api/places/by-district-name/nuwara-eliya
         [HttpGet("by-district-name/{slug}")]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
@@ -81,14 +81,14 @@ namespace Backend.Controllers
         {
             // Fetch places that belong to the given categoryId
             var places = await _context.PlacesToVisit
-            .Where(p => p.CategoryId == categoryId)  
+            .Where(p => p.CategoryId == categoryId)
             .ToListAsync();
 
             // If no places found, return a 404 Not Found
             if (places == null || places.Count == 0)
-            return NotFound("No places found for this category");
+                return NotFound("No places found for this category");
 
-             return Ok(places);  
+            return Ok(places);
         }
 
         [HttpPost]
@@ -96,20 +96,20 @@ namespace Backend.Controllers
         {
             // Check if a place with the same name already exists
             var existingPlace = await _context.PlacesToVisit
-            .FirstOrDefaultAsync(p => 
+            .FirstOrDefaultAsync(p =>
                 p.Name.ToLower() == dto.Name.ToLower().Trim() &&
                 p.DistrictId == dto.DistrictId);
 
-        if (existingPlace != null)
-        {
-            return Conflict("A place with the same name already exists in this district.");
-        }
+            if (existingPlace != null)
+            {
+                return Conflict("A place with the same name already exists in this district.");
+            }
 
             // Check related entities exist
             var district = await _context.Districts.FindAsync(dto.DistrictId);
             if (district == null) return BadRequest("District not found.");
 
-            var category = dto.CategoryId.HasValue 
+            var category = dto.CategoryId.HasValue
                 ? await _context.Categories.FindAsync(dto.CategoryId.Value)
                 : null;
 
@@ -161,7 +161,7 @@ namespace Backend.Controllers
                 .FirstOrDefaultAsync(p =>
                     p.Name.ToLower() == dto.Name.ToLower().Trim() &&
                     p.DistrictId == dto.DistrictId &&
-                    p.Id != id); // Ensure itâ€™s not the same place being updated
+                    p.Id != id); // Ensure it’s not the same place being updated
 
             if (existingPlace != null)
             {
@@ -214,14 +214,14 @@ namespace Backend.Controllers
             var place = await _context.PlacesToVisit.FindAsync(id);
 
             if (place == null)
-        {
-            return NotFound("Place not found");
-        }
+            {
+                return NotFound("Place not found");
+            }
 
-        _context.PlacesToVisit.Remove(place);
-        await _context.SaveChangesAsync();
+            _context.PlacesToVisit.Remove(place);
+            await _context.SaveChangesAsync();
 
-        return Ok("Place deleted successfully");
+            return Ok("Place deleted successfully");
         }
 
         // GET: api/places/count

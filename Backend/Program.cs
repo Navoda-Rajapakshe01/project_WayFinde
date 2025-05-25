@@ -1,9 +1,8 @@
 ﻿using Backend.Data;
-using Scalar.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Backend.Services;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CloudinaryDotNet;
 
@@ -11,14 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register UserDbContext in the container
+// Register UserDbContext for dependency injection
 builder.Services.AddDbContext<UserDbContext>(options =>
-
-    
-options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
-
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 // Add Authentication with JWT Bearer
@@ -36,6 +32,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
+
 //Cloudinary
 builder.Services.AddSingleton(new Cloudinary(new Account(
     "diccvuqqo",
@@ -43,23 +40,20 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
     "80wa84I1eT5EwO6CW3RIAtW56rc"
 )));
 
-
-
-
 // Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<VehicleReservationService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
         policy.WithOrigins("http://localhost:5173", "https://localhost:5174",
-            "https://localhost:5175")
+            "https://localhost:5175") // Allow the frontend React app to communicate with the backend
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials() 
-    );
+              .AllowCredentials());
 });
 
 // Add Controllers
@@ -84,16 +78,17 @@ else
     // or comment this out if you don't need CORS in production
     app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
 }
-
-
 // Apply CORS policy BEFORE auth
-app.UseCors("AllowReactApp");
+app.UseCors("AllowReactApp"); // Ensure this line is before UseAuthentication
 
+// Enable HTTPS redirection
 app.UseHttpsRedirection();
 
+// Enable Authentication and Authorization middleware
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
+// Start the app
 app.Run();

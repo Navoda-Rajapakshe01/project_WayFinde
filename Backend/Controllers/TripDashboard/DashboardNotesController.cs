@@ -42,7 +42,7 @@ namespace Backend.Controllers
                 CreatedTime = note.CreatedTime,
                 UserId = note.UserId,
                 Username = users.TryGetValue(note.UserId, out var user) ? user.Username : "Unknown",
-                UrlImages = users.TryGetValue(note.UserId, out var user2) ? user2.UrlImages : null
+                UrlImages = users.TryGetValue(note.UserId, out var user2) ? user2.ProfilePictureUrl : null
             }).ToList();
 
             return Ok(result);
@@ -69,7 +69,7 @@ namespace Backend.Controllers
                 CreatedTime = note.CreatedTime,
                 UserId = note.UserId,
                 Username = user.Username,
-                UrlImages = user.UrlImages
+                UrlImages = user.ProfilePictureUrl
             };
 
             return Ok(dto);
@@ -98,7 +98,7 @@ namespace Backend.Controllers
                 CreatedTime = note.CreatedTime,
                 UserId = user.Id,
                 Username = user.Username,
-                UrlImages = user.UrlImages
+                UrlImages = user.ProfilePictureUrl
             }).ToList();
 
             return Ok(result);

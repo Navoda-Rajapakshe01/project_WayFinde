@@ -7,74 +7,92 @@ import "react-datepicker/dist/react-datepicker.css";
 import "../CSS/vehicledetail.css"; // Adjust path if needed
 
 const VehicleDetailPage = () => {
-  const { id } = useParams(); // Get the vehicle ID from the URL
-  const [vehicle, setVehicle] = useState(null); // Use state to store vehicle data
-  const [loading, setLoading] = useState(true); // Track loading state
-  const [error, setError] = useState(null); // Track any errors
-  const [showBookingModal, setShowBookingModal] = useState(false); // Control modal visibility
+  const { id } = useParams();
+  const [vehicle, setVehicle] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
   const [bookingData, setBookingData] = useState({
     startDate: null,
     endDate: null,
     pickupLocation: "",
     returnLocation: "",
     additionalRequirements: "",
-    tripId: "", // Add TripId to the booking data state
+    tripId: "",
+    customerName: "",
+    totalAmount: 0,
   });
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingError, setBookingError] = useState("");
-  const [selectedVehicle, setSelectedVehicle] = useState(null); // Add selectedVehicle state
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
 
-  // Fetch vehicle details based on the vehicle ID from the URL
+  // Fetch vehicle details based on ID
   useEffect(() => {
     const fetchVehicleDetails = async () => {
       try {
         const response = await axios.get(
           `http://localhost:5030/api/vehicle/${id}`
         );
-        setVehicle(response.data); // Set the vehicle data in the state
-        setSelectedVehicle(response.data); // Set selected vehicle to the fetched vehicle
+        setVehicle(response.data);
+        setSelectedVehicle(response.data);
       } catch (err) {
-        setError("Failed to load vehicle details"); // Set error if fetching fails
+        setError("Failed to load vehicle details");
         console.error(err);
       } finally {
-        setLoading(false); // Set loading to false once data is fetched
+        setLoading(false);
       }
     };
+    fetchVehicleDetails();
+  }, [id]);
 
-    fetchVehicleDetails(); // Call the function to fetch vehicle details
-  }, [id]); // Re-run when the vehicle ID changes
+  // Calculate totalAmount whenever dates or vehicle price changes
+  useEffect(() => {
+    if (bookingData.startDate && bookingData.endDate && vehicle?.pricePerDay) {
+      const days = Math.ceil(
+        (bookingData.endDate - bookingData.startDate) / (1000 * 60 * 60 * 24)
+      );
+      // At least 1 day charge (prevent zero or negative days)
+      const total = days > 0 ? days * vehicle.pricePerDay : vehicle.pricePerDay;
+      setBookingData((prev) => ({ ...prev, totalAmount: total }));
+    } else {
+      setBookingData((prev) => ({ ...prev, totalAmount: 0 }));
+    }
+  }, [bookingData.startDate, bookingData.endDate, vehicle?.pricePerDay]);
 
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
     setBookingError("");
 
-    // Validation
     if (!bookingData.startDate || !bookingData.endDate) {
       setBookingError("Please select pickup and return dates.");
+      return;
+    }
+    if (!bookingData.customerName || bookingData.customerName.trim() === "") {
+      setBookingError("Please enter your name.");
       return;
     }
 
     try {
       const data = {
         vehicleId: vehicle?.id,
-        startDate: bookingData.startDate,
-        endDate: bookingData.endDate,
+        customerName: bookingData.customerName,
+        startDate: bookingData.startDate?.toISOString(),
+        endDate: bookingData.endDate?.toISOString(),
         pickupLocation: bookingData.pickupLocation,
         returnLocation: bookingData.returnLocation,
         additionalRequirements: bookingData.additionalRequirements,
-        tripId: bookingData.tripId || null, // Pass TripId if available, else null
+        totalAmount: bookingData.totalAmount,
+        tripId: bookingData.tripId || null,
       };
 
-      // Simulate API call to book the vehicle
-      // Replace with your backend API request
       await axios.post(
         "http://localhost:5030/api/VehicleReservations/reserve",
         data
       );
 
-      setBookingSuccess(true); // Set booking success to true
+      setBookingSuccess(true);
       setTimeout(() => {
-        handleCloseModal(); // Close the modal after a successful booking
+        handleCloseModal();
       }, 2000);
     } catch (err) {
       console.error("Booking failed:", err);
@@ -83,7 +101,7 @@ const VehicleDetailPage = () => {
   };
 
   const handleCloseModal = () => {
-    setShowBookingModal(false); // Close modal
+    setShowBookingModal(false);
     setBookingSuccess(false);
     setBookingError("");
     setBookingData({
@@ -92,33 +110,28 @@ const VehicleDetailPage = () => {
       pickupLocation: "",
       returnLocation: "",
       additionalRequirements: "",
-      tripId: "", // Reset TripId
+      customerName: "",
+      totalAmount: 0,
+      tripId: "",
     });
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="vehicle-detail-page">
       <h2>Vehicle Details</h2>
 
       <div className="vehicle-detail-card">
-        {/* Vehicle Image */}
         <div className="vehicle-image">
           <img
-            src={vehicle?.imageUrls?.[0] || "/default.jpg"} // Safe check
+            src={vehicle?.imageUrls?.[0] || "/default.jpg"}
             alt={`${vehicle?.brand} ${vehicle?.model}`}
             className="vehicle-detail-image"
           />
         </div>
 
-        {/* Vehicle Info */}
         <div className="vehicle-info">
           <h3>
             {vehicle?.brand} {vehicle?.model}
@@ -128,13 +141,12 @@ const VehicleDetailPage = () => {
           <p className="vehicle-location">{vehicle?.location}</p>
 
           <div className="vehicle-availability">
-            <strong>Status:</strong>
+            <strong>Status:</strong>{" "}
             <span className={vehicle?.isAvailable ? "available" : "rented"}>
               {vehicle?.isAvailable ? "Available" : "Rented"}
             </span>
           </div>
 
-          {/* Vehicle Details */}
           <div className="vehicle-details">
             <h4>Details:</h4>
             <ul>
@@ -147,15 +159,17 @@ const VehicleDetailPage = () => {
               <li>
                 <strong>Capacity:</strong> {vehicle?.numberOfPassengers} seats
               </li>
+              <li>
+                <strong>Location:</strong> {vehicle?.location}
+              </li>
             </ul>
           </div>
 
-          {/* Amenities */}
           {vehicle?.amenities?.length > 0 && (
             <div className="vehicle-amenities">
               <h4>Amenities:</h4>
               <div className="amenity-tags">
-                {vehicle?.amenities?.map((amenity, index) => (
+                {vehicle.amenities.map((amenity, index) => (
                   <span key={index} className="amenity-tag">
                     {amenity}
                   </span>
@@ -164,17 +178,14 @@ const VehicleDetailPage = () => {
             </div>
           )}
 
-          {/* Booking Button */}
           <button
             className="book-now-btn"
-            onClick={() => setShowBookingModal(true)} // Open modal when clicked
-          >
+            onClick={() => setShowBookingModal(true)}>
             Book Now
           </button>
         </div>
       </div>
 
-      {/* Booking Modal */}
       <Modal show={showBookingModal} onHide={handleCloseModal} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>
@@ -185,13 +196,12 @@ const VehicleDetailPage = () => {
           {bookingSuccess ? (
             <Alert variant="success">Booking Successful!</Alert>
           ) : (
-            (selectedVehicle || vehicle) && ( // Check either selectedVehicle or vehicle
+            (selectedVehicle || vehicle) && (
               <Form onSubmit={handleBookingSubmit}>
-                {/* Form Content */}
                 <Row className="mb-3">
                   <Col md={6}>
                     <img
-                      src={selectedVehicle?.imagePaths?.[0] || "/default.jpg"}
+                      src={selectedVehicle?.imageUrls?.[0] || "/default.jpg"}
                       className="img-fluid rounded"
                       style={{
                         maxHeight: 220,
@@ -205,7 +215,6 @@ const VehicleDetailPage = () => {
                       {selectedVehicle?.brand || vehicle?.brand}{" "}
                       {selectedVehicle?.model || vehicle?.model}
                     </h5>
-                    {/* Other Vehicle Details */}
                     <p>
                       <strong>Location:</strong>{" "}
                       {selectedVehicle?.location || vehicle?.location}
@@ -237,8 +246,23 @@ const VehicleDetailPage = () => {
                   </Col>
                 </Row>
 
-                {/* Pickup and Return Dates */}
                 <Row className="mb-3">
+                  <Form.Group>
+                    <Form.Label>Customer Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={bookingData.customerName}
+                      onChange={(e) =>
+                        setBookingData({
+                          ...bookingData,
+                          customerName: e.target.value,
+                        })
+                      }
+                      placeholder="Enter your full name"
+                      required
+                    />
+                  </Form.Group>
+
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label>Pickup Date</Form.Label>
@@ -253,6 +277,7 @@ const VehicleDetailPage = () => {
                       />
                     </Form.Group>
                   </Col>
+
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label>Return Date</Form.Label>
@@ -269,7 +294,6 @@ const VehicleDetailPage = () => {
                   </Col>
                 </Row>
 
-                {/* Pickup and Return Locations */}
                 <Row className="mb-3">
                   <Col md={6}>
                     <Form.Group>
@@ -305,8 +329,7 @@ const VehicleDetailPage = () => {
                   </Col>
                 </Row>
 
-                {/* Additional Requirements */}
-                <Form.Group>
+                <Form.Group className="mb-3">
                   <Form.Label>Additional Requirements</Form.Label>
                   <Form.Control
                     as="textarea"
@@ -322,8 +345,7 @@ const VehicleDetailPage = () => {
                   />
                 </Form.Group>
 
-                {/* Trip ID */}
-                <Form.Group>
+                <Form.Group className="mb-3">
                   <Form.Label>Trip ID (Optional)</Form.Label>
                   <Form.Control
                     type="text"
@@ -335,18 +357,15 @@ const VehicleDetailPage = () => {
                   />
                 </Form.Group>
 
-                {/* Total Price */}
-                {bookingData.startDate && bookingData.endDate && (
+                {/* Display total cost */}
+                {bookingData.totalAmount > 0 && (
                   <p className="mt-3">
-                    <strong>Total Cost:</strong> Rs.
-                    {(
-                      (vehicle.pricePerDay *
-                        (new Date(bookingData.endDate) -
-                          new Date(bookingData.startDate))) /
-                      (1000 * 60 * 60 * 24)
-                    ).toFixed(2)}
+                    <strong>Total Cost:</strong> Rs.{" "}
+                    {bookingData.totalAmount.toFixed(2)}
                   </p>
                 )}
+
+                {bookingError && <Alert variant="danger">{bookingError}</Alert>}
 
                 <Button variant="primary" type="submit">
                   Confirm Booking

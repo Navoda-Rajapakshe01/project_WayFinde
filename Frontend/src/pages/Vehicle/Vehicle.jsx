@@ -1,28 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import HeroSection from "../../Components/HeroSection/HeroSection.jsx";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import axios from "axios";
-import {
-  Modal,
-  Button,
-  Form,
-  Container,
-  Row,
-  Col,
-  Alert,
-} from "react-bootstrap";
-import VehicleCard from "./VehicleCardTraveller.jsx"; // Adjust path if needed
-import FilterSection from "./FilterSection.jsx"; // Adjust path
-import DestinationTags from "./DestinationTags.jsx"; // Adjust path
-import "../CSS/vehicle.css"; // Adjust path
+import VehicleCard from "./VehicleCardTraveller.jsx";
+import FilterSection from "./FilterSection.jsx";
+import DestinationTags from "./DestinationTags.jsx";
+import "../CSS/vehicle.css";
 
 const Vehicle = ({ isSignedIn = true }) => {
   const [vehicles, setVehicles] = useState([]);
-  const [featuredVehicles, setFeaturedVehicles] = useState([]);
   const [recentlyViewed, setRecentlyViewed] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(4);
+
+  const [filters, setFilters] = useState({
+    priceRange: [0, 50000],
+    type: "",
+    location: "",
+    NumberOfPassengers: "",
+    transmissionType: "",
+    FuelType: "",
+    searchTerm: "",
+  });
 
   const popularDestinations = [
     "Colombo",
@@ -40,7 +38,6 @@ const Vehicle = ({ isSignedIn = true }) => {
         const response = await axios.get("http://localhost:5030/api/Vehicle");
         const allVehicles = response.data;
         setVehicles(allVehicles);
-        setFeaturedVehicles(allVehicles.slice(0, 6));
 
         const recentlyViewedIds =
           JSON.parse(localStorage.getItem("recentlyViewedVehicles")) || [];
@@ -51,7 +48,7 @@ const Vehicle = ({ isSignedIn = true }) => {
       } catch (error) {
         console.error("Error fetching vehicles:", error);
         setVehicles([]);
-        setFeaturedVehicles([]);
+        setRecentlyViewed([]);
       } finally {
         setLoading(false);
       }
@@ -59,13 +56,89 @@ const Vehicle = ({ isSignedIn = true }) => {
     fetchVehicles();
   }, []);
 
-  const handleFilterChange = (newFilters) => setFilters(newFilters);
+  // Filter vehicles based on filters
+  const filteredVehicles = useMemo(() => {
+    return vehicles.filter((vehicle) => {
+      // Type filter
+      if (
+        filters.type &&
+        vehicle.type?.toLowerCase() !== filters.type.toLowerCase()
+      )
+        return false;
 
-  const handleLoadMore = () => setVisibleCount((prev) => prev + 4);
+      // Location filter
+      if (
+        filters.location &&
+        vehicle.location?.toLowerCase() !== filters.location.toLowerCase()
+      )
+        return false;
+
+      // FuelType filter
+      if (
+        filters.FuelType &&
+        vehicle.FuelType?.toLowerCase() !== filters.FuelType.toLowerCase()
+      )
+        return false;
+
+      // NumberOfPassengers filter
+      if (filters.NumberOfPassengers) {
+        const filterCap =
+          filters.NumberOfPassengers === "8+"
+            ? 8
+            : parseInt(filters.NumberOfPassengers, 10);
+        const vehicleCap = parseInt(vehicle.NumberOfPassengers, 10);
+        if (filters.NumberOfPassengers === "8+") {
+          if (!vehicleCap || vehicleCap < filterCap) return false;
+        } else {
+          if (vehicleCap !== filterCap) return false;
+        }
+      }
+
+      // Transmission filter
+      if (
+        filters.transmissionType &&
+        vehicle.transmissionType?.toLowerCase() !==
+          filters.transmissionType.toLowerCase()
+      )
+        return false;
+
+      // Price range filter
+      if (
+        vehicle.PricePerDay < filters.priceRange[0] ||
+        vehicle.PricePerDay > filters.priceRange[1]
+      )
+        return false;
+
+      // Search term filter (brand, model, location)
+      if (filters.searchTerm) {
+        const search = filters.searchTerm.toLowerCase();
+        if (
+          !vehicle.brand?.toLowerCase().includes(search) &&
+          !vehicle.model?.toLowerCase().includes(search) &&
+          !vehicle.location?.toLowerCase().includes(search)
+        )
+          return false;
+      }
+
+      return true;
+    });
+  }, [vehicles, filters]);
+
+  const filteredRecentlyViewed = recentlyViewed.filter((vehicle) =>
+    filteredVehicles.some((v) => v.id === vehicle.id)
+  );
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 4);
+  };
 
   const handleBookNow = (vehicle) => {
-    // Assuming you want to handle vehicle details view here instead of booking modal
-    console.log(vehicle);
+    // You can implement booking logic here
+    console.log("Book Now clicked for:", vehicle);
   };
 
   if (loading) {
@@ -89,20 +162,20 @@ const Vehicle = ({ isSignedIn = true }) => {
       <div className="vehicle-page-container">
         <FilterSection onFilterChange={handleFilterChange} />
 
-        {/* Featured Vehicles */}
+        {/* Vehicles Listing */}
         <section className="vehicle-featured-section">
-          <h2 className="vehicle-section-title">Featured Vehicles</h2>
+          <h2 className="vehicle-section-title">Available Vehicles</h2>
           <div className="vehicle-card-grid">
-            {featuredVehicles.slice(0, visibleCount).map((vehicle, index) => (
+            {filteredVehicles.slice(0, visibleCount).map((vehicle) => (
               <VehicleCard
                 key={vehicle.id}
                 vehicle={vehicle}
                 isSignedIn={isSignedIn}
-                onBookNow={() => handleBookNow(vehicle)} // This can be for navigating or viewing vehicle details
+                onBookNow={() => handleBookNow(vehicle)}
               />
             ))}
           </div>
-          {visibleCount < featuredVehicles.length && (
+          {visibleCount < filteredVehicles.length && (
             <button className="load-more-btn" onClick={handleLoadMore}>
               Load More
             </button>
@@ -110,11 +183,11 @@ const Vehicle = ({ isSignedIn = true }) => {
         </section>
 
         {/* Recently Viewed */}
-        {recentlyViewed.length > 0 && (
+        {filteredRecentlyViewed.length > 0 && (
           <section>
             <h2 className="vehicle-section-title">Recently Viewed Vehicles</h2>
             <div className="vehicle-card-grid">
-              {recentlyViewed.map((vehicle) => (
+              {filteredRecentlyViewed.map((vehicle) => (
                 <VehicleCard
                   key={vehicle.id}
                   vehicle={vehicle}
@@ -125,7 +198,8 @@ const Vehicle = ({ isSignedIn = true }) => {
             </div>
           </section>
         )}
-
+        <br />
+        <br />
         {/* Popular Destinations */}
         <DestinationTags destinations={popularDestinations} />
       </div>

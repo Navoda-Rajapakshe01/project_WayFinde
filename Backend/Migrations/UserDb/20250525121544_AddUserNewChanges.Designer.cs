@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations.UserDb
 {
     [DbContext(typeof(UserDbContext))]
-    [Migration("20250517150535_CreateUserNewTable")]
-    partial class CreateUserNewTable
+    [Migration("20250525121544_AddUserNewChanges")]
+    partial class AddUserNewChanges
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -41,16 +41,15 @@ namespace Backend.Migrations.UserDb
                     b.Property<string>("LastLoginDate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Password");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfilePictureUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RegisteredDate")
@@ -61,6 +60,7 @@ namespace Backend.Migrations.UserDb
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ServiceType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")

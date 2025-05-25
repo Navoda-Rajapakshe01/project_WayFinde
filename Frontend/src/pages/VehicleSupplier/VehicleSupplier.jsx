@@ -7,6 +7,9 @@ import HeroSection from "../../Components/HeroSection/HeroSection";
 import "../CSS/VehicleSupplier.css";
 import { Tabs, Tab } from "react-bootstrap";
 
+const fallbackVehicles = []; // You can add fallback vehicle data here if needed
+const fallbackBookings = []; // You can add fallback booking data here if needed
+
 const VehicleSupplier = () => {
   const [vehicles, setVehicles] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -40,7 +43,6 @@ const VehicleSupplier = () => {
       }));
     } catch (error) {
       console.error("Vehicle fetch failed, using fallback data.");
-
       setVehicles(fallbackVehicles);
       setDashboardStats((prev) => ({
         ...prev,
@@ -56,13 +58,29 @@ const VehicleSupplier = () => {
 
   const fetchBookings = async () => {
     try {
-      const res = await axios.get("http://localhost:5030/api/vehicle");
-      setBookings(res.data);
+      const res = await axios.get(
+        "http://localhost:5030/api/VehicleReservations"
+      );
+
+      // Map backend data to frontend format
+      const bookingsData = res.data.map((b) => ({
+        id: b.id,
+        vehicleBrand: b.vehicle?.brand || "Unknown",
+        vehicleModel: b.vehicle?.model || "",
+        customerName: b.customerName,
+        startDate: b.startDate,
+        endDate: b.endDate,
+        status: b.status,
+        totalAmount: b.totalAmount,
+        bookingDate: b.bookingDate,
+      }));
+
+      setBookings(bookingsData);
 
       const current = new Date();
       const firstDay = new Date(current.getFullYear(), current.getMonth(), 1);
 
-      const monthlyBookings = res.data.filter(
+      const monthlyBookings = bookingsData.filter(
         (b) => new Date(b.bookingDate) >= firstDay
       );
       const monthlyRevenue = monthlyBookings.reduce(
@@ -73,19 +91,18 @@ const VehicleSupplier = () => {
 
       setDashboardStats((prev) => ({
         ...prev,
-        totalBookings: res.data.length,
+        totalBookings: bookingsData.length,
         monthlyBookings: monthlyBookings.length,
         monthlyRevenue,
       }));
     } catch (error) {
       console.error("Booking fetch failed, using fallback data.");
-
-      setBookings(fallback);
+      setBookings(fallbackBookings);
       setDashboardStats((prev) => ({
         ...prev,
-        totalBookings: fallback.length,
-        monthlyBookings: fallback.length,
-        monthlyRevenue: fallback.reduce(
+        totalBookings: fallbackBookings.length,
+        monthlyBookings: fallbackBookings.length,
+        monthlyRevenue: fallbackBookings.reduce(
           (sum, b) =>
             sum + (typeof b.totalAmount === "number" ? b.totalAmount : 0),
           0
@@ -103,7 +120,7 @@ const VehicleSupplier = () => {
       await axios.put(`http://localhost:5030/api/vehicle/${id}/status`, {
         status: newStatus,
       });
-      fetchVehicles();
+      await fetchVehicles();
       setAlert("Vehicle status updated.");
     } catch {
       setAlert("Status update failed.");
@@ -116,7 +133,7 @@ const VehicleSupplier = () => {
     if (window.confirm("Are you sure you want to delete this vehicle?")) {
       try {
         await axios.delete(`http://localhost:5030/api/vehicle/${id}`);
-        fetchVehicles();
+        await fetchVehicles();
         setAlert("Vehicle deleted.");
       } catch {
         setAlert("Failed to delete vehicle.");
@@ -134,9 +151,22 @@ const VehicleSupplier = () => {
   const handleViewBookings = async (vehicleId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5030/api/bookings/vehicle/${vehicleId}`
+        `http://localhost:5030/api/VehicleReservations/vehicle/${vehicleId}`
       );
-      setBookings(res.data);
+
+      const bookingsData = res.data.map((b) => ({
+        id: b.id,
+        vehicleBrand: b.vehicle?.brand || "Unknown",
+        vehicleModel: b.vehicle?.model || "",
+        customerName: b.customerName,
+        startDate: b.startDate,
+        endDate: b.endDate,
+        status: b.status,
+        totalAmount: b.totalAmount,
+        bookingDate: b.bookingDate,
+      }));
+
+      setBookings(bookingsData);
       setActiveTab("bookings");
     } catch {
       setAlert("Failed to load bookings for this vehicle.");

@@ -5,6 +5,8 @@ using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;  // For IEnumerable
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Backend.Controllers
@@ -16,13 +18,13 @@ namespace Backend.Controllers
         private readonly VehicleReservationService _reservationService;
         private readonly AppDbContext _context;
 
-        // Fix: Provide a name for the AppDbContext parameter in the constructor
         public VehicleReservationsController(VehicleReservationService reservationService, AppDbContext context)
         {
             _reservationService = reservationService;
-            _context = context;  // Initialize _context with the injected AppDbContext
+            _context = context;
         }
 
+        // POST api/VehicleReservations/reserve
         [HttpPost("reserve")]
         public async Task<IActionResult> CreateReservation([FromBody] VehicleReservationDTO reservationDto)
         {
@@ -33,7 +35,6 @@ namespace Backend.Controllers
 
             try
             {
-                // Using the reservation service to create the reservation
                 var reservation = await _reservationService.CreateReservationAsync(reservationDto);
                 return CreatedAtAction(nameof(GetReservation), new { id = reservation.Id }, reservation);
             }
@@ -43,6 +44,7 @@ namespace Backend.Controllers
             }
         }
 
+        // GET api/VehicleReservations/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<VehicleReservation>> GetReservation(int id)
         {
@@ -54,6 +56,29 @@ namespace Backend.Controllers
             }
 
             return reservation;
+        }
+
+        // GET api/VehicleReservations
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<VehicleReservation>>> GetAllReservations()
+        {
+            var reservations = await _context.VehicleReservations
+                                             .Include(r => r.Vehicle)
+                                             .ToListAsync();
+
+            return Ok(reservations);
+        }
+
+        // GET api/VehicleReservations/vehicle/{vehicleId}
+        [HttpGet("vehicle/{vehicleId}")]
+        public async Task<ActionResult<IEnumerable<VehicleReservation>>> GetReservationsByVehicle(int vehicleId)
+        {
+            var reservations = await _context.VehicleReservations
+                                             .Include(r => r.Vehicle)
+                                             .Where(r => r.VehicleId == vehicleId)
+                                             .ToListAsync();
+
+            return Ok(reservations);
         }
     }
 }

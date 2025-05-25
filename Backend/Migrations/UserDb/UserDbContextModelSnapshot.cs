@@ -38,16 +38,15 @@ namespace Backend.Migrations.UserDb
                     b.Property<string>("LastLoginDate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Password");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProfilePictureUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RegisteredDate")
@@ -58,6 +57,7 @@ namespace Backend.Migrations.UserDb
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ServiceType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Username")

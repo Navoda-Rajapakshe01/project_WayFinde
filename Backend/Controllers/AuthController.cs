@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 
 
-namespace Backend.Controller
+namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

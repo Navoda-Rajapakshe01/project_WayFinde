@@ -111,8 +111,7 @@ const PlaceDetails = () => {
         }`}
         onClick={() => onClickFn && onClickFn(star)}
         onMouseEnter={() => onHoverFn && onHoverFn(star)}
-        onMouseLeave={() => onLeaveFn && onLeaveFn()}
-      >
+        onMouseLeave={() => onLeaveFn && onLeaveFn()}>
         ★
       </span>
     ));
@@ -141,8 +140,7 @@ const PlaceDetails = () => {
         <p>{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="retry-button"
-        >
+          className="retry-button">
           Try Again
         </button>
       </div>
@@ -180,8 +178,7 @@ const PlaceDetails = () => {
               <div className="wishlist-container">
                 <button
                   className={`wishlist-button ${wishlistAdded ? "added" : ""}`}
-                  onClick={handleWishlistClick}
-                >
+                  onClick={handleWishlistClick}>
                   {wishlistAdded ? "✓ Added to Wishlist" : "+ Add to Wishlist"}
                 </button>
               </div>
@@ -224,8 +221,7 @@ const PlaceDetails = () => {
                     href={place.googleMapLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="map-link"
-                  >
+                    className="map-link">
                     View on Google Maps
                   </a>
                 </div>
@@ -290,8 +286,7 @@ const PlaceDetails = () => {
                     <div className="show-more">
                       <span
                         className="show-more-link"
-                        onClick={() => setShowAllReviewsModal(true)}
-                      >
+                        onClick={() => setShowAllReviewsModal(true)}>
                         Show More
                       </span>
                     </div>
@@ -323,14 +318,12 @@ const PlaceDetails = () => {
                   <textarea
                     placeholder="Share your experience with this place..."
                     value={newReview}
-                    onChange={(e) => setNewReview(e.target.value)}
-                  ></textarea>
+                    onChange={(e) => setNewReview(e.target.value)}></textarea>
                 </div>
                 <button
                   className="submit-review-btn"
                   onClick={handleSubmitReview}
-                  disabled={submitting}
-                >
+                  disabled={submitting}>
                   {submitting ? "Submitting..." : "Submit Review"}
                 </button>
               </div>
@@ -359,8 +352,7 @@ const PlaceDetails = () => {
             <div className="guest-modal-actions">
               <button
                 className="cancel-guest-btn"
-                onClick={() => setShowGuestModal(false)}
-              >
+                onClick={() => setShowGuestModal(false)}>
                 Cancel
               </button>
               <button
@@ -376,8 +368,7 @@ const PlaceDetails = () => {
                   }
                   setShowGuestModal(false);
                   submitReview(reviewName.trim(), reviewEmail.trim());
-                }}
-              >
+                }}>
                 Submit
               </button>
             </div>
@@ -408,8 +399,7 @@ const PlaceDetails = () => {
                         float: "right",
                         fontSize: "12px",
                         color: "gray",
-                      }}
-                    >
+                      }}>
                       {r.createdAt
                         ? new Date(r.createdAt).toLocaleDateString()
                         : "Recently"}

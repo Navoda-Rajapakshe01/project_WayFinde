@@ -1,34 +1,120 @@
-.vehicle-detail {
-  padding: 2rem;
-  background-color: #f4f6f7;
+.vehicle-detail-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
 }
 
-.vehicle-content {
+.vehicle-detail-card {
   display: flex;
-  gap: 2rem;
-  margin-top: 2rem;
+  flex-direction: row;
+  gap: 20px;
 }
 
 .vehicle-image {
-  width: 50%;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  max-width: 600px;
+}
+
+.vehicle-detail-image {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .vehicle-info {
-  flex: 1;
-  background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 2rem;
-  margin-top: 2rem;
-  width: 100%;
-  height: 200px;
+  flex: 2;
 }
 
-.vehicle-info p {
-  font-size: 1rem;
-  color: #2d2d2d;
-  margin-bottom: 0.75rem;
+.vehicle-info h3 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.vehicle-type {
+  font-size: 1.2em;
+  color: #888;
+}
+
+.vehicle-price {
+  font-size: 1.5em;
+  color: green;
+}
+
+.vehicle-location {
+  font-size: 1.1em;
+  margin-top: 10px;
+}
+
+.vehicle-availability {
+  margin-top: 20px;
+}
+
+.vehicle-availability span {
+  font-weight: bold;
+}
+
+.available {
+  color: green;
+}
+
+.rented {
+  color: red;
+}
+
+.vehicle-details {
+  margin-top: 30px;
+}
+
+.vehicle-details h4 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.vehicle-details ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.vehicle-details ul li {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.vehicle-amenities {
+  margin-top: 20px;
+}
+
+.vehicle-amenities h4 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.amenity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.amenity-tag {
+  background-color: #f1f1f1;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 1em;
+}
+
+.vehicle-actions {
+  margin-top: 30px;
+}
+
+.book-now-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.book-now-btn:hover {
+  background-color: #218838;
 }

@@ -47,8 +47,8 @@ const Register = () => {
         apiData,
         {
           headers: {
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
       console.log("Registration response:", response.data);
@@ -64,11 +64,13 @@ const Register = () => {
       if (error.response) {
         // The server responded with a status code outside the 2xx range
         console.error("Error response data:", error.response.data);
-        const errorMessage = typeof error.response.data === "string"
-          ? error.response.data
-          : error.response.data?.message || error.response.data?.title || 
-            "Registration failed. Please check your information and try again.";
-            
+        const errorMessage =
+          typeof error.response.data === "string"
+            ? error.response.data
+            : error.response.data?.message ||
+              error.response.data?.title ||
+              "Registration failed. Please check your information and try again.";
+
         setError(errorMessage);
       } else if (error.request) {
         // The request was made but no response was received
@@ -120,8 +122,7 @@ const Register = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            required
-          >
+            required>
             <option value="">Select Role</option>
             <option value="NormalUser">Normal User</option>
             <option value="ServiceProvider">Service Provider</option>
@@ -133,8 +134,7 @@ const Register = () => {
               name="serviceType"
               value={formData.serviceType}
               onChange={handleChange}
-              required
-            >
+              required>
               <option value="">Select Service Type</option>
               <option value="TransportProvider">Transport Provider</option>
               <option value="AccommodationProvider">

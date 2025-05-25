@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { Form, Button, Row, Col, Collapse } from "react-bootstrap";
-//import "../../CSS/vehicle.css";
+import { Button, Collapse } from "react-bootstrap";
 
 const FilterSection = ({ onFilterChange }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [filters, setFilters] = useState({
-    priceRange: [0, 500],
-    vehicleType: "",
+    priceRange: [0, 50000],
+    type: "",
     location: "",
-    capacity: "",
-    transmission: "",
-    fuel: "",
+    NumberOfPassengers: "",
+    transmissionType: "",
+    FuelType: "",
+    searchTerm: "",
   });
 
   // Vehicle types
@@ -26,14 +26,14 @@ const FilterSection = ({ onFilterChange }) => {
   // Locations
   const locations = ["Colombo", "Kandy", "Galle", "Negombo", "Nuwara Eliya"];
 
-  // Capacity options
-  const capacityOptions = ["2", "4", "5", "7", "8+"];
+  // Passenger options
+  const NumberOfPassengers = ["2", "4", "5", "7", "8+"];
 
   // Transmission options
-  const transmissionOptions = ["Automatic", "Manual"];
+  const transmissionOptions = ["Automatic", "Manual", "Triptonic"];
 
   // Fuel options
-  const fuelOptions = ["Petrol", "Diesel", "Hybrid", "Electric"];
+  const FuelType = ["Petrol", "Diesel", "Hybrid", "Electric"];
 
   const toggleFilters = () => {
     setIsOpen(!isOpen);
@@ -41,39 +41,39 @@ const FilterSection = ({ onFilterChange }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFilters({
-      ...filters,
+    setFilters((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const handlePriceRangeChange = (e) => {
     const { name, value } = e.target;
-    const newRange = [...filters.priceRange];
+    let newRange = [...filters.priceRange];
     if (name === "minPrice") {
-      newRange[0] = parseInt(value);
+      newRange[0] = value ? parseInt(value, 10) : 0;
     } else {
-      newRange[1] = parseInt(value);
+      newRange[1] = value ? parseInt(value, 10) : 50000;
     }
-    setFilters({
-      ...filters,
+    setFilters((prev) => ({
+      ...prev,
       priceRange: newRange,
-    });
+    }));
   };
 
   const handleApplyFilters = () => {
-    // Pass the filters up to the parent component
     onFilterChange(filters);
   };
 
   const handleResetFilters = () => {
     const resetFilters = {
-      priceRange: [0, 500],
-      vehicleType: "",
+      priceRange: [0, 50000],
+      type: "",
       location: "",
-      capacity: "",
-      transmission: "",
-      fuel: "",
+      NumberOfPassengers: "",
+      transmissionType: "",
+      FuelType: "",
+      searchTerm: "",
     };
     setFilters(resetFilters);
     onFilterChange(resetFilters);
@@ -81,12 +81,19 @@ const FilterSection = ({ onFilterChange }) => {
 
   return (
     <section className="vehicle-filter-section">
-      <div className="filter-header" onClick={toggleFilters}>
+      <div
+        className="filter-header"
+        onClick={toggleFilters}
+        style={{ cursor: "pointer" }}>
         <h2 className="vehicle-section-title">Find Your Ride</h2>
         <Button
           variant="link"
           className="toggle-filter-btn"
-          aria-expanded={isOpen}>
+          aria-expanded={isOpen}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleFilters();
+          }}>
           <i
             className={`bi ${
               isOpen ? "bi-chevron-up" : "bi-chevron-down"
@@ -95,20 +102,20 @@ const FilterSection = ({ onFilterChange }) => {
       </div>
 
       <Collapse in={isOpen}>
-        <div className="vehicle-filter-grid">
+        <div className="vehicle-filter-grid" style={{ marginTop: "1rem" }}>
           <input
             type="text"
-            placeholder="Search by brand or location"
+            placeholder="Search by brand, model or location"
             className="vehicle-filter-input"
             name="searchTerm"
-            value={filters.searchTerm || ""}
+            value={filters.searchTerm}
             onChange={handleInputChange}
           />
 
           <select
             className="vehicle-filter-input"
-            name="vehicleType"
-            value={filters.vehicleType}
+            name="type"
+            value={filters.type}
             onChange={handleInputChange}>
             <option value="">Vehicle Type</option>
             {vehicleTypes.map((type) => (
@@ -120,13 +127,13 @@ const FilterSection = ({ onFilterChange }) => {
 
           <select
             className="vehicle-filter-input"
-            name="fuel"
-            value={filters.fuel}
+            name="FuelType"
+            value={filters.FuelType}
             onChange={handleInputChange}>
             <option value="">Fuel Type</option>
-            {fuelOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
+            {FuelType.map((fuel) => (
+              <option key={fuel} value={fuel}>
+                {fuel}
               </option>
             ))}
           </select>
@@ -137,71 +144,76 @@ const FilterSection = ({ onFilterChange }) => {
             value={filters.location}
             onChange={handleInputChange}>
             <option value="">Location</option>
-            {locations.map((location) => (
-              <option key={location} value={location}>
-                {location}
+            {locations.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc}
               </option>
             ))}
           </select>
 
           <select
             className="vehicle-filter-input"
-            name="capacity"
-            value={filters.capacity}
+            name="NumberOfPassengers"
+            value={filters.NumberOfPassengers}
             onChange={handleInputChange}>
             <option value="">Capacity</option>
-            {capacityOptions.map((option) => (
-              <option key={option} value={option}>
-                {option} seats
+            {NumberOfPassengers.map((cap) => (
+              <option key={cap} value={cap}>
+                {cap} {cap === "8+" ? "or more" : "seats"}
               </option>
             ))}
           </select>
 
           <select
             className="vehicle-filter-input"
-            name="transmission"
-            value={filters.transmission}
+            name="transmissionType"
+            value={filters.transmissionType}
             onChange={handleInputChange}>
             <option value="">Transmission</option>
-            {transmissionOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
+            {transmissionOptions.map((trans) => (
+              <option key={trans} value={trans}>
+                {trans}
               </option>
             ))}
           </select>
 
           <div className="price-range-container">
-            <label>Price Range:</label>
+            <label>Price Range (Rs per day)</label>
             <div className="price-inputs">
               <input
                 type="number"
-                placeholder="Min"
                 className="price-input"
                 name="minPrice"
                 min="0"
                 max={filters.priceRange[1]}
                 value={filters.priceRange[0]}
                 onChange={handlePriceRangeChange}
+                placeholder="Min"
               />
               <span>to</span>
               <input
                 type="number"
-                placeholder="Max"
                 className="price-input"
                 name="maxPrice"
                 min={filters.priceRange[0]}
                 value={filters.priceRange[1]}
                 onChange={handlePriceRangeChange}
+                placeholder="Max"
               />
             </div>
           </div>
 
-          <button className="vehicle-filter-btn" onClick={handleApplyFilters}>
-            Apply Filters
-          </button>
-
-          <button className="vehicle-reset-btn" onClick={handleResetFilters}>
+          <button
+            className="vehicle-reset-btn"
+            onClick={handleResetFilters}
+            type="button">
             Reset
+          </button>
+          <button
+            className="vehicle-filter-btn"
+            onClick={handleApplyFilters}
+            type="button">
+            Apply Filters
           </button>
         </div>
       </Collapse>

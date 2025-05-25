@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import AboutSection from "../Components/AboutSection/AboutSection";
-import NameTag from "../Components/NameTag/NameTag";
-import PhotoGallery from "../Components/PhotoGallery/PhotoGallery";
-import ReserveNow from "../Components/ReserveNow/ReserveNow";
-import ReviewSection from "../Components/ReviewSection/ReviewSection";
 import { getAccommodation } from "../api";
 
 const AccommodationDetail = () => {
@@ -75,29 +70,7 @@ const AccommodationDetail = () => {
     city: accommodation.ownerCity,
   };
 
-  return (
-    <div className="vehicle-detail">
-      <NameTag
-        name={accommodation.name}
-        rating={averageRating}
-        price={accommodation.price}
-        onContactNow={handleContactNow}
-      />
-      <PhotoGallery images={accommodation.images} />
-      <AboutSection
-        accommodationDetails={accommodation}
-        ownerDetails={ownerDetails}
-      />
-      <ReviewSection
-        reviews={accommodation.reviews}
-        accommodationId={accommodation.id}
-      />
-      <ReserveNow
-        accommodationId={accommodation.id}
-        isAvailable={accommodation.isAvailable}
-      />
-    </div>
-  );
+  return {};
 };
 
 export default AccommodationDetail;

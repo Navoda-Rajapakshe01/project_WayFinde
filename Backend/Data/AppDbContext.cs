@@ -13,19 +13,19 @@ namespace Backend.Data
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
+        public DbSet<VehicleAmenity> VehicleAmenities { get; set; }
+
 
         // Places & Districts
         public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Review> Reviews { get; set; }
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
-        public DbSet<Blog> Blogs { get; set; }
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
@@ -68,9 +68,6 @@ namespace Backend.Data
                     FuelType = "Petrol",
                     TransmissionType = "Automatic",
                     Location = "Colombo",
-                    OwnerName = "John Doe",
-                    OwnerCity = "Colombo",
-                    Description = "A comfortable and fuel-efficient city car.",
                     PricePerDay = 45.00m,
                     IsAvailable = true
                 },
@@ -84,9 +81,6 @@ namespace Backend.Data
                     FuelType = "Hybrid",
                     TransmissionType = "Automatic",
                     Location = "Kandy",
-                    OwnerName = "Jane Smith",
-                    OwnerCity = "Kandy",
-                    Description = "Perfect for short family trips and hill country.",
                     PricePerDay = 38.50m,
                     IsAvailable = true
                 }
@@ -151,12 +145,6 @@ namespace Backend.Data
                 .HasOne(p => p.Category)
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
-
-            modelBuilder.Entity<Review>()
-                .HasOne(r => r.Place)
-                .WithMany(p => p.Reviews)
-                .HasForeignKey(r => r.PlaceId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // TodoItem
             modelBuilder.Entity<TodoItem>()

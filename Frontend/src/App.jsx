@@ -15,19 +15,18 @@ import SignUp from "./Components/Authentication/SignUp/SignUp";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
-import Accommodation from "./pages/Accommodation";
+import Accommodation from "./pages/Accommodation/Accommodation";
+import AccommodationSupplier from "./pages/AccommodationSupplier/AccommodationSupplier";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import Home from "./pages/Home";
-import PaymentGateway from "./pages/PaymentGateway";
 import Chat from "./pages/Profile/Chat";
 import Following from "./pages/Profile/Following";
 import Followers from "./pages/Profile/Follwers";
 import Profile from "./pages/Profile/Profile";
 import UserProfileSettings from "./pages/Profile/Setting";
-import ReserveVehicle from "./pages/ReserveVehicle";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
@@ -35,9 +34,9 @@ import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
 import TripDashboard from "./pages/TripDashboard";
-import Vehicle from "./pages/Vehicle";
-import VehicleBookingForm from "./pages/VehicleBookingForm";
-import VehicleDetail from "./pages/VehicleDetail";
+import Vehicle from "./pages/Vehicle/Vehicle";
+import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
+import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
 
 import "./App.css";
 
@@ -56,6 +55,11 @@ function AppRoutes() {
         <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
+        <Route path="/vehicle/supplier" element={<VehicleSupplier />} />
+        <Route
+          path="/accommodation/supplier"
+          element={<AccommodationSupplier />}
+        />
         <Route path="/blog" element={<Blog />} />
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
@@ -63,12 +67,9 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-        <Route path="/chat" element={<PersonalBlog/>} />
+        <Route path="/chat" element={<PersonalBlog />} />
         <Route path="/blog/:id" element={<PersonalBlog />} />
         <Route path="/settings" element={<UserProfileSettings />} />
-        <Route path="/reservevehicle" element={<ReserveVehicle />} />
-        <Route path="/paymentgateway" element={<PaymentGateway />} />
-        <Route path="/vehiclebookingform" element={<VehicleBookingForm />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/blog" element={<Blog />} />
         <Route path="/profile/followers" element={<Followers />} />
