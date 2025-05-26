@@ -1,36 +1,49 @@
 "use client";
 import React from "react";
-import { useState } from "react";
-import {  FaBell, FaSearch, FaUser } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaBell, FaUser } from "react-icons/fa";
 import "../AdminProfile/admin-header.css";
 import "../../App.css";
+import * as signalR from "@microsoft/signalr";
 
 const AdminHeader = ({ toggleSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
-  // Mock notifications
-  const notifications = [
-    { id: 1, text: "New user registered", time: "5 minutes ago", read: false },
-    {
-      id: 2,
-      text: "New review submitted for Sigiriya",
-      time: "1 hour ago",
-      read: false,
-    },
-    { id: 3, text: "System update scheduled", time: "2 hours ago", read: true },
-    {
-      id: 4,
-      text: "Backup completed successfully",
-      time: "Yesterday",
-      read: true,
-    },
-  ];
+  useEffect(() => {
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl("http://localhost:5030/notificationHub")
+      .withAutomaticReconnect()
+      .build();
+
+    connection
+      .start()
+      .then(() => {
+        console.log("Connected to SignalR");
+
+        connection.on("ReceiveNotification", (message) => {
+          const newNotification = {
+            id: Date.now(),
+            text: message,
+            time: "Just now",
+            read: false,
+          };
+          setNotifications((prev) => [newNotification, ...prev]);
+        });
+      })
+      .catch((err) => {
+        console.error("SignalR error:", err);
+      });
+
+    return () => {
+      connection.stop();
+    };
+  }, []);
 
   return (
     <header className="admin-header">
-      <div className="header-left">
-      </div>
+      <div className="header-left"></div>
 
       <div className="header-right">
         <div className="notification-container">
@@ -69,7 +82,16 @@ const AdminHeader = ({ toggleSidebar }) => {
               )}
               <div className="dropdown-footer">
                 <button className="view-all">View All</button>
-                <button className="mark-read">Mark All as Read</button>
+                <button
+                  className="mark-read"
+                  onClick={() =>
+                    setNotifications((prev) =>
+                      prev.map((n) => ({ ...n, read: true }))
+                    )
+                  }
+                >
+                  Mark All as Read
+                </button>
               </div>
             </div>
           )}

@@ -123,7 +123,12 @@ const PlaceDetails = () => {
       })
       .catch((err) => {
         console.error("Failed to submit review:", err);
-        alert("Error submitting review. Try again later.");
+        swal.fire({
+          title: "Error submitting review",
+          text: "Please try again later.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
         setSubmitting(false);
       });
   };

@@ -2,6 +2,8 @@ using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
+using Microsoft.AspNetCore.SignalR;
+using Backend.Hubs;
 
 namespace Backend.Controllers
 {
@@ -10,10 +12,12 @@ namespace Backend.Controllers
     public class ReviewsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public ReviewsController(AppDbContext context)
+        public ReviewsController(AppDbContext context, IHubContext<NotificationHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -41,7 +45,23 @@ namespace Backend.Controllers
             _context.Reviews.Add(review);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetReviews), new { placeId = placeId }, review);
+            // Send SignalR notification to admins
+            var place = await _context.PlacesToVisit.FindAsync(placeId);
+            string placeName = place != null ? place.Name : $"ID {placeId}";
+            string reviewer = !string.IsNullOrWhiteSpace(review.Name) ? review.Name : "A guest";
+            string message = $"📝 {reviewer} submitted a new review for \"{placeName}\".";
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+
+            return CreatedAtAction(nameof(GetReviews), new { placeId = placeId }, new
+            {
+                review.Id,
+                review.PlaceId,
+                review.Name,
+                review.Email,
+                review.Comment,
+                review.Rating,
+                review.CreatedAt
+            });
         }
     }
 }

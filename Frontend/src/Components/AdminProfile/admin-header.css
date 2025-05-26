@@ -1,5 +1,3 @@
-/* === admin-header.css (Revised) === */
-
 .admin-header .header-left,
 .admin-header .header-right {
   display: flex;
@@ -20,20 +18,19 @@
 }
 .admin-header .search-input {
   padding: 9px 12px 9px 35px;
-  border: 1px solid #e0e0e0; /* Light border */
+  border: 1px solid #e0e0e0; 
   border-radius: 20px;
   min-width: 220px;
   font-size: 0.9rem;
-  background-color: #ecf0f1; /* Light background for input */
+  background-color: #ecf0f1; 
 }
 .admin-header .search-input:focus {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px rgba(20, 185, 213, 0.2);
-  background-color: #ffffff; /* White when focused */
+  background-color: #ffffff; 
 }
 
-/* Header Right: Notifications & Profile */
 .admin-header .notification-container,
 .admin-header .profile-container {
   position: relative;

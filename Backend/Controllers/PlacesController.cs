@@ -251,7 +251,7 @@ namespace Backend.Controllers
             return Ok(popularPlaces);
         }
 
-        // GET: api/places/11/images
+        // GET: api/11/images
         [HttpGet("{placeId}/images")]
         public async Task<IActionResult> GetPlaceImages(int placeId)
         {
