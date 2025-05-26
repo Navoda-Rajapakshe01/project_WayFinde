@@ -22,7 +22,7 @@ import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
 import BlogEditor from "./pages/Blogs/BlogEditor";
-import BlogPreview from "./pages/Blogs/BlogPriview";
+import BlogPreview from "./pages/Blogs/BlogPreview";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
