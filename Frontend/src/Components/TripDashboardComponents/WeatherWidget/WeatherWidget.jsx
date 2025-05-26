@@ -1,33 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import './WeatherWidget.css';
 
-function WeatherWidget({ city }) {
+const WeatherWidget = ({ location }) => {
   const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:5030/weather/${city}`) // Updated backend URL to localhost:5030
-      .then(res => res.json())  // Parse JSON once here
-      .then(data => {
-        setWeather(data);  // No need for JSON.parse
-      })
-      .catch(err => console.error("Weather API Error: ", err));
-  }, [city]);
+    const fetchWeather = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`/api/weather/${encodeURIComponent(location)}`);
+        setWeather(response.data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch weather data');
+        console.error('Error fetching weather:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeather();
+    // Refresh weather data every 5 minutes
+    const interval = setInterval(fetchWeather, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [location]);
+
+  if (loading) {
+    return <div className="weather-widget loading">Loading weather data...</div>;
+  }
+
+  if (error) {
+    return <div className="weather-widget error">{error}</div>;
+  }
+
+  if (!weather) {
+    return null;
+  }
 
   return (
     <div className="weather-widget">
-      <h2>{city} Weather</h2>
-      {weather ? (
-        <div>
-          <p>🌡️ Temperature: {weather.current.temp_c}°C</p>
-          <p>🌤️ Condition: {weather.current.condition.text}</p>
-          <img src={weather.current.condition.icon} alt="Weather Icon" />
-          <p>💨 Wind: {weather.current.wind_kph} kph</p>
+      <div className="weather-header">
+        <h3>{weather.location}</h3>
+        <img 
+          src={`https:${weather.icon}`} 
+          alt={weather.description}
+          className="weather-icon"
+        />
+      </div>
+      
+      <div className="weather-info">
+        <div className="temperature">
+          <span className="current">{Math.round(weather.temperature)}°C</span>
+          <span className="feels-like">Feels like: {Math.round(weather.feelsLike)}°C</span>
         </div>
-      ) : (
-        <p>Loading...</p>
-      )}
+        
+        <div className="details">
+          <div className="detail-item">
+            <span className="label">Description:</span>
+            <span className="value">{weather.description}</span>
+          </div>
+          <div className="detail-item">
+            <span className="label">Humidity:</span>
+            <span className="value">{weather.humidity}%</span>
+          </div>
+          <div className="detail-item">
+            <span className="label">Wind Speed:</span>
+            <span className="value">{weather.windSpeed} km/h</span>
+          </div>
+        </div>
+        
+        <div className="last-updated">
+          Last updated: {new Date(weather.lastUpdated).toLocaleTimeString()}
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default WeatherWidget;

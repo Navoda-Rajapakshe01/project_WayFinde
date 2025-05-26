@@ -1,0 +1,87 @@
+.dashboard-container {
+  width: 100%;
+  position: relative;
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 30px;
+}
+
+.navbar-spacing {
+  height: 60px; /* Adjust based on navbar height */
+}
+
+.full-width-section {
+  width: 100%;
+  padding: 20px;
+}
+
+.split-content {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  padding: 20px;
+  flex: 1;
+  min-height: 0; /* Prevents flex overflow */
+}
+
+.main-content {
+  flex: 0 0 60%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding-right: 20px;
+  padding-left: 55px;
+}
+
+.side-content {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-right: 75px;
+
+}
+
+/* Responsive styles */
+@media screen and (max-width: 1200px) {
+  .dashboard-container {
+    padding-bottom: 450px; /* Slightly more space for footer on smaller screens */
+  }
+
+  .split-content {
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .main-content {
+    flex: 0 0 55%;
+    padding-right: 15px;
+  }
+
+  .side-content {
+    flex: 0 0 45%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .dashboard-container {
+    padding-bottom: 600px; /* More space for stacked footer on mobile */
+  }
+
+  .split-content {
+    flex-direction: column;
+    padding: 10px;
+  }
+
+  .main-content,
+  .side-content {
+    flex: none;
+    width: 100%;
+    padding-right: 0;
+  }
+
+  .full-width-section {
+    padding: 10px;
+  }
+}
