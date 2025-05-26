@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using CloudinaryDotNet;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,7 +59,12 @@ builder.Services.AddCors(options =>
 });
 
 // Add Controllers
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    x.JsonSerializerOptions.WriteIndented = true;
+});
+
 
 // Swagger for API Documentation
 builder.Services.AddEndpointsApiExplorer();

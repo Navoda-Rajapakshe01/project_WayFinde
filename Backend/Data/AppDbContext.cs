@@ -22,11 +22,10 @@ namespace Backend.Data
                 .HasKey(b => b.Id);
 
             // Configure relationship between Blog and UserNew if needed
-            // modelBuilder.Entity<Blog>()
-            //     .HasOne<UserNew>()
-            //     .WithMany()
-            //     .HasForeignKey(b => b.UserId);
-
+            modelBuilder.Entity<Blog>()
+             .HasOne(b => b.User)
+             .WithMany(u => u.Blogs)
+             .HasForeignKey(b => b.UserId);
             // Configure the ImageUrls property for Blog
             modelBuilder.Entity<Blog>()
                 .Property(b => b.ImageUrls)

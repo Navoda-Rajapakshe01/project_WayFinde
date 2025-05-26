@@ -26,19 +26,22 @@ namespace Backend.Controllers
         private readonly Cloudinary _cloudinary;
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<BlogController> _logger;
 
         public BlogController(
              Cloudinary cloudinary,
              AppDbContext context,
              IAuthService authService,
              IUserService userService,
-             IHttpContextAccessor httpContextAccessor)
+             IHttpContextAccessor httpContextAccessor,
+             ILogger<BlogController> logger)
         {
             _cloudinary = cloudinary;
             _context = context;
             _authService = authService;
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
         [HttpPost("upload-blogs")]
@@ -50,7 +53,7 @@ namespace Backend.Controllers
                 if (uploadDto.Document == null || uploadDto.Image == null)
                     return BadRequest("Document and image are required.");
 
-                // Upload document
+                //Upload document
                 var docUploadParams = new RawUploadParams
                 {
                     File = new FileDescription(uploadDto.Document.FileName, uploadDto.Document.OpenReadStream()),
@@ -60,7 +63,7 @@ namespace Backend.Controllers
                 if (docResult.StatusCode != HttpStatusCode.OK)
                     return StatusCode(500, "Document upload failed.");
 
-                // Upload image
+               // Upload image
                 var imageUploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(uploadDto.Image.FileName, uploadDto.Image.OpenReadStream()),
@@ -137,8 +140,8 @@ namespace Backend.Controllers
 
 
         [HttpPost("upload-image")]
-        //[Authorize]
-        public async Task<IActionResult> UploadImage(IFormFile image)
+        // [Authorize] // Make sure this is uncommented in production
+        public async Task<IActionResult> UploadImage([FromForm] IFormFile image)
         {
             if (image == null || image.Length == 0)
                 return BadRequest("No image file provided.");
@@ -158,9 +161,28 @@ namespace Backend.Controllers
                     return StatusCode(500, "Image upload to Cloudinary failed.");
                 }
 
+                // 🔐 Get user ID from JWT
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                {
+                    return Unauthorized("Invalid or missing user ID.");
+                }
+
+                // 💾 Save image info to the database
+                var blogImage = new BlogImageNew
+                {
+                    Url = uploadResult.SecureUrl.ToString(),
+                    UserId = userId,
+                    BlogId = null // Associate later when blog is created
+                };
+
+                _context.BlogImagesNew.Add(blogImage);
+                await _context.SaveChangesAsync();
+
                 return Ok(new
                 {
-                    imageUrl = uploadResult.SecureUrl.ToString(),
+                    imageUrl = blogImage.Url,
+                    imageId = blogImage.Id,
                     originalFilename = uploadResult.OriginalFilename
                 });
             }
@@ -169,6 +191,7 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
 
 
@@ -193,5 +216,36 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
             return Ok(new { message = "Blog saved" });
         }
+
+        [HttpGet("display/{Id}")]
+        public async Task<ActionResult<Blog>> GetBlog(int Id)
+        {
+            try
+            {
+                var blog = await _context.Blogs
+                    .Include(b => b.User)
+                    .FirstOrDefaultAsync(b => b.Id == Id);
+
+                if (blog == null)
+                {
+                    return NotFound(new { message = "Blog not found" });
+                }
+
+                //Ensure author is populated
+                if (string.IsNullOrEmpty(blog.Author))
+                {
+                    blog.Author = blog.User?.Username ?? "Unknown Author";
+                }
+
+                return Ok(blog);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger?.LogError(ex, "Error fetching blog with id {BlogId}", Id);
+                return StatusCode(500, new { message = "internal server error" });
+            }
+        }
+
     }
 }

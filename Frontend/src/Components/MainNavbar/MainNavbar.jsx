@@ -76,11 +76,12 @@ const MainNavbar = () => {
         );
 
         setProfileData({
-          profileImage: response.data.profileImage || profileImageFromContext,
+          profileImage:
+            response.data.profilePictureUrl || profileImageFromContext,
           username: response.data.username || user?.username || "User",
           contactEmail:
-            response.data.contactemail ||
-            user?.contactemail ||
+            response.data.ContactEmail ||
+            user?.ContactEmail ||
             "user@example.com",
         });
       } catch (err) {
@@ -90,7 +91,7 @@ const MainNavbar = () => {
         setProfileData({
           profileImage: profileImageFromContext,
           username: user?.username || "User",
-          contactEmail: user?.contactemail || "user@example.com",
+          contactEmail: user?.ContactEmail || "user@example.com",
         });
       } finally {
         setIsLoadingProfile(false);

@@ -22,6 +22,7 @@ import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
 import BlogEditor from "./pages/Blogs/BlogEditor";
+import BlogPreview from "./pages/Blogs/BlogPriview";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
@@ -84,6 +85,7 @@ function AppRoutes() {
           path="/profile/profileBlogs/blogEditor"
           element={<BlogEditor />}
         />
+        <Route path="/pages/blogs/blogpriview" element={<BlogPreview />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />

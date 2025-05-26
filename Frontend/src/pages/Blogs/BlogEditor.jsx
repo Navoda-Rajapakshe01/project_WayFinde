@@ -20,6 +20,7 @@ import {
   Undo,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../CSS/BlogEditor.css";
 
 function BlogEditor() {
@@ -28,6 +29,8 @@ function BlogEditor() {
   const [blogImages, setBlogImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const editorRef = useRef(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (editorRef.current) {
@@ -533,6 +536,20 @@ function BlogEditor() {
         >
           Preview Content
         </button>
+        <button
+          onClick={() =>
+            navigate("/blogpriview", {
+              state: {
+                title,
+                content,
+                blogImages,
+              },
+            })
+          }
+          className="btn btn-success"
+        >
+          Preview Blog
+        </button>
       </div>
 
       {/* Preview */}
@@ -549,6 +566,7 @@ function BlogEditor() {
         </div>
       )}
     </div>
+    
   );
 }
 
