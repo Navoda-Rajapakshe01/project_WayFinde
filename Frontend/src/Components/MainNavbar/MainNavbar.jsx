@@ -220,7 +220,7 @@ const MainNavbar = () => {
                       className="profile-img"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "default-profile.png";
+                        e.target.src = "defaultprofilepicture.png";
                       }}
                     />
                     <span className="profile-indicator"></span>

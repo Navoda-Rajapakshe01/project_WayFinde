@@ -9,6 +9,7 @@ namespace Backend.Data
     {
         public DbSet<UserNew> UsersNew { get; set; } = null!;
         public DbSet<Blog> Blogs { get; set; } = null!;
+        public DbSet<BlogImageNew> BlogImagesNew { get; set; } = null!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 

@@ -137,7 +137,7 @@ namespace Backend.Controllers
 
 
         [HttpPost("upload-image")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> UploadImage(IFormFile image)
         {
             if (image == null || image.Length == 0)
