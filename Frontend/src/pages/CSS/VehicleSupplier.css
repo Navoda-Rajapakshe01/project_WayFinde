@@ -1,3 +1,15 @@
+:root {
+  --primary-color: #14b9d5;
+  --primary-dark: #0e8a9e;
+  --primary-light: #5ed6e5;
+  --secondary-color: #14b9d5;
+  --text-muted: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(255, 255, 255, 0.2);
+  --transition: all 0.3s ease;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --margin-top: 40px;
+}
+
 /* VehicleSupplier.css */
 
 .supplier-container {
@@ -20,7 +32,7 @@
 }
 
 .post-btn {
-  background-color: #4caf50;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   padding: 0.8rem 1.5rem;
@@ -32,7 +44,7 @@
 }
 
 .post-btn:hover {
-  background-color: #45a049;
+  background-color: var(--primary-dark);
 }
 
 /* Vehicle grid */
@@ -49,7 +61,7 @@
   padding: 2rem;
   border-radius: 8px;
   margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 /* Dashboard Stats */
@@ -64,7 +76,7 @@
   background-color: #fff;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .stat-card h3 {
@@ -87,7 +99,7 @@
 }
 
 .active-stat {
-  color: #28a745;
+  color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -101,7 +113,7 @@
   background-color: #fff;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .bookings-table {
@@ -155,7 +167,7 @@
 
 .status-completed {
   background-color: #cce5ff;
-  color: #004085;
+  color: var(--primary-dark);
 }
 
 /* No data states */
@@ -187,7 +199,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border-left-color: #4caf50;
+  border-left-color: var(--primary-color);
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
@@ -212,7 +224,7 @@
 }
 
 .supplier-tabs .nav-link.active {
-  color: #4caf50;
+  color: var(--primary-color);
   font-weight: 700;
 }
 
@@ -252,6 +264,7 @@
     padding: 0.5rem;
   }
 }
+
 /*vehicle form */
 
 /* VehicleForm.css */
@@ -260,7 +273,7 @@
   background-color: #fff;
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
 }
 
 .vehicle-form h2 {
@@ -287,13 +300,13 @@
   color: #555;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: var(--transition);
 }
 
 .toggle-btn.active {
-  background-color: #4caf50;
+  background-color: var(--primary-color);
   color: white;
-  border-color: #4caf50;
+  border-color: var(--primary-color);
 }
 
 .toggle-btn:first-child {
@@ -349,8 +362,8 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #4caf50;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(20, 185, 213, 0.2);
 }
 
 /* File input */
@@ -435,12 +448,12 @@
 }
 
 .submit-btn {
-  background-color: #4caf50;
+  background-color: var(--primary-color);
   color: white;
 }
 
 .submit-btn:hover {
-  background-color: #45a049;
+  background-color: var(--primary-dark);
 }
 
 .submit-btn:disabled {
@@ -505,7 +518,7 @@
 .preview-price {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #4caf50;
+  color: var(--primary-color);
   margin-bottom: 0.5rem;
 }
 
@@ -555,13 +568,14 @@
     width: 100%;
   }
 }
+
 /* VehicleCard.css */
 
 .vehicle-card {
   position: relative;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow);
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
   height: 100%;
@@ -611,7 +625,7 @@
 .vehicle-price {
   font-size: 1.3rem;
   font-weight: 700;
-  color: #4caf50;
+  color: var(--primary-color);
   margin-bottom: 0.5rem;
 }
 
@@ -655,7 +669,7 @@
 .amenity-tag {
   display: inline-block;
   background-color: #e9f5e9;
-  color: #4caf50;
+  color: var(--primary-color);
   padding: 0.25rem 0.5rem;
   border-radius: 20px;
   font-size: 0.8rem;
@@ -691,33 +705,33 @@
 }
 
 .status-toggle-btn {
-  background-color: #4caf50;
+  background-color: var(--primary-color);
   color: white;
   width: 100%;
 }
 
 .status-toggle-btn:hover {
-  background-color: #45a049;
+  background-color: var(--primary-dark);
 }
 
 .book-now-btn {
-  background-color: #2196f3;
+  background-color: var(--primary-light);
   color: white;
   width: 100%;
 }
 
 .book-now-btn:hover {
-  background-color: #0b7dda;
+  background-color: var(--primary-dark);
 }
 
 .view-bookings-btn {
   flex: 1;
-  background-color: #2196f3;
+  background-color: var(--primary-light);
   color: white;
 }
 
 .view-bookings-btn:hover {
-  background-color: #0b7dda;
+  background-color: var(--primary-dark);
 }
 
 .edit-btn {

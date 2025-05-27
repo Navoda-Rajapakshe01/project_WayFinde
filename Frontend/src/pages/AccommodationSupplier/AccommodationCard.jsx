@@ -1,5 +1,5 @@
 import React from "react";
-//import "../Accommodation/CSS/AccommodationCard.css"; // Adjust the path as necessary
+import "../CSS/Accommodation.css";
 
 const AccommodationCard = ({
   accommodation,
@@ -25,7 +25,7 @@ const AccommodationCard = ({
 
         <p className="accommodation-location">{accommodation.location}</p>
         <p className="accommodation-price">
-          ${accommodation.pricePerNight}
+          Rs {accommodation.pricePerNight}
           <span>/night</span>
         </p>
 

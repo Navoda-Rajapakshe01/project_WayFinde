@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AccommodationForm from "./AccommodationForm";
 import AccommodationCard from "./AccommodationCard";
-//import Alert from "../VehicleSupplier/componants/Alert";
+import Alert from "../Alert";
 import HeroSection from "../../Components/HeroSection/HeroSection";
-//import "../CSS/AccommodationSupplier.css";
 import { Tabs, Tab } from "react-bootstrap";
 
 const AccommodationSupplier = () => {
@@ -22,6 +21,7 @@ const AccommodationSupplier = () => {
     monthlyRevenue: 0,
   });
 
+  // Fetch accommodations from API
   const fetchAccommodations = async () => {
     try {
       setLoading(true);
@@ -35,19 +35,20 @@ const AccommodationSupplier = () => {
       ).length;
 
       // Set dashboard stats
-      setDashboardStats({
+      setDashboardStats((prev) => ({
+        ...prev,
         totalAccommodations,
         activeAccommodations,
-        totalBookings: 0, // Will be updated when fetching bookings
-        monthlyBookings: 0,
-        monthlyRevenue: 0,
-      });
+        totalBookings: bookings.length, // This will be updated after fetching bookings
+        monthlyBookings: dashboardStats.monthlyBookings, // Will be updated after fetchBookings
+        monthlyRevenue: dashboardStats.monthlyRevenue, // Will be updated after fetchBookings
+      }));
 
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch accommodations", error);
 
-      // If API fails, set sample data for development
+      // Sample accommodations data for development
       const sampleAccommodations = [
         {
           id: 1,
@@ -108,7 +109,7 @@ const AccommodationSupplier = () => {
   const fetchBookings = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5030/api/accommodationbooking/supplier/current"
+        "http://localhost:5030/api/AccommodationReservation"
       );
       setBookings(res.data);
 
@@ -234,7 +235,7 @@ const AccommodationSupplier = () => {
   const handleViewBookings = async (accommodationId) => {
     try {
       const res = await axios.get(
-        `http://localhost:5030/api/bookings/accommodation/${accommodationId}`
+        `http://localhost:5030/api/AccommodationReservation/accommodation/${accommodationId}`
       );
       setBookings(res.data);
       setActiveTab("bookings");
@@ -335,11 +336,11 @@ const AccommodationSupplier = () => {
               <div className="stat-card">
                 <h3>Monthly Revenue</h3>
                 <div className="stat-value">
-                  ${dashboardStats.monthlyRevenue.toFixed(2)}
-                </div>
+                  Rs {dashboardStats.monthlyRevenue.toFixed(2)}
+                </div>{" "}
                 <div className="stat-detail">
                   {dashboardStats.monthlyBookings > 0
-                    ? `Avg $${(
+                    ? `Avg Rs ${(
                         dashboardStats.monthlyRevenue /
                         dashboardStats.monthlyBookings
                       ).toFixed(2)} per booking`
@@ -367,7 +368,13 @@ const AccommodationSupplier = () => {
                       {bookings.slice(0, 5).map((booking) => (
                         <tr key={booking.id}>
                           <td>#{booking.id}</td>
-                          <td>{booking.accommodationName}</td>
+                          {/* Find accommodation by matching ID */}
+                          <td>
+                            {accommodations.find(
+                              (accommodation) =>
+                                accommodation.id === booking.accommodationId
+                            )?.name || "Unknown Accommodation"}
+                          </td>
                           <td>{booking.customerName}</td>
                           <td>
                             {new Date(booking.checkInDate).toLocaleDateString()}{" "}
@@ -382,7 +389,7 @@ const AccommodationSupplier = () => {
                               {booking.status}
                             </span>
                           </td>
-                          <td>${booking.totalAmount.toFixed(2)}</td>
+                          <td>Rs {booking.totalAmount.toFixed(2)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -433,10 +440,16 @@ const AccommodationSupplier = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.map((booking) => (
+                    {bookings.slice(0, 5).map((booking) => (
                       <tr key={booking.id}>
                         <td>#{booking.id}</td>
-                        <td>{booking.accommodationName}</td>
+                        {/* Find accommodation by matching ID */}
+                        <td>
+                          {accommodations.find(
+                            (accommodation) =>
+                              accommodation.id === booking.accommodationId
+                          )?.name || "Unknown Accommodation"}
+                        </td>
                         <td>{booking.customerName}</td>
                         <td>
                           {new Date(booking.checkInDate).toLocaleDateString()} -{" "}
@@ -448,7 +461,7 @@ const AccommodationSupplier = () => {
                             {booking.status}
                           </span>
                         </td>
-                        <td>${booking.totalAmount.toFixed(2)}</td>
+                        <td>Rs {booking.totalAmount.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>

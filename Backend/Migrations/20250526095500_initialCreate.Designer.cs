@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250522070404_vehicleUpdate1")]
-    partial class vehicleUpdate1
+    [Migration("20250526095500_initialCreate")]
+    partial class initialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,50 @@ namespace Backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AccommodationAmenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccommodationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AmenityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccommodationId");
+
+                    b.ToTable("AccommodationAmenities");
+                });
+
+            modelBuilder.Entity("AccommodationImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccommodationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccommodationId");
+
+                    b.ToTable("AccommodationImages");
+                });
 
             modelBuilder.Entity("Backend.DTOs.DistrictWithPlacesCountDTO", b =>
                 {
@@ -56,103 +100,46 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Bathrooms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Bedrooms")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxGuests")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfBathRooms")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfBedRooms")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfBeds")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfGuests")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OwnerCity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OwnerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("PricePerDay")
+                    b.Property<decimal>("PricePerNight")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Accommodations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "stay in free, make your day comfortable",
-                            IsAvailable = true,
-                            Location = "Thennekumbura",
-                            Name = "Earl's Regency",
-                            NumberOfBathRooms = 40,
-                            NumberOfBedRooms = 20,
-                            NumberOfBeds = 60,
-                            NumberOfGuests = 100,
-                            OwnerCity = "Kandy",
-                            OwnerName = "Earl's regency group",
-                            PricePerDay = 56900m,
-                            Type = "Hotel"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "happy holiday",
-                            IsAvailable = true,
-                            Location = "Oruthota",
-                            Name = "Sajeew Paradise",
-                            NumberOfBathRooms = 3,
-                            NumberOfBedRooms = 3,
-                            NumberOfBeds = 4,
-                            NumberOfGuests = 8,
-                            OwnerCity = "Rajawella",
-                            OwnerName = "Sajeewa Karalliyadda",
-                            PricePerDay = 14900m,
-                            Type = "Cabana suite"
-                        });
-                });
-
-            modelBuilder.Entity("Backend.Models.AccommodationImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccommodationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccommodationId");
+                    b.HasIndex("SupplierId");
 
-                    b.ToTable("AccommodationImages");
+                    b.ToTable("Accommodations");
                 });
 
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
@@ -166,44 +153,35 @@ namespace Backend.Migrations
                     b.Property<int>("AccommodationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BillingName")
+                    b.Property<string>("AdditionalRequirements")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NicNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ReservationDate")
+                    b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("State")
+                    b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StreetAddress")
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Guests")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("TripId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -291,6 +269,37 @@ namespace Backend.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("CreatedTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("NoteDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoteTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DashboardNote");
+                });
+
             modelBuilder.Entity("Backend.Models.District", b =>
                 {
                     b.Property<int>("Id")
@@ -315,6 +324,39 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Districts");
+                });
+
+            modelBuilder.Entity("Backend.Models.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("Review");
                 });
 
             modelBuilder.Entity("Backend.Models.TodoItem", b =>
@@ -375,6 +417,53 @@ namespace Backend.Migrations
                     b.ToTable("TravelBudgets");
                 });
 
+            modelBuilder.Entity("Backend.Models.UserNew", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastLoginDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("Password");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePictureUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RegisteredDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserNew");
+                });
+
             modelBuilder.Entity("Backend.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
@@ -388,12 +477,14 @@ namespace Backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FuelType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Model")
@@ -408,86 +499,16 @@ namespace Backend.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TransmissionType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Brand = "Toyota",
-                            FuelType = "Petrol",
-                            IsAvailable = true,
-                            Location = "Colombo",
-                            Model = "Corolla",
-                            NumberOfPassengers = 5,
-                            PricePerDay = 45.00m,
-                            TransmissionType = "Automatic",
-                            Type = "Sedan"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Brand = "Suzuki",
-                            FuelType = "Hybrid",
-                            IsAvailable = true,
-                            Location = "Kandy",
-                            Model = "Wagon R",
-                            NumberOfPassengers = 4,
-                            PricePerDay = 38.50m,
-                            TransmissionType = "Automatic",
-                            Type = "Mini Van"
-                        });
-                });
-
-            modelBuilder.Entity("Backend.Models.VehicleAmenity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AmenityName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("VehicleAmenities");
-                });
-
-            modelBuilder.Entity("Backend.Models.VehicleImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("VehicleImages");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleReservation", b =>
@@ -530,6 +551,9 @@ namespace Backend.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int?>("TripId")
+                        .HasColumnType("int");
+
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
@@ -538,38 +562,6 @@ namespace Backend.Migrations
                     b.HasIndex("VehicleId");
 
                     b.ToTable("VehicleReservations");
-                });
-
-            modelBuilder.Entity("Backend.Models.VehicleReview", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ReviewDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReviewerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("VehicleReviews");
                 });
 
             modelBuilder.Entity("PlacesToVisit", b =>
@@ -622,7 +614,91 @@ namespace Backend.Migrations
                     b.ToTable("PlacesToVisit");
                 });
 
-            modelBuilder.Entity("Backend.Models.AccommodationImage", b =>
+            modelBuilder.Entity("VehicleAmenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AmenityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("VehicleAmenities");
+                });
+
+            modelBuilder.Entity("VehicleImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("VehicleImages");
+                });
+
+            modelBuilder.Entity("VehicleReview", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReviewerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("VehicleReviews");
+                });
+
+            modelBuilder.Entity("AccommodationAmenity", b =>
+                {
+                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
+                        .WithMany("Amenities")
+                        .HasForeignKey("AccommodationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Accommodation");
+                });
+
+            modelBuilder.Entity("AccommodationImage", b =>
                 {
                     b.HasOne("Backend.Models.Accommodation", "Accommodation")
                         .WithMany("Images")
@@ -631,6 +707,17 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Accommodation");
+                });
+
+            modelBuilder.Entity("Backend.Models.Accommodation", b =>
+                {
+                    b.HasOne("Backend.Models.UserNew", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
@@ -655,43 +742,21 @@ namespace Backend.Migrations
                     b.Navigation("Accommodation");
                 });
 
-            modelBuilder.Entity("Backend.Models.VehicleAmenity", b =>
+            modelBuilder.Entity("Backend.Models.Review", b =>
                 {
-                    b.HasOne("Backend.Models.Vehicle", "Vehicle")
-                        .WithMany("Amenities")
-                        .HasForeignKey("VehicleId")
+                    b.HasOne("PlacesToVisit", "Place")
+                        .WithMany("Reviews")
+                        .HasForeignKey("PlaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("Backend.Models.VehicleImage", b =>
-                {
-                    b.HasOne("Backend.Models.Vehicle", "Vehicle")
-                        .WithMany("Images")
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vehicle");
+                    b.Navigation("Place");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleReservation", b =>
                 {
                     b.HasOne("Backend.Models.Vehicle", "Vehicle")
                         .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("Backend.Models.VehicleReview", b =>
-                {
-                    b.HasOne("Backend.Models.Vehicle", "Vehicle")
-                        .WithMany("Reviews")
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -716,8 +781,43 @@ namespace Backend.Migrations
                     b.Navigation("District");
                 });
 
+            modelBuilder.Entity("VehicleAmenity", b =>
+                {
+                    b.HasOne("Backend.Models.Vehicle", "Vehicle")
+                        .WithMany("Amenities")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("VehicleImage", b =>
+                {
+                    b.HasOne("Backend.Models.Vehicle", "Vehicle")
+                        .WithMany("Images")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("VehicleReview", b =>
+                {
+                    b.HasOne("Backend.Models.Vehicle", "Vehicle")
+                        .WithMany("Reviews")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("Backend.Models.Accommodation", b =>
                 {
+                    b.Navigation("Amenities");
+
                     b.Navigation("Images");
 
                     b.Navigation("Reviews");
@@ -729,6 +829,11 @@ namespace Backend.Migrations
 
                     b.Navigation("Images");
 
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("PlacesToVisit", b =>
+                {
                     b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618

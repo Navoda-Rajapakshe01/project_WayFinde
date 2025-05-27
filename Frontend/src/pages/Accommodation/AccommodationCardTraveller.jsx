@@ -1,11 +1,18 @@
 import React from "react";
-//import "../CSS/AccommodationCard.css";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
-const AccommodationCardTraveller = ({ accommodation, onBookNow }) => {
+const AccommodationCardTraveller = ({ accommodation }) => {
+  const navigate = useNavigate(); // Create navigate function
+
+  const handleViewNow = () => {
+    // Navigate to accommodation detail page with accommodation ID
+    navigate(`/accommodation/${accommodation.id}`);
+  };
+
   return (
     <div className="accommodation-card">
       <img
-        src={accommodation.imagePaths?.[0] || "/default-accommodation.jpg"}
+        src={accommodation.imageUrls?.[0] || "/default-accommodation.jpg"}
         alt={accommodation.name}
         className="accommodation-image"
       />
@@ -17,21 +24,21 @@ const AccommodationCardTraveller = ({ accommodation, onBookNow }) => {
 
         <p className="accommodation-location">{accommodation.location}</p>
         <p className="accommodation-price">
-          ${accommodation.pricePerNight}
+          Rs {accommodation.pricePerNight}
           <span>/night</span>
         </p>
 
         <div className="accommodation-details">
           <div className="accommodation-detail">
-            <i className="bi bi-door-closed"></i> {accommodation.bedrooms}{" "}
+            🛏 {accommodation.bedrooms}{" "}
             {accommodation.bedrooms === 1 ? "bedroom" : "bedrooms"}
           </div>
           <div className="accommodation-detail">
-            <i className="bi bi-droplet"></i> {accommodation.bathrooms}{" "}
+            🛁 {accommodation.bathrooms}{" "}
             {accommodation.bathrooms === 1 ? "bathroom" : "bathrooms"}
           </div>
           <div className="accommodation-detail">
-            <i className="bi bi-people"></i> {accommodation.maxGuests}{" "}
+            👥 {accommodation.maxGuests}{" "}
             {accommodation.maxGuests === 1 ? "guest" : "guests"}
           </div>
         </div>
@@ -57,10 +64,8 @@ const AccommodationCardTraveller = ({ accommodation, onBookNow }) => {
             : accommodation.description}
         </p>
 
-        <button
-          className="book-now-btn"
-          onClick={() => onBookNow && onBookNow(accommodation)}>
-          Book Now
+        <button className="view-now-btn" onClick={handleViewNow}>
+          View Now
         </button>
       </div>
     </div>

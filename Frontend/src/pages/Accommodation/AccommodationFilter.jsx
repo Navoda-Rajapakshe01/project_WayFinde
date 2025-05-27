@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { Form, Button, Row, Col, Collapse } from "react-bootstrap";
-//import "../CSS/AccommodationFilter.css";
+import React, { useState, useEffect } from "react";
+import { Form, Button, Collapse } from "react-bootstrap";
+import "../CSS/Accommodation.css";
 
-const AccommodationFilter = ({ onFilterChange }) => {
-  const [isOpen, setIsOpen] = useState(true);
-  const [filters, setFilters] = useState({
-    priceRange: [0, 1000],
+const AccommodationFilter = ({ onFilterChange, maxPrice }) => {
+  const [isOpen, setIsOpen] = React.useState(true);
+  const [filters, setFilters] = React.useState({
+    priceRange: [0, maxPrice || 1000000],
     accommodationType: "",
     location: "",
     guests: "",
@@ -13,7 +13,14 @@ const AccommodationFilter = ({ onFilterChange }) => {
     bathrooms: "",
   });
 
-  // Accommodation types
+  React.useEffect(() => {
+    // Whenever maxPrice changes, update filters.priceRange max
+    setFilters((prev) => ({
+      ...prev,
+      priceRange: [0, maxPrice || 1000000],
+    }));
+  }, [maxPrice]);
+
   const accommodationTypes = [
     "Hotel",
     "Apartment",
@@ -25,7 +32,6 @@ const AccommodationFilter = ({ onFilterChange }) => {
     "Resort",
   ];
 
-  // Locations
   const locations = [
     "Colombo",
     "Kandy",
@@ -37,9 +43,7 @@ const AccommodationFilter = ({ onFilterChange }) => {
     "Negombo",
   ];
 
-  const toggleFilters = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleFilters = () => setIsOpen(!isOpen);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,12 +55,19 @@ const AccommodationFilter = ({ onFilterChange }) => {
 
   const handlePriceRangeChange = (e) => {
     const { name, value } = e.target;
-    const newRange = [...filters.priceRange];
+    let newRange = [...filters.priceRange];
+
     if (name === "minPrice") {
-      newRange[0] = parseInt(value);
-    } else {
-      newRange[1] = parseInt(value);
+      // minPrice is fixed at 0, ignore changes
+      newRange[0] = 0;
+    } else if (name === "maxPrice") {
+      const maxVal = Math.min(
+        maxPrice || 1000000,
+        Math.max(Number(value), newRange[0])
+      );
+      newRange[1] = maxVal;
     }
+
     setFilters({
       ...filters,
       priceRange: newRange,
@@ -64,13 +75,12 @@ const AccommodationFilter = ({ onFilterChange }) => {
   };
 
   const handleApplyFilters = () => {
-    // Pass the filters up to the parent component
     onFilterChange(filters);
   };
 
   const handleResetFilters = () => {
     const resetFilters = {
-      priceRange: [0, 1000],
+      priceRange: [0, maxPrice || 1000000],
       accommodationType: "",
       location: "",
       guests: "",
@@ -106,9 +116,9 @@ const AccommodationFilter = ({ onFilterChange }) => {
               value={filters.location}
               onChange={handleInputChange}>
               <option value="">All Locations</option>
-              {locations.map((location) => (
-                <option key={location} value={location}>
-                  {location}
+              {locations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
                 </option>
               ))}
             </select>
@@ -176,17 +186,17 @@ const AccommodationFilter = ({ onFilterChange }) => {
           </div>
 
           <div className="filter-group price-range">
-            <label>Price Range ($ per night)</label>
+            <label>Price Range (Rs per night)</label>
             <div className="price-inputs">
               <input
                 type="number"
                 placeholder="Min"
                 className="price-input"
                 name="minPrice"
-                min="0"
+                min={0}
                 max={filters.priceRange[1]}
-                value={filters.priceRange[0]}
-                onChange={handlePriceRangeChange}
+                value={0} // fixed minPrice
+                readOnly
               />
               <span>to</span>
               <input
@@ -194,7 +204,8 @@ const AccommodationFilter = ({ onFilterChange }) => {
                 placeholder="Max"
                 className="price-input"
                 name="maxPrice"
-                min={filters.priceRange[0]}
+                min={0}
+                max={maxPrice || 1000000}
                 value={filters.priceRange[1]}
                 onChange={handlePriceRangeChange}
               />
@@ -205,7 +216,6 @@ const AccommodationFilter = ({ onFilterChange }) => {
             <button className="reset-btn" onClick={handleResetFilters}>
               Reset
             </button>
-
             <button className="apply-btn" onClick={handleApplyFilters}>
               Apply Filters
             </button>

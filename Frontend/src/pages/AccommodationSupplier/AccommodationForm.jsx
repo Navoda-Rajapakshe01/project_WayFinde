@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-//import "../CSS/AccommodationForm.css";
+import "../CSS/AccommodationSupplier.css";
 
 const initialState = {
   name: "",
@@ -13,27 +13,12 @@ const initialState = {
   description: "",
   amenities: [],
   images: [],
-  supplierId: "", // start empty; will be set from localStorage or login info
 };
 
 const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
   const [form, setForm] = useState(initialState);
   const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Simulate getting supplierId from login/session/localStorage
-    const savedSupplierId = localStorage.getItem("supplierId");
-    if (savedSupplierId) {
-      setForm((prev) => ({ ...prev, supplierId: savedSupplierId }));
-    } else {
-      // For development - set a dummy supplier ID
-      setForm((prev) => ({
-        ...prev,
-        supplierId: "00000000-0000-0000-0000-000000000000",
-      }));
-    }
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,13 +47,6 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     setPreview(!preview);
   };
 
-  const isValidGuid = (guid) => {
-    if (!guid) return false;
-    const guidRegex =
-      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    return guidRegex.test(guid);
-  };
-
   const validate = () => {
     if (!form.name) return "Name is required";
     if (!form.type) return "Accommodation type is required";
@@ -77,10 +55,6 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     if (!form.bedrooms) return "Number of bedrooms is required";
     if (!form.bathrooms) return "Number of bathrooms is required";
     if (!form.maxGuests) return "Maximum number of guests is required";
-
-    if (!isValidGuid(form.supplierId)) {
-      return "Invalid supplier ID. Please log in again.";
-    }
 
     return null; // No errors
   };
@@ -103,19 +77,14 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     formData.append("Bathrooms", parseFloat(form.bathrooms));
     formData.append("MaxGuests", parseInt(form.maxGuests));
     formData.append("Description", form.description);
-    formData.append("SupplierId", form.supplierId);
 
     form.amenities.forEach((a) => formData.append("Amenities", a));
     form.images.forEach((img) => formData.append("Images", img));
 
     try {
-      await axios.post(
-        "http://localhost:5030/api/accommodation/supplier/upload",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+      await axios.post("http://localhost:5030/api/accommodation", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       setForm(initialState);
       setLoading(false);
       onSuccess();
@@ -126,7 +95,6 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     }
   };
 
-  // Accommodation types
   const accommodationTypes = [
     "Hotel",
     "Apartment",
@@ -138,7 +106,6 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     "Resort",
   ];
 
-  // Available amenities
   const availableAmenities = [
     "Wi-Fi",
     "Air Conditioning",
@@ -221,11 +188,11 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
             </div>
 
             <div className="form-group">
-              <label>Price Per Night ($)*</label>
+              <label>Price Per Night (Rs)*</label>
               <input
                 name="pricePerNight"
                 type="number"
-                placeholder="e.g. 150"
+                placeholder="e.g. 15,000"
                 value={form.pricePerNight}
                 onChange={handleChange}
                 min="0"

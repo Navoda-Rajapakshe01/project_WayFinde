@@ -22,6 +22,50 @@ namespace Backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("AccommodationAmenity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccommodationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AmenityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccommodationId");
+
+                    b.ToTable("AccommodationAmenities");
+                });
+
+            modelBuilder.Entity("AccommodationImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccommodationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccommodationId");
+
+                    b.ToTable("AccommodationImages");
+                });
+
             modelBuilder.Entity("Backend.DTOs.DistrictWithPlacesCountDTO", b =>
                 {
                     b.Property<int>("Id")
@@ -53,103 +97,41 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Bathrooms")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Bedrooms")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxGuests")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NumberOfBathRooms")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfBedRooms")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfBeds")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfGuests")
-                        .HasColumnType("int");
-
-                    b.Property<string>("OwnerCity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("OwnerName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("PricePerDay")
+                    b.Property<decimal>("PricePerNight")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Type")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Accommodations");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "stay in free, make your day comfortable",
-                            IsAvailable = true,
-                            Location = "Thennekumbura",
-                            Name = "Earl's Regency",
-                            NumberOfBathRooms = 40,
-                            NumberOfBedRooms = 20,
-                            NumberOfBeds = 60,
-                            NumberOfGuests = 100,
-                            OwnerCity = "Kandy",
-                            OwnerName = "Earl's regency group",
-                            PricePerDay = 56900m,
-                            Type = "Hotel"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "happy holiday",
-                            IsAvailable = true,
-                            Location = "Oruthota",
-                            Name = "Sajeew Paradise",
-                            NumberOfBathRooms = 3,
-                            NumberOfBedRooms = 3,
-                            NumberOfBeds = 4,
-                            NumberOfGuests = 8,
-                            OwnerCity = "Rajawella",
-                            OwnerName = "Sajeewa Karalliyadda",
-                            PricePerDay = 14900m,
-                            Type = "Cabana suite"
-                        });
-                });
-
-            modelBuilder.Entity("Backend.Models.AccommodationImage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AccommodationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccommodationId");
-
-                    b.ToTable("AccommodationImages");
+                    b.ToTable("Accommodations");
                 });
 
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
@@ -163,44 +145,35 @@ namespace Backend.Migrations
                     b.Property<int>("AccommodationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BillingName")
+                    b.Property<string>("AdditionalRequirements")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NicNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("ReservationDate")
+                    b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("State")
+                    b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("StreetAddress")
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Guests")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ZipCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("TripId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -449,12 +422,14 @@ namespace Backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FuelType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Model")
@@ -469,42 +444,16 @@ namespace Backend.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TransmissionType")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Vehicles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Brand = "Toyota",
-                            FuelType = "Petrol",
-                            IsAvailable = true,
-                            Location = "Colombo",
-                            Model = "Corolla",
-                            NumberOfPassengers = 5,
-                            PricePerDay = 45.00m,
-                            TransmissionType = "Automatic",
-                            Type = "Sedan"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Brand = "Suzuki",
-                            FuelType = "Hybrid",
-                            IsAvailable = true,
-                            Location = "Kandy",
-                            Model = "Wagon R",
-                            NumberOfPassengers = 4,
-                            PricePerDay = 38.50m,
-                            TransmissionType = "Automatic",
-                            Type = "Mini Van"
-                        });
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleReservation", b =>
@@ -683,7 +632,18 @@ namespace Backend.Migrations
                     b.ToTable("VehicleReviews");
                 });
 
-            modelBuilder.Entity("Backend.Models.AccommodationImage", b =>
+            modelBuilder.Entity("AccommodationAmenity", b =>
+                {
+                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
+                        .WithMany("Amenities")
+                        .HasForeignKey("AccommodationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Accommodation");
+                });
+
+            modelBuilder.Entity("AccommodationImage", b =>
                 {
                     b.HasOne("Backend.Models.Accommodation", "Accommodation")
                         .WithMany("Images")
@@ -790,6 +750,8 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Accommodation", b =>
                 {
+                    b.Navigation("Amenities");
+
                     b.Navigation("Images");
 
                     b.Navigation("Reviews");

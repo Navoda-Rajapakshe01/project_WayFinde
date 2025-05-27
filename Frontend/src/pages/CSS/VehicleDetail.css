@@ -1,3 +1,15 @@
+:root {
+  --primary-color: #14b9d5;
+  --primary-dark: #0e8a9e;
+  --primary-light: #5ed6e5;
+  --secondary-color: #14b9d5;
+  --text-muted: rgba(255, 255, 255, 0.8);
+  --border-color: rgba(255, 255, 255, 0.2);
+  --transition: all 0.3s ease;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --margin-top: 40px;
+}
+
 .vehicle-detail-page {
   padding: 20px;
   max-width: 1200px;
@@ -19,6 +31,7 @@
   width: 100%;
   object-fit: cover;
   border-radius: 8px;
+  box-shadow: var(--shadow);
 }
 
 .vehicle-info {
@@ -28,6 +41,7 @@
 .vehicle-info h3 {
   font-size: 2em;
   font-weight: bold;
+  color: var(--primary-dark);
 }
 
 .vehicle-type {
@@ -37,12 +51,15 @@
 
 .vehicle-price {
   font-size: 1.5em;
-  color: green;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-top: 10px;
 }
 
 .vehicle-location {
   font-size: 1.1em;
   margin-top: 10px;
+  color: #666;
 }
 
 .vehicle-availability {
@@ -51,14 +68,15 @@
 
 .vehicle-availability span {
   font-weight: bold;
+  transition: var(--transition);
 }
 
 .available {
-  color: green;
+  color: #28a745; /* You can customize this to a CSS variable if you want */
 }
 
 .rented {
-  color: red;
+  color: #dc3545; /* Same as above */
 }
 
 .vehicle-details {
@@ -68,6 +86,7 @@
 .vehicle-details h4 {
   font-size: 1.2em;
   font-weight: bold;
+  color: var(--primary-dark);
 }
 
 .vehicle-details ul {
@@ -78,6 +97,7 @@
 .vehicle-details ul li {
   font-size: 1.1em;
   margin-bottom: 10px;
+  color: #444;
 }
 
 .vehicle-amenities {
@@ -87,6 +107,7 @@
 .vehicle-amenities h4 {
   font-size: 1.2em;
   font-weight: bold;
+  color: var(--primary-dark);
 }
 
 .amenity-tags {
@@ -100,6 +121,9 @@
   padding: 5px 10px;
   border-radius: 20px;
   font-size: 1em;
+  color: var(--primary-color);
+  user-select: none;
+  transition: background-color var(--transition), color var(--transition);
 }
 
 .vehicle-actions {
@@ -107,14 +131,27 @@
 }
 
 .book-now-btn {
-  background-color: #28a745;
+  background-color: #0e8a9e; /* you can replace with a var if you want, e.g. --success-color */
   color: white;
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color var(--transition);
 }
 
 .book-now-btn:hover {
-  background-color: #218838;
+  background-color: #5ed6e5; /* same as above, replace with a var if desired */
+}
+
+/* Responsive - stack on small screens */
+@media (max-width: 768px) {
+  .vehicle-detail-card {
+    flex-direction: column;
+  }
+
+  .vehicle-image,
+  .vehicle-info {
+    max-width: 100%;
+  }
 }

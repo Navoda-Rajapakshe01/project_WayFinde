@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Backend.Data;
+﻿using Backend.Data;
+using Backend.DTOs;
 using Backend.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class AccommodationController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -16,60 +17,152 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        // GET: api/Accommodation
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Accommodation>>> GetAccommodations()
+        [HttpPost]
+        public async Task<IActionResult> CreateAccommodation([FromForm] AccommodationCreateDto dto)
         {
-            var accommodations = await _context.Accommodations
-                .Include(a => a.Images)
-                .Include(a => a.Reviews)
-                .ToListAsync();
+            if (dto == null) return BadRequest();
 
-            return Ok(accommodations);
-        }
+            var accommodation = new Accommodation
+            {
+                Name = dto.Name,
+                Type = dto.Type,
+                Location = dto.Location,
+                PricePerNight = dto.PricePerNight,
+                Bedrooms = dto.Bedrooms,
+                Bathrooms = dto.Bathrooms,
+                MaxGuests = dto.MaxGuests,
+                Description = dto.Description,
+                IsAvailable = true
+            };
 
-        // GET: api/Accommodation/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Accommodation>> GetAccommodation(int id)
-        {
-            var accommodation = await _context.Accommodations
-                .Include(a => a.Images)
-                .Include(a => a.Reviews)
-                .FirstOrDefaultAsync(a => a.Id == id);
+            _context.Accommodations.Add(accommodation);
+            await _context.SaveChangesAsync();
 
-            if (accommodation == null)
-                return NotFound();
+            // Add amenities
+            if (dto.Amenities != null)
+            {
+                foreach (var amenity in dto.Amenities)
+                {
+                    _context.AccommodationAmenities.Add(new AccommodationAmenity
+                    {
+                        AccommodationId = accommodation.Id,
+                        AmenityName = amenity
+                    });
+                }
+            }
+
+            // Add images
+            if (dto.Images != null)
+            {
+                foreach (var file in dto.Images)
+                {
+                    var imageUrl = await SaveFileAndGetUrlAsync(file);
+                    _context.AccommodationImages.Add(new AccommodationImage
+                    {
+                        AccommodationId = accommodation.Id,
+                        ImageUrl = imageUrl
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
 
             return Ok(accommodation);
         }
 
-        // POST: api/Accommodation/reserve
-        [HttpPost("reserve")]
-        public async Task<ActionResult> ReserveAccommodation([FromBody] AccommodationReservation reservation)
+        private async Task<string> SaveFileAndGetUrlAsync(Microsoft.AspNetCore.Http.IFormFile file)
         {
-            var accommodation = await _context.Accommodations.FindAsync(reservation.AccommodationId);
-            if (accommodation == null || !accommodation.IsAvailable)
-                return BadRequest("Accommodation not available.");
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
-            _context.AccommodationReservations.Add(reservation);
-            await _context.SaveChangesAsync();
+            if (!Directory.Exists(uploadsFolder))
+                Directory.CreateDirectory(uploadsFolder);
 
-            return Ok(new { message = "Reservation successful!" });
+            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+
+            using var stream = new FileStream(filePath, FileMode.Create);
+            await file.CopyToAsync(stream);
+
+            return $"/uploads/{fileName}";
         }
 
-        // POST: api/Accommodation/review
-        [HttpPost("review")]
-        public async Task<ActionResult> AddReview([FromBody] AccommodationReview review)
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] AccommodationUpdateStatusDto dto)
         {
-            var accommodation = await _context.Accommodations.FindAsync(review.AccommodationId);
-            if (accommodation == null)
-                return NotFound("Accommodation not found.");
+            var accommodation = await _context.Accommodations.FindAsync(id);
+            if (accommodation == null) return NotFound();
 
-            review.DatePosted = DateTime.Now;
-            _context.AccommodationReviews.Add(review);
+            accommodation.IsAvailable = dto.Status == "Available";
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Review added successfully!" });
+            return Ok(accommodation);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAccommodation(int id)
+        {
+            var accommodation = await _context.Accommodations
+                .Include(a => a.Images)
+                .Include(a => a.Amenities)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (accommodation == null) return NotFound();
+
+            if (accommodation.Images != null)
+                _context.AccommodationImages.RemoveRange(accommodation.Images);
+
+            if (accommodation.Amenities != null)
+                _context.AccommodationAmenities.RemoveRange(accommodation.Amenities);
+
+            _context.Accommodations.Remove(accommodation);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAccommodations()
+        {
+            var accommodations = await _context.Accommodations
+                .Include(a => a.Images)
+                .Include(a => a.Amenities)
+                .ToListAsync();
+
+            var dtos = accommodations.Select(MapToDto);
+            return Ok(dtos);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetAccommodation(int id)
+        {
+            var accommodation = await _context.Accommodations
+                .Include(a => a.Images)
+                .Include(a => a.Amenities)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
+            if (accommodation == null) return NotFound();
+
+            return Ok(MapToDto(accommodation));
+        }
+
+        private AccommodationDto MapToDto(Accommodation accommodation)
+        {
+            return new AccommodationDto
+            {
+                Id = accommodation.Id,
+                Name = accommodation.Name,
+                Type = accommodation.Type ?? string.Empty,
+                Location = accommodation.Location ?? string.Empty,
+                PricePerNight = accommodation.PricePerNight,
+                Bedrooms = accommodation.Bedrooms,
+                Bathrooms = accommodation.Bathrooms,
+                MaxGuests = accommodation.MaxGuests,
+                Description = accommodation.Description ?? string.Empty,
+                IsAvailable = accommodation.IsAvailable,
+                // Removed SupplierId mapping
+                ImageUrls = accommodation.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>(),
+                Amenities = accommodation.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>()
+            };
         }
     }
 }

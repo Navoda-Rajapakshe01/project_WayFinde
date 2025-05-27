@@ -6,7 +6,7 @@ namespace Backend.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        [Required] 
         public string Brand { get; set; } = string.Empty;
         [Required]
         public string Model { get; set; } = string.Empty;

@@ -1,5 +1,5 @@
 import React from "react";
-//import "../../CSS/accommodation.css";
+import "../CSS/Accommodation.css";
 
 const PopularLocations = ({ locations }) => {
   return (
@@ -9,7 +9,9 @@ const PopularLocations = ({ locations }) => {
         {locations.map((location, index) => (
           <div key={index} className="location-card">
             <img
-              src={`https://via.placeholder.com/300x200?text=${location}`}
+              src={`https://via.placeholder.com/300x200?text=${encodeURIComponent(
+                location
+              )}`}
               alt={location}
               className="location-image"
             />

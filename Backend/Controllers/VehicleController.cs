@@ -98,7 +98,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("{id}/status")]
-        public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusDto dto)
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] VehicleUpdateStatusDto dto)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
             if (vehicle == null) return NotFound();
@@ -107,11 +107,6 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(vehicle);
-        }
-
-        public class UpdateStatusDto
-        {
-            public string Status { get; set; }
         }
 
         [HttpDelete("{id}")]

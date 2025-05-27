@@ -17,7 +17,7 @@ import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import Accommodation from "./pages/Accommodation/Accommodation";
 import AccommodationSupplier from "./pages/AccommodationSupplier/AccommodationSupplier";
-import AccommodationDetail from "./pages/AccommodationDetail";
+import AccommodationDetail from "./pages/Accommodation/AccommodationDetailPage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
@@ -60,6 +60,7 @@ function AppRoutes() {
           path="/accommodation/supplier"
           element={<AccommodationSupplier />}
         />
+
         <Route path="/blog" element={<Blog />} />
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />

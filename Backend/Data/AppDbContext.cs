@@ -15,7 +15,6 @@ namespace Backend.Data
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
         public DbSet<VehicleAmenity> VehicleAmenities { get; set; }
 
-
         // Places & Districts
         public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
@@ -30,7 +29,7 @@ namespace Backend.Data
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
-        //Dashboard Notes (NEW)
+        // Dashboard Notes (NEW)
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
@@ -38,7 +37,7 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-        public object Amenities { get; internal set; }
+        public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -47,80 +46,15 @@ namespace Backend.Data
             // DistrictWithPlacesCountDTO is a keyless DTO
             modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
 
-            // Precision for PricePerDay
+            // Precision for PricePerDay (Vehicles)
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.PricePerDay)
                 .HasPrecision(18, 2);
 
+            // Precision for PricePerNight (Accommodations)
             modelBuilder.Entity<Accommodation>()
-                .Property(a => a.PricePerDay)
+                .Property(a => a.PricePerNight)
                 .HasPrecision(18, 2);
-
-            // Seed Vehicles
-            modelBuilder.Entity<Vehicle>().HasData(
-                new Vehicle
-                {
-                    Id = 1,
-                    Brand = "Toyota",
-                    Model = "Corolla",
-                    Type = "Sedan",
-                    NumberOfPassengers = 5,
-                    FuelType = "Petrol",
-                    TransmissionType = "Automatic",
-                    Location = "Colombo",
-                    PricePerDay = 45.00m,
-                    IsAvailable = true
-                },
-                new Vehicle
-                {
-                    Id = 2,
-                    Brand = "Suzuki",
-                    Model = "Wagon R",
-                    Type = "Mini Van",
-                    NumberOfPassengers = 4,
-                    FuelType = "Hybrid",
-                    TransmissionType = "Automatic",
-                    Location = "Kandy",
-                    PricePerDay = 38.50m,
-                    IsAvailable = true
-                }
-            );
-
-            // Seed Accommodations
-            modelBuilder.Entity<Accommodation>().HasData(
-                new Accommodation
-                {
-                    Id = 1,
-                    Name = "Earl's Regency",
-                    Type = "Hotel",
-                    NumberOfGuests = 100,
-                    NumberOfBedRooms = 20,
-                    NumberOfBeds = 60,
-                    NumberOfBathRooms = 40,
-                    Location = "Thennekumbura",
-                    OwnerName = "Earl's regency group",
-                    OwnerCity = "Kandy",
-                    Description = "stay in free, make your day comfortable",
-                    PricePerDay = 56900m,
-                    IsAvailable = true
-                },
-                new Accommodation
-                {
-                    Id = 2,
-                    Name = "Sajeew Paradise",
-                    Type = "Cabana suite",
-                    NumberOfGuests = 8,
-                    NumberOfBedRooms = 3,
-                    NumberOfBeds = 4,
-                    NumberOfBathRooms = 3,
-                    Location = "Oruthota",
-                    OwnerName = "Sajeewa Karalliyadda",
-                    OwnerCity = "Rajawella",
-                    Description = "happy holiday",
-                    PricePerDay = 14900m,
-                    IsAvailable = true
-                }
-            );
 
             // District
             modelBuilder.Entity<District>()
@@ -179,7 +113,6 @@ namespace Backend.Data
                 .HasDefaultValueSql("GETDATE()");
 
             // DashboardNote rules
-
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.NoteTitle)
                 .IsRequired()
