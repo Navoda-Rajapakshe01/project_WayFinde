@@ -1,6 +1,10 @@
+.profile-blogs-container{
+  height: 100vh;
+}
 .blogTopic{
     font-weight: bold;
    text-align: center;
+   margin-top: 100px;
    
  }
  .page-container-personalBlog{

@@ -14,6 +14,7 @@ using CloudinaryDotNet.Actions;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using Backend.DTO;
 
 namespace Backend.Controllers
 {
@@ -246,18 +247,70 @@ namespace Backend.Controllers
                 return StatusCode(500, new { message = "internal server error" });
             }
         }
-        // GET: api/Blog/{id}
+        // GET: api/Blog/display/{id}
         [HttpGet("display/{id}")]
         public async Task<ActionResult<Blog>> GetBlogById(int id)
         {
-            var blog = await _context.Blogs.FindAsync(id);
-
-            if (blog == null)
+            // Validate the ID
+            if (id <= 0)
             {
-                return NotFound();
+                return BadRequest("Invalid blog ID");
             }
 
-            return blog;
+            try
+            {
+                var blog = await _context.Blogs
+            .Include(b => b.User)  // Include the related User data
+            .FirstOrDefaultAsync(b => b.Id == id);
+
+                if (blog == null)
+                {
+                    return NotFound($"Blog with ID {id} not found");
+                }
+
+                return Ok(blog);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception here if you have logging configured
+                return StatusCode(500, "An error occurred while retrieving the blog");
+            }
+        }
+        [HttpPost("add_comment")]
+        public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
+        {
+            var blog = await _context.Blogs.FindAsync(dto.BlogId);
+            if (blog == null)
+                return NotFound("Blog not found");
+
+            var user = await _context.UsersNew.FindAsync(dto.UserId);
+            if (user == null)
+                return NotFound("User not found");
+
+            var comment = new Comment
+            {
+                Blog = blog,
+                User = user,
+                UserId = dto.UserId,
+                Content = dto.Content,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return Ok(comment);
+        }
+
+        // GET: api/blog/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
+        {
+            var blogs = await _context.Blogs
+                .Include(b => b.User) // if you want to include user data
+                .ToListAsync();
+
+            return Ok(blogs);
         }
 
     }

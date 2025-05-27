@@ -3,6 +3,7 @@ import { FaChevronLeft, FaChevronRight, FaComment } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "./ImageGrid.css";
 
+
 const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
   const navigate = useNavigate();
   const scrollContainerRefLatest = useRef(null); // Create ref for scrolling container

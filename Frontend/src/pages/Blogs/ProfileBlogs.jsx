@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaCommentAlt, FaThumbsUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "../CSS/ProfileBlogs.css";
 
@@ -121,7 +122,7 @@ const ProfileSettings = () => {
   }
 
   return (
-    <div>
+    <div className="profile-blogs-container">
       <ProfileHeadSection user={user} />
 
       <div className="carousel-container">
@@ -149,8 +150,8 @@ const ProfileSettings = () => {
         ) : (
           blogs.map((blog, index) => (
             <div onClick={() => handleBlogDisplay(blog.id || blog.Id || blog.blogId || blog.BlogId)} 
-            className="blog-card" 
-            key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}>
+    className="blog-card" 
+    key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}>
               <img
                 src={blog.coverImageUrl}
                 alt="Blog"

@@ -11,6 +11,8 @@ namespace Backend.Data
         public DbSet<Blog> Blogs { get; set; } = null!;
         public DbSet<BlogImageNew> BlogImagesNew { get; set; } = null!;
 
+        public DbSet<Comment> Comments { get; set; } = null!;
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -26,12 +28,22 @@ namespace Backend.Data
              .HasOne(b => b.User)
              .WithMany(u => u.Blogs)
              .HasForeignKey(b => b.UserId);
+             
+
             // Configure the ImageUrls property for Blog
             modelBuilder.Entity<Blog>()
                 .Property(b => b.ImageUrls)
                 .HasConversion(
                     v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
                     v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
+
+                    modelBuilder.Entity<Comment>()
+               .HasOne(c => c.User)
+               .WithMany()
+               .HasForeignKey(c => c.UserId)
+               .OnDelete(DeleteBehavior.Restrict); // <== Fix for cascade cycle
+
+            
         }
     }
 }
