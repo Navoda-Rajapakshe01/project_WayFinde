@@ -31,6 +31,36 @@ namespace Backend.Controllers
             return Ok(reviews);
         }
 
+        [HttpGet("/api/reviews")]
+        public async Task<ActionResult<IEnumerable<Review>>> GetAllReviews()
+        {
+            var reviews = await _context.Reviews
+                .Include(r => r.Place)
+                .Where(r => r.Place != null) 
+                .Select(r => new
+                {
+                    r.Id,
+                    r.PlaceId,
+                    PlaceName = r.Place.Name,
+                    Name = r.Name,
+                    r.Email,
+                    r.Comment,
+                    r.Rating,
+                    r.CreatedAt
+                })
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            return Ok(reviews);
+        }
+
+        [HttpGet("/api/reviews/Rcount")]
+        public async Task<ActionResult<int>> GetTotalReviewCount()
+        {
+            var count = await _context.Reviews.CountAsync();
+            return Ok(count);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Review>> PostReview(int placeId, [FromBody] Review review)
         {
@@ -62,6 +92,18 @@ namespace Backend.Controllers
                 review.Rating,
                 review.CreatedAt
             });
+        }
+        
+        [HttpDelete("/api/reviews/{id}")]
+        public async Task<IActionResult> DeleteReview(int id)
+        {
+            var review = await _context.Reviews.FindAsync(id);
+            if (review == null)
+                return NotFound();
+
+            _context.Reviews.Remove(review);
+            await _context.SaveChangesAsync();
+            return NoContent();
         }
     }
 }
