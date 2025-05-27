@@ -1,39 +1,15 @@
-.admin-header .header-left,
 .admin-header .header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-.admin-header .search-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.admin-header .search-icon {
-  position: absolute;
-  left: 12px;
-  color: #7f8c8d;
-  font-size: 0.9rem;
-}
-.admin-header .search-input {
-  padding: 9px 12px 9px 35px;
-  border: 1px solid #e0e0e0; 
-  border-radius: 20px;
-  min-width: 220px;
-  font-size: 0.9rem;
-  background-color: #ecf0f1; 
-}
-.admin-header .search-input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(20, 185, 213, 0.2);
-  background-color: #ffffff; 
+  justify-content: flex-end;
+  width: 100%;
+  padding: 0 24px;
 }
 
 .admin-header .notification-container,
 .admin-header .profile-container {
   position: relative;
+  margin-left: 25px;
 }
 
 .admin-header .notification-button,
@@ -53,12 +29,36 @@
   color: #2c3e50;
 }
 
+.admin-header .notification-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-header .notification-heading h3 {
+  margin: 0;
+}
+
+.admin-header .notification-heading button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 5px 15px 5px 5px;
+}
+.notification-heading button:hover {
+  text-decoration: underline;
+}
+
 .admin-header .notification-badge {
   position: absolute;
   top: -2px;
   right: -5px;
-  background-color: #e74c3c; /* Hardcoded Danger */
-  color: white;
+  background-color: transparent;
+  color: transparent;
   font-size: 0.7rem;
   font-weight: bold;
   width: 18px;
@@ -68,14 +68,53 @@
   justify-content: center;
   align-items: center;
   line-height: 1;
+}
+
+.admin-header .notification-badge.show {
+  background-color: #e74c3c;
+  color: white;
   border: 1px solid white;
+}
+
+/* Notifications Modal */
+.admin-header .notifications-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-header .notifications-modal {
+  background: #fff;
+  padding: 32px;
+  border-radius: 8px;
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+.admin-header .notifications-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 0;
+  z-index: 10;
+  transition: color 0.2s;
 }
 
 .admin-header .profile-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #ecf0f1; /* Light background */
+  background-color: #ecf0f1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -93,10 +132,10 @@
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
-  background-color: #ffffff; /* White background */
-  border: 1px solid #e0e0e0; /* Light border */
-  border-radius: 6px; /* Hardcoded */
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
   min-width: 300px;
   z-index: 1010;
   opacity: 1;
@@ -108,7 +147,6 @@
   font-weight: 600;
   padding: 15px 20px;
   margin: 0;
-  border-bottom: 1px solid #e0e0e0;
   color: #2c3e50;
 }
 
@@ -124,6 +162,8 @@
   border-bottom: 1px solid #e0e0e0;
   cursor: pointer;
   transition: background-color var(--transition);
+  padding-right: 32px;
+  position: relative;
 }
 .admin-header .notification-list li:last-child {
   border-bottom: none;
@@ -134,6 +174,25 @@
 .admin-header .notification-list li.unread {
   background-color: #f1faff;
 }
+
+.admin-header .notification-item-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-header .notification-clear-btn {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #b0b0b0;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+
 .admin-header .notification-text {
   font-size: 0.9rem;
   margin-bottom: 4px;
@@ -148,6 +207,7 @@
   text-align: center;
   color: #7f8c8d;
   font-size: 0.9rem;
+  margin-bottom: 10px;
 }
 .admin-header .dropdown-footer {
   display: flex;
@@ -222,9 +282,9 @@
   border-top: 1px solid #e0e0e0;
   margin-top: 5px;
   padding-top: 10px;
-  color: #e74c3c; /* Hardcoded Danger */
+  color: #e74c3c;
   font-weight: 500;
 }
 .admin-header .profile-menu li.logout:hover {
   background-color: #feebee;
-} /* Light red */
+}
