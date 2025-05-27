@@ -80,7 +80,7 @@ const PersonalBlog = ({ userId, blogId }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5030/api/blog/add-comment",
+        "http://localhost:5030/api/blog/addcomment",
         {
           userId,
           blogId,
@@ -152,11 +152,11 @@ const PersonalBlog = ({ userId, blogId }) => {
           <div className="numberOfComments">Comments(265)</div>
           <div className="commentsAreaProfileDetails">
             <img
-              src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+              src={blog.user.profilePictureUrl}
               alt="User Profile"
               className="profile-img"
             />
-            Aaron-Jay
+            <h1>{blog.user.username}</h1>
           </div>
           <div className="commentAreaAddComments">
             <textarea

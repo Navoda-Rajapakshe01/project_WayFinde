@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { FaCommentAlt, FaThumbsUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "../CSS/ProfileBlogs.css";
 
@@ -126,32 +125,21 @@ const ProfileSettings = () => {
       <ProfileHeadSection user={user} />
 
       <div className="carousel-container">
-        {/* Debug information */}
-        {/* <div style={{ background: '#f0f0f0', padding: '10px', margin: '10px', fontSize: '12px' }}>
-          <strong>Debug Info:</strong><br />
-          Blogs array length: {blogs.length}<br />
-          User data: {user ? 'Loaded' : 'Not loaded'}<br />
-          <strong>Raw API Response:</strong><br />
-          {user && (
-            <pre style={{ fontSize: '10px', overflow: 'auto', maxHeight: '200px' }}>
-              {JSON.stringify(user, null, 2)}
-            </pre>
-          )}
-          <strong>Blogs Data:</strong><br />
-          <pre style={{ fontSize: '10px', overflow: 'auto', maxHeight: '100px' }}>
-            {JSON.stringify(blogs, null, 2)}
-          </pre>
-        </div> */}
-
         {blogs.length === 0 ? (
           <p style={{ textAlign: "center", marginTop: "2rem" }}>
             No blogs uploaded yet.
           </p>
         ) : (
           blogs.map((blog, index) => (
-            <div onClick={() => handleBlogDisplay(blog.id || blog.Id || blog.blogId || blog.BlogId)} 
-    className="blog-card" 
-    key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}>
+            <div
+              onClick={() =>
+                handleBlogDisplay(
+                  blog.id || blog.Id || blog.blogId || blog.BlogId
+                )
+              }
+              className="blog-card"
+              key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}
+            >
               <img
                 src={blog.coverImageUrl}
                 alt="Blog"
@@ -187,7 +175,7 @@ const ProfileSettings = () => {
       <div className="profile-settings">
         <div className="button-wrapper">
           <button onClick={handleFileClick} className="UploadBlogButton">
-            Upload Blog Document (.doc/.docx)
+            Add Blog
           </button>
           <button onClick={writeBlog} className="UploadBlogButton">
             Write blog

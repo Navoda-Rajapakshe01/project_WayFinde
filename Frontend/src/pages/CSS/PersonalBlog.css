@@ -5,6 +5,7 @@
     font-weight: bold;
    text-align: center;
    margin-top: 100px;
+   font-size: 30px;
    
  }
  .page-container-personalBlog{
@@ -39,6 +40,9 @@
    }
    .writerName{
      font-weight: boldcd;
+   }
+   .writerName h1{
+    font-weight: bold;
    }
    .numComLikes{
      font-size: 15px;

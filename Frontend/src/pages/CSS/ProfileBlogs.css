@@ -1,8 +1,12 @@
 .button-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 1rem; /* optional spacing */
-  }
+  display: flex;
+  justify-content: flex-start; /* align buttons to the left */
+  gap: 0.5rem; /* adds spacing between buttons */
+  margin-top: 1rem; /* optional spacing */
+}
+.profile-blogs-container{
+  height: 100vh;
+}
   
   .UploadBlogButton {
     background-color: #007bff;
@@ -72,5 +76,8 @@
   .icon {
     margin-right: 0.3rem;
     color: #0d6efd;
+  }
+  .profile-settings{
+    min-height: 100px;
   }
   

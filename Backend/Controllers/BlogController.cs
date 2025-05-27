@@ -276,7 +276,9 @@ namespace Backend.Controllers
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
         }
-        [HttpPost("add_comment")]
+        [HttpPost("addcomment")]
+       
+
         public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
         {
             var blog = await _context.Blogs.FindAsync(dto.BlogId);
