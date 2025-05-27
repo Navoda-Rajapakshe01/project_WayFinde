@@ -18,7 +18,7 @@ const ProfileSettings = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const res = await fetch("http://localhost:5030/api/profile/me", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -32,12 +32,12 @@ const ProfileSettings = () => {
         const data = await res.json();
         console.log("=== FULL API RESPONSE ===");
         console.log(JSON.stringify(data, null, 2));
-        
+
         setUser(data);
-        
+
         // Handle Entity Framework JSON serialization format
         let blogsData = null;
-        
+
         // Check for different possible blog locations
         if (data.Blogs && data.Blogs.$values) {
           // Entity Framework format with capital B
@@ -59,15 +59,21 @@ const ProfileSettings = () => {
           console.log("No blogs found in expected locations");
           console.log("Available keys:", Object.keys(data));
         }
-        
+
         console.log("Final blogs data:", blogsData);
-        console.log("Blogs length:", blogsData ? blogsData.length : 'N/A');
-        
+        console.log("Blogs length:", blogsData ? blogsData.length : "N/A");
+
         if (Array.isArray(blogsData)) {
           setBlogs(blogsData);
-          console.log("Successfully set blogs array with length:", blogsData.length);
+          console.log(
+            "Successfully set blogs array with length:",
+            blogsData.length
+          );
         } else {
-          console.warn("Blogs data is not an array or is null/undefined:", blogsData);
+          console.warn(
+            "Blogs data is not an array or is null/undefined:",
+            blogsData
+          );
           setBlogs([]);
         }
       } catch (error) {
@@ -86,8 +92,8 @@ const ProfileSettings = () => {
     navigate("/uploadNewBlog"); // Navigate to your blog upload page
   };
 
-  const handleBlogDisplay = () => {
-    navigate("/pages/Blogs/BlogPriview"); // Navigate to your blog upload page
+  const handleBlogDisplay = (blogId) => {
+    navigate(`/blog/${blogId}`); // Navigate to your blog upload page
   };
 
   const writeBlog = () => {
@@ -98,9 +104,7 @@ const ProfileSettings = () => {
     return (
       <div>
         <ProfileHeadSection user={user} />
-        <div style={{ textAlign: "center", marginTop: "2rem" }}>
-          Loading...
-        </div>
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>
       </div>
     );
   }
@@ -137,26 +141,32 @@ const ProfileSettings = () => {
             {JSON.stringify(blogs, null, 2)}
           </pre>
         </div> */}
-        
+
         {blogs.length === 0 ? (
           <p style={{ textAlign: "center", marginTop: "2rem" }}>
             No blogs uploaded yet.
           </p>
         ) : (
           blogs.map((blog, index) => (
-            <div onClick={handleBlogDisplay} className="blog-card" key={index}>
-              <img 
-                src={blog.coverImageUrl} 
-                alt="Blog" 
+            <div onClick={() => handleBlogDisplay(blog.id || blog.Id || blog.blogId || blog.BlogId)} 
+            className="blog-card" 
+            key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}>
+              <img
+                src={blog.coverImageUrl}
+                alt="Blog"
                 className="blog-image"
                 onError={(e) => {
-                  e.target.src = '/placeholder-image.jpg'; // Fallback image
+                  e.target.src = "/placeholder-image.jpg"; // Fallback image
                 }}
               />
               <div className="blog-content">
                 <p className="blog-name">{blog.title}</p>
                 <p className="blog-topic">
-                  <strong>{blog.location !== "undefined" ? blog.location : "No location specified"}</strong>
+                  <strong>
+                    {blog.location !== "undefined"
+                      ? blog.location
+                      : "No location specified"}
+                  </strong>
                 </p>
                 <p className="blog-description">Author: {blog.author}</p>
                 <div className="blog-actions">

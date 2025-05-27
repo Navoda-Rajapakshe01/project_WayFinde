@@ -246,6 +246,19 @@ namespace Backend.Controllers
                 return StatusCode(500, new { message = "internal server error" });
             }
         }
+        // GET: api/Blog/{id}
+        [HttpGet("display/{id}")]
+        public async Task<ActionResult<Blog>> GetBlogById(int id)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+
+            if (blog == null)
+            {
+                return NotFound();
+            }
+
+            return blog;
+        }
 
     }
 }
