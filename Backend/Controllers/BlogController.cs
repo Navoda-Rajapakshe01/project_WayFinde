@@ -45,8 +45,9 @@ namespace Backend.Controllers
             _logger = logger;
         }
 
+        //Upload blogs to the account
         [HttpPost("upload-blogs")]
-        [Authorize] // Add the Authorize attribute to ensure the user is authenticated
+        [Authorize] 
         public async Task<IActionResult> UploadBlog([FromForm] UploadBlogDto uploadDto)
         {
             try
@@ -106,7 +107,7 @@ namespace Backend.Controllers
         }
 
         
-
+        //Display blogs with the unique id
         [HttpGet("{Id}")]
         public async Task<ActionResult<Blog>> GetBlog(int Id)
         {
@@ -166,7 +167,7 @@ namespace Backend.Controllers
             }
         }
 
-
+        //Add a new comment to the blog
         [HttpPost("newComment")]
         public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
         {
@@ -204,6 +205,7 @@ namespace Backend.Controllers
             return Ok(blogs);
         }
 
+        //Delete a blog in the profile
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBlog(int id)
         {

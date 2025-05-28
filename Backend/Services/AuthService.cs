@@ -43,7 +43,7 @@ namespace Backend.Services
                 return null; // Treat wrong password as login failure
             }
 
-            // Everything is correct - generate token
+            
             return CreateToken(user);
         }
 
@@ -84,7 +84,7 @@ namespace Backend.Services
                 }
                 catch (DbUpdateException dbEx)
                 {
-                    // Log the inner exception for debugging
+                    
                     Console.WriteLine($"Database error: {dbEx.InnerException?.Message}");
                     throw new Exception($"Database error: {dbEx.InnerException?.Message}");
                 }
@@ -102,7 +102,7 @@ namespace Backend.Services
         {
             var payload = await GoogleJsonWebSignature.ValidateAsync(googleToken, new GoogleJsonWebSignature.ValidationSettings
             {
-                Audience = new[] { configuration["Google:ClientId"] } // Put your Google Client ID in appsettings.json
+                Audience = new[] { configuration["Google:ClientId"] } 
             });
 
             var existingUser = await context.UsersNew.FirstOrDefaultAsync(u => u.ContactEmail == payload.Email);
@@ -111,11 +111,11 @@ namespace Backend.Services
             {
                 var newUser = new UserNew
                 {
-                    Username = payload.Email, // Or payload.Name if you want full name
+                    Username = payload.Email, 
                     ContactEmail = payload.Email,
-                    Role = "User", // Default role, change as needed
-                    ServiceType = "", // Or derive from payload if needed
-                    PasswordHash = "" // No password needed for Google users
+                    Role = "User", 
+                    ServiceType = "", 
+                    PasswordHash = "" 
                 };
 
                 context.UsersNew.Add(newUser);

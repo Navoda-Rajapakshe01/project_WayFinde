@@ -24,10 +24,9 @@ const MainNavbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // States
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
-  //const [showSignInModal, setShowSignInModal] = useState(false);
+
   const [profileData, setProfileData] = useState({
     profileImage: "defaultprofilepicture.png",
     username: "",
@@ -35,12 +34,11 @@ const MainNavbar = () => {
   });
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
-  // Context
   const profileImageContext = useContext(ProfileImageContext);
   const profileImageFromContext =
     profileImageContext?.profileImage || "defaultprofilepicture.png";
 
-  // Handle potential undefined context with default values
+  
   const authContext = useContext(AuthContext);
   const user = authContext?.user || null;
   const loading = authContext?.loading || false;
@@ -53,7 +51,7 @@ const MainNavbar = () => {
       window.location.href = "/";
     });
 
-  // Fetch user profile data when user is available
+  
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!user) return;
@@ -87,7 +85,7 @@ const MainNavbar = () => {
       } catch (err) {
         console.error("Error fetching profile data:", err);
 
-        // Fallback to context data if available
+        
         setProfileData({
           profileImage: profileImageFromContext,
           username: user?.username || "User",
@@ -124,6 +122,7 @@ const MainNavbar = () => {
   if (loading) return null;
 
   const handleNavigation = (path) => {
+    window.scrollTo(0, 0);
     navigate(path);
     setIsOpen(false); // Close popup after navigation
   };
@@ -134,13 +133,7 @@ const MainNavbar = () => {
     navigate("/signin");
   };
 
-  // const handleSignInOption = (type) => {
-  //   setShowSignInModal(false);
-  //   navigate(`/signup?role=${type}`);
-  // };
-
-  // const openModal = () => setShowSignInModal(true);
-  // const closeModal = () => setShowSignInModal(false);
+  
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -156,7 +149,7 @@ const MainNavbar = () => {
     { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
     { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
     { name: "Chat", icon: <FaComments />, path: "/chat" },
-    { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
+    { name: "Blogs", icon: <FaNewspaper />, path: "/profile/profileBlogs" },
     { name: "Settings", icon: <FaCog />, path: "/settings" },
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];

@@ -121,7 +121,7 @@ const ProfileSettings = () => {
 
   const writeBlog = () => {
     window.scrollTo(0, 0);
-    navigate("/profile/profileBlogs/blogEditor"); // Navigate to your blog upload page
+    navigate("/profile/profileBlogs/blogEditor"); 
   };
 
   if (loading) {
