@@ -6,7 +6,7 @@
 }
 .profile-blogs-container {
   padding-top: 10px; /* height of navbar */
-  padding-bottom: 1100px; /* height of footer */
+  padding-bottom: 1300px; /* height of footer */
   min-height: 100vh; /* ensure it takes full height */
   box-sizing: border-box;
 }
@@ -21,15 +21,14 @@
     cursor: pointer;
   }
   
-.carousel-container {
+  .blog-container {
     display: flex;
-    flex-wrap: wrap;            /* Allow items to wrap to the next line */
-    gap: 1rem;                  /* Space between cards */
-    overflow-y: auto;           /* Vertical scrolling */
-    max-height: 80vh;           /* Limit height to allow scrolling */
+    flex-wrap: wrap;
+    gap: 1rem;
     padding: 1rem;
     margin-left: 100px;
     margin-right: 100px;
+  
   }
   
   .blog-card {
@@ -81,8 +80,10 @@
     margin-right: 0.3rem;
     color: #0d6efd;
   }
-  .profile-settings{
+  .profile-settings {
     min-height: 100px;
-    
+    margin-top: 10px; /* Pushes the button section below blog cards */
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  

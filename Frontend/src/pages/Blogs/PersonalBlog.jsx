@@ -9,7 +9,7 @@ import "../CSS/PersonalBlog.css"; // Import your CSS file for styling
 //const beachImage2 = "/Blogimages/beach2.jpg"; // Correct path from public folder
 //const beachImage3 = "/Blogimages/beach3.jpg"; // Correct path from public folder
 //const beachImage4 = "/Blogimages/beach4.jpg"; // Correct path from public folder
-const PersonalBlog = ({ userId, blogId }) => {
+const PersonalBlog = ({ UserId, BlogId }) => {
   console.log("PersonalBlog component mounted");
   const { id } = useParams(); // Get ID from URL parameters
   const [blog, setBlog] = useState(null);
@@ -18,8 +18,8 @@ const PersonalBlog = ({ userId, blogId }) => {
   const [commentText, setCommentText] = useState("");
 
   PersonalBlog.propTypes = {
-    userId: PropTypes.string.isRequired,
-    blogId: PropTypes.string.isRequired,
+    UserId: PropTypes.string.isRequired,
+    BlogId: PropTypes.string.isRequired,
   };
 
   useEffect(() => {
@@ -80,11 +80,11 @@ const PersonalBlog = ({ userId, blogId }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5030/api/blog/addcomment",
+        "http://localhost:5030/api/blog/newComment",
         {
-          userId,
-          blogId,
-          content: commentText,
+          UserId,
+          BlogId,
+          Content: commentText,
         }
       );
 

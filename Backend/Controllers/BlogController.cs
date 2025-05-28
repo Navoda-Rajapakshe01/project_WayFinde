@@ -105,118 +105,7 @@ namespace Backend.Controllers
             }
         }
 
-        //[HttpPost("save-blogs")]
-        //[Authorize]
-        //public async Task<IActionResult> CreateBlog([FromBody] Blog blog)
-        //{
-        //    if (blog == null || string.IsNullOrWhiteSpace(blog.Title) || string.IsNullOrWhiteSpace(blog.BlogUrl))
-        //    {
-        //        return BadRequest("Invalid blog data.");
-        //    }
-
-        //    var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        //    if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out Guid userId))
-        //    {
-        //        return Unauthorized("Invalid or missing user ID.");
-        //    }
-
-        //    blog.UserId = userId;
-        //    blog.CreatedAt = DateTime.UtcNow;
-
-        //    // Ensure tags list is not null
-        //    blog.Tags ??= new List<string>();
-
-        //    // Optional: Set fallback cover image if none provided
-        //    if (string.IsNullOrEmpty(blog.CoverImageUrl))
-        //    {
-        //        blog.CoverImageUrl = "https://your-default-image-url.com/default.jpg";
-        //    }
-
-        //    _context.Blogs.Add(blog);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(new { message = "Blog saved successfully", blog.Id });
-        //}
-
-
-        //[HttpPost("upload-image")]
-        //[Authorize] // Make sure this is uncommented in production
-        //public async Task<IActionResult> UploadImage([FromForm] IFormFile image)
-        //{
-        //    if (image == null || image.Length == 0)
-        //        return BadRequest("No image file provided.");
-
-        //    try
-        //    {
-        //        var uploadParams = new ImageUploadParams
-        //        {
-        //            File = new FileDescription(image.FileName, image.OpenReadStream()),
-        //            Folder = "quill_blog_images"
-        //        };
-
-        //        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-        //        if (uploadResult.StatusCode != HttpStatusCode.OK || string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
-        //        {
-        //            return StatusCode(500, "Image upload to Cloudinary failed.");
-        //        }
-
-        //        // 🔐 Get user ID from JWT
-        //        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        //        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-        //        {
-        //            return Unauthorized("Invalid or missing user ID.");
-        //        }
-
-        //        // 💾 Save image info to the database
-        //        var blogImage = new BlogImageNew
-        //        {
-        //            Url = uploadResult.SecureUrl.ToString(),
-        //            UserId = userId,
-        //            BlogId = null // Associate later when blog is created
-        //        };
-
-        //        _context.BlogImagesNew.Add(blogImage);
-        //        await _context.SaveChangesAsync();
-
-        //        return Ok(new
-        //        {
-        //            imageUrl = blogImage.Url,
-        //            imageId = blogImage.Id,
-        //            originalFilename = uploadResult.OriginalFilename
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
-
-
-
-
-        // Make sure you have a GET endpoint for Swagger to detect
-        //[HttpGet]
-        //public async Task<IActionResult> GetBlogs()
-        //{
-        //    try
-        //    {
-        //        var blogs = await _context.Blogs.ToListAsync();
-        //        return Ok(blogs);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
-        //[HttpPost]
-        //public async Task<IActionResult> PostBlog([FromBody] Blog post)
-        //{
-        //    _context.Blogs.Add(post);
-        //    await _context.SaveChangesAsync();
-        //    return Ok(new { message = "Blog saved" });
-        //}
+        
 
         [HttpGet("{Id}")]
         public async Task<ActionResult<Blog>> GetBlog(int Id)
@@ -276,9 +165,9 @@ namespace Backend.Controllers
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
         }
-        [HttpPost("addcomment")]
-       
 
+
+        [HttpPost("newComment")]
         public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
         {
             var blog = await _context.Blogs.FindAsync(dto.BlogId);
@@ -313,6 +202,21 @@ namespace Backend.Controllers
                 .ToListAsync();
 
             return Ok(blogs);
+        }
+
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteBlog(int id)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
+            {
+                return NotFound(new { message = "Blog not found." });
+            }
+
+            _context.Blogs.Remove(blog);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Blog deleted successfully." });
         }
 
     }

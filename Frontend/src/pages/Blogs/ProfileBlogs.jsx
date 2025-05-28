@@ -1,5 +1,6 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaCommentAlt, FaThumbsUp } from "react-icons/fa";
+import { FaCommentAlt, FaThumbsUp, FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
@@ -89,14 +90,37 @@ const ProfileSettings = () => {
   }, []);
 
   const handleFileClick = () => {
+    window.scrollTo(0, 0);
     navigate("/uploadNewBlog"); // Navigate to your blog upload page
   };
 
   const handleBlogDisplay = (blogId) => {
+    window.scrollTo(0, 0);
     navigate(`/blog/${blogId}`); // Navigate to your blog upload page
   };
 
+  const handleDeleteBlog = async (blogId) => {
+    if (!window.confirm("Are you sure you want to delete this blog?")) return;
+
+    try {
+      await axios.delete(`http://localhost:5030/api/blog/delete/${blogId}`);
+      alert("Blog deleted successfully.");
+      // optionally refresh blog list
+      // Remove the deleted blog from the state
+      setBlogs((prevBlogs) =>
+        prevBlogs.filter(
+          (blog) =>
+            (blog.id || blog.Id || blog.blogId || blog.BlogId) !== blogId
+        )
+      );
+    } catch (error) {
+      console.error("Failed to delete blog:", error);
+      alert("Failed to delete blog.");
+    }
+  };
+
   const writeBlog = () => {
+    window.scrollTo(0, 0);
     navigate("/profile/profileBlogs/blogEditor"); // Navigate to your blog upload page
   };
 
@@ -124,7 +148,7 @@ const ProfileSettings = () => {
     <div className="profile-blogs-container">
       <ProfileHeadSection user={user} />
 
-      <div className="carousel-container">
+      <div className="blog-container">
         {blogs.length === 0 ? (
           <p style={{ textAlign: "center", marginTop: "2rem" }}>
             No blogs uploaded yet.
@@ -164,6 +188,17 @@ const ProfileSettings = () => {
                   </span>
                   <span>
                     <FaThumbsUp className="icon" /> Likes
+                  </span>
+                  <span
+                    
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent triggering blog display
+                      handleDeleteBlog(
+                        blog.id || blog.Id || blog.blogId || blog.BlogId
+                      );
+                    }}
+                  >
+                   <FaTrash className="icon" /> Delete
                   </span>
                 </div>
               </div>

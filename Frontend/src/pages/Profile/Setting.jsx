@@ -174,7 +174,7 @@ const ProfileSettings = () => {
   };
 
   return (
-    <div className="profile-settings">
+    <div className="profilesettings">
       <div className="profile-picture-section">
         <img
           src={

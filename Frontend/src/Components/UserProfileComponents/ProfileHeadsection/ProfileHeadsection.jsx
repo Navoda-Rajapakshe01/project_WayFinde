@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const ProfileHeadSection = () => {
   const [username, setUsername] = useState("");
@@ -9,7 +8,8 @@ const ProfileHeadSection = () => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
-    navigate('/settings'); // your target route
+    window.scrollTo(0, 0);
+    navigate("/settings"); // your target route
   };
 
   useEffect(() => {
@@ -75,7 +75,9 @@ const ProfileHeadSection = () => {
             <br />
             🌍 Always looking for the next great adventure.
           </p>
-          <button className="edit-profile-btn" onClick={handleEditClick}>Edit Profile</button>
+          <button className="edit-profile-btn" onClick={handleEditClick}>
+            Edit Profile
+          </button>
         </div>
       </div>
 
@@ -99,8 +101,6 @@ const ProfileHeadSection = () => {
           Bookings
         </NavLink>
       </div>
-
-      
     </div>
   );
 };
