@@ -24,7 +24,6 @@ const VehicleManagement = () => {
     // Simulate API call to fetch vehicles
     const fetchVehicles = async () => {
       try {
-        // In a real app, this would be an API call
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
         // Mock data
@@ -130,11 +129,6 @@ const VehicleManagement = () => {
     fetchVehicles();
   }, []);
 
-  const handleAddVehicle = () => {
-    setCurrentVehicle(null);
-    setShowAddModal(true);
-  };
-
   const handleEditVehicle = (vehicle) => {
     setCurrentVehicle(vehicle);
     setShowAddModal(true);
@@ -142,7 +136,6 @@ const VehicleManagement = () => {
 
   const handleDeleteVehicle = (vehicleId) => {
     if (window.confirm("Are you sure you want to delete this vehicle?")) {
-      // In a real app, this would be an API call
       setVehicles(vehicles.filter((vehicle) => vehicle.id !== vehicleId));
     }
   };
@@ -190,9 +183,6 @@ const VehicleManagement = () => {
     <div className="vehicle-management">
       <div className="adminsection-header">
         <h1 className="page-title">Vehicle Management</h1>
-        <button className="adminadd-button" onClick={handleAddVehicle}>
-          <FaPlus /> Add New Vehicle
-        </button>
       </div>
 
       <div className="adminfilter-bar">
@@ -222,8 +212,8 @@ const VehicleManagement = () => {
             </select>
           </div>
 
-          <div className="filter-dropdown">
-            <FaFilter className="filter-icon" />
+          <div className="adminfilter-dropdown">
+            <FaFilter className="adminfilter-icon" />
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}

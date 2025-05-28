@@ -80,7 +80,11 @@ namespace Backend.Controllers
             string placeName = place != null ? place.Name : $"ID {placeId}";
             string reviewer = !string.IsNullOrWhiteSpace(review.Name) ? review.Name : "A guest";
             string message = $"📝 {reviewer} submitted a new review for \"{placeName}\".";
-            await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+            string url = $"/admin/reviews-management";
+            await _hubContext.Clients.All.SendAsync("ReceiveNotification", new{
+                text = message,
+                url = url,
+            });
 
             return CreatedAtAction(nameof(GetReviews), new { placeId = placeId }, new
             {

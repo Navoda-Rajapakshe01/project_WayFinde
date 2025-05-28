@@ -51,14 +51,6 @@ const UsersManagement = () => {
             lastLogin: "2023-06-10",
           },
           {
-            id: 4,
-            name: "Emily Davis",
-            email: "emily@example.com",
-            role: "editor",
-            status: "active",
-            lastLogin: "2023-06-12",
-          },
-          {
             id: 5,
             name: "Michael Wilson",
             email: "michael@example.com",
@@ -73,14 +65,6 @@ const UsersManagement = () => {
             role: "user",
             status: "active",
             lastLogin: "2023-06-13",
-          },
-          {
-            id: 7,
-            name: "David Miller",
-            email: "david@example.com",
-            role: "editor",
-            status: "active",
-            lastLogin: "2023-06-11",
           },
           {
             id: 8,
@@ -103,11 +87,6 @@ const UsersManagement = () => {
     fetchUsers();
   }, []);
 
-  const handleAddUser = () => {
-    setCurrentUser(null);
-    setShowAddModal(true);
-  };
-
   const handleEditUser = (user) => {
     setCurrentUser(user);
     setShowAddModal(true);
@@ -115,7 +94,6 @@ const UsersManagement = () => {
 
   const handleDeleteUser = (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      // In a real app, this would be an API call
       setUsers(users.filter((user) => user.id !== userId));
     }
   };
@@ -141,9 +119,6 @@ const UsersManagement = () => {
     <div className="users-management">
       <div className="adminsection-header">
         <h1 className="page-title">Users Management</h1>
-        <button className="adminadd-button" onClick={handleAddUser}>
-          <FaUserPlus /> Add New User
-        </button>
       </div>
 
       <div className="adminfilter-bar">

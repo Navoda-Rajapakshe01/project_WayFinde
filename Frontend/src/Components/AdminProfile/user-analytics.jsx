@@ -390,56 +390,6 @@ const UserAnalytics = () => {
         </div>
       </div>
 
-      <div className="analytics-grid">
-        <div className="analytics-table-card">
-          <div className="card-header">
-            <h2>Users by Country</h2>
-          </div>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Country</th>
-                <th>Users</th>
-                <th>Percentage</th>
-              </tr>
-            </thead>
-            <tbody>
-              {analyticsData.usersByCountry.map((country, index) => (
-                <tr key={index}>
-                  <td>{country.country}</td>
-                  <td>{country.count}</td>
-                  <td>{country.percentage}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="analytics-table-card">
-          <div className="card-header">
-            <h2>Users by Device</h2>
-          </div>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Device</th>
-                <th>Users</th>
-                <th>Percentage</th>
-              </tr>
-            </thead>
-            <tbody>
-              {analyticsData.usersByDevice.map((device, index) => (
-                <tr key={index}>
-                  <td>{device.device}</td>
-                  <td>{device.count}</td>
-                  <td>{device.percentage}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
       <div className="analytics-metrics">
         <div className="metrics-card">
           <h3>Retention Rate</h3>
