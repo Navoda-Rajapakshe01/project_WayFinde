@@ -39,7 +39,7 @@ const BlogForm = () => {
       if (response.ok) {
         console.log("Uploaded successfully:", result);
         alert("Blog uploaded!");
-        navigate("/profile");
+        navigate("/profile/profileBlogs");
       } else {
         const errorData = await response.json();
         alert("Error uploading blog: " + errorData.message);
@@ -72,7 +72,7 @@ const BlogForm = () => {
         <input type="text" name="author" onChange={handleChange} required />
 
         <label>Location</label>
-        <input type="text" name="category" onChange={handleChange} />
+        <input type="text" name="location" onChange={handleChange} />
 
         <label>Upload Document</label>
         <input

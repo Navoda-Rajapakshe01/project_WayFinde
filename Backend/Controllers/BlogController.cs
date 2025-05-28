@@ -64,7 +64,7 @@ namespace Backend.Controllers
                 if (docResult.StatusCode != HttpStatusCode.OK)
                     return StatusCode(500, "Document upload failed.");
 
-               // Upload image
+                // Upload image
                 var imageUploadParams = new ImageUploadParams
                 {
                     File = new FileDescription(uploadDto.Image.FileName, uploadDto.Image.OpenReadStream()),

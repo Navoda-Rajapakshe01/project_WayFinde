@@ -4,9 +4,13 @@
   gap: 0.5rem; /* adds spacing between buttons */
   margin-top: 1rem; /* optional spacing */
 }
-.profile-blogs-container{
-  height: 100vh;
+.profile-blogs-container {
+  padding-top: 10px; /* height of navbar */
+  padding-bottom: 1100px; /* height of footer */
+  min-height: 100vh; /* ensure it takes full height */
+  box-sizing: border-box;
 }
+
   
   .UploadBlogButton {
     background-color: #007bff;
@@ -79,5 +83,6 @@
   }
   .profile-settings{
     min-height: 100px;
+    
   }
   
