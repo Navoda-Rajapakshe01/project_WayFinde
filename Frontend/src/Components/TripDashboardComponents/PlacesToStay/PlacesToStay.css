@@ -1,9 +1,9 @@
-.place-to-stay-container {
+.placess-to-stay-container {
   display: flex;
   flex-direction: column; 
   gap: 20px; 
   padding: 20px;
-  width: 5%; 
+  width: 53%; 
   max-width: 59%; 
   margin-left: 0; 
   margin-right: 0; 
@@ -31,13 +31,13 @@
   background-color: #218838; 
 }
 
-.places-cards-container {
+.placess-cards-container {
   display: flex;
   flex-wrap: wrap;
   gap: 20px; 
 }
 
-.place-card {
+.places-card {
   width: 48%; 
   border-radius: 8px;
   overflow: hidden;
@@ -49,7 +49,7 @@
   will-change: auto;
 }
 
-.place-image {
+.places-image {
   height: 150px;
   background-size: cover;
   background-position: center;
@@ -74,22 +74,22 @@
 }
 
 .save-button-active {
-  background-color: rgba(0, 0, 255, 1); /* Solid blue when active */
+  background-color: rgba(0, 0, 255, 1); 
 }
 
-.place-info {
-  padding: 10px; /* Reduced padding */
+.places-info {
+  padding: 10px; 
 }
 
 .place-name {
-  font-size: 16px; /* Smaller font size */
+  font-size: 16px; 
   font-weight: bold;
   margin: 0;
   color: #333;
 }
 
 .place-reviews {
-  font-size: 12px; /* Smaller font size */
+  font-size: 12px; 
   color: #666;
   margin-top: 5px;
 }
@@ -97,16 +97,16 @@
 /* Media Query for Smaller Screens */
 @media (max-width: 1200px) {
   .place-card {
-    width: 45%; /* Reduce to 45% width on medium screens */
+    width: 45%; 
   }
 }
 
 @media (max-width: 768px) {
   .place-card {
-    width: 100%; /* Full width on smaller screens */
+    width: 100%; 
   }
 
   .places-cards-container {
-    justify-content: center; /* Center cards on small screens */
+    justify-content: center; 
   }
 }

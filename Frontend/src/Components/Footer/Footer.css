@@ -2,11 +2,14 @@
 .footer {
   background-color: var(--primary-color);
   color: var(--text-color);
-  padding: 60px 0 20px;
+  padding: 60px 0 20px 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  position: relative;
+  bottom: 0;
+  left: 0;
+  width: 100%;
   overflow: hidden;
   color: #e6f7fa;
+  z-index: 1000;
 }
 
 .footer::before {
@@ -171,5 +174,16 @@
 
 .social-icon:hover svg {
   transform: scale(1.2);
+}
+
+/* Add responsive adjustments for mobile */
+@media screen and (max-width: 768px) {
+  .footer {
+    padding: 40px 0 20px;
+  }
+  
+  .footer-container {
+    padding: 0 15px;
+  }
 }
 

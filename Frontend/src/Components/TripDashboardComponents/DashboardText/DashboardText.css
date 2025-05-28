@@ -43,3 +43,23 @@
   .navbar-spacing {
     height: 80px; /* Adjust this value for more or less space */
   }
+
+  @media (max-width: 600px) {
+  .gradient-box {
+    padding: 15px;
+  }
+
+  .gradient-box h1 {
+    font-size: 1.3rem;
+  }
+
+  .gradient-box p,
+  .happy-travels {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-text {
+    margin-top: -20px;
+    flex-direction: column;
+  }
+}

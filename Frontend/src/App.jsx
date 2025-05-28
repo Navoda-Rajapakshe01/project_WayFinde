@@ -38,6 +38,7 @@ import ReviewsManagement from "./Components/AdminProfile/reviews-management";
 import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import EditPlace from "./Components/AdminProfile/edit-place";
+import AddTrip from "./pages/AddTrip";
 
 import "./App.css";
 
@@ -54,6 +55,7 @@ function AppRoutes() {
         <Route path="/plantrip" element={<PlanTrip />} />
         <Route path="/trip-planner" element={<OptimizedTripRoute />} />
         <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
+        <Route path="/add-trip" element={<AddTrip />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
         <Route path="/blog" element={<Blog />} />

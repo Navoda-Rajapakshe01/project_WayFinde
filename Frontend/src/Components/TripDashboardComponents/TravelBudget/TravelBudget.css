@@ -1,10 +1,10 @@
 .travel-budget-container {
   display: flex;
   flex-direction: column;
-  width: 40%;
-  padding-bottom: 60px;
-  margin: 30px;
-  margin-left: 5%;
+  width: 80%;
+  padding: 60px;
+  margin-left: 45px;
+  
 }
 
 .budget-plan-title {

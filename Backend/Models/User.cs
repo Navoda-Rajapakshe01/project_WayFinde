@@ -1,29 +1,27 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
 {
-    public class DashboardNote
+    public class User
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(200)]
-        public string NoteTitle { get; set; }
+        public string FullName { get; set; }
 
         [Required]
-        public string NoteDescription { get; set; }
+        [EmailAddress]
+        public string Email { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
+
         public DateTime CreatedAt { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime UpdatedAt { get; set; }
-
-        [Required]
-        public int TripId { get; set; }
     }
-}
+} 

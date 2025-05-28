@@ -1,13 +1,32 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Backend.Models
 {
     public class TodoItem
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string? TaskName { get; set; }  // Make it nullable
-        
-       // public string? TaskDescription { get; set; } 
-        public string? TaskStatus { get; set; }  // Make it nullable
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
+
+        [Required]
+        [MaxLength(150)]
+        public string TaskName { get; set; }
+
+        [Required]
+        public string TaskStatus { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedAt { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime UpdatedAt { get; set; }
+
+        [Required]
+        public int TripId { get; set; }
+
+        [ForeignKey("TripId")]
+        public virtual Trip Trip { get; set; }
     }
 }

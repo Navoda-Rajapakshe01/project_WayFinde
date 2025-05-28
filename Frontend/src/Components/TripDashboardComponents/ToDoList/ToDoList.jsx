@@ -43,20 +43,21 @@ const TodoList = () => {
       taskName: newNoteText,  // taskName is sent in the request
       taskStatus: 'Active',   // Default status when creating a new task
       createdAt: new Date(),  // Send current time as createdAt
-      updatedAt: new Date()   // Send current time as updatedAt
+      updatedAt: new Date(),
+      tripId: "1" // Send current time as updatedAt
     };
 
-    axios.post('http://localhost:5030/api/todo', newTodo) // POST request to backend
+    axios.post('http://localhost:5030/api/todo', newTodo)
       .then(res => {
         const added = {
           id: res.data.id,
           text: res.data.taskName,
-          completed: res.data.taskStatus === 'Completed' // Convert taskStatus to boolean
+          completed: res.data.taskStatus === 'Completed'
         };
-        setNotes([...notes, added]);  // Update frontend with new task
-        setIsPopupOpen(false);  // Close popup after adding
+        setNotes([...notes, added]);
+        setIsPopupOpen(false);
       })
-      .catch(err => console.error("POST error: ", err));  // Log error if any
+      .catch(err => console.error("POST error: ", err));
   };
 
   // Handle search input change

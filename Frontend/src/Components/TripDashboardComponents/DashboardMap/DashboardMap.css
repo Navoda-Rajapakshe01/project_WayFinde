@@ -1,26 +1,19 @@
 .dashboard-map-container {
-  width: 27%;
-  margin-top: -323px; /* Only move up, not affect other sides */
-  height: 100%;
+  width: 100%;
+  height: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f9f9f9;
-  padding: 5px;
+  padding: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
-  margin-left: 62%;
-  margin-bottom: -220px;
 }
 
 .dashboard-map {
   width: 100%;
-  height: 500px;
-  background-color: #f2f2f2;
-  position: relative;
-  background-image: url('https://via.placeholder.com/800x400');
-  background-size: cover;
-  border-radius: 12px;
+  height: 100%;
+  border-radius: 8px;
 }
 
 .dashboard-map-controls {
@@ -54,7 +47,8 @@
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
 }
 
-.zoom-in-btn, .zoom-out-btn {
+.zoom-in-btn,
+.zoom-out-btn {
   width: 45px;
   height: 45px;
   background: none;
@@ -68,4 +62,54 @@
 
 .zoom-in-btn {
   border-bottom: 1px solid #ddd;
+}
+
+/* ---------------------------- */
+/* ✅ Responsive Media Queries  */
+/* ---------------------------- */
+@media (max-width: 1024px) {
+  .dashboard-map-container {
+    height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-map-container {
+    height: 300px;
+    padding: 10px;
+  }
+
+  .dashboard-map-controls {
+    right: 10px;
+    bottom: 20px;
+    gap: 10px;
+  }
+
+  .center-btn,
+  .zoom-in-btn,
+  .zoom-out-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-map {
+    height: 250px;
+  }
+
+  .center-btn,
+  .zoom-in-btn,
+  .zoom-out-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .dashboard-map-controls {
+    right: 8px;
+    bottom: 16px;
+    gap: 8px;
+  }
 }

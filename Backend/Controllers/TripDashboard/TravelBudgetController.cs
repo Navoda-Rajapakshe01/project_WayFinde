@@ -30,6 +30,13 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<TravelBudget>> Post(TravelBudget travelBudget)
         {
+            var trip = await _context.Trips.FindAsync(travelBudget.TripId);
+            if (trip == null)
+                return BadRequest("Invalid TripId");
+
+            travelBudget.CreatedAt = DateTime.UtcNow;
+            travelBudget.UpdatedAt = DateTime.UtcNow;
+            
             _context.TravelBudgets.Add(travelBudget);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = travelBudget.Id }, travelBudget);
@@ -39,8 +46,18 @@ namespace Backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, TravelBudget travelBudget)
         {
-            if (id != travelBudget.Id) return BadRequest();
-            _context.Entry(travelBudget).State = EntityState.Modified;
+            if (id != travelBudget.Id) 
+                return BadRequest();
+
+            var existingBudget = await _context.TravelBudgets.FindAsync(id);
+            if (existingBudget == null)
+                return NotFound();
+
+            existingBudget.Description = travelBudget.Description;
+            existingBudget.Amount = travelBudget.Amount;
+            existingBudget.UpdatedAt = DateTime.UtcNow;
+
+            _context.Entry(existingBudget).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return NoContent();
         }

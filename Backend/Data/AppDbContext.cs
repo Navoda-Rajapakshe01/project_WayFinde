@@ -28,6 +28,13 @@ namespace Backend.Data
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
+        // Trips
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripPlace> TripPlaces { get; set; }
+
+        // Users
+        public DbSet<User> Users { get; set; }
+
         //Dashboard Notes (NEW)
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
@@ -41,6 +48,10 @@ namespace Backend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Configure TripPlaces trigger
+            modelBuilder.Entity<Trip>()
+                .ToTable("Trips", t => t.HasTrigger("InsertTripPlacesAfterTripInsert"));
 
             // DistrictWithPlacesCountDTO is a keyless DTO
             modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
@@ -182,8 +193,87 @@ namespace Backend.Data
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // DashboardNote rules
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
 
+            modelBuilder.Entity<TravelBudget>()
+                .HasOne<Trip>()
+                .WithMany()
+                .HasForeignKey(t => t.TripId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Trip
+            modelBuilder.Entity<Trip>(entity =>
+            {
+                entity.ToTable("Trips");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("Id")
+                    .UseIdentityColumn();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.StartDate)
+                    .IsRequired();
+
+                entity.Property(e => e.EndDate)
+                    .IsRequired();
+
+                entity.Property(e => e.TotalSpend)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.TripDistance)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.TripTime)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .IsRequired();
+
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("GETDATE()")
+                    .ValueGeneratedOnAddOrUpdate();
+            });
+
+            // User
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(u => u.Id);
+
+                entity.Property(u => u.Id)
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(u => u.FullName)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(u => u.Email)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(u => u.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.Property(u => u.UpdatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+            });
+
+            // DashboardNote rules
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.NoteTitle)
                 .IsRequired()
@@ -194,16 +284,25 @@ namespace Backend.Data
                 .IsRequired();
 
             modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.CreatedDate)
+                .Property(d => d.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.TripId)
                 .IsRequired();
 
             modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.CreatedTime)
-                .IsRequired();
+                .HasOne<Trip>()
+                .WithMany()
+                .HasForeignKey(d => d.TripId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.UserId)
-                .IsRequired();
+            // TripPlace composite key
+            modelBuilder.Entity<TripPlace>().HasKey(tp => new { tp.TripId, tp.PlaceId });
         }
     }
 }

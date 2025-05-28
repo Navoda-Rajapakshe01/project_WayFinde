@@ -1,11 +1,10 @@
 .dashboard-image-card {
   width: 100%;
-  max-width: 700px;
   border-radius: 16px;
   overflow: hidden;
   position: relative;
-  margin: 30px auto;
-  margin-left: 10%;
+  margin: 0;
+  margin-bottom: 30px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -21,7 +20,8 @@
   left: 20px;
   right: 20px;
   display: flex;
-  gap: 30px;
+  flex-wrap: wrap; /* Allows items to wrap on small screens */
+  gap: 20px;
   align-items: center;
   color: #fff;
   font-weight: 600;
@@ -39,4 +39,49 @@
 
 .icon {
   font-size: 1.2rem;
+}
+
+/* -------------------------- */
+/* ✅ Responsive Adjustments  */
+/* -------------------------- */
+@media (max-width: 768px) {
+  .dashboard-image-card {
+    margin-left: 5%;
+    margin-right: 5%;
+  }
+
+  .dashboard-image {
+    height: 200px;
+  }
+
+  .overlay-info {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 1rem;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+
+  .icon {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-image {
+    height: 180px;
+  }
+
+  .overlay-info {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+
+  .icon {
+    font-size: 0.9rem;
+  }
 }

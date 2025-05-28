@@ -1,11 +1,11 @@
 .todo-list-container {
     display: flex;
     flex-direction: column;
-    width: 40%;
     position: relative;
-    padding-bottom: 60px;
-    margin: 30px;
-    margin-left:5%; 
+    width: 80%;
+    padding: 60px;
+    margin-left: 45px;
+  
   }
   
   .todo-title {
@@ -157,12 +157,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 50px 0px 0px 50px;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
   
   .plus-icon {
     font-size: 24px;
+    
   }
 
   

@@ -8,17 +8,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Register HttpClient and WeatherService
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IWeatherService, WeatherService>();
+
 // Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RandulaConnection")));
 
 // Register UserDbContext in the container
 builder.Services.AddDbContext<UserDbContext>(options =>
-
-    
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
+    options.UseSqlServer(builder.Configuration.GetConnectionString("RandulaConnection")));
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -39,15 +39,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-// Add CORS policy
+// Configure CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials() 
-    );
+    options.AddPolicy("AllowReactApp",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5173") // Frontend URL
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials();
+        });
 });
 
 // Add Controllers
@@ -67,7 +69,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Apply CORS policy BEFORE auth
+// Use CORS - Important: This must be called before UseAuthentication and UseAuthorization
 app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();

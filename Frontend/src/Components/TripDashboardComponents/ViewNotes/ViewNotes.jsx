@@ -121,11 +121,8 @@ const ViewNotes = ({ isOpen, onClose }) => {
       .then((updatedData) => {
         // Update local notes state with the response from server
         const updatedLocalNote = {
-          id: updatedData.id,
           title: updatedData.noteTitle || editTitle.trim(),
           note: updatedData.noteDescription || editContent.trim(),
-          createdAt: new Date(updatedData.createdAt || selectedNote.createdAt),
-          userId: updatedData.userId || selectedNote.userId
         };
 
         setNotes(notes.map(note => 

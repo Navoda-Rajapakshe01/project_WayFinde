@@ -35,15 +35,15 @@ function PlacesToStay() {
   };
 
   return (
-    <div className="place-to-stay-container">
+    <div className="placess-to-stay-container">
       
       {/* Render each travel place item */}
-      <div className="places-cards-container">
+      <div className="placess-cards-container">
         {places.map((item, index) => (
-          <div key={index} className="place-card">
+          <div key={index} className="places-card">
             {/* Main Image */}
             <div
-              className="place-image"
+              className="places-image"
               style={{ backgroundImage: `url(${item.mainImageUrl})` }}
             >
               {/* Save Button */}
@@ -57,7 +57,7 @@ function PlacesToStay() {
             </div>
 
             {/* Place Information */}
-            <div className="place-info">
+            <div className="places-info">
               <h3 className="place-name">{item.name}</h3>
               <p className="place-reviews">{item.reviews} reviews</p>
             </div>

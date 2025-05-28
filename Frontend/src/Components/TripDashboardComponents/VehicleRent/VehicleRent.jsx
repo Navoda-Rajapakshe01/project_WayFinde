@@ -37,34 +37,7 @@ const VehicleRent = () => {
 
   return (
     <div className="vehicle-rent-container">
-      {/* Search Section */}
-      <div className="search-section">
-        <div className="location-input">
-          <label>Location</label>
-          <input type="text" placeholder="Pick-up location" />
-        </div>
-        <div className="date-input">
-          <label>Pick-up Date</label>
-          <DatePicker
-            selected={pickupDate}
-            onChange={(date) => setPickupDate(date)}
-            dateFormat="MM/dd/yyyy"
-            placeholderText="mm / dd / yyyy"
-            className="date-picker-input"
-          />
-        </div>
-        <div className="date-input">
-          <label>Return Date</label>
-          <DatePicker
-            selected={returnDate}
-            onChange={(date) => setReturnDate(date)}
-            dateFormat="MM/dd/yyyy"
-            placeholderText="mm / dd / yyyy"
-            className="date-picker-input"
-          />
-        </div>
-      </div>
-
+      
       {/* Vehicles List Section */}
       <div className="vehicle-cards-container">
         {vehicles.map((vehicle, index) => (

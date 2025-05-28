@@ -7,8 +7,7 @@ const AddNotes = ({ isOpen, onClose, onSave }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Replace this with your actual logged-in user ID
-  const userId = '3fa85f64-5717-9962-b3fc-2c963f66afa6';
+ 
 
   // Function to call backend API
   const createNote = async (title, note) => {
@@ -19,10 +18,10 @@ const AddNotes = ({ isOpen, onClose, onSave }) => {
         'Accept': 'text/plain',
       },
       body: JSON.stringify({
-        id: 0,
+  
         noteTitle: title,
         noteDescription: note,
-        userId: userId,
+        tripId: 1,
         // Do not send createdDate or createdTime; backend will auto-fill
       }),
     });

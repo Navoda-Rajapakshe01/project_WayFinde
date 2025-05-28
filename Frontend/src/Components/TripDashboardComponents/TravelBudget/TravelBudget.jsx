@@ -21,13 +21,19 @@ const TravelBudget = () => {
   // Add new expense to the backend
   const handleAddExpense = () => {
     if (newExpense.description && newExpense.amount) {
-      axios.post('http://localhost:5030/api/TravelBudget', newExpense)  // Send POST request to backend
+      const expenseData = {
+        description: newExpense.description,
+        amount: parseFloat(newExpense.amount),
+        tripId: 1  // Automatically set tripId to 1
+      };
+
+      axios.post('http://localhost:5030/api/TravelBudget', expenseData)
         .then((res) => {
-          setExpenses([...expenses, res.data]); // Update state with the new expense
-          setNewExpense({ description: '', amount: '' }); // Reset input fields
+          setExpenses([...expenses, res.data]);
+          setNewExpense({ description: '', amount: '' });
         })
         .catch((err) => {
-          console.error("POST error: ", err); // Handle errors
+          console.error("POST error: ", err);
         });
     }
   };
