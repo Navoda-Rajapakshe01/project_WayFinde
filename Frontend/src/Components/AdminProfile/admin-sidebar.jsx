@@ -43,8 +43,8 @@ const AdminSidebar = ({ activeSection }) => {
       id: "accommodation",
       label: "Accommodation",
       icon: <FaHotel />,
-      path: "/admin/places-management",
-    }, // optional: separate
+      path: "/admin/accommodation-management",
+    }, 
     {
       id: "vehicles",
       label: "Vehicles",
