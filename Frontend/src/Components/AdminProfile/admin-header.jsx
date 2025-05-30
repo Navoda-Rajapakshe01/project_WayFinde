@@ -1,12 +1,14 @@
 "use client";
 import React from "react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaBell, FaUser } from "react-icons/fa";
 import "../AdminProfile/admin-header.css";
 import "../../App.css";
 import * as signalR from "@microsoft/signalr";
 
 const AdminHeader = () => {
+  const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -20,10 +22,12 @@ const AdminHeader = () => {
       .build();
 
     connection.start().then(() => {
-      const handleNotification = (message) => {
+      const handleNotification = (data) => {
+        const { text, url } = data;
         const newNotification = {
           id: Date.now(),
-          text: message,
+          text,
+          url,
           time: "Just now",
           read: false,
         };
@@ -34,8 +38,8 @@ const AdminHeader = () => {
     });
 
     return () => {
-      connection.stop();
       connection.off("ReceiveNotification");
+      connection.stop();
     };
   }, []);
 
@@ -76,6 +80,11 @@ const AdminHeader = () => {
                     <li
                       key={notification.id}
                       className={notification.read ? "read" : "unread"}
+                      onClick={() => {
+                        if (notification.url) {
+                          navigate(notification.url);
+                        }
+                      }}
                     >
                       <div className="notification-item-content">
                         <p className="notification-text">{notification.text}</p>
@@ -86,11 +95,12 @@ const AdminHeader = () => {
                       <button
                         className="notification-clear-btn"
                         title="Clear notification"
-                        onClick={() =>
+                        onClick={(e) => {
+                          e.stopPropagation();
                           setNotifications((prev) =>
                             prev.filter((n) => n.id !== notification.id)
-                          )
-                        }
+                          );
+                        }}
                       >
                         &times;
                       </button>

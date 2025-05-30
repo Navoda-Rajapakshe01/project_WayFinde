@@ -458,6 +458,15 @@ const PlaceDetails = () => {
                     });
                     return;
                   }
+                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailRegex.test(reviewEmail.trim())) {
+                    swal.fire({
+                      title: "Invalid email format",
+                      icon: "warning",
+                      confirmButtonText: "OK",
+                    });
+                    return;
+                  }
                   setShowGuestModal(false);
                   submitReview(reviewName.trim(), reviewEmail.trim());
                 }}
@@ -486,7 +495,7 @@ const PlaceDetails = () => {
                 .filter((r) => r.comment?.trim())
                 .map((r, idx) => (
                   <div key={idx} className="review-card">
-                    <strong>{r.name || "Anonymous"}</strong>
+                    <strong>{r.name}</strong>
                     <span
                       style={{
                         float: "right",
