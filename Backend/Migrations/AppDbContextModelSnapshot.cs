@@ -123,9 +123,9 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Blog", b =>
                 {
-<<<<<<< HEAD
-                    b.HasOne("Backend.Models.UserNew", "User")
-=======
+
+                    b.HasOne("Backend.Models.UserNew", "User");
+
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
@@ -207,8 +207,6 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
                 {
                     b.HasOne("Backend.Models.Accommodation", "Accommodation")
->>>>>>> update-v2
-                    b.HasOne("Backend.Models.UserNew", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

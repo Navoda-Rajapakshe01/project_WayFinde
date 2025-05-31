@@ -1,10 +1,7 @@
-<<<<<<< HEAD
 ﻿
 using Backend.Models;
 using Backend.DTOs;
-=======
-﻿using Backend.Models;
->>>>>>> update-v2
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
