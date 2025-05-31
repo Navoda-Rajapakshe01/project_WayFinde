@@ -106,7 +106,7 @@ function SavesComment() {
             />
           </div>
           <div className="edit-actions">
-            <button onClick={saveComment} className="save-button">Save</button>
+            <button onClick={saveComment} className="saves-button">Save</button>
             <button onClick={cancelEditing} className="cancel-button">Cancel</button>
           </div>
         </div>

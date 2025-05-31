@@ -1,5 +1,10 @@
-// Import necessary modules
+// AuthContext.js
 import { createContext } from "react";
 
-// Create the AuthContext
-export const AuthContext = createContext(); // Named export
+// Create the context with default values
+export const AuthContext = createContext({
+  user: null,
+  setUser: () => {},
+  logout: () => {},
+  loading: true
+});

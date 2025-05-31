@@ -18,21 +18,28 @@ namespace Backend.Data
         public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Review> Reviews { get; set; }
+        public DbSet<PlaceImage> PlaceImages { get; set; }
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
+
+        //Dashboard Notes (NEW)
+        public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
         public DbSet<Accommodation> Accommodations { get; set; }
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
+        public object Amenities { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -146,6 +153,12 @@ namespace Backend.Data
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
 
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Place)
+                .WithMany(p => p.Reviews)
+                .HasForeignKey(r => r.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // TodoItem
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
@@ -177,6 +190,29 @@ namespace Backend.Data
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
+
+            // DashboardNote rules
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.NoteTitle)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.NoteDescription)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.CreatedDate)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.CreatedTime)
+                .IsRequired();
+
+            modelBuilder.Entity<DashboardNote>()
+                .Property(d => d.UserId)
+                .IsRequired();
         }
     }
 }

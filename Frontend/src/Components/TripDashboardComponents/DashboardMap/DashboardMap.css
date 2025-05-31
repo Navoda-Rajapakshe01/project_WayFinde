@@ -1,6 +1,6 @@
 .dashboard-map-container {
   width: 27%;
-  margin: -275px;
+  margin-top: -323px; /* Only move up, not affect other sides */
   height: 100%;
   display: flex;
   justify-content: center;
@@ -10,6 +10,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   margin-left: 62%;
+  margin-bottom: -220px;
 }
 
 .dashboard-map {

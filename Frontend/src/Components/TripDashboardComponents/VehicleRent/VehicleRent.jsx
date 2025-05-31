@@ -1,16 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './VehicleRent.css'; // Import the CSS file
 
 const VehicleRent = () => {
-  // State for managing selected dates
+  const [vehicles, setVehicles] = useState([]); // State for vehicle data
   const [pickupDate, setPickupDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
+  const [savedVehicles, setSavedVehicles] = useState([]); // To manage saved vehicles
+
+  // Fetch vehicle details when the component mounts
+  useEffect(() => {
+    // API URL to fetch vehicle data
+    fetch('http://localhost:5030/api/TravelBudget') // Use your updated API URL
+      .then((response) => response.json()) // Convert the response into JSON
+      .then((data) => {
+        setVehicles(data); // Set the fetched vehicle data into state
+      })
+      .catch((error) => console.error('Error fetching vehicle data:', error));
+  }, []);
+
+  // Function to toggle saving vehicles
+  const toggleSave = (vehicleId, e) => {
+    e.stopPropagation();
+    if (savedVehicles.includes(vehicleId)) {
+      setSavedVehicles(savedVehicles.filter((id) => id !== vehicleId));
+    } else {
+      setSavedVehicles([...savedVehicles, vehicleId]);
+    }
+  };
+
+  // Show loading state while the data is being fetched
+  if (vehicles.length === 0) {
+    return <div>Loading...</div>; // Show loading text if no data is loaded yet
+  }
 
   return (
     <div className="vehicle-rent-container">
-      <div className="filter-section">
+      {/* Search Section */}
+      <div className="search-section">
         <div className="location-input">
           <label>Location</label>
           <input type="text" placeholder="Pick-up location" />
@@ -35,146 +63,34 @@ const VehicleRent = () => {
             className="date-picker-input"
           />
         </div>
-    
       </div>
 
-      <div className="vehicles-list">
-        {/* Toyota RAV4 */}
-        <div className="vehicle-card">
-          <img src="https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8VG95b3RhJTIwUkFWNHxlbnwwfHwwfHx8MA%3D%3D" alt="Toyota RAV4" />
-          <div className="vehicle-info">
-      
-            <div className="vehicle-details">
-              <span>5 Seats</span>
-              <span>3 Bags</span>
+      {/* Vehicles List Section */}
+      <div className="vehicle-cards-container">
+        {vehicles.map((vehicle, index) => (
+          <div key={index} className="vehicle-card">
+            {/* Main Image */}
+            <div
+              className="vehicle-image"
+              style={{ backgroundImage: `url(${vehicle.mainImageUrl})` }}
+            >
+              {/* Save Button */}
+              <button
+                className={`save-button ${savedVehicles.includes(vehicle.id) ? 'save-button-active' : ''}`}
+                onClick={(e) => toggleSave(vehicle.id, e)}
+                aria-label="Save this vehicle"
+              >
+                <span>+</span> Add
+              </button>
             </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
-          </div>
-        </div>
 
-        {/* Honda */}
-        <div className="vehicle-card">
-          <img src="/path-to-your-honda.jpg" alt="Honda" />
-          <div className="vehicle-info">
-           
-            <div className="vehicle-details">
-              <span>4 Seats</span>
-              <span>2 Bags</span>
+            {/* Vehicle Information */}
+            <div className="vehicle-info">
+              <h3 className="vehicle-name">{vehicle.name}</h3>
+              <p className="vehicle-reviews">{vehicle.reviews} reviews</p>
             </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
           </div>
-        </div>
-
-          {/* Honda */}
-          <div className="vehicle-card">
-          <img src="/path-to-your-honda.jpg" alt="Honda" />
-          <div className="vehicle-info">
-           
-            <div className="vehicle-details">
-              <span>4 Seats</span>
-              <span>2 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
-          </div>
-        </div>
-
-        {/* Honda NAVI 110 */}
-        <div className="vehicle-card">
-          <img src="/path-to-your-honda-navi.jpg" alt="Honda NAVI 110" />
-          <div className="vehicle-info">
- 
-            <div className="vehicle-details">
-              <span>2 Seats</span>
-              <span>1 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button unavailable-button">Unavailable</button>
-            <span className="availability-status unavailable">Unavailable</span>
-          </div>
-        </div>
-
-          {/* Honda NAVI 110 */}
-          <div className="vehicle-card">
-          <img src="/path-to-your-honda-navi.jpg" alt="Honda NAVI 110" />
-          <div className="vehicle-info">
- 
-            <div className="vehicle-details">
-              <span>2 Seats</span>
-              <span>1 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button unavailable-button">Unavailable</button>
-            <span className="availability-status unavailable">Unavailable</span>
-          </div>
-        </div>
-
-        {/* Bajaj RE Three Wheeler */}
-        <div className="vehicle-card">
-          <img src="/path-to-your-bajaj-re.jpg" alt="Bajaj RE Three Wheeler" />
-          <div className="vehicle-info">
-            
-            <div className="vehicle-details">
-              <span>3 Seats</span>
-              <span>2 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
-          </div>
-        </div>
-
-        {/* Bajaj RE Three Wheeler */}
-        <div className="vehicle-card">
-          <img src="/path-to-your-bajaj-re.jpg" alt="Bajaj RE Three Wheeler" />
-          <div className="vehicle-info">
-            
-            <div className="vehicle-details">
-              <span>3 Seats</span>
-              <span>2 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
-          </div>
-        </div>
-
-          {/* Honda */}
-          <div className="vehicle-card">
-          <img src="/path-to-your-honda.jpg" alt="Honda" />
-          <div className="vehicle-info">
-           
-            <div className="vehicle-details">
-              <span>4 Seats</span>
-              <span>2 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
-          </div>
-        </div>
-        
+        ))}
       </div>
     </div>
   );

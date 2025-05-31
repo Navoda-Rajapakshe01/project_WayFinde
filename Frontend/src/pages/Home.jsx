@@ -16,7 +16,11 @@ function Home() {
       />
 
       {/* 1. Services Overview Section */}
-      <ServicesOverviewSection />
+      <ServicesOverviewSection
+        title="Discover Our Services"
+        subtitle="Explore a wide range of travel services tailored for you"
+        showViewAllButton={true}
+        />
 
       {/* 2. Popular Destinations */}
       <LocationSection

@@ -1,12 +1,11 @@
 "use client";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaHome,
   FaMapMarkerAlt,
-  FaCity,
   FaUsers,
   FaStar,
-  FaBlog,
   FaCog,
   FaSignOutAlt,
   FaChartLine,
@@ -16,23 +15,63 @@ import {
 import "../AdminProfile/admin-sidebar.css";
 import "../../App.css";
 
-const AdminSidebar = ({ activeSection, setActiveSection }) => {
+const AdminSidebar = ({ activeSection }) => {
   const [hoveredItem, setHoveredItem] = useState(null);
+  const navigate = useNavigate();
 
   const menuItems = [
-    { id: "overview", label: "Dashboard", icon: <FaHome /> },
-    { id: "places", label: "Places", icon: <FaMapMarkerAlt /> },
-    { id: "users", label: "Users", icon: <FaUsers /> },
-    { id: "user-analytics", label: "User Analytics", icon: <FaChartLine /> },
-    { id: "accommodation", label: "Accommodation", icon: <FaHotel /> },
-    { id: "vehicles", label: "Vehicles", icon: <FaCar /> },
-    { id: "reviews", label: "Reviews", icon: <FaStar /> },
-    { id: "blog", label: "Blog", icon: <FaBlog /> },
-    { id: "settings", label: "Settings", icon: <FaCog /> },
+    { id: "overview", label: "Dashboard", icon: <FaHome />, path: "/admin" },
+    {
+      id: "places",
+      label: "Places",
+      icon: <FaMapMarkerAlt />,
+      path: "/admin/places-management",
+    },
+    {
+      id: "users",
+      label: "Users",
+      icon: <FaUsers />,
+      path: "/admin/users-management",
+    },
+    {
+      id: "user-analytics",
+      label: "User Analytics",
+      icon: <FaChartLine />,
+      path: "/admin/user-analytics",
+    },
+    {
+      id: "accommodation",
+      label: "Accommodation",
+      icon: <FaHotel />,
+      path: "/admin/accommodation-management",
+    }, 
+    {
+      id: "vehicles",
+      label: "Vehicles",
+      icon: <FaCar />,
+      path: "/admin/vehicles-management",
+    },
+    {
+      id: "reviews",
+      label: "Reviews",
+      icon: <FaStar />,
+      path: "/admin/reviews-management",
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: <FaCog />,
+      path: "/admin/settings-panel",
+    },
   ];
 
   const handleLogout = () => {
     console.log("Logging out...");
+    // Add logout logic here
+  };
+
+  const handleNavigation = (path) => {
+    navigate(path);
   };
 
   return (
@@ -45,7 +84,7 @@ const AdminSidebar = ({ activeSection, setActiveSection }) => {
             <li
               key={item.id}
               className={activeSection === item.id ? "active" : ""}
-              onClick={() => setActiveSection(item.id)}
+              onClick={() => handleNavigation(item.path)}
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}
             >
