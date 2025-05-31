@@ -1,6 +1,7 @@
 import axios from "axios";
 import  { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import React from "react";
 
 const ProfileHeadSection = () => {
   const [username, setUsername] = useState("");
