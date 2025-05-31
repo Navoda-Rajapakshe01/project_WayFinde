@@ -24,6 +24,7 @@ namespace Backend.Data
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<PlaceImage> PlaceImages { get; set; }
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
