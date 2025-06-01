@@ -1,16 +1,7 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
-<<<<<<< HEAD
 
-
-
-
-import BlogManagement from "./Components/AdminProfile/blog-management";
-
-=======
-import { GoogleOAuthProvider } from '@react-oauth/google';
->>>>>>> parent of 132fb3df (Fixed the merge issues)
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -19,7 +10,6 @@ import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
-import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
@@ -34,6 +24,7 @@ import Blog from "./pages/Blogs/Blog";
 import BlogEditor from "./pages/Blogs/BlogEditor";
 import BlogPreview from "./pages/Blogs/BlogPreview";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
 import PaymentGateway from "./pages/PaymentGateway";
@@ -52,14 +43,6 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-<<<<<<< HEAD
-=======
-import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
-import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
->>>>>>> parent of 132fb3df (Fixed the merge issues)
-import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
-
-
 
 import "./App.css";
 
@@ -85,16 +68,9 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-<<<<<<< HEAD
 
-=======
->>>>>>> parent of 132fb3df (Fixed the merge issues)
-        <Route path="/chat" element={<PersonalBlog/>} />
-        {/* <Route path="/blog/:id" element={<PersonalBlog />} /> */}
-=========
         <Route path="/chat" element={<PersonalBlog />} />
-        <Route path="/blog/:id" element={<PersonalBlog />} />
-
+        {/* <Route path="/blog/:id" element={<PersonalBlog />} /> */}
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
@@ -109,13 +85,11 @@ function AppRoutes() {
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
 
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
-=========
         <Route
           path="/profile/profileBlogs/blogEditor"
           element={<BlogEditor />}
         />
         <Route path="/pages/blogs/blogpriview" element={<BlogPreview />} />
-
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
@@ -126,7 +100,6 @@ function AppRoutes() {
           <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
-          <Route path="accommodation-management" element={<AccommodationManagement />} />
         </Route>
       </Routes>
 
@@ -138,19 +111,6 @@ function AppRoutes() {
 function App() {
   return (
     <GoogleOAuthProvider clientId="114068341710-2i1qkqgprej37t78umijsckchgktcljm.apps.googleusercontent.com">
-<<<<<<< HEAD
-
-=======
->>>>>>> parent of 132fb3df (Fixed the merge issues)
-    <BrowserRouter>
-      <AuthProvider>
-        <ProfileImageProvider>
-          <AppRoutes />
-        </ProfileImageProvider>
-      </AuthProvider>
-    </BrowserRouter>
-<<<<<<< HEAD
-=========
       <BrowserRouter>
         <AuthProvider>
           <ProfileImageProvider>
@@ -158,9 +118,6 @@ function App() {
           </ProfileImageProvider>
         </AuthProvider>
       </BrowserRouter>
->>>>>>>>> Temporary merge branch 2
-=======
->>>>>>> parent of 132fb3df (Fixed the merge issues)
     </GoogleOAuthProvider>
   );
 }
