@@ -6,17 +6,18 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using CloudinaryDotNet;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Database Context
+//Database context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
 
 
 
 
-// Add Authentication with JWT Bearer
+// Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -41,20 +42,28 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
 
 
 
-// Add services to container
+//services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-// Add CORS policy
+//CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5174",
-            "https://localhost:5175")
+        policy.WithOrigins("http://localhost:5173", "http://localhost:5174",
+            "http://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials() 
     );
+});
+
+
+//Controllers
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    x.JsonSerializerOptions.WriteIndented = true;
 });
 
 // Add Controllers
@@ -63,11 +72,13 @@ builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
 
+
 // Swagger for API Documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
 
-// Build the App
+
 var app = builder.Build();
 
 // Enable Swagger in Development
@@ -78,9 +89,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // For production, you might want a more restrictive CORS policy
-    // or comment this out if you don't need CORS in production
-    app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
+   
+    app.UseCors("ProductionCorsPolicy"); 
 }
 
 

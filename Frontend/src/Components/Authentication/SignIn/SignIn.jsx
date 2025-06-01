@@ -25,6 +25,7 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
+    //sends loging data to the backend
     try {
       const response = await axios.post(
         "http://localhost:5030/api/Auth/login",
@@ -76,6 +77,7 @@ const Login = () => {
     }
   };
 
+ 
   const handleProfileFetch = async (token) => {
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
@@ -126,6 +128,7 @@ const Login = () => {
             onChange={handleChange}
             required
           />
+          
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>
