@@ -8,7 +8,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Google.Apis.Auth;
 
 namespace Backend.Services
 {
@@ -43,7 +42,7 @@ namespace Backend.Services
                 return null; // Treat wrong password as login failure
             }
 
-            
+            // Everything is correct - generate token
             return CreateToken(user);
         }
 
@@ -84,7 +83,7 @@ namespace Backend.Services
                 }
                 catch (DbUpdateException dbEx)
                 {
-                    
+                    // Log the inner exception for debugging
                     Console.WriteLine($"Database error: {dbEx.InnerException?.Message}");
                     throw new Exception($"Database error: {dbEx.InnerException?.Message}");
                 }
@@ -97,35 +96,6 @@ namespace Backend.Services
                 throw new Exception($"User registration failed: {ex.Message}");
             }
         }
-
-        public async Task<string> GoogleLoginAsync(string googleToken)
-        {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(googleToken, new GoogleJsonWebSignature.ValidationSettings
-            {
-                Audience = new[] { configuration["Google:ClientId"] } 
-            });
-
-            var existingUser = await context.UsersNew.FirstOrDefaultAsync(u => u.ContactEmail == payload.Email);
-
-            if (existingUser == null)
-            {
-                var newUser = new UserNew
-                {
-                    Username = payload.Email, 
-                    ContactEmail = payload.Email,
-                    Role = "User", 
-                    ServiceType = "", 
-                    PasswordHash = "" 
-                };
-
-                context.UsersNew.Add(newUser);
-                await context.SaveChangesAsync();
-                existingUser = newUser;
-            }
-
-            return CreateToken(existingUser);
-        }
-
 
         private string CreateToken(UserNew user)
         {

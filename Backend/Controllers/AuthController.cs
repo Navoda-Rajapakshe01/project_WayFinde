@@ -18,8 +18,6 @@ using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
-using Google.Apis.Auth;
-using Backend.DTO;
 
 
 
@@ -148,22 +146,7 @@ namespace Backend.Controller
             });
         }
 
-        [HttpPost("google")]
-        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
-        {
-            try
-            {
-                var token = await _authService.GoogleLoginAsync(dto.Token);
-                return Ok(new { token });
-            }
-            catch (Exception ex)
-            {
-                return Unauthorized(new { message = "Google login failed", error = ex.Message });
-            }
-        }
-
-
-
+       
 
 
         [Authorize(Roles = "Admin")]

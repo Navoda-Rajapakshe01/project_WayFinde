@@ -5,7 +5,7 @@ namespace Backend.DTOs
 {
     public class UploadBlogDto
     {
-        
+        [Required]
         public IFormFile Document { get; set; }
 
         [Required]

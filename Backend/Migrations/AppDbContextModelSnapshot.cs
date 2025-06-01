@@ -45,10 +45,6 @@ namespace Backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImageUrls")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Location")
                         .HasColumnType("nvarchar(max)");
 
@@ -77,61 +73,6 @@ namespace Backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Blogs");
-                });
-
-            modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("BlogId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlogId");
-
-                    b.ToTable("BlogImagesNew");
-                });
-
-            modelBuilder.Entity("Backend.Models.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BlogId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlogId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Backend.Models.UserNew", b =>
@@ -186,9 +127,6 @@ namespace Backend.Migrations
 
                     b.HasOne("Backend.Models.UserNew", "User")
 
-                        .WithMany("Blogs")
-
-
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
@@ -205,7 +143,7 @@ namespace Backend.Migrations
                 });
 
 
- 
+ update-v2
             modelBuilder.Entity("Backend.Models.DashboardNote", b =>
                 {
                     b.Property<int>("Id")
@@ -258,7 +196,7 @@ namespace Backend.Migrations
                     b.ToTable("UsersNew", (string)null);
                 });
 
-
+manage_user_accounts
             modelBuilder.Entity("Backend.Models.AccommodationImage", b =>
                 {
                     b.HasOne("Backend.Models.Accommodation", "Accommodation")
@@ -273,14 +211,13 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
                 {
                     b.HasOne("Backend.Models.Accommodation", "Accommodation")
-
+update-v2
 
             modelBuilder.Entity("Backend.Models.DashboardNote", b =>
                 {
                     b.HasOne("Backend.Models.UserNew", null)
- 
+ update-v2
                         .WithMany()
-
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -289,39 +226,6 @@ manage_user_accounts
                     b.Navigation("User");
 
 update-v2
-                });
-
-            modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
-                {
-                    b.HasOne("Backend.Models.Blog", "Blog")
-                        .WithMany()
-                        .HasForeignKey("BlogId");
-
-                    b.Navigation("Blog");
-                });
-
-            modelBuilder.Entity("Backend.Models.Comment", b =>
-                {
-                    b.HasOne("Backend.Models.Blog", "Blog")
-                        .WithMany()
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Models.UserNew", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Blog");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Backend.Models.UserNew", b =>
-                {
-                    b.Navigation("Blogs");
                 });
 #pragma warning restore 612, 618
         }
