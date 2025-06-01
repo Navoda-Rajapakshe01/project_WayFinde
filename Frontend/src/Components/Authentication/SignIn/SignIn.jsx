@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
 import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -25,6 +26,7 @@ const Login = () => {
     setError("");
     setIsLoading(true);
 
+    //sends loging data to the backend
     try {
       const response = await axios.post(
         "http://localhost:5030/api/Auth/login",
@@ -126,6 +128,7 @@ const Login = () => {
             onChange={handleChange}
             required
           />
+          
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>

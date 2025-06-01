@@ -1,7 +1,7 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -16,12 +16,16 @@ import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
+import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import Accommodation from "./pages/Accommodation";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
+import BlogEditor from "./pages/Blogs/BlogEditor";
+import BlogPreview from "./pages/Blogs/BlogPreview";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
 import PaymentGateway from "./pages/PaymentGateway";
 import Following from "./pages/Profile/Following";
@@ -82,6 +86,11 @@ function AppRoutes() {
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
+        <Route
+          path="/profile/profileBlogs/blogEditor"
+          element={<BlogEditor />}
+        />
+        <Route path="/pages/blogs/blogpriview" element={<BlogPreview />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />

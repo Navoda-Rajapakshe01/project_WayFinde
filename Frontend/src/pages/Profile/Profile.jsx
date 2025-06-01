@@ -1,6 +1,7 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+//import axios from "axios";
+//import React, { useEffect, useState } from "react";
+//import { NavLink } from "react-router-dom";
+import React from "react";
 import "../CSS/Profile.css";
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 
