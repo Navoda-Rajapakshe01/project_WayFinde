@@ -4,8 +4,9 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FaPlus, FaEdit, FaTrash, FaSearch, FaFilter } from "react-icons/fa";
-import "../AdminProfile/edit-place"
+import "../AdminProfile/edit-place";
 import "./places-management.css";
+import "../../pages/CSS/AdminDashboard.css";
 import "../../App.css";
 
 const PlacesManagement = () => {
@@ -82,10 +83,10 @@ const PlacesManagement = () => {
       title: "Are you sure?",
       text: "You won’t be able to undo this!",
       icon: "warning",
+      confirmButtonText: "Yes, delete it!",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
     });
 
     if (result.isConfirmed) {
@@ -201,14 +202,14 @@ const PlacesManagement = () => {
     <div className="places-management">
       <div className="adminsection-header">
         <h1 className="page-title">Places Management</h1>
-        <button className="add-button" onClick={() => setShowModal(true)}>
+        <button className="adminadd-button" onClick={() => setShowModal(true)}>
           <FaPlus /> Add New Place
         </button>
       </div>
 
-      <div className="filter-bar">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
+      <div className="adminfilter-bar">
+        <div className="adminsearch-box">
+          <FaSearch className="adminsearch-icon" />
           <input
             type="text"
             placeholder="Search places by name..."
@@ -216,8 +217,8 @@ const PlacesManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="filter-dropdown">
-          <FaFilter className="filter-icon" />
+        <div className="adminfilter-dropdown">
+          <FaFilter className="adminfilter-icon" />
           <select
             value={selectedDistrict}
             onChange={(e) => setSelectedDistrict(e.target.value)}
@@ -237,37 +238,57 @@ const PlacesManagement = () => {
           <p>No places found matching your criteria.</p>
         </div>
       ) : (
-        <div className="places-grid">
-          {filteredPlaces.map((place) => {
-            const districtName =
-              districts.find((d) => d.id === place.districtId)?.name || "N/A";
-            return (
-              <div key={place.id} className="place-card-item">
-                <div className="place-card-content">
-                  <h3 className="place-card-name">{place.name}</h3>
-                  <p className="place-card-district">
-                    District: {districtName}
-                  </p>
-                </div>
-                <div className="place-card-actions action-buttons">
-                  <button
-                    className="edit-button"
-                    onClick={() => navigate(`/admin/edit-place/${place.id}`)}
-                    title="Edit Place"
-                  >
-                    <FaEdit /> <span>Edit</span>
-                  </button>
-                  <button
-                    className="delete-button"
-                    onClick={() => deletePlace(place.id)}
-                    title="Delete Place"
-                  >
-                    <FaTrash /> <span>Delete</span>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+        <div className="table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Place Name</th>
+                <th>District</th>
+                <th>Category</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPlaces.map((place, index) => {
+                const districtName =
+                  districts.find((d) => d.id === place.districtId)?.name ||
+                  "N/A";
+                const categoryName =
+                  categories.find((c) => c.categoryId === place.categoryId)
+                    ?.categoryName || "N/A";
+
+                return (
+                  <tr key={place.id}>
+                    <td>{index + 1}</td>
+                    <td>{place.name}</td>
+                    <td>{districtName}</td>
+                    <td>{categoryName}</td>
+                    <td>
+                      <div className="adminaction-buttons">
+                        <button
+                          className="adminedit-button"
+                          onClick={() =>
+                            navigate(`/admin/edit-place/${place.id}`)
+                          }
+                          title="Edit Place"
+                        >
+                          <FaEdit /> 
+                        </button>
+                        <button
+                          className="admindelete-button"
+                          onClick={() => deletePlace(place.id)}
+                          title="Delete Place"
+                        >
+                          <FaTrash /> 
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
 
@@ -388,15 +409,15 @@ const PlacesManagement = () => {
                 </label>
 
                 <div className="modal-buttons">
-                  <button type="submit" className="save-button">
-                    Save
-                  </button>
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}
-                    className="cancel-button"
+                    className="admincancel-button"
                   >
                     Cancel
+                  </button>
+                  <button type="submit" className="adminsave-button">
+                    Save
                   </button>
                 </div>
               </div>

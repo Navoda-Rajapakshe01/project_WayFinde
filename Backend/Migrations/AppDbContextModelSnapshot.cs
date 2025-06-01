@@ -3,7 +3,6 @@ using System;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -20,6 +19,7 @@ namespace Backend.Migrations
                 .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
+ manage_user_accounts
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Backend.Models.Blog", b =>
@@ -183,13 +183,112 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Blog", b =>
                 {
+
                     b.HasOne("Backend.Models.UserNew", "User")
+
                         .WithMany("Blogs")
-                        .HasForeignKey("UserId")
+
+
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+                });
+
+
+ 
+            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("CreatedTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("NoteDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DashboardNotes", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Models.UserNew", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UrlImages")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UsersNew", (string)null);
+                });
+
+
+            modelBuilder.Entity("Backend.Models.AccommodationImage", b =>
+                {
+                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
+                        .WithMany("Images")
+                        .HasForeignKey("AccommodationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Accommodation");
+                });
+
+            modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
+                {
+                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
+
+
+            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
+                {
+                    b.HasOne("Backend.Models.UserNew", null)
+ 
+                        .WithMany()
+
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+manage_user_accounts
+
                     b.Navigation("User");
+
+update-v2
                 });
 
             modelBuilder.Entity("Backend.Models.BlogImageNew", b =>

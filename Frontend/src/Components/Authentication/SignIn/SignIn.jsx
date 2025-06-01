@@ -76,7 +76,8 @@ const Login = () => {
       setError("Google login failed. Please try again.");
     }
   };
-  //Get the user details from the backend after login
+
+ 
   const handleProfileFetch = async (token) => {
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));

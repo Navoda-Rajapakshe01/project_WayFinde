@@ -6,7 +6,6 @@ import {
   FaMapMarkerAlt,
   FaUsers,
   FaStar,
-  FaBlog,
   FaCog,
   FaSignOutAlt,
   FaChartLine,
@@ -44,8 +43,8 @@ const AdminSidebar = ({ activeSection }) => {
       id: "accommodation",
       label: "Accommodation",
       icon: <FaHotel />,
-      path: "/admin/places-management",
-    }, // optional: separate
+      path: "/admin/accommodation-management",
+    }, 
     {
       id: "vehicles",
       label: "Vehicles",
@@ -57,12 +56,6 @@ const AdminSidebar = ({ activeSection }) => {
       label: "Reviews",
       icon: <FaStar />,
       path: "/admin/reviews-management",
-    },
-    {
-      id: "blog",
-      label: "Blog",
-      icon: <FaBlog />,
-      path: "/admin/blog-management",
     },
     {
       id: "settings",

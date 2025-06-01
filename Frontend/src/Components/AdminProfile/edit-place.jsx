@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import Swal from "sweetalert2"; 
-import "./edit-place.css"; 
-import "../../App.css"; 
+import Swal from "sweetalert2";
+import "./edit-place.css";
+import "../../App.css";
 
 const EditPlace = () => {
   const { id } = useParams();
@@ -17,8 +17,8 @@ const EditPlace = () => {
     address: "",
     googleMapLink: "",
     mainImageUrl: "",
-    districtId: "", 
-    categoryId: "", 
+    districtId: "",
+    categoryId: "",
   });
 
   const [districts, setDistricts] = useState([]);
@@ -35,10 +35,10 @@ const EditPlace = () => {
         );
         const districtsPromise = axios.get(
           "http://localhost:5030/api/district"
-        ); 
+        );
         const categoriesPromise = axios.get(
           "http://localhost:5030/api/places/categories"
-        ); 
+        );
 
         const [placeResponse, districtsResponse, categoriesResponse] =
           await Promise.all([
@@ -56,17 +56,15 @@ const EditPlace = () => {
           address: fetchedPlace.address || "",
           googleMapLink: fetchedPlace.googleMapLink || "",
           mainImageUrl: fetchedPlace.mainImageUrl || "",
-          districtId:
-            fetchedPlace.districtId ||  "", 
-          categoryId:
-            fetchedPlace.categoryId ||  "", 
+          districtId: fetchedPlace.districtId || "",
+          categoryId: fetchedPlace.categoryId || "",
         });
         setDistricts(districtsResponse.data);
         setCategories(categoriesResponse.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         Swal.fire("Error!", "Could not load data for editing.", "error");
-        navigate("/admin/places-management"); 
+        navigate("/admin/places-management");
       } finally {
         setIsLoading(false);
       }
@@ -84,7 +82,7 @@ const EditPlace = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Basic Validation 
+    // Basic Validation
     if (
       !placeData.name ||
       !placeData.mainImageUrl ||
@@ -116,7 +114,7 @@ const EditPlace = () => {
         timer: 1500,
         showConfirmButton: false,
       });
-      navigate("/admin/places-management"); 
+      navigate("/admin/places-management");
     } catch (error) {
       console.error(
         "Error updating place:",
@@ -147,16 +145,13 @@ const EditPlace = () => {
   const requiredLabel = <span className="required-asterisk">*</span>;
 
   return (
-    <div className="admin-content">
-      {" "}
-      <div className="page-title">
+    <div className="ep-admin-content">
+      <div className="ep-page-title">
         Edit Place: {placeData.name || "Loading..."}
       </div>
-      <div className="form-container-card">
-        {" "}
-        <form onSubmit={handleUpdate} className="form">
-          {" "}
-          <div className="form-group">
+      <div className="ep-form-container-card">
+        <form onSubmit={handleUpdate} className="ep-form">
+          <div className="ep-form-group">
             <label htmlFor="name">Name {requiredLabel}</label>
             <input
               type="text"
@@ -167,7 +162,8 @@ const EditPlace = () => {
               required
             />
           </div>
-          <div className="form-group">
+
+          <div className="ep-form-group">
             <label htmlFor="description">Description {requiredLabel}</label>
             <textarea
               id="description"
@@ -178,7 +174,8 @@ const EditPlace = () => {
               required
             />
           </div>
-          <div className="form-group">
+
+          <div className="ep-form-group">
             <label htmlFor="history">History</label>
             <textarea
               id="history"
@@ -188,8 +185,9 @@ const EditPlace = () => {
               rows="3"
             />
           </div>
-          <div className="form-row">
-            <div className="form-group">
+
+          <div className="ep-form-row">
+            <div className="ep-form-group">
               <label htmlFor="openingHours">Opening Hours</label>
               <input
                 type="text"
@@ -201,7 +199,8 @@ const EditPlace = () => {
               />
             </div>
           </div>
-          <div className="form-group">
+
+          <div className="ep-form-group">
             <label htmlFor="address">Address</label>
             <input
               type="text"
@@ -211,7 +210,8 @@ const EditPlace = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="form-group">
+
+          <div className="ep-form-group">
             <label htmlFor="googleMapLink">Google Map Link</label>
             <input
               type="url"
@@ -222,7 +222,8 @@ const EditPlace = () => {
               placeholder="https://maps.google.com/..."
             />
           </div>
-          <div className="form-group">
+
+          <div className="ep-form-group">
             <label htmlFor="mainImageUrl">Main Image URL {requiredLabel}</label>
             <input
               type="url"
@@ -234,8 +235,9 @@ const EditPlace = () => {
               required
             />
           </div>
-          <div className="form-row">
-            <div className="form-group">
+
+          <div className="ep-form-row">
+            <div className="ep-form-group">
               <label htmlFor="districtId">District {requiredLabel}</label>
               <select
                 id="districtId"
@@ -246,16 +248,14 @@ const EditPlace = () => {
               >
                 <option value="">Select a district</option>
                 {districts.map((district) => (
-                  <option
-                    key={district.id || district.id}
-                    value={district.id || district.id}
-                  >
+                  <option key={district.id} value={district.id}>
                     {district.name}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="form-group">
+
+            <div className="ep-form-group">
               <label htmlFor="categoryId">Category {requiredLabel}</label>
               <select
                 id="categoryId"
@@ -266,23 +266,25 @@ const EditPlace = () => {
               >
                 <option value="">Select a category</option>
                 {categories.map((category) => (
-                  <option
-                    key={category.categoryId || category.categoryId}
-                    value={category.categoryId || category.categoryId}>
+                  <option key={category.categoryId} value={category.categoryId}>
                     {category.categoryName}
                   </option>
                 ))}
               </select>
             </div>
           </div>
-          <div className="form-actions">
-            {" "}
-            <Link to="/admin/places-management" className="cancel-button">
-              Cancel
-            </Link>
+
+          <div className="ep-form-actions">
+            <button
+              type="button"
+              className="admincancel-button"
+              onClick={() => navigate("/admin/places-management")}
+            >
+              Back
+            </button>
             <button
               type="submit"
-              className="save-button"
+              className="adminsave-button"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Updating..." : "Update Place"}

@@ -58,12 +58,19 @@ builder.Services.AddCors(options =>
     );
 });
 
+
 //Controllers
 builder.Services.AddControllers().AddJsonOptions(x =>
 {
     x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
     x.JsonSerializerOptions.WriteIndented = true;
 });
+
+// Add Controllers
+builder.Services.AddControllers();
+// Add SignalR
+builder.Services.AddSignalR();
+
 
 
 // Swagger for API Documentation
@@ -96,5 +103,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+// Map SignalR hubs
+app.MapHub<Backend.Hubs.NotificationHub>("/notificationHub");
 
 app.Run();
