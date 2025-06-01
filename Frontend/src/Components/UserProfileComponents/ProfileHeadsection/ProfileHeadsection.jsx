@@ -1,18 +1,10 @@
 import axios from "axios";
-
-import React, { useEffect, useState } from "react";
-
+import  { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const ProfileHeadSection = () => {
   const [username, setUsername] = useState("");
   const [profilePictureUrl, setProfilePictureUrl] = useState("");
-  const navigate = useNavigate();
-
-  const handleEditClick = () => {
-    window.scrollTo(0, 0);
-    navigate("/settings"); // your target route
-  };
 
   const navigate = useNavigate();
 
@@ -79,14 +71,10 @@ const ProfileHeadSection = () => {
             <br />
             🌍 Always looking for the next great adventure.
           </p>
-
-          <button className="edit-profile-btn" onClick={handleEditClick}>
-
           <button
             className="edit-profile-btn"
             onClick={() => navigate("/settings")}
           >
-
             Edit Profile
           </button>
         </div>
