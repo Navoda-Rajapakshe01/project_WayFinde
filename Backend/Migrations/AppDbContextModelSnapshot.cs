@@ -263,7 +263,8 @@ namespace Backend.Migrations
                     b.Navigation("Accommodation");
                 });
 
-            modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
+           
+                modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
                 {
                     b.HasOne("Backend.Models.Accommodation", "Accommodation")
                         .WithMany()
@@ -271,10 +272,9 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
-                                                .HasForeignKey("UserId")
-
+                    b.Navigation("Accommodation");
                 });
+
 
             modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
                 {

@@ -8,7 +8,7 @@ namespace Backend.Data
     public class AppDbContext : DbContext
     {
         public DbSet<UserNew> UsersNew { get; set; } = null!;
-        public DbSet<Blog> Blogs { get; set; } = null!;
+
         public DbSet<BlogImageNew> BlogImagesNew { get; set; } = null!;
 
         public DbSet<Comment> Comments { get; set; } = null!;
@@ -33,7 +33,7 @@ namespace Backend.Data
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
-        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Blog> Blogs { get; set; } = null!;
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
