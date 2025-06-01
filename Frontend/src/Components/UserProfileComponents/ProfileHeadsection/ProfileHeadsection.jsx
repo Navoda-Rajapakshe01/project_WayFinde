@@ -1,9 +1,5 @@
 import axios from "axios";
-
-
 import React, { useEffect, useState } from "react";
-
-import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const ProfileHeadSection = () => {
@@ -81,7 +77,7 @@ const ProfileHeadSection = () => {
             onClick={() => navigate("/settings")}
           >
 
-          <button className="edit-profile-btn" onClick={handleEditClick}>
+          
 
             Edit Profile
           </button>

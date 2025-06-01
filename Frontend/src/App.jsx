@@ -2,11 +2,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 
 import BlogManagement from "./Components/AdminProfile/blog-management";
->>>>>>>>> Temporary merge branch 2
+
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -47,9 +47,6 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-
-import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
-import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 
 
