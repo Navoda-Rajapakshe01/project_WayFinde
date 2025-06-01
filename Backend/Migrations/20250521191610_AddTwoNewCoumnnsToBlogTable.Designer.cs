@@ -3,6 +3,8 @@ using System;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,16 +12,17 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250521191610_AddTwoNewCoumnnsToBlogTable")]
+    partial class AddTwoNewCoumnnsToBlogTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
- manage_user_accounts
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Backend.Models.Blog", b =>
@@ -124,108 +127,13 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Blog", b =>
                 {
-
                     b.HasOne("Backend.Models.UserNew", "User")
-
-                    b.Property<int>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
-
-                    b.Property<string>("CategoryName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("Categories");
-                });
-
-
- update-v2
-            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("CreatedTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("NoteDescription")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("DashboardNotes", (string)null);
-                });
-
-            modelBuilder.Entity("Backend.Models.UserNew", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UrlImages")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UsersNew", (string)null);
-                });
-
-manage_user_accounts
-            modelBuilder.Entity("Backend.Models.AccommodationImage", b =>
-                {
-                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
-                        .WithMany("Images")
-                        .HasForeignKey("AccommodationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Accommodation");
-                });
-
-            modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
-                {
-                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
-update-v2
-
-            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
-                {
-                    b.HasOne("Backend.Models.UserNew", null)
- update-v2
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-manage_user_accounts
 
                     b.Navigation("User");
-
-update-v2
                 });
 #pragma warning restore 612, 618
         }

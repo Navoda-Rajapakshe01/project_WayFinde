@@ -11,13 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
 
-// Register UserDbContext in the container
-builder.Services.AddDbContext<UserDbContext>(options =>
-
-    
-options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
 
 
 

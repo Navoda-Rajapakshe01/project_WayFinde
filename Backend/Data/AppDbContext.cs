@@ -6,8 +6,13 @@ namespace Backend.Data
 {
     public class AppDbContext : DbContext
     {
+        public DbSet<UserNew> UsersNew { get; set; } = null!;
+        public DbSet<Blog> Blogs { get; set; } = null!;
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+<<<<<<< HEAD
+=======
         // Vehicles
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
@@ -41,13 +46,22 @@ namespace Backend.Data
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
         public object Amenities { get; internal set; }
 
+>>>>>>> update-v2
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // DistrictWithPlacesCountDTO is a keyless DTO
-            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+            // Configure the Blog entity
+            modelBuilder.Entity<Blog>()
+                .HasKey(b => b.Id);
 
+<<<<<<< HEAD
+            // Configure relationship between Blog and UserNew if needed
+            // modelBuilder.Entity<Blog>()
+            //     .HasOne<UserNew>()
+            //     .WithMany()
+            //     .HasForeignKey(b => b.UserId);
+=======
             // Precision for PricePerDay
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.PricePerDay)
@@ -213,6 +227,7 @@ namespace Backend.Data
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.UserId)
                 .IsRequired();
+>>>>>>> update-v2
         }
     }
 }
