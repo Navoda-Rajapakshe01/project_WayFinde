@@ -76,8 +76,11 @@ const ProfileSettings = () => {
   useEffect(() => {
     const fetchProfileAndBlogs = async () => {
       try {
+
+
         setLoading(true);
         setError(null);
+
 
         const res = await fetch("http://localhost:5030/api/profile/me", {
           headers: {
@@ -214,13 +217,32 @@ const ProfileSettings = () => {
           </p>
         ) : (
           blogs.map((blog, index) => (
-            <div
-              className="blog-card"
-              key={index}
-              onClick={() => navigate(`/blog/${blog.id}`)}
-              style={{ cursor: "pointer" }} // Optional: indicate clickable
+
+            <div className="blog-card"
+            key={index}
+            onClick={() => navigate(`/blog/${blog.id}`)}
+            style={{ cursor: "pointer" }} // Optional: indicate clickable
             >
               <img src={blog.coverImageUrl} alt="Blog" className="blog-image" />
+
+            <div
+              onClick={() =>
+                handleBlogDisplay(
+                  blog.id || blog.Id || blog.blogId || blog.BlogId
+                )
+              }
+              className="blog-card"
+              key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}
+            >
+              <img
+                src={blog.coverImageUrl}
+                alt="Blog"
+                className="blog-image"
+                onError={(e) => {
+                  e.target.src = "/placeholder-image.jpg"; // Fallback image
+                }}
+              />
+
               <div className="blog-content">
                 <p className="blog-name">{blog.title}</p>
                 <p className="blog-topic">
@@ -238,8 +260,21 @@ const ProfileSettings = () => {
                   <span>
                     <FaThumbsUp className="icon" /> Likes
                   </span>
+
                   <span onClick={() => handleDelete(blog.id)}>
                     <FaTrash className="icon" /> Delete
+
+                  <span
+                    
+                    onClick={(e) => {
+                      e.stopPropagation(); // prevent triggering blog display
+                      handleDeleteBlog(
+                        blog.id || blog.Id || blog.blogId || blog.BlogId
+                      );
+                    }}
+                  >
+                   <FaTrash className="icon" /> Delete
+
                   </span>
                 </div>
               </div>

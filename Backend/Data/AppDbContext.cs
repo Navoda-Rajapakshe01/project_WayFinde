@@ -15,6 +15,7 @@ namespace Backend.Data
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+
         // Vehicles
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
@@ -48,6 +49,7 @@ namespace Backend.Data
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
         public object Amenities { get; internal set; }
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -56,6 +58,14 @@ namespace Backend.Data
             modelBuilder.Entity<Blog>()
                 .HasKey(b => b.Id);
 
+
+            // Configure relationship between Blog and UserNew if needed
+<<<<<<<<< Temporary merge branch 1
+            // modelBuilder.Entity<Blog>()
+            //     .HasOne<UserNew>()
+            //     .WithMany()
+            //     .HasForeignKey(b => b.UserId);
+=======
             // Precision for PricePerDay
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.PricePerDay)
@@ -221,6 +231,30 @@ namespace Backend.Data
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.UserId)
                 .IsRequired();
+>>>>>>> update-v2
+
+            modelBuilder.Entity<Blog>()
+             .HasOne(b => b.User)
+             .WithMany(u => u.Blogs)
+             .HasForeignKey(b => b.UserId);
+
+
+            // Configure the ImageUrls property for Blog
+            modelBuilder.Entity<Blog>()
+                .Property(b => b.ImageUrls)
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
+
+            modelBuilder.Entity<Comment>()
+       .HasOne(c => c.User)
+       .WithMany()
+       .HasForeignKey(c => c.UserId)
+       .OnDelete(DeleteBehavior.Restrict); // <== Fix for cascade cycle
+
+
+
+>>>>>>>>> Temporary merge branch 2
         }
     }
 }

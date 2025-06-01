@@ -54,9 +54,10 @@ builder.Services.AddCors(options =>
             "http://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials() 
+              .AllowCredentials()
     );
 });
+
 
 //Controllers
 builder.Services.AddControllers().AddJsonOptions(x =>
@@ -69,6 +70,7 @@ builder.Services.AddControllers().AddJsonOptions(x =>
 builder.Services.AddControllers();
 // Add SignalR
 builder.Services.AddSignalR();
+
 
 
 // Swagger for API Documentation
@@ -87,8 +89,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-   
-    app.UseCors("ProductionCorsPolicy"); 
+
+    app.UseCors("ProductionCorsPolicy");
 }
 
 

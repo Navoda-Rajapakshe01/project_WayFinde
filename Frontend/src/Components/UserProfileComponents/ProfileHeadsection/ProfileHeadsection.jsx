@@ -1,7 +1,10 @@
 import axios from "axios";
-import  { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+
+
+import React, { useEffect, useState } from "react";
+
 import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const ProfileHeadSection = () => {
   const [username, setUsername] = useState("");
@@ -72,10 +75,14 @@ const ProfileHeadSection = () => {
             <br />
             🌍 Always looking for the next great adventure.
           </p>
+
           <button
             className="edit-profile-btn"
             onClick={() => navigate("/settings")}
           >
+
+          <button className="edit-profile-btn" onClick={handleEditClick}>
+
             Edit Profile
           </button>
         </div>

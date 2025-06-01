@@ -2,7 +2,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+
+import BlogManagement from "./Components/AdminProfile/blog-management";
+>>>>>>>>> Temporary merge branch 2
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -44,7 +48,11 @@ import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
 
+import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
+import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
+
+
 
 import "./App.css";
 
@@ -70,8 +78,13 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-        <Route path="/chat" element={<PersonalBlog />} />
+
+        <Route path="/chat" element={<PersonalBlog/>} />
         {/* <Route path="/blog/:id" element={<PersonalBlog />} /> */}
+=========
+        <Route path="/chat" element={<PersonalBlog />} />
+        <Route path="/blog/:id" element={<PersonalBlog />} />
+
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
@@ -84,12 +97,15 @@ function AppRoutes() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
+
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
+=========
         <Route
           path="/profile/profileBlogs/blogEditor"
           element={<BlogEditor />}
         />
         <Route path="/pages/blogs/blogpriview" element={<BlogPreview />} />
+
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
@@ -115,6 +131,15 @@ function AppRoutes() {
 function App() {
   return (
     <GoogleOAuthProvider clientId="114068341710-2i1qkqgprej37t78umijsckchgktcljm.apps.googleusercontent.com">
+
+    <BrowserRouter>
+      <AuthProvider>
+        <ProfileImageProvider>
+          <AppRoutes />
+        </ProfileImageProvider>
+      </AuthProvider>
+    </BrowserRouter>
+=========
       <BrowserRouter>
         <AuthProvider>
           <ProfileImageProvider>
@@ -122,6 +147,7 @@ function App() {
           </ProfileImageProvider>
         </AuthProvider>
       </BrowserRouter>
+>>>>>>>>> Temporary merge branch 2
     </GoogleOAuthProvider>
   );
 }
