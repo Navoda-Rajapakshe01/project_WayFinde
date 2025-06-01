@@ -14,7 +14,6 @@ const ProfileHeadSection = () => {
     navigate("/settings"); // your target route
   };
 
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -80,7 +79,7 @@ const ProfileHeadSection = () => {
             🌍 Always looking for the next great adventure.
           </p>
 
-          <button className="edit-profile-btn" onClick={handleEditClick}>
+          {/* <button className="edit-profile-btn" onClick={handleEditClick}> */}
 
           <button
             className="edit-profile-btn"

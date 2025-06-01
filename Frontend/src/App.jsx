@@ -2,11 +2,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-import BlogManagement from "./Components/AdminProfile/blog-management";
-
-import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
+
+
+import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -15,7 +15,6 @@ import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
-import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
@@ -49,8 +48,6 @@ import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
 
-import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
-import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 
 
