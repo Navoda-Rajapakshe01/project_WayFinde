@@ -571,8 +571,7 @@ namespace Backend.Migrations
                     b.Navigation("Accommodation");
                 });
 
-           
-                modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
+            modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
                 {
                     b.HasOne("Backend.Models.Accommodation", "Accommodation")
 
@@ -584,9 +583,10 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Accommodation");
-                });
+                    b.Navigation("User");
+                                                .HasForeignKey("UserId")
 
+                });
 
             modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
                 {
