@@ -19,7 +19,7 @@ namespace Backend.Migrations
                 .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
- manage_user_accounts
+
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Backend.Models.Blog", b =>
@@ -186,7 +186,7 @@ namespace Backend.Migrations
 
                     b.HasOne("Backend.Models.UserNew", "User")
 
-                        .WithMany("Blogs")
+                        .WithMany("Blogs");
 
 
                     b.Property<int>("CategoryId")
@@ -205,7 +205,7 @@ namespace Backend.Migrations
                 });
 
 
- 
+
             modelBuilder.Entity("Backend.Models.DashboardNote", b =>
                 {
                     b.Property<int>("Id")
@@ -272,58 +272,58 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
                 {
-                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
+                    b.HasOne("Backend.Models.Accommodation", "Accommodation");
 
 
-            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
-                {
-                    b.HasOne("Backend.Models.UserNew", null)
- 
-                        .WithMany()
+                    modelBuilder.Entity("Backend.Models.DashboardNote", b =>
+                        {
+                            b.HasOne("Backend.Models.UserNew", null)
 
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-manage_user_accounts
+                                .WithMany()
 
-                    b.Navigation("User");
+                                .HasForeignKey("UserId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
 
-update-v2
-                });
+                            b.Navigation("User");
 
-            modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
-                {
-                    b.HasOne("Backend.Models.Blog", "Blog")
-                        .WithMany()
-                        .HasForeignKey("BlogId");
 
-                    b.Navigation("Blog");
-                });
+                        });
 
-            modelBuilder.Entity("Backend.Models.Comment", b =>
-                {
-                    b.HasOne("Backend.Models.Blog", "Blog")
-                        .WithMany()
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
+                        {
+                            b.HasOne("Backend.Models.Blog", "Blog")
+                                .WithMany()
+                                .HasForeignKey("BlogId");
 
-                    b.HasOne("Backend.Models.UserNew", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                            b.Navigation("Blog");
+                        });
 
-                    b.Navigation("Blog");
+                    modelBuilder.Entity("Backend.Models.Comment", b =>
+                        {
+                            b.HasOne("Backend.Models.Blog", "Blog")
+                                .WithMany()
+                                .HasForeignKey("BlogId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
 
-                    b.Navigation("User");
-                });
+                            b.HasOne("Backend.Models.UserNew", "User")
+                                .WithMany()
+                                .HasForeignKey("UserId")
+                                .OnDelete(DeleteBehavior.Restrict)
+                                .IsRequired();
 
-            modelBuilder.Entity("Backend.Models.UserNew", b =>
-                {
-                    b.Navigation("Blogs");
-                });
+                            b.Navigation("Blog");
+
+                            b.Navigation("User");
+                        });
+
+                    modelBuilder.Entity("Backend.Models.UserNew", b =>
+                        {
+                            b.Navigation("Blogs");
+                        });
 #pragma warning restore 612, 618
+                });
         }
     }
 }

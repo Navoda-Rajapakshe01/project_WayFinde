@@ -2,10 +2,6 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
-
-
-
-
 import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
@@ -50,7 +46,6 @@ import VehicleDetail from "./pages/VehicleDetail";
 
 import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 
-
 import "./App.css";
 
 function AppRoutes() {
@@ -79,7 +74,7 @@ function AppRoutes() {
         <Route path="/chat" element={<PersonalBlog />} />
         <Route path="/blog/:id" element={<PersonalBlog />} />
 
-        <Route path="/chat" element={<PersonalBlog/>} />
+        <Route path="/chat" element={<PersonalBlog />} />
         {/* <Route path="/blog/:id" element={<PersonalBlog />} /> */}
 
         <Route path="/settings" element={<UserProfileSettings />} />
@@ -103,7 +98,6 @@ function AppRoutes() {
 
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
 
-
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />
@@ -113,7 +107,10 @@ function AppRoutes() {
           <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
-          <Route path="accommodation-management" element={<AccommodationManagement />} />
+          <Route
+            path="accommodation-management"
+            element={<AccommodationManagement />}
+          />
         </Route>
       </Routes>
 
@@ -125,7 +122,6 @@ function AppRoutes() {
 function App() {
   return (
     <GoogleOAuthProvider clientId="114068341710-2i1qkqgprej37t78umijsckchgktcljm.apps.googleusercontent.com">
- manage_user_accounts_new
       <BrowserRouter>
         <AuthProvider>
           <ProfileImageProvider>
@@ -133,15 +129,6 @@ function App() {
           </ProfileImageProvider>
         </AuthProvider>
       </BrowserRouter>
-
-    <BrowserRouter>
-      <AuthProvider>
-        <ProfileImageProvider>
-          <AppRoutes />
-        </ProfileImageProvider>
-      </AuthProvider>
-    </BrowserRouter>
-
     </GoogleOAuthProvider>
   );
 }

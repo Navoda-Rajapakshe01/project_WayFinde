@@ -16,37 +16,37 @@ namespace Backend.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
 
-        // Vehicles
-        public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<VehicleImage> VehicleImages { get; set; }
-        public DbSet<VehicleReview> VehicleReviews { get; set; }
-        public DbSet<VehicleReservation> VehicleReservations { get; set; }
+        //// Vehicles
+        //public DbSet<Vehicle> Vehicles { get; set; }
+        //public DbSet<VehicleImage> VehicleImages { get; set; }
+        //public DbSet<VehicleReview> VehicleReviews { get; set; }
+        //public DbSet<VehicleReservation> VehicleReservations { get; set; }
 
         // Places & Districts
-        public DbSet<District> Districts { get; set; }
+       // public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
-        public DbSet<Category> Categories { get; set; }
+       // public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<PlaceImage> PlaceImages { get; set; }
 
         // Todo
-        public DbSet<TodoItem> TodoItems { get; set; }
+        //public DbSet<TodoItem> TodoItems { get; set; }
 
-        // Blogs
-        public DbSet<BlogImage> BlogImages { get; set; }
-        public DbSet<Blog> Blogs { get; set; }
+        //// Blogs
+        //public DbSet<BlogImage> BlogImages { get; set; }
+        //public DbSet<Blog> Blogs { get; set; }
 
         // Travel Budget
-        public DbSet<TravelBudget> TravelBudgets { get; set; }
+       // public DbSet<TravelBudget> TravelBudgets { get; set; }
 
         //Dashboard Notes (NEW)
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
-        public DbSet<Accommodation> Accommodations { get; set; }
-        public DbSet<AccommodationImage> AccommodationImages { get; set; }
-        public DbSet<AccommodationReview> AccommodationReviews { get; set; }
-        public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
+        //public DbSet<Accommodation> Accommodations { get; set; }
+        //public DbSet<AccommodationImage> AccommodationImages { get; set; }
+        //public DbSet<AccommodationReview> AccommodationReviews { get; set; }
+        //public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
         public object Amenities { get; internal set; }
 
 
@@ -82,101 +82,6 @@ namespace Backend.Data
 
             
 
-            // modelBuilder.Entity<Blog>()
-            //     .HasOne<UserNew>()
-            //     .WithMany()
-            //     .HasForeignKey(b => b.UserId);
-
-            // Precision for PricePerDay
-            modelBuilder.Entity<Vehicle>()
-                .Property(v => v.PricePerDay)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Accommodation>()
-                .Property(a => a.PricePerDay)
-                .HasPrecision(18, 2);
-
-            // Seed Vehicles
-            modelBuilder.Entity<Vehicle>().HasData(
-                new Vehicle
-                {
-                    Id = 1,
-                    Brand = "Toyota",
-                    Model = "Corolla",
-                    Type = "Sedan",
-                    NumberOfPassengers = 5,
-                    FuelType = "Petrol",
-                    TransmissionType = "Automatic",
-                    Location = "Colombo",
-                    OwnerName = "John Doe",
-                    OwnerCity = "Colombo",
-                    Description = "A comfortable and fuel-efficient city car.",
-                    PricePerDay = 45.00m,
-                    IsAvailable = true
-                },
-                new Vehicle
-                {
-                    Id = 2,
-                    Brand = "Suzuki",
-                    Model = "Wagon R",
-                    Type = "Mini Van",
-                    NumberOfPassengers = 4,
-                    FuelType = "Hybrid",
-                    TransmissionType = "Automatic",
-                    Location = "Kandy",
-                    OwnerName = "Jane Smith",
-                    OwnerCity = "Kandy",
-                    Description = "Perfect for short family trips and hill country.",
-                    PricePerDay = 38.50m,
-                    IsAvailable = true
-                }
-            );
-
-            // Seed Accommodations
-            modelBuilder.Entity<Accommodation>().HasData(
-                new Accommodation
-                {
-                    Id = 1,
-                    Name = "Earl's Regency",
-                    Type = "Hotel",
-                    NumberOfGuests = 100,
-                    NumberOfBedRooms = 20,
-                    NumberOfBeds = 60,
-                    NumberOfBathRooms = 40,
-                    Location = "Thennekumbura",
-                    OwnerName = "Earl's regency group",
-                    OwnerCity = "Kandy",
-                    Description = "stay in free, make your day comfortable",
-                    PricePerDay = 56900m,
-                    IsAvailable = true
-                },
-                new Accommodation
-                {
-                    Id = 2,
-                    Name = "Sajeew Paradise",
-                    Type = "Cabana suite",
-                    NumberOfGuests = 8,
-                    NumberOfBedRooms = 3,
-                    NumberOfBeds = 4,
-                    NumberOfBathRooms = 3,
-                    Location = "Oruthota",
-                    OwnerName = "Sajeewa Karalliyadda",
-                    OwnerCity = "Rajawella",
-                    Description = "happy holiday",
-                    PricePerDay = 14900m,
-                    IsAvailable = true
-                }
-            );
-
-            // District
-            modelBuilder.Entity<District>()
-                .Property(d => d.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            modelBuilder.Entity<District>()
-                .Property(d => d.ImageUrl)
-                .IsRequired();
 
             // PlacesToVisit
             modelBuilder.Entity<PlacesToVisit>()
@@ -187,10 +92,7 @@ namespace Backend.Data
                 .Property(p => p.MainImageUrl)
                 .IsRequired();
 
-            modelBuilder.Entity<PlacesToVisit>()
-                .HasOne(p => p.Category)
-                .WithMany()
-                .HasForeignKey(p => p.CategoryId);
+           
 
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Place)
@@ -198,37 +100,7 @@ namespace Backend.Data
                 .HasForeignKey(r => r.PlaceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // TodoItem
-            modelBuilder.Entity<TodoItem>()
-                .Property(t => t.TaskName)
-                .IsRequired()
-                .HasMaxLength(150);
-
-            modelBuilder.Entity<TodoItem>()
-                .Property(t => t.TaskStatus)
-                .IsRequired();
-
-            modelBuilder.Entity<TodoItem>()
-                .Property(t => t.CreatedAt)
-                .HasDefaultValueSql("GETDATE()");
-
-            modelBuilder.Entity<TodoItem>()
-                .Property(t => t.UpdatedAt)
-                .HasDefaultValueSql("GETDATE()");
-
-            // TravelBudget
-            modelBuilder.Entity<TravelBudget>()
-                .Property(t => t.Description)
-                .IsRequired()
-                .HasMaxLength(200);
-
-            modelBuilder.Entity<TravelBudget>()
-                .Property(t => t.Amount)
-                .IsRequired();
-
-            modelBuilder.Entity<TravelBudget>()
-                .Property(t => t.CreatedAt)
-                .HasDefaultValueSql("GETDATE()");
+           
 
             // DashboardNote rules
 
