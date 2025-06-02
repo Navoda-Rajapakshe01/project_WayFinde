@@ -3,7 +3,14 @@ using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
-
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace Backend.Controllers
 {
@@ -12,19 +19,25 @@ namespace Backend.Controllers
     public class VehicleController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Cloudinary _cloudinary;
 
-        public VehicleController(AppDbContext context)
+        public VehicleController(AppDbContext context, Cloudinary cloudinary)
         {
             _context = context;
+            _cloudinary = cloudinary;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateVehicle([FromForm] VehicleCreateDto dto)
         {
-            // dto includes Brand, Model, PricePerDay, Location, Type, NumberOfPassengers, FuelType, TransmissionType
-            // Amenities as List<string>, Images as IFormFileCollection
-
             if (dto == null) return BadRequest();
+
+            // Validate DistrictId exists in Districts table (optional but recommended)
+            var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
+            if (!districtExists)
+            {
+                return BadRequest($"District with Id {dto.DistrictId} does not exist.");
+            }
 
             var vehicle = new Vehicle
             {
@@ -36,6 +49,7 @@ namespace Backend.Controllers
                 NumberOfPassengers = dto.NumberOfPassengers,
                 FuelType = dto.FuelType,
                 TransmissionType = dto.TransmissionType,
+                DistrictId = dto.DistrictId,   // <-- Set DistrictId here
                 IsAvailable = true
             };
 
@@ -56,13 +70,12 @@ namespace Backend.Controllers
                 }
             }
 
-            // Handle image uploads
+            // Handle image uploads to Cloudinary
             if (dto.Images != null)
             {
                 foreach (var file in dto.Images)
                 {
-                    // Save file to disk or cloud, get URL
-                    var imageUrl = await SaveFileAndGetUrlAsync(file);
+                    var imageUrl = await UploadFileToCloudinary(file);
 
                     _context.VehicleImages.Add(new VehicleImage
                     {
@@ -77,24 +90,22 @@ namespace Backend.Controllers
             return Ok(vehicle);
         }
 
-        private async Task<string> SaveFileAndGetUrlAsync(IFormFile file)
+        private async Task<string> UploadFileToCloudinary(IFormFile file)
         {
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            await using var stream = file.OpenReadStream();
 
-            // Create the directory if it doesn't exist
-            if (!Directory.Exists(uploadsFolder))
+            var uploadParams = new ImageUploadParams()
             {
-                Directory.CreateDirectory(uploadsFolder);
-            }
+                File = new FileDescription(file.FileName, stream),
+                Folder = "vehicles" // Optional: folder in Cloudinary
+            };
 
-            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
+            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                return uploadResult.SecureUrl.ToString();
 
-            // Return the relative URL accessible by frontend
-            return $"/uploads/{fileName}";
+            throw new Exception("Failed to upload image to Cloudinary.");
         }
 
         [HttpPut("{id}/status")]
@@ -119,7 +130,6 @@ namespace Backend.Controllers
 
             if (vehicle == null) return NotFound();
 
-            // Remove related images and amenities first
             if (vehicle.Images != null)
                 _context.VehicleImages.RemoveRange(vehicle.Images);
 
@@ -131,6 +141,7 @@ namespace Backend.Controllers
 
             return NoContent();
         }
+
         [HttpGet("/api/bookings/vehicle/{vehicleId}")]
         public async Task<IActionResult> GetBookingsByVehicle(int vehicleId)
         {
@@ -156,7 +167,9 @@ namespace Backend.Controllers
                 PricePerDay = vehicle.PricePerDay,
                 IsAvailable = vehicle.IsAvailable,
                 ImageUrls = vehicle.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>(),
-                Amenities = vehicle.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>()
+                Amenities = vehicle.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>(),
+                // Optional: include DistrictId in DTO if needed
+                DistrictId = vehicle.DistrictId
             };
         }
 

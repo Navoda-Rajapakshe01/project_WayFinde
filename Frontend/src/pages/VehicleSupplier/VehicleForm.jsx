@@ -13,7 +13,8 @@ const initialState = {
   FuelType: "",
   transmissionType: "",
   amenities: [],
-  supplierId: "", // will be set from localStorage or login info
+  supplierId: "",
+  districtId: "", // <-- new
 };
 
 const AMENITY_OPTIONS = [
@@ -31,6 +32,7 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
   const [form, setForm] = useState(initialState);
   const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [districts, setDistricts] = useState([]); // <-- new
 
   useEffect(() => {
     const savedSupplierId = localStorage.getItem("supplierId");
@@ -39,9 +41,13 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
     } else {
       setForm((prev) => ({
         ...prev,
-        supplierId: "123e4567-e89b-12d3-a456-426614174000", // Dummy for development
+        supplierId: "123e4567-e89b-12d3-a456-426614174000",
       }));
     }
+    // Load district list
+    axios.get("http://localhost:5030/api/district").then((res) => {
+      setDistricts(res.data);
+    });
   }, []);
 
   const handleChange = (e) => {
@@ -82,6 +88,7 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
     if (!form.NumberOfPassengers) return "Capacity is required";
     if (!form.FuelType) return "Fuel type is required";
     if (!form.transmissionType) return "Transmission type is required";
+    if (!form.districtId) return "District is required";
     if (
       !form.supplierId ||
       (!isValidGuid(form.supplierId) && isNaN(parseInt(form.supplierId)))
@@ -110,6 +117,7 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
     formData.append("FuelType", form.FuelType);
     formData.append("transmissionType", form.transmissionType);
     formData.append("SupplierId", form.supplierId);
+    formData.append("DistrictId", form.districtId); // <-- add DistrictId
 
     form.amenities.forEach((a) => formData.append("Amenities", a));
     form.images.forEach((img) => formData.append("Images", img));
@@ -149,7 +157,6 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
 
       {!preview ? (
         <div className="form-fields">
-          {/* Brand & Model */}
           <div className="form-row">
             <div className="form-group">
               <label>Brand*</label>
@@ -173,7 +180,6 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
             </div>
           </div>
 
-          {/* Price & Location */}
           <div className="form-row">
             <div className="form-group">
               <label>Price Per Day (Rs/day)*</label>
@@ -198,7 +204,6 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
             </div>
           </div>
 
-          {/* Type & Capacity */}
           <div className="form-row">
             <div className="form-group">
               <label>Vehicle Type*</label>
@@ -226,7 +231,6 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
             </div>
           </div>
 
-          {/* Fuel & Transmission */}
           <div className="form-row">
             <div className="form-group">
               <label>Fuel Type*</label>
@@ -255,7 +259,22 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
             </div>
           </div>
 
-          {/* Image Upload */}
+          <div className="form-group">
+            <label>District*</label>
+            <select
+              name="districtId"
+              value={form.districtId}
+              onChange={handleChange}
+              required>
+              <option value="">Select District</option>
+              {districts.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {String(d.id).padStart(2, "0")} - {d.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="form-group">
             <label>Vehicle Images (max 5)</label>
             <input
@@ -278,7 +297,6 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
             )}
           </div>
 
-          {/* Amenities */}
           <div className="form-group">
             <label>Amenities</label>
             <div className="checkbox-group">
@@ -296,7 +314,6 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
             </div>
           </div>
 
-          {/* Form Actions */}
           <div className="form-actions">
             <button className="cancel-btn" onClick={onClose}>
               Cancel

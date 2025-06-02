@@ -34,6 +34,10 @@ namespace Backend.Models
         [Required]
         public bool IsAvailable { get; set; } = true;
 
+        [Required]
+        public int DistrictId { get; set; }
+        public District? District { get; set; }
+
         public List<AccommodationImage>? Images { get; set; }
         public List<AccommodationReview>? Reviews { get; set; }
         public List<AccommodationAmenity>? Amenities { get; set; }

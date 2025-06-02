@@ -12,7 +12,7 @@ const VehicleCardTraveller = ({ vehicle }) => {
   return (
     <div className="vehicle-card">
       <img
-        src={vehicle.imagePaths?.[0] || "/default.jpg"}
+        src={vehicle.imageUrls?.[0] || "/default.jpg"}
         alt={`${vehicle.brand} ${vehicle.model}`}
         className="vehicle-image"
       />

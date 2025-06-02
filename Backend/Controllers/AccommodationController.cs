@@ -3,6 +3,13 @@ using Backend.DTOs;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace Backend.Controllers
 {
@@ -11,79 +18,99 @@ namespace Backend.Controllers
     public class AccommodationController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Cloudinary _cloudinary;
 
-        public AccommodationController(AppDbContext context)
+        public AccommodationController(AppDbContext context, Cloudinary cloudinary)
         {
             _context = context;
+            _cloudinary = cloudinary;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateAccommodation([FromForm] AccommodationCreateDto dto)
         {
-            if (dto == null) return BadRequest();
+            if (dto == null)
+                return BadRequest("Accommodation data is missing.");
 
-            var accommodation = new Accommodation
+            try
             {
-                Name = dto.Name,
-                Type = dto.Type,
-                Location = dto.Location,
-                PricePerNight = dto.PricePerNight,
-                Bedrooms = dto.Bedrooms,
-                Bathrooms = dto.Bathrooms,
-                MaxGuests = dto.MaxGuests,
-                Description = dto.Description,
-                IsAvailable = true
-            };
+                // Validate DistrictId existence
+                var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
+                if (!districtExists)
+                    return BadRequest($"District with Id {dto.DistrictId} does not exist.");
 
-            _context.Accommodations.Add(accommodation);
-            await _context.SaveChangesAsync();
-
-            // Add amenities
-            if (dto.Amenities != null)
-            {
-                foreach (var amenity in dto.Amenities)
+                var accommodation = new Accommodation
                 {
-                    _context.AccommodationAmenities.Add(new AccommodationAmenity
-                    {
-                        AccommodationId = accommodation.Id,
-                        AmenityName = amenity
-                    });
-                }
-            }
+                    Name = dto.Name,
+                    Type = dto.Type,
+                    Location = dto.Location,
+                    PricePerNight = dto.PricePerNight,
+                    Bedrooms = dto.Bedrooms,
+                    Bathrooms = dto.Bathrooms,
+                    MaxGuests = dto.MaxGuests,
+                    Description = dto.Description,
+                    DistrictId = dto.DistrictId,
+                    IsAvailable = true
+                };
 
-            // Add images
-            if (dto.Images != null)
-            {
-                foreach (var file in dto.Images)
+                _context.Accommodations.Add(accommodation);
+                await _context.SaveChangesAsync();
+
+                // Add amenities if any
+                if (dto.Amenities != null)
                 {
-                    var imageUrl = await SaveFileAndGetUrlAsync(file);
-                    _context.AccommodationImages.Add(new AccommodationImage
+                    foreach (var amenity in dto.Amenities)
                     {
-                        AccommodationId = accommodation.Id,
-                        ImageUrl = imageUrl
-                    });
+                        _context.AccommodationAmenities.Add(new AccommodationAmenity
+                        {
+                            AccommodationId = accommodation.Id,
+                            AmenityName = amenity
+                        });
+                    }
                 }
+
+                // Upload images to Cloudinary and save URLs
+                if (dto.Images != null)
+                {
+                    foreach (var file in dto.Images)
+                    {
+                        var imageUrl = await UploadFileToCloudinary(file);
+                        _context.AccommodationImages.Add(new AccommodationImage
+                        {
+                            AccommodationId = accommodation.Id,
+                            ImageUrl = imageUrl
+                        });
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(accommodation);
             }
-
-            await _context.SaveChangesAsync();
-
-            return Ok(accommodation);
+            catch (Exception ex)
+            {
+                // Log exception for debugging
+                Console.WriteLine($"[CreateAccommodation Error] {ex.Message}\n{ex.StackTrace}");
+                return StatusCode(500, "Internal server error occurred while creating accommodation.");
+            }
         }
 
-        private async Task<string> SaveFileAndGetUrlAsync(Microsoft.AspNetCore.Http.IFormFile file)
+        private async Task<string> UploadFileToCloudinary(IFormFile file)
         {
-            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+            await using var stream = file.OpenReadStream();
 
-            if (!Directory.Exists(uploadsFolder))
-                Directory.CreateDirectory(uploadsFolder);
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = "accommodations"
+            };
 
-            var fileName = $"{Guid.NewGuid()}_{file.FileName}";
-            var filePath = Path.Combine(uploadsFolder, fileName);
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-            using var stream = new FileStream(filePath, FileMode.Create);
-            await file.CopyToAsync(stream);
+            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                return uploadResult.SecureUrl.ToString();
 
-            return $"/uploads/{fileName}";
+            throw new Exception("Failed to upload image to Cloudinary.");
         }
 
         [HttpPut("{id}/status")]
@@ -159,9 +186,9 @@ namespace Backend.Controllers
                 MaxGuests = accommodation.MaxGuests,
                 Description = accommodation.Description ?? string.Empty,
                 IsAvailable = accommodation.IsAvailable,
-                // Removed SupplierId mapping
                 ImageUrls = accommodation.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>(),
-                Amenities = accommodation.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>()
+                Amenities = accommodation.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>(),
+                DistrictId = accommodation.DistrictId
             };
         }
     }

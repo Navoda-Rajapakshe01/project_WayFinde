@@ -83,7 +83,7 @@ const FeaturedListingsSection = () => {
                       name: item.name,
                       type: item.type,
                       image:
-                        item.imagePaths?.[0] ||
+                        item.imageUrls?.[0] ||
                         "https://via.placeholder.com/300x200?text=No+Image",
                       price: `Rs ${item.pricePerNight}/night`,
                       link: `/accommodation/${item.id}`,

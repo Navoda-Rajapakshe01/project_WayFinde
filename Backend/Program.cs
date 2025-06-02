@@ -12,10 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register UserDbContext for dependency injection
 builder.Services.AddDbContext<UserDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -33,40 +31,41 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-//Cloudinary
-builder.Services.AddSingleton(new Cloudinary(new Account(
-    "diccvuqqo",
-    "269366281956762",
-    "80wa84I1eT5EwO6CW3RIAtW56rc"
-)));
+// Cloudinary setup - load from appsettings.json for security and flexibility
+var cloudName = builder.Configuration["Cloudinary:CloudName"];
+var apiKey = builder.Configuration["Cloudinary:ApiKey"];
+var apiSecret = builder.Configuration["Cloudinary:ApiSecret"];
 
-// Add services to container
+builder.Services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
+
+// Add application services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<VehicleReservationService>();
 
-// Add CORS policy
+// Add CORS policy to allow your React app URLs
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5174",
-            "https://localhost:5175") // Allow the frontend React app to communicate with the backend
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials());
+        policy.WithOrigins(
+            "http://localhost:5173",
+            "https://localhost:5174",
+            "https://localhost:5175")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials());
 });
 
-// Add Controllers
+// Add controllers
 builder.Services.AddControllers();
 
-// Swagger for API Documentation
+// Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Build the App
 var app = builder.Build();
 
-// Enable Swagger in Development
+// Enable Swagger in Development environment only
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -74,21 +73,20 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // For production, you might want a more restrictive CORS policy
-    // or comment this out if you don't need CORS in production
-    app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
+    // Example: Add a more restrictive CORS policy for production
+    // app.UseCors("ProductionCorsPolicy"); 
 }
-// Apply CORS policy BEFORE auth
-app.UseCors("AllowReactApp"); // Ensure this line is before UseAuthentication
 
-// Enable HTTPS redirection
+// Apply CORS policy BEFORE Authentication middleware
+app.UseCors("AllowReactApp");
+
+// Use HTTPS redirection
 app.UseHttpsRedirection();
 
-// Enable Authentication and Authorization middleware
+// Enable Authentication and Authorization middlewares
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-// Start the app
 app.Run();

@@ -16,5 +16,7 @@ namespace Backend.DTOs
 
         public List<string>? Amenities { get; set; }
         public IFormFileCollection? Images { get; set; }
+
+        public int DistrictId { get; set; }
     }
 }

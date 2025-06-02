@@ -13,6 +13,7 @@ namespace Backend.DTOs
         public int NumberOfPassengers { get; set; }
         public string FuelType { get; set; } = string.Empty;
         public string TransmissionType { get; set; } = string.Empty;
+        public int DistrictId { get; set; }
         public List<string>? Amenities { get; set; }
         public IFormFileCollection? Images { get; set; }
     }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../CSS/AccommodationSupplier.css";
 
@@ -13,12 +13,21 @@ const initialState = {
   description: "",
   amenities: [],
   images: [],
+  districtId: "",
 };
 
 const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
   const [form, setForm] = useState(initialState);
   const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [districts, setDistricts] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5030/api/district")
+      .then((res) => setDistricts(res.data))
+      .catch((err) => console.error("Failed to load districts", err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,10 +52,6 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     }));
   };
 
-  const togglePreview = () => {
-    setPreview(!preview);
-  };
-
   const validate = () => {
     if (!form.name) return "Name is required";
     if (!form.type) return "Accommodation type is required";
@@ -55,8 +60,8 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     if (!form.bedrooms) return "Number of bedrooms is required";
     if (!form.bathrooms) return "Number of bathrooms is required";
     if (!form.maxGuests) return "Maximum number of guests is required";
-
-    return null; // No errors
+    if (!form.districtId) return "District is required";
+    return null;
   };
 
   const handleSubmit = async () => {
@@ -67,8 +72,8 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     }
 
     setLoading(true);
-
     const formData = new FormData();
+
     formData.append("Name", form.name);
     formData.append("Type", form.type);
     formData.append("Location", form.location);
@@ -77,6 +82,7 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     formData.append("Bathrooms", parseFloat(form.bathrooms));
     formData.append("MaxGuests", parseInt(form.maxGuests));
     formData.append("Description", form.description);
+    formData.append("DistrictId", form.districtId);
 
     form.amenities.forEach((a) => formData.append("Amenities", a));
     form.images.forEach((img) => formData.append("Images", img));
@@ -87,6 +93,7 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
       });
       setForm(initialState);
       setLoading(false);
+      setPreview(false);
       onSuccess();
     } catch (error) {
       console.error(error);
@@ -128,6 +135,7 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
     <div className="accommodation-form">
       <h2>Post New Accommodation</h2>
 
+      {/* Preview toggle buttons */}
       <div className="form-toggle-buttons">
         <button
           className={`toggle-btn ${!preview ? "active" : ""}`}
@@ -143,135 +151,121 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
       </div>
 
       {!preview ? (
+        // Form View
         <div className="form-fields">
-          <div className="form-row">
-            <div className="form-group">
-              <label>Name*</label>
-              <input
-                name="name"
-                type="text"
-                placeholder="e.g. Luxury Beach Villa"
-                value={form.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Type*</label>
-              <select
-                name="type"
-                value={form.type}
-                onChange={handleChange}
-                required>
-                <option value="">Select Type</option>
-                {accommodationTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="form-group">
+            <label>Name*</label>
+            <input
+              name="name"
+              type="text"
+              value={form.name}
+              onChange={handleChange}
+            />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Location*</label>
-              <input
-                name="location"
-                type="text"
-                placeholder="e.g. Bentota, Sri Lanka"
-                value={form.location}
-                onChange={handleChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Price Per Night (Rs)*</label>
-              <input
-                name="pricePerNight"
-                type="number"
-                placeholder="e.g. 15,000"
-                value={form.pricePerNight}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                required
-              />
-            </div>
+          <div className="form-group">
+            <label>Type*</label>
+            <select name="type" value={form.type} onChange={handleChange}>
+              <option value="">Select Type</option>
+              {accommodationTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label>Bedrooms*</label>
-              <input
-                name="bedrooms"
-                type="number"
-                value={form.bedrooms}
-                onChange={handleChange}
-                min="1"
-                max="20"
-                required
-              />
-            </div>
+          <div className="form-group">
+            <label>District*</label>
+            <select
+              name="districtId"
+              value={form.districtId}
+              onChange={handleChange}>
+              <option value="">Select District</option>
+              {districts.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.id} - {d.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-            <div className="form-group">
-              <label>Bathrooms*</label>
-              <input
-                name="bathrooms"
-                type="number"
-                value={form.bathrooms}
-                onChange={handleChange}
-                min="0.5"
-                step="0.5"
-                required
-              />
-            </div>
+          <div className="form-group">
+            <label>Address*</label>
+            <input
+              name="location"
+              type="text"
+              value={form.location}
+              onChange={handleChange}
+            />
+          </div>
 
-            <div className="form-group">
-              <label>Max Guests*</label>
-              <input
-                name="maxGuests"
-                type="number"
-                value={form.maxGuests}
-                onChange={handleChange}
-                min="1"
-                max="30"
-                required
-              />
-            </div>
+          <div className="form-group">
+            <label>Price Per Night*</label>
+            <input
+              name="pricePerNight"
+              type="number"
+              value={form.pricePerNight}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Bedrooms*</label>
+            <input
+              name="bedrooms"
+              type="number"
+              value={form.bedrooms}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Bathrooms*</label>
+            <input
+              name="bathrooms"
+              type="number"
+              value={form.bathrooms}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Max Guests*</label>
+            <input
+              name="maxGuests"
+              type="number"
+              value={form.maxGuests}
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
             <label>Description</label>
             <textarea
               name="description"
-              rows="4"
-              placeholder="Describe your accommodation..."
               value={form.description}
-              onChange={handleChange}></textarea>
+              onChange={handleChange}
+            />
           </div>
 
           <div className="form-group">
-            <label>Accommodation Images (max 5)</label>
+            <label>Images</label>
             <input
               type="file"
               multiple
               accept="image/*"
               onChange={handleImageChange}
-              className="file-input"
             />
-
             {form.images.length > 0 && (
               <div className="image-preview-container">
-                {Array.from(form.images).map((img, index) => (
-                  <div key={index} className="image-preview-item">
-                    <img
-                      src={URL.createObjectURL(img)}
-                      alt={`Preview ${index}`}
-                    />
-                  </div>
+                {form.images.map((img, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(img)}
+                    alt={`Preview ${index}`}
+                    className="image-preview"
+                  />
                 ))}
               </div>
             )}
@@ -286,9 +280,7 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
                     type="checkbox"
                     value={a}
                     checked={form.amenities.includes(a)}
-                    onChange={(e) =>
-                      handleAmenityToggle(e.target.value, e.target.checked)
-                    }
+                    onChange={(e) => handleAmenityToggle(a, e.target.checked)}
                   />
                   {a}
                 </label>
@@ -297,19 +289,14 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
           </div>
 
           <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="submit-btn"
-              onClick={handleSubmit}
-              disabled={loading}>
+            <button onClick={onClose}>Cancel</button>
+            <button onClick={handleSubmit} disabled={loading}>
               {loading ? "Submitting..." : "Submit"}
             </button>
           </div>
         </div>
       ) : (
+        // Preview View
         <div className="preview-card">
           <h3>Preview</h3>
           <div className="preview-content">
@@ -327,11 +314,15 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
               <h4>{form.name}</h4>
               <p className="preview-type-location">
                 <span className="preview-type">{form.type}</span> in{" "}
-                <span className="preview-location">{form.location}</span>
+                <span className="preview-location">
+                  {districts.find((d) => d.id === parseInt(form.districtId))
+                    ?.name || "District"}
+                </span>
               </p>
+              <p className="preview-location">{form.location}</p>
               <p className="preview-price">${form.pricePerNight}/night</p>
               <p className="preview-specs">
-                {form.bedrooms} {form.bedrooms === 1 ? "bedroom" : "bedrooms"} •
+                {form.bedrooms} {form.bedrooms === 1 ? "bedroom" : "bedrooms"} •{" "}
                 {form.bathrooms}{" "}
                 {form.bathrooms === 1 ? "bathroom" : "bathrooms"} • Max{" "}
                 {form.maxGuests} {form.maxGuests === 1 ? "guest" : "guests"}
@@ -348,16 +339,9 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
               </div>
             </div>
           </div>
-
           <div className="form-actions">
-            <button type="button" className="cancel-btn" onClick={onClose}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="submit-btn"
-              onClick={handleSubmit}
-              disabled={loading}>
+            <button onClick={onClose}>Cancel</button>
+            <button onClick={handleSubmit} disabled={loading}>
               {loading ? "Submitting..." : "Submit"}
             </button>
           </div>

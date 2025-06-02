@@ -12,7 +12,7 @@ const AccommodationCard = ({
     <div className="accommodation-card">
       <img
         src={
-          accommodation.imagePaths?.[0] || "/images/default-accommodation.jpg"
+          accommodation.imageUrls?.[0] || "/images/default-accommodation.jpg"
         }
         alt={accommodation.name}
         className="accommodation-image"

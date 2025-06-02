@@ -24,6 +24,9 @@ namespace Backend.Models
         public decimal PricePerDay { get; set; }
         [Required]
         public bool IsAvailable { get; set; } = true;
+        [Required]
+        public int DistrictId { get; set; } // ✅ New field
+        public District? District { get; set; }
 
         public List<VehicleImage>? Images { get; set; }
         public List<VehicleReview>? Reviews { get; set; }

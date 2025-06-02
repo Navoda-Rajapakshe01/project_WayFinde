@@ -28,5 +28,7 @@ namespace Backend.DTOs
         public List<string> ImageUrls { get; set; } = new List<string>();
 
         public List<string> Amenities { get; set; } = new List<string>();
+
+        public int DistrictId { get; set; } // ✅ Add this
     }
 }

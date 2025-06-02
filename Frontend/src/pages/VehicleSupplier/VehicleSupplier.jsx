@@ -7,8 +7,8 @@ import HeroSection from "../../Components/HeroSection/HeroSection";
 import "../CSS/VehicleSupplier.css";
 import { Tabs, Tab } from "react-bootstrap";
 
-const fallbackVehicles = []; // You can add fallback vehicle data here if needed
-const fallbackBookings = []; // You can add fallback booking data here if needed
+const fallbackVehicles = [];
+const fallbackBookings = [];
 
 const VehicleSupplier = () => {
   const [vehicles, setVehicles] = useState([]);
