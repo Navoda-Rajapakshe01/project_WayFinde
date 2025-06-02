@@ -14,7 +14,6 @@ using CloudinaryDotNet.Actions;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using Backend.DTO;
 
 namespace Backend.Controllers
 {
@@ -26,28 +25,21 @@ namespace Backend.Controllers
         private readonly IUserService _userService;
         private readonly Cloudinary _cloudinary;
         private readonly AppDbContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<BlogController> _logger;
 
         public BlogController(
              Cloudinary cloudinary,
              AppDbContext context,
              IAuthService authService,
-             IUserService userService,
-             IHttpContextAccessor httpContextAccessor,
-             ILogger<BlogController> logger)
+             IUserService userService)
         {
             _cloudinary = cloudinary;
             _context = context;
             _authService = authService;
             _userService = userService;
-            _httpContextAccessor = httpContextAccessor;
-            _logger = logger;
         }
 
-        //Upload blogs to the account
         [HttpPost("upload-blogs")]
-        [Authorize]
+        [Authorize] // Add the Authorize attribute to ensure the user is authenticated
         public async Task<IActionResult> UploadBlog([FromForm] UploadBlogDto uploadDto)
         {
             try
@@ -55,7 +47,7 @@ namespace Backend.Controllers
                 if (uploadDto.Document == null || uploadDto.Image == null)
                     return BadRequest("Document and image are required.");
 
-                //Upload document
+                // Upload document
                 var docUploadParams = new RawUploadParams
                 {
                     File = new FileDescription(uploadDto.Document.FileName, uploadDto.Document.OpenReadStream()),
@@ -106,29 +98,14 @@ namespace Backend.Controllers
             }
         }
 
-
-        //Display blogs with the unique id
-        [HttpGet("{Id}")]
-        public async Task<ActionResult<Blog>> GetBlog(int Id)
+        // Make sure you have a GET endpoint for Swagger to detect
+        [HttpGet]
+        public async Task<IActionResult> GetBlogs()
         {
             try
             {
-                var blog = await _context.Blogs
-                    .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == Id);
-
-                if (blog == null)
-                {
-                    return NotFound(new { message = "Blog not found" });
-                }
-
-                //Ensure author is populated
-                if (string.IsNullOrEmpty(blog.Author))
-                {
-                    blog.Author = blog.User?.Username ?? "Unknown Author";
-                }
-
-                return Ok(blog);
+                var blogs = await _context.Blogs.ToListAsync();
+                return Ok(blogs);
             }
             catch (Exception ex)
             {

@@ -1,7 +1,6 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
-
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -21,8 +20,6 @@ import Accommodation from "./pages/Accommodation";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
-import BlogEditor from "./pages/Blogs/BlogEditor";
-import BlogPreview from "./pages/Blogs/BlogPreview";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
@@ -85,11 +82,6 @@ function AppRoutes() {
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
 
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
-        <Route
-          path="/profile/profileBlogs/blogEditor"
-          element={<BlogEditor />}
-        />
-        <Route path="/pages/blogs/blogpriview" element={<BlogPreview />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />

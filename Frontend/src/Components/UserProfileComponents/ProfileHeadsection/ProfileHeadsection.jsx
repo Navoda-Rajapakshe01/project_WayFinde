@@ -76,9 +76,6 @@ const ProfileHeadSection = () => {
             className="edit-profile-btn"
             onClick={() => navigate("/settings")}
           >
-
-          
-
             Edit Profile
           </button>
         </div>

@@ -23,7 +23,6 @@ namespace Backend.Models
         public int NumberOfReacts { get; set; } = 0;
         public string Author { get; set; } = string.Empty;
         public string CoverImageUrl { get; set; } = string.Empty;
-        public List<string> ImageUrls { get; set; } = new();
 
     }
 

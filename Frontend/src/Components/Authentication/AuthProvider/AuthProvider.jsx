@@ -12,7 +12,7 @@ const AuthProvider = ({ children }) => {
   // Set up axios instance with authentication
   const setupAuthenticatedAxios = (token) => {
     return axios.create({
-      baseURL: 'http://localhost:5030',
+      baseURL: 'https://localhost:7138',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`

@@ -140,12 +140,9 @@ namespace Backend.Controllers
                 {
                     b.Title,
                     b.Author,
-                    b.Id,
+                   
                     b.Location,
-                    
-                    
-                    
-                    Url = b.BlogUrl,
+                    BlogUrl = b.BlogUrl,
                     CoverImageUrl = b.CoverImageUrl,
                     b.CreatedAt
                 })

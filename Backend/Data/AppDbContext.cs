@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.DTOs;
-using System.Text.Json;
 
 namespace Backend.Data
 {
@@ -9,13 +8,11 @@ namespace Backend.Data
     {
         public DbSet<UserNew> UsersNew { get; set; } = null!;
         public DbSet<Blog> Blogs { get; set; } = null!;
-        public DbSet<BlogImageNew> BlogImagesNew { get; set; } = null!;
-
-        public DbSet<Comment> Comments { get; set; } = null!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-
+<<<<<<< HEAD
+=======
         // Vehicles
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
@@ -49,7 +46,7 @@ namespace Backend.Data
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
         public object Amenities { get; internal set; }
 
-
+>>>>>>> update-v2
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -58,9 +55,8 @@ namespace Backend.Data
             modelBuilder.Entity<Blog>()
                 .HasKey(b => b.Id);
 
-
+<<<<<<< HEAD
             // Configure relationship between Blog and UserNew if needed
-<<<<<<<<< Temporary merge branch 1
             // modelBuilder.Entity<Blog>()
             //     .HasOne<UserNew>()
             //     .WithMany()
