@@ -16,6 +16,7 @@ const PersonalBlog = ({ UserId, BlogId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [commentText, setCommentText] = useState("");
+  const [blogContent, setBlogContent] = useState("");
 
   PersonalBlog.propTypes = {
     UserId: PropTypes.string.isRequired,
@@ -124,6 +125,7 @@ const PersonalBlog = ({ UserId, BlogId }) => {
           <BlogContent />
         </div>
       </div>
+
       <div className="writerDetails space-x-4">
         <div>
           <img

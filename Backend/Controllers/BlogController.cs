@@ -15,6 +15,7 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Backend.DTO;
+using Azure.Storage.Blobs;
 
 namespace Backend.Controllers
 {
@@ -24,8 +25,11 @@ namespace Backend.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
+        private readonly BlobService _blobService;
         private readonly Cloudinary _cloudinary;
         private readonly AppDbContext _context;
+        private readonly AppDbContext _dbContext;
+        private readonly IConfiguration _config;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<BlogController> _logger;
 
@@ -34,8 +38,11 @@ namespace Backend.Controllers
              AppDbContext context,
              IAuthService authService,
              IUserService userService,
+             BlobService blobService,
              IHttpContextAccessor httpContextAccessor,
-             ILogger<BlogController> logger)
+             ILogger<BlogController> logger,
+            AppDbContext dbContext, 
+            IConfiguration config)
         {
             _cloudinary = cloudinary;
             _context = context;
@@ -43,6 +50,9 @@ namespace Backend.Controllers
             _userService = userService;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _blobService = blobService;
+            _dbContext = dbContext;
+            _config = config;
         }
 
         //Upload blogs to the account
@@ -106,7 +116,126 @@ namespace Backend.Controllers
             }
         }
 
-        
+        [HttpPost("save-blogs")]
+        [Authorize]
+        public async Task<IActionResult> SaveBlog([FromForm] IFormFile file, [FromForm] string title, [FromForm] string coverImageUrl)
+        {
+            try
+            {
+                // Input validation
+                if (file == null || file.Length == 0)
+                    return BadRequest("No blog file uploaded.");
+
+                if (string.IsNullOrWhiteSpace(title))
+                    return BadRequest("Blog title is required.");
+
+                // Get UserId from JWT token
+                var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("id") ?? User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                {
+                    return BadRequest("Invalid user authentication. Please log in again.");
+                }
+
+                // Validate Azure Blob Storage configuration
+                var connectionString = _config["AzureBlobStorage:ConnectionString"];
+                var containerName = _config["AzureBlobStorage:ContainerName"];
+
+                if (string.IsNullOrWhiteSpace(connectionString))
+                {
+                    return StatusCode(500, "Azure Blob Storage connection string is not configured.");
+                }
+
+                if (string.IsNullOrWhiteSpace(containerName))
+                {
+                    return StatusCode(500, "Azure Blob Storage container name is not configured.");
+                }
+
+                // Upload to Azure Blob Storage
+                var container = new BlobContainerClient(connectionString, containerName);
+                await container.CreateIfNotExistsAsync();
+
+                // Generate unique filename to avoid conflicts
+                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                var blobClient = container.GetBlobClient(fileName);
+
+                using var stream = file.OpenReadStream();
+                await blobClient.UploadAsync(stream, overwrite: true);
+                var blobUrl = blobClient.Uri.ToString();
+
+                // Get author name from claims
+                var author = User.FindFirst("name")?.Value ??
+                            User.FindFirst("username")?.Value ??
+                            User.FindFirst(ClaimTypes.Name)?.Value ??
+                            User.Identity.Name ??
+                            "Unknown Author";
+
+                // Save blog metadata to DB
+                var blog = new Blog
+                {
+                    Title = title.Trim(),
+                    BlogUrl = blobUrl,
+                    Author = author,
+                    UserId = userId, // This was missing!
+                    CreatedAt = DateTime.UtcNow,
+                    Location = string.Empty,
+                    Tags = new List<string>(),
+                    NumberOfComments = 0,
+                    NumberOfReads = 0,
+                    NumberOfReacts = 0,
+                    CoverImageUrl = coverImageUrl ?? string.Empty,
+                    ImageUrls = new List<string>()
+                };
+
+                _dbContext.Blogs.Add(blog);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Blog saved successfully",
+                    blogUrl = blobUrl,
+                    blogId = blog.Id
+                });
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Log the inner exception for more details
+                var innerException = dbEx.InnerException?.Message ?? dbEx.Message;
+                return StatusCode(500, $"Database Error: {innerException}");
+            }
+            catch (Azure.RequestFailedException azureEx)
+            {
+                return StatusCode(500, $"Azure Storage Error: {azureEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Log the full exception details
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
+        [HttpPost("upload-cover-image")]
+        [Authorize]
+        public async Task<IActionResult> UploadCoverImage(IFormFile imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+                return BadRequest(new { message = "No file provided." });
+
+            var uploadParams = new ImageUploadParams
+            {
+                File = new FileDescription(imageFile.FileName, imageFile.OpenReadStream()),
+                Folder = "blog_covers"
+            };
+
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                return Ok(new { imageUrl = uploadResult.SecureUrl.ToString() });
+            }
+
+            return StatusCode(500, new { message = "Cloudinary upload failed" });
+        }
+
         //Display blogs with the unique id
         [HttpGet("{Id}")]
         public async Task<ActionResult<Blog>> GetBlog(int Id)

@@ -19,28 +19,52 @@ import {
   Underline,
   Undo,
 } from "lucide-react";
+import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../CSS/BlogEditor.css";
+
+// ToolbarButton component defined outside of BlogEditor
+const ToolbarButton = ({ onClick, children, title, disabled = false }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    title={title}
+    className="toolbar-button"
+    disabled={disabled}
+  >
+    {children}
+  </button>
+);
+
+// PropTypes for ToolbarButton
+ToolbarButton.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  children: PropTypes.node.isRequired,
+  title: PropTypes.string,
+  disabled: PropTypes.bool,
+};
 
 function BlogEditor() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [blogImages, setBlogImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [coverImage, setCoverImage] = useState(null);
   const editorRef = useRef(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     if (editorRef.current) {
       editorRef.current.innerHTML = content;
     }
-  }, []);
+  }, []); // Added missing dependency array
 
   const executeCommand = (command, value = null) => {
     document.execCommand(command, false, value);
-    editorRef.current.focus();
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
     updateContent();
   };
 
@@ -99,6 +123,7 @@ function BlogEditor() {
     }
   };
 
+  // Upload image to server
   const uploadImageFile = async (file) => {
     // Validate file size
     const maxSize = 5 * 1024 * 1024; // 5MB
@@ -203,12 +228,14 @@ function BlogEditor() {
     }
   };
 
+  // Update content state when editor changes
   const updateContent = () => {
     if (editorRef.current) {
       setContent(editorRef.current.innerHTML);
     }
   };
 
+  // Handle local image upload for preview
   const handleImageUpload = () => {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
@@ -219,14 +246,41 @@ function BlogEditor() {
       const file = e.target.files[0];
       if (!file) return;
 
-      await uploadImageFile(file);
-      // Show success message for manual upload
-      if (!isUploading) {
-        alert("Image uploaded successfully!");
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+      ];
+
+      if (file.size > maxSize) {
+        alert("Image size should be less than 5MB");
+        return;
       }
+
+      if (!allowedTypes.includes(file.type)) {
+        alert("Please select a valid image file (JPEG, PNG, GIF, or WebP)");
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = (loadEvent) => {
+        const imageUrl = loadEvent.target.result; // This will be a base64 data URL
+        insertImageAtCursor(imageUrl); // This function should insert <img src="..." /> into the editor
+      };
+
+      reader.onerror = () => {
+        alert("Error reading image file.");
+      };
+
+      reader.readAsDataURL(file); // Read the file as base64 for inline preview
     };
   };
 
+  // Handle inserting links with basic validation
   const handleInsertLink = () => {
     const url = prompt("Enter the URL:");
     if (url) {
@@ -251,6 +305,7 @@ function BlogEditor() {
     }
   };
 
+  // Handle text color change
   const handleTextColorChange = () => {
     const color = prompt("Enter a color name or hex (e.g., red or #ff0000):");
     if (color) {
@@ -264,14 +319,6 @@ function BlogEditor() {
       return;
     }
 
-    const blog = {
-      title: title.trim(),
-      blogUrl: content,
-      imageUrls: blogImages,
-      tags: [],
-      author: "Author Name",
-    };
-
     try {
       const token = localStorage.getItem("token");
 
@@ -279,16 +326,52 @@ function BlogEditor() {
         alert("Authentication token not found. Please log in again.");
         return;
       }
+      let coverImageUrl = "";
+
+      if (coverImage) {
+        const imageFormData = new FormData();
+        imageFormData.append("imageFile", coverImage);
+
+        const imageUploadResponse = await fetch(
+          "http://localhost:5030/api/blog/upload-cover-image",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: imageFormData,
+          }
+        );
+
+        if (!imageUploadResponse.ok) {
+          const error = await imageUploadResponse.json().catch(() => null);
+          alert(error?.message || "Failed to upload cover image.");
+          return;
+        }
+
+        const imageData = await imageUploadResponse.json();
+        coverImageUrl = imageData.imageUrl;
+      }
+
+      // Convert content to a Blob (HTML file)
+      const htmlBlob = new Blob([content], { type: "text/html" });
+      const fileName = `${title
+        .trim()
+        .replace(/\s+/g, "_")}_${Date.now()}.html`;
+
+      const formData = new FormData();
+      formData.append("title", title.trim());
+      formData.append("file", htmlBlob, fileName);
+      formData.append("coverImageUrl", coverImageUrl);
 
       const response = await fetch(
         "http://localhost:5030/api/blog/save-blogs",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(blog),
+          body: formData,
         }
       );
 
@@ -297,6 +380,7 @@ function BlogEditor() {
         setTitle("");
         setContent("");
         setBlogImages([]);
+        setCoverImage(null);
         if (editorRef.current) {
           editorRef.current.innerHTML = "";
         }
@@ -329,18 +413,6 @@ function BlogEditor() {
     }
   };
 
-  const ToolbarButton = ({ onClick, children, title, disabled = false }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className="toolbar-button"
-      disabled={disabled}
-    >
-      {children}
-    </button>
-  );
-
   return (
     <div className="blog-editor-container">
       <h1 className="blog-editor-title">Blog Editor</h1>
@@ -352,6 +424,13 @@ function BlogEditor() {
         placeholder="Enter your blog title..."
         className="blog-title-input"
         maxLength={200}
+      />
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setCoverImage(e.target.files[0])}
+        className="cover-image-input"
       />
 
       <div className="editor-container">
@@ -452,8 +531,8 @@ function BlogEditor() {
           {/* Utilities */}
           <ToolbarButton
             onClick={handleImageUpload}
-            title={isUploading ? "Uploading..." : "Insert Image"}
-            disabled={isUploading}
+            title="Insert Image"
+            disabled={false}
           >
             <Image size={16} />
           </ToolbarButton>
@@ -536,7 +615,7 @@ function BlogEditor() {
         >
           Preview Content
         </button>
-        <button
+        {/* <button
           onClick={() =>
             navigate("/blogpriview", {
               state: {
@@ -549,7 +628,7 @@ function BlogEditor() {
           className="btn btn-success"
         >
           Preview Blog
-        </button>
+        </button> */}
       </div>
 
       {/* Preview */}
@@ -566,8 +645,17 @@ function BlogEditor() {
         </div>
       )}
     </div>
-    
   );
 }
+
+// PropTypes for BlogEditor - moved to the end
+BlogEditor.propTypes = {
+  // These props don't seem to be used in the component, consider removing them
+  // or add them to the function parameters if needed
+  onClick: PropTypes.func,
+  children: PropTypes.node,
+  title: PropTypes.string,
+  disabled: PropTypes.bool,
+};
 
 export default BlogEditor;
