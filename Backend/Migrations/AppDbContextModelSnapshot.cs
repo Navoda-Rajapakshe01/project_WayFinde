@@ -125,7 +125,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Blog", b =>
                 {
 
-                    b.HasOne("Backend.Models.UserNew", "User")
+                    b.HasOne("Backend.Models.UserNew", "User");
 
                     b.Property<int>("CategoryId")
                         .ValueGeneratedOnAdd()
@@ -517,14 +517,14 @@ namespace Backend.Migrations
 
                         .WithMany()
 
-                        .WithMany("Blogs")
+                        
 
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
-                                                .HasForeignKey("UserId")
+                                                
 
                 });
 
@@ -634,7 +634,7 @@ namespace Backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
->>>>>>>>> Temporary merge branch 2
+
                 });
 #pragma warning restore 612, 618
         }

@@ -14,6 +14,8 @@ using CloudinaryDotNet.Actions;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using Microsoft.Extensions.Logging;
+using Backend.DTO;
 
 namespace Backend.Controllers
 {
@@ -25,17 +27,20 @@ namespace Backend.Controllers
         private readonly IUserService _userService;
         private readonly Cloudinary _cloudinary;
         private readonly AppDbContext _context;
+        private readonly ILogger<BlogController> _logger;
 
         public BlogController(
              Cloudinary cloudinary,
              AppDbContext context,
              IAuthService authService,
-             IUserService userService)
+             IUserService userService,
+             ILogger<BlogController> logger)
         {
             _cloudinary = cloudinary;
             _context = context;
             _authService = authService;
             _userService = userService;
+            _logger = logger;
         }
 
         [HttpPost("upload-blogs")]
@@ -110,7 +115,7 @@ namespace Backend.Controllers
             catch (Exception ex)
             {
                 // Log the exception
-                _logger?.LogError(ex, "Error fetching blog with id {BlogId}", Id);
+                _logger?.LogError(ex, "Error fetching blogs.");
                 return StatusCode(500, new { message = "internal server error" });
             }
         }
@@ -143,61 +148,61 @@ namespace Backend.Controllers
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
 
-
-            //Add a new comment to the blog
-            [HttpPost("newComment")]
-            public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
-            {
-                var blog = await _context.Blogs.FindAsync(dto.BlogId);
-                if (blog == null)
-                    return NotFound("Blog not found");
-
-                var user = await _context.UsersNew.FindAsync(dto.UserId);
-                if (user == null)
-                    return NotFound("User not found");
-
-                var comment = new Comment
-                {
-                    Blog = blog,
-                    User = user,
-                    UserId = dto.UserId,
-                    Content = dto.Content,
-                    CreatedAt = DateTime.UtcNow
-                };
-
-                _context.Comments.Add(comment);
-                await _context.SaveChangesAsync();
-
-                return Ok(comment);
-            }
-
-            // GET: api/blog/all
-            [HttpGet("all")]
-            public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
-            {
-                var blogs = await _context.Blogs
-                    .Include(b => b.User) // if you want to include user data
-                    .ToListAsync();
-
-                return Ok(blogs);
-            }
-
-            //Delete a blog in the profile
-            [HttpDelete("delete/{id}")]
-            public async Task<IActionResult> DeleteBlog(int id)
-            {
-                var blog = await _context.Blogs.FindAsync(id);
-                if (blog == null)
-                {
-                    return NotFound(new { message = "Blog not found." });
-                }
-
-                _context.Blogs.Remove(blog);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Blog deleted successfully." });
-            }
-
-
         }
+        //Add a new comment to the blog
+        [HttpPost("newComment")]
+        public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
+        {
+            var blog = await _context.Blogs.FindAsync(dto.BlogId);
+            if (blog == null)
+                return NotFound("Blog not found");
+
+            var user = await _context.UsersNew.FindAsync(dto.UserId);
+            if (user == null)
+                return NotFound("User not found");
+
+            var comment = new Comment
+            {
+                Blog = blog,
+                User = user,
+                UserId = dto.UserId,
+                Content = dto.Content,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+
+            return Ok(comment);
+        }
+
+        // GET: api/blog/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
+        {
+            var blogs = await _context.Blogs
+                .Include(b => b.User) // if you want to include user data
+                .ToListAsync();
+
+            return Ok(blogs);
+        }
+
+        //Delete a blog in the profile
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteBlog(int id)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
+            {
+                return NotFound(new { message = "Blog not found." });
+            }
+
+            _context.Blogs.Remove(blog);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Blog deleted successfully." });
+        }
+
+
     }
+    } 
