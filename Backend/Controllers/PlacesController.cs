@@ -251,5 +251,18 @@ namespace Backend.Controllers
             return Ok(popularPlaces);
         }
 
+        // GET: api/11/images
+        [HttpGet("{placeId}/images")]
+        public async Task<IActionResult> GetPlaceImages(int placeId)
+        {
+            var images = await _context.PlaceImages
+                .Where(pi => pi.PlaceId == placeId)
+                .Select(pi => pi.ImageUrl)
+                .ToListAsync();
+
+            return Ok(images);
+        }
+
+
     }
 }

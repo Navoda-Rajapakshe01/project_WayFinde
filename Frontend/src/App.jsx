@@ -9,6 +9,7 @@ import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
+import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
@@ -22,7 +23,6 @@ import Blog from "./pages/Blogs/Blog";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import Home from "./pages/Home";
 import PaymentGateway from "./pages/PaymentGateway";
-import Chat from "./pages/Profile/Chat";
 import Following from "./pages/Profile/Following";
 import Followers from "./pages/Profile/Follwers";
 import Profile from "./pages/Profile/Profile";
@@ -88,6 +88,7 @@ function AppRoutes() {
           <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
+          <Route path="accommodation-management" element={<AccommodationManagement />} />
         </Route>
       </Routes>
 

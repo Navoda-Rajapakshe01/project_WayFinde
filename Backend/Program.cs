@@ -64,6 +64,9 @@ builder.Services.AddCors(options =>
 
 // Add Controllers
 builder.Services.AddControllers();
+// Add SignalR
+builder.Services.AddSignalR();
+
 
 // Swagger for API Documentation
 builder.Services.AddEndpointsApiExplorer();
@@ -94,5 +97,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+// Map SignalR hubs
+app.MapHub<Backend.Hubs.NotificationHub>("/notificationHub");
 
 app.Run();

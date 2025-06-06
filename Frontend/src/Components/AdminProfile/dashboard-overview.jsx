@@ -47,6 +47,22 @@ const DashboardOverview = () => {
     } finally {
       setIsLoading(false);
     }
+
+    try {
+      const reviewsRes = await axios.get(
+        "http://localhost:5030/api/reviews/Rcount"
+      );
+      setStats((prev) => ({
+        ...prev,
+        totalReviews: reviewsRes.data,
+      }));
+    }
+    catch (error) {
+      console.error("Failed to fetch reviews count:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchPopularPlaces = async () => {
@@ -89,9 +105,6 @@ const DashboardOverview = () => {
           <div className="stat-details">
             <h3>Total Users</h3>
             <p className="stat-value">{stats.totalUsers}</p>
-            <p className="stat-change increase">
-              <FaArrowUp /> 8% <span>since last month</span>
-            </p>
           </div>
         </div>
 
@@ -102,9 +115,6 @@ const DashboardOverview = () => {
           <div className="stat-details">
             <h3>Accommodations</h3>
             <p className="stat-value">{stats.totalAccommodations}</p>
-            <p className="stat-change increase">
-              <FaArrowUp /> 15% <span>since last month</span>
-            </p>
           </div>
         </div>
 
@@ -115,22 +125,16 @@ const DashboardOverview = () => {
           <div className="stat-details">
             <h3>Vehicles</h3>
             <p className="stat-value">{stats.totalVehicles}</p>
-            <p className="stat-change increase">
-              <FaArrowUp /> 10% <span>since last month</span>
-            </p>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon reviews">
+          <div className="stat-icon Adminreviews">
             <FaStar />
           </div>
           <div className="stat-details">
             <h3>Total Reviews</h3>
             <p className="stat-value">{stats.totalReviews}</p>
-            <p className="stat-change increase">
-              <FaArrowUp /> 5% <span>since last month</span>
-            </p>
           </div>
         </div>
 
@@ -141,9 +145,6 @@ const DashboardOverview = () => {
           <div className="stat-details">
             <h3>Total Visits</h3>
             <p className="stat-value">{stats.totalVisits}</p>
-            <p className="stat-change decrease">
-              <FaArrowDown /> 3% <span>since last month</span>
-            </p>
           </div>
         </div>
       </div>
