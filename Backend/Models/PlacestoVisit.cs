@@ -15,6 +15,12 @@ public class PlacesToVisit
     public string? Address { get; set; }
     public string? GoogleMapLink { get; set; }
 
+    
+    public double? Rating { get; set; }  // rating (number 0-5)
+    public int HowManyRated { get; set; } = 0;  //  howManyRated (number)
+    public decimal? AvgSpend { get; set; }  //  avgSpend (number)
+    public string? AvgTime { get; set; }  // avgTime (string), optional
+
     public int DistrictId { get; set; }
     public required District District { get; set; }
 
@@ -22,5 +28,4 @@ public class PlacesToVisit
     public required Category Category { get; set; }
 
     public ICollection<Review> Reviews { get; set; } = new List<Review>();
-
 }

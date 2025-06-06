@@ -32,12 +32,14 @@ import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
-import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
-import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
+
 import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
+
+import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
+import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
 import "./App.css";
 
@@ -51,8 +53,6 @@ function AppRoutes() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/plantrip" element={<PlanTrip />} />
-        <Route path="/trip-planner" element={<OptimizedTripRoute />} />
         <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
@@ -63,7 +63,7 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-        <Route path="/chat" element={<PersonalBlog/>} />
+        <Route path="/chat" element={<PersonalBlog />} />
         <Route path="/blog/:id" element={<PersonalBlog />} />
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
@@ -75,6 +75,9 @@ function AppRoutes() {
         <Route path="/profile/following" element={<Following />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+
+        <Route path="/plantrip" element={<CreateTrip />} />
+        <Route path="/optimizedroute/:id" element={<OptimizedRoute />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />

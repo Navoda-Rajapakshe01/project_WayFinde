@@ -240,6 +240,37 @@ namespace Backend.Migrations
                     b.ToTable("AccommodationReviews");
                 });
 
+            modelBuilder.Entity("Backend.Models.Blog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Author")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumberOfReacts")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumberOfReads")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Blogs");
+                });
+
             modelBuilder.Entity("Backend.Models.BlogImage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -316,7 +347,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DashboardNotes");
+                    b.ToTable("DashboardNote");
                 });
 
             modelBuilder.Entity("Backend.Models.District", b =>
@@ -340,9 +371,45 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SubTitle")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Districts");
+                });
+
+            modelBuilder.Entity("Backend.Models.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Backend.Models.TodoItem", b =>
@@ -610,6 +677,12 @@ namespace Backend.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal?>("AvgSpend")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("AvgTime")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
@@ -626,6 +699,9 @@ namespace Backend.Migrations
                     b.Property<string>("History")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("HowManyRated")
+                        .HasColumnType("int");
+
                     b.Property<string>("MainImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -636,6 +712,9 @@ namespace Backend.Migrations
 
                     b.Property<string>("OpeningHours")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Rating")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -680,6 +759,17 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Accommodation");
+                });
+
+            modelBuilder.Entity("Backend.Models.Review", b =>
+                {
+                    b.HasOne("PlacesToVisit", "Place")
+                        .WithMany("Reviews")
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
@@ -743,6 +833,11 @@ namespace Backend.Migrations
                 {
                     b.Navigation("Images");
 
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("PlacesToVisit", b =>
+                {
                     b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
