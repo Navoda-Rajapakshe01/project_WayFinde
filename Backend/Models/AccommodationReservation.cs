@@ -23,5 +23,9 @@
         public int AccommodationId { get; set; }
         public Accommodation? Accommodation { get; set; }
 
+     
+        public Guid UserId { get; set; }
+        public UserNew? User { get; set; }
+
     }
 }

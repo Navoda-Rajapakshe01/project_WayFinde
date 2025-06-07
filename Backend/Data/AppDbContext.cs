@@ -8,8 +8,11 @@ namespace Backend.Data
 {
     public class AppDbContext : DbContext
     {
+        //Profile
         public DbSet<UserNew> UsersNew { get; set; } = null!;
         public DbSet<Blog> Blogs { get; set; } = null!;
+        public DbSet<Post> Posts { get; set; } = null!;
+        public DbSet<Follows> Follows { get; set; } = null!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -48,7 +51,7 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-        public object Amenities { get; internal set; }
+        public object? Amenities { get; internal set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -301,10 +304,10 @@ namespace Backend.Data
                     v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
 
             modelBuilder.Entity<Comment>()
-       .HasOne(c => c.User)
-       .WithMany()
-       .HasForeignKey(c => c.UserId)
-       .OnDelete(DeleteBehavior.Restrict); // <== Fix for cascade cycle
+           .HasOne(c => c.User)
+           .WithMany()
+           .HasForeignKey(c => c.UserId)
+           .OnDelete(DeleteBehavior.Restrict); // <== Fix for cascade cycle
 
 
 
@@ -358,13 +361,25 @@ namespace Backend.Data
              .HasForeignKey(b => b.UserId);
 
 
-            // Configure the ImageUrls property for Blog
-            modelBuilder.Entity<Blog>()
-                .Property(b => b.ImageUrls)
-                .HasConversion(
-                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
-                    v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null));
+           
+            modelBuilder.Entity<Follows>()
+                .HasKey(f => new { f.FollowerID, f.FollowedID });
 
+            modelBuilder.Entity<Follows>()
+                .HasOne(f => f.Follower)
+                .WithMany(u => u.Following)
+                .HasForeignKey(f => f.FollowerID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Follows>()
+                .HasOne(f => f.Followed)
+                .WithMany(u => u.Followers)
+                .HasForeignKey(f => f.FollowedID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+
+            
 
 
 

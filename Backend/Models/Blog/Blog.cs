@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
 {
@@ -17,11 +18,15 @@ namespace Backend.Models
 
                 [Required]
                 public Guid UserId { get; set; }
+                [ForeignKey("UserId")]
+                 public UserNew User { get; set; } = null!;
 
-                public UserNew User { get; set; } = null!;
+                public int DistrictId { get; set; }
+                [ForeignKey("DistrictId")]
+                public District District { get; set; } = null!;
+                [Required]
 
-                public string Location { get; set; } = string.Empty;
-
+                public string Location { get; set; } = null;
                 public List<string> Tags { get; set; } = new List<string>();
 
                 public int NumberOfComments { get; set; } = 0;
@@ -36,5 +41,9 @@ namespace Backend.Models
                 public string CoverImageUrl { get; set; } = string.Empty;
 
                 public List<string> ImageUrls { get; set; } = new();
-        }
+
+
+                // One blog has many comments
+                public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+    }
 }
