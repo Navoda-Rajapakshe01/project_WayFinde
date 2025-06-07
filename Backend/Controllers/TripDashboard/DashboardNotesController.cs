@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Models;
-using Backend.DTOs;  
+using Backend.DTOs;
 
 namespace Backend.Controllers
 {
@@ -11,12 +11,12 @@ namespace Backend.Controllers
     public class DashboardNoteController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
-    
+
 
         public DashboardNoteController(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
-           
+
         }
 
         // GET: api/DashboardNotes

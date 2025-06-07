@@ -6,18 +6,17 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using CloudinaryDotNet;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Database context
+// Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
 
 
 
 
-// Authentication with JWT Bearer
+// Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -42,30 +41,22 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
 
 
 
-//services to container
+// Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
 
 
-//CORS policy
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins("http://localhost:5173", "http://localhost:5174",
-            "http://localhost:5175")
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5174",
+            "https://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials() 
+              .AllowCredentials()
     );
-});
-
-
-//Controllers
-builder.Services.AddControllers().AddJsonOptions(x =>
-{
-    x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-    x.JsonSerializerOptions.WriteIndented = true;
 });
 
 // Add Controllers
@@ -74,13 +65,11 @@ builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
 
-
 // Swagger for API Documentation
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpContextAccessor();
 
-
+// Build the App
 var app = builder.Build();
 
 // Enable Swagger in Development
@@ -91,8 +80,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-   
-    app.UseCors("ProductionCorsPolicy"); 
+
+    app.UseCors("ProductionCorsPolicy");
 }
 
 

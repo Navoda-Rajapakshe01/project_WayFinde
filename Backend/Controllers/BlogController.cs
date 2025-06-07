@@ -14,6 +14,7 @@ using CloudinaryDotNet.Actions;
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
+using Microsoft.Extensions.Logging;
 using Backend.DTO;
 using Azure.Storage.Blobs;
 
@@ -41,23 +42,21 @@ namespace Backend.Controllers
              BlobService blobService,
              IHttpContextAccessor httpContextAccessor,
              ILogger<BlogController> logger,
-            AppDbContext dbContext, 
+            AppDbContext dbContext,
             IConfiguration config)
         {
             _cloudinary = cloudinary;
             _context = context;
             _authService = authService;
             _userService = userService;
-            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _blobService = blobService;
             _dbContext = dbContext;
             _config = config;
         }
 
-        //Upload blogs to the account
         [HttpPost("upload-blogs")]
-        [Authorize] 
+        [Authorize] // Add the Authorize attribute to ensure the user is authenticated
         public async Task<IActionResult> UploadBlog([FromForm] UploadBlogDto uploadDto)
         {
             try
@@ -65,7 +64,7 @@ namespace Backend.Controllers
                 if (uploadDto.Document == null || uploadDto.Image == null)
                     return BadRequest("Document and image are required.");
 
-                //Upload document
+                // Upload document
                 var docUploadParams = new RawUploadParams
                 {
                     File = new FileDescription(uploadDto.Document.FileName, uploadDto.Document.OpenReadStream()),
@@ -242,27 +241,13 @@ namespace Backend.Controllers
         {
             try
             {
-                var blog = await _context.Blogs
-                    .Include(b => b.User)
-                    .FirstOrDefaultAsync(b => b.Id == Id);
-
-                if (blog == null)
-                {
-                    return NotFound(new { message = "Blog not found" });
-                }
-
-                //Ensure author is populated
-                if (string.IsNullOrEmpty(blog.Author))
-                {
-                    blog.Author = blog.User?.Username ?? "Unknown Author";
-                }
-
-                return Ok(blog);
+                var blogs = await _context.Blogs.ToListAsync();
+                return Ok(blogs);
             }
             catch (Exception ex)
             {
                 // Log the exception
-                _logger?.LogError(ex, "Error fetching blog with id {BlogId}", Id);
+                _logger?.LogError(ex, "Error fetching blogs.");
                 return StatusCode(500, new { message = "internal server error" });
             }
         }
@@ -294,93 +279,62 @@ namespace Backend.Controllers
                 // Log the exception here if you have logging configured
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
-        } 
 
 
-
-        //Add a new comment to the blog
-        [HttpPost("newComment")]
-        public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
-        {
-            var blog = await _context.Blogs.FindAsync(dto.BlogId);
-            if (blog == null)
-                return NotFound("Blog not found");
-
-            var user = await _context.UsersNew.FindAsync(dto.UserId);
-            if (user == null)
-                return NotFound("User not found");
-
-            var comment = new Comment
+            //Add a new comment to the blog
+            [HttpPost("newComment")]
+            public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
             {
-                Blog = blog,
-                User = user,
-                UserId = dto.UserId,
-                Content = dto.Content,
-                CreatedAt = DateTime.UtcNow
-            };
+                var blog = await _context.Blogs.FindAsync(dto.BlogId);
+                if (blog == null)
+                    return NotFound("Blog not found");
 
-            _context.Comments.Add(comment);
-            await _context.SaveChangesAsync();
+                var user = await _context.UsersNew.FindAsync(dto.UserId);
+                if (user == null)
+                    return NotFound("User not found");
 
-            return Ok(comment);
-        }
+                var comment = new Comment
+                {
+                    Blog = blog,
+                    User = user,
+                    UserId = dto.UserId,
+                    Content = dto.Content,
+                    CreatedAt = DateTime.UtcNow
+                };
 
-        // GET: api/blog/all
-        [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
-        {
-            var blogs = await _context.Blogs
-                .Include(b => b.User) // if you want to include user data
-                .ToListAsync();
+                _context.Comments.Add(comment);
+                await _context.SaveChangesAsync();
 
-            return Ok(blogs);
-        }
-
-        //Delete a blog in the profile
-        [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> DeleteBlog(int id)
-        {
-            var blog = await _context.Blogs.FindAsync(id);
-            if (blog == null)
-            {
-                return NotFound(new { message = "Blog not found." });
+                return Ok(comment);
             }
 
-            _context.Blogs.Remove(blog);
-            await _context.SaveChangesAsync();
+            // GET: api/blog/all
+            [HttpGet("all")]
+            public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
+            {
+                var blogs = await _context.Blogs
+                    .Include(b => b.User) // if you want to include user data
+                    .ToListAsync();
 
-            return Ok(new { message = "Blog deleted successfully." });
+                return Ok(blogs);
+            }
+
+            //Delete a blog in the profile
+            [HttpDelete("delete/{id}")]
+            public async Task<IActionResult> DeleteBlog(int id)
+            {
+                var blog = await _context.Blogs.FindAsync(id);
+                if (blog == null)
+                {
+                    return NotFound(new { message = "Blog not found." });
+                }
+
+                _context.Blogs.Remove(blog);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Blog deleted successfully." });
+            }
+
+
         }
-
-
-        //// DELETE: api/blogs/{id}
-        //[HttpDelete("{id}")]
-        //[Authorize]
-        //public async Task<IActionResult> DeleteBlog(int id)
-        //{
-        //    // Add validation
-        //    if (id <= 0)
-        //    {
-        //        return BadRequest(new { message = "Invalid blog ID" });
-        //    }
-
-        //    var blog = await _context.Blogs.FindAsync(id);
-        //    if (blog == null)
-        //    {
-        //        return NotFound(new { message = "Blog not found" });
-        //    }
-
-        //    // Optional: Check if the user owns this blog
-        //    // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        //    // if (blog.UserId != userId) 
-        //    // {
-        //    //     return Forbid(new { message = "You can only delete your own blogs" });
-        //    // }
-
-        //    _context.Blogs.Remove(blog);
-        //    await _context.SaveChangesAsync();
-        //    return Ok(new { message = "Blog deleted successfully" });
-        //}
-
-    }
-}
+    } 

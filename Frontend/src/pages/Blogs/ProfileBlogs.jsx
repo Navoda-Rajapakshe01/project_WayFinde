@@ -13,66 +13,63 @@ const ProfileSettings = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  //Delete blog from user profile
-const handleDelete = async (id) => {
-  const confirmDelete = window.confirm(
-    "Are you sure you want to delete this blog?"
-  );
-  if (!confirmDelete) return;
-  
-  console.log("Deleting blog with ID:", id, "Type:", typeof id);
-  
-  // Ensure ID is a valid integer
-  const blogId = parseInt(id);
-  if (isNaN(blogId) || blogId <= 0) {
-    alert("Invalid blog ID");
-    return;
-  }
-  
-  try {
-    // Fixed URL to match backend endpoint (blogs plural)
-    const response = await fetch(`http://localhost:5030/api/blogs/${blogId}`, {
-      method: "DELETE",
-      headers: {
-        "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        "Content-Type": "application/json", // Added content-type header
-      },
-    });
-    
-    console.log("Response status:", response.status);
-    console.log("Response:", response); // Additional logging
+  //   //Delete blog from user profile
+  // const handleDeleteBlog = async (id) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this blog?"
+  //   );
+  //   if (!confirmDelete) return;
 
-    if (response.ok) {
-      alert("Blog deleted successfully.");
-      // Refresh list or remove blog from state
-      // You might want to call a function to refresh your blog list here
-      // e.g., fetchBlogs() or setBlogList(prevBlogs => prevBlogs.filter(blog => blog.id !== id))
-    } else {
-      // Get detailed error information
-      const errorData = await response.json().catch(() => ({}));
-      console.error("Delete failed - Full error:", errorData);
-      
-      // Log specific validation errors if they exist
-      if (errorData.errors) {
-        console.error("Validation errors:", errorData.errors);
-      }
-      
-      alert(`Failed to delete blog: ${errorData.title || errorData.message || 'Validation error'}`);
-    }
-  } catch (error) {
-    console.error("Delete error:", error);
-    alert("An error occurred while deleting. Please check your connection.");
-  }
-};
+  //   console.log("Deleting blog with ID:", id, "Type:", typeof id);
+
+  //   // Ensure ID is a valid integer
+  //   const blogId = parseInt(id);
+  //   if (isNaN(blogId) || blogId <= 0) {
+  //     alert("Invalid blog ID");
+  //     return;
+  //   }
+
+  //   try {
+  //     // Fixed URL to match backend endpoint (blogs plural)
+  //     const response = await fetch(`http://localhost:5030/api/blogs/${blogId}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Authorization": `Bearer ${localStorage.getItem("token")}`,
+  //         "Content-Type": "application/json", // Added content-type header
+  //       },
+  //     });
+
+  //     console.log("Response status:", response.status);
+  //     console.log("Response:", response); // Additional logging
+
+  //     if (response.ok) {
+  //       alert("Blog deleted successfully.");
+  //       // Refresh list or remove blog from state
+  //       // You might want to call a function to refresh your blog list here
+  //       // e.g., fetchBlogs() or setBlogList(prevBlogs => prevBlogs.filter(blog => blog.id !== id))
+  //     } else {
+  //       // Get detailed error information
+  //       const errorData = await response.json().catch(() => ({}));
+  //       console.error("Delete failed - Full error:", errorData);
+
+  //       // Log specific validation errors if they exist
+  //       if (errorData.errors) {
+  //         console.error("Validation errors:", errorData.errors);
+  //       }
+
+  //       alert(`Failed to delete blog: ${errorData.title || errorData.message || 'Validation error'}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Delete error:", error);
+  //     alert("An error occurred while deleting. Please check your connection.");
+  //   }
+  // };
   // Fetch user profile and blogs from backend
   useEffect(() => {
     const fetchProfileAndBlogs = async () => {
       try {
-
         setLoading(true);
         setError(null);
-
-
 
         const res = await fetch("http://localhost:5030/api/profile/me", {
           headers: {
@@ -175,7 +172,7 @@ const handleDelete = async (id) => {
 
   const writeBlog = () => {
     window.scrollTo(0, 0);
-    navigate("/profile/profileBlogs/blogEditor"); 
+    navigate("/profile/profileBlogs/blogEditor");
   };
 
   if (loading) {
@@ -209,7 +206,6 @@ const handleDelete = async (id) => {
           </p>
         ) : (
           blogs.map((blog, index) => (
-
             <div
               onClick={() =>
                 handleBlogDisplay(
@@ -247,7 +243,6 @@ const handleDelete = async (id) => {
                   </span>
 
                   <span
-                    
                     onClick={(e) => {
                       e.stopPropagation(); // prevent triggering blog display
                       handleDeleteBlog(
@@ -255,9 +250,7 @@ const handleDelete = async (id) => {
                       );
                     }}
                   >
-                   <FaTrash className="icon" /> Delete
-
-                 
+                    <FaTrash className="icon" /> Delete
                   </span>
                 </div>
               </div>

@@ -22,9 +22,8 @@ import Accommodation from "./pages/Accommodation";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
-import BlogEditor from "./pages/Blogs/BlogEditor";
-import BlogPreview from "./pages/Blogs/BlogPreview";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
 import PaymentGateway from "./pages/PaymentGateway";
@@ -43,8 +42,6 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-
-import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 
 import "./App.css";
 
@@ -76,7 +73,6 @@ function AppRoutes() {
 
         <Route path="/chat" element={<PersonalBlog />} />
         {/* <Route path="/blog/:id" element={<PersonalBlog />} /> */}
-
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
@@ -89,12 +85,6 @@ function AppRoutes() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
-
-        <Route
-          path="/profile/profileBlogs/blogEditor"
-          element={<BlogEditor />}
-        />
-        <Route path="/pages/blogs/blogpriview" element={<BlogPreview />} />
 
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
 

@@ -1,15 +1,12 @@
-import axios from "axios";
-import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FaComment, FaThumbsUp } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import BlogContent from "../../Components/BlogComponents/BlogContent/BlogContent";
 import "../CSS/PersonalBlog.css"; // Import your CSS file for styling
-
-//const beachImage2 = "/Blogimages/beach2.jpg"; // Correct path from public folder
-//const beachImage3 = "/Blogimages/beach3.jpg"; // Correct path from public folder
+const beachImage2 = "/Blogimages/beach2.jpg"; // Correct path from public folder
+const beachImage3 = "/Blogimages/beach3.jpg"; // Correct path from public folder
 //const beachImage4 = "/Blogimages/beach4.jpg"; // Correct path from public folder
-const PersonalBlog = ({ UserId, BlogId }) => {
+const PersonalBlog = () => {
   console.log("PersonalBlog component mounted");
   const { id } = useParams(); // Get ID from URL parameters
   const [blog, setBlog] = useState(null);
@@ -99,19 +96,18 @@ const PersonalBlog = ({ UserId, BlogId }) => {
   return (
     <div className="page-container-personalBlog">
       <div className="blogTopic">
-        <h1>{blog.title}</h1>
+        <h1>Beaches of Sri Lanka</h1>
       </div>
       {/* <WriterDetails/> */}
-
       <BlogContent />
       <div className="blogImages">
-        <img src={blog.coverImageUrl} alt="beachImage2" />
+        <img src={beachImage2} alt="beachImage2" />
       </div>
 
       <BlogContent />
       <div className="blogImages columns-2 gap-x-20 ">
         <div>
-          <img src={blog.coverImageUrl} alt="beachImage3" />
+          <img src={beachImage3} alt="beachImage3" />
         </div>
         <div>
           <BlogContent />
@@ -119,7 +115,7 @@ const PersonalBlog = ({ UserId, BlogId }) => {
       </div>
       <div className="blogImages columns-2 gap-x-20 ">
         <div>
-          <img src={blog.coverImageUrl} alt="beachImage3" />
+          <img src={beachImage3} alt="beachImage3" />
         </div>
         <div>
           <BlogContent />
@@ -129,16 +125,13 @@ const PersonalBlog = ({ UserId, BlogId }) => {
       <div className="writerDetails space-x-4">
         <div>
           <img
-            src={blog.user.profilePictureUrl}
+            src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
             alt="User Profile"
             className="profile-img"
           />
         </div>
         <div className="name-container">
-          <div className="writerName">
-            Written by <h1>{blog.author}</h1>
-          </div>
-
+          <div className="writerName">Written by Anne Frank</div>
           <div className="numOfFollowersFollowing">
             <div className="numOfFollowers">449 Followers</div>
             <div className="numOfFollowers">469 Followings</div>
@@ -154,25 +147,22 @@ const PersonalBlog = ({ UserId, BlogId }) => {
           <div className="numberOfComments">Comments(265)</div>
           <div className="commentsAreaProfileDetails">
             <img
-              src={blog.user.profilePictureUrl}
+              src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
               alt="User Profile"
               className="profile-img"
             />
-            <h1>{blog.user.username}</h1>
+            Aaron-Jay
           </div>
           <div className="commentAreaAddComments">
             <textarea
               className="commentInput"
               placeholder="Write your comment here..."
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
             ></textarea>
-            <button onClick={submitComment}>Submit</button>
           </div>
-          {/* <div className="functionButtons">
+          <div className="functionButtons">
             <button className="cancelButton">Cancel</button>
             <button className="submitButton">Submit</button>
-          </div> */}
+          </div>
           <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
         </div>
         <div>
