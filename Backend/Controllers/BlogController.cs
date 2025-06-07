@@ -279,6 +279,7 @@ namespace Backend.Controllers
                 // Log the exception here if you have logging configured
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
+            }
 
 
             //Add a new comment to the blog

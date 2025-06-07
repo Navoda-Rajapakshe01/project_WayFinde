@@ -518,7 +518,7 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
                 {
-                    b.HasOne("Backend.Models.Accommodation", "Accommodation");
+                    b.HasOne("Backend.Models.Accommodation", "Accommodation")
 
                         .WithMany()
 
@@ -537,37 +537,10 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Models.UserNew", null)
 
-                        .WithMany()
+                        .WithMany();
 
-    modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
-        {
-            b.HasOne("Backend.Models.Blog", "Blog")
-                .WithMany()
-                .HasForeignKey("BlogId");
-
-            b.Navigation("Blog");
-        });
-
-                    modelBuilder.Entity("Backend.Models.Comment", b =>
-                                {
-            b.HasOne("Backend.Models.Blog", "Blog")
-                .WithMany()
-                .HasForeignKey("BlogId")
-                .OnDelete(DeleteBehavior.Cascade)
-                .IsRequired();
-
-                                .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-            b.Navigation("User");
-
-            update -
-                
-        });
-
-                    modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
-                                {
+            modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
+                {
                     b.HasOne("Backend.Models.Blog", "Blog")
                         .WithMany()
                         .HasForeignKey("BlogId");
@@ -575,31 +548,64 @@ namespace Backend.Migrations
                     b.Navigation("Blog");
                 });
 
-                    modelBuilder.Entity("Backend.Models.Comment", b =>
-                                {
-                    b.HasOne("Backend.Models.Blog", "Blog")
-                        .WithMany()
-                        .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+            modelBuilder.Entity("Backend.Models.Comment", b =>
+              {
+                  {
+                      b.HasOne("Backend.Models.Blog", "Blog")
+                          .WithMany()
+                          .HasForeignKey("BlogId")
+                          .OnDelete(DeleteBehavior.Cascade)
+                          .IsRequired();
 
-                    b.HasOne("Backend.Models.UserNew", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
 
-                    b.Navigation("Blog");
 
-                    b.Navigation("User");
-                });
+                      b.HasOne("Backend.Models.UserNew", "User")
+                          .WithMany()
+                          .HasForeignKey("UserId")
+                          .OnDelete(DeleteBehavior.Cascade)
+                          .IsRequired();
+                      ;
 
-                    modelBuilder.Entity("Backend.Models.UserNew", b =>
-                                {
-                    b.Navigation("Blogs");
-                });
-#pragma warning restore 612, 618
-                });
+                      b.Navigation("Blog");
+                      b.Navigation("User");
+
+                  }
+              });
+
+                modelBuilder.Entity("Backend.Models.BlogImageNew", b =>
+                            {
+                b.HasOne("Backend.Models.Blog", "Blog")
+                    .WithMany()
+                    .HasForeignKey("BlogId");
+
+                b.Navigation("Blog");
+            });
+
+                modelBuilder.Entity("Backend.Models.Comment", b =>
+                            {
+                b.HasOne("Backend.Models.Blog", "Blog")
+                    .WithMany()
+                    .HasForeignKey("BlogId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+
+                b.HasOne("Backend.Models.UserNew", "User")
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired();
+
+                b.Navigation("Blog");
+
+                b.Navigation("User");
+            });
+
+                modelBuilder.Entity("Backend.Models.UserNew", b =>
+                            {
+                b.Navigation("Blogs");
+            });
+
+            });
         }
     }
 }
