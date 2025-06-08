@@ -21,10 +21,10 @@ namespace Backend.Models
                 [ForeignKey("UserId")]
                  public UserNew User { get; set; } = null!;
 
-                public int DistrictId { get; set; }
-                [ForeignKey("DistrictId")]
-                public District District { get; set; } = null!;
-                [Required]
+                //public int DistrictId { get; set; }
+                //[ForeignKey("DistrictId")]
+                //public District? District { get; set; } = null!;
+                
 
                 public string Location { get; set; } = null;
                 public List<string> Tags { get; set; } = new List<string>();

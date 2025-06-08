@@ -385,8 +385,19 @@ function BlogEditor() {
           editorRef.current.innerHTML = "";
         }
       } else {
-        const errorData = await response.json().catch(() => null);
-        alert(errorData?.message || "Error submitting blog. Please try again.");
+        const errorText = await response.text();
+        let errorMessage = "Error submitting blog. Please try again.";
+
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+          console.error("Server Error Response:", errorData);
+        } catch (jsonError) {
+          // If the response isn't JSON, log the raw text
+          console.error("Non-JSON error response:", errorText);
+        }
+
+        alert(errorMessage);
       }
     } catch (error) {
       console.error("Submit error:", error);
