@@ -1,8 +1,8 @@
 import axios from "axios";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useParams, useState } from "react";
 import { FaComment, FaThumbsUp } from "react-icons/fa";
-import { Link, useEffect, useParams, useState } from "react-router-dom";
+import { Link } from "react-router-dom";
 import BlogContent from "../../Components/BlogComponents/BlogContent/BlogContent";
 import "../CSS/PersonalBlog.css";
 
