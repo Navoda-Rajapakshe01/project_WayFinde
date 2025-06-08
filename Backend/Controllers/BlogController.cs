@@ -336,6 +336,24 @@ namespace Backend.Controllers
                 return Ok(new { message = "Blog deleted successfully." });
             }
 
+        [HttpGet("proxy-blog-content")]
+        public async Task<IActionResult> ProxyBlogContent([FromQuery] string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return BadRequest("URL is required");
+
+            try
+            {
+                using var httpClient = new HttpClient();
+                var response = await httpClient.GetStringAsync(url);
+                return Content(response, "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error fetching content: {ex.Message}");
+            }
+        }
+
 
         }
     } 
