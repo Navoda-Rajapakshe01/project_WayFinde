@@ -1,13 +1,15 @@
-import axios from "axios";
 import PropTypes from "prop-types";
-import React, { useEffect, useParams, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
 import { FaComment, FaThumbsUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import BlogContent from "../../Components/BlogComponents/BlogContent/BlogContent";
+//import BlogContent from "../../Components/BlogComponents/BlogContent/BlogContent";
 import "../CSS/PersonalBlog.css";
 
 const beachImage2 = "/Blogimages/beach2.jpg";
 const beachImage3 = "/Blogimages/beach3.jpg";
+
 const PersonalBlog = () => {
   console.log("PersonalBlog component mounted");
   const { id } = useParams(); // Get ID from URL parameters
@@ -49,7 +51,39 @@ const PersonalBlog = () => {
         }
 
         const blogData = await response.json();
+        console.log("Fetched blog data:", blogData);
         setBlog(blogData);
+
+        // Fetch HTML content from contentUrl (if available)
+        if (blogData && blogData.blogUrl) {
+          try {
+            console.log("Fetching blog content from:", blogData.blogUrl);
+
+            const contentResponse = await fetch(
+              `http://localhost:5030/api/blog/proxy-blog-content?url=${encodeURIComponent(
+                blogData.blogUrl
+              )}`
+            );
+            if (!contentResponse.ok) {
+              console.error(
+                `Error fetching blog content: ${contentResponse.status}`
+              );
+              throw new Error(
+                `Failed to fetch blog content: ${contentResponse.status}`
+              );
+            }
+
+            const htmlContent = await contentResponse.text();
+            console.log("Successfully fetched HTML content");
+            setBlogContent(htmlContent);
+          } catch (contentError) {
+            console.error("Error loading blog content:", contentError);
+            // We don't set the main error state here to allow the blog to still display
+            // even if content loading fails
+          }
+        } else {
+          console.log("No contentUrl found in blog data:", blogData);
+        }
       } catch (err) {
         setError(err.message);
         console.error("Error fetching blog:", err);
@@ -75,53 +109,51 @@ const PersonalBlog = () => {
     return <div className="not-found">Blog not found</div>;
   }
 
-  const submitComment = async () => {
-    if (!commentText.trim()) return;
+  // const submitComment = async () => {
+  //   if (!commentText.trim()) return;
 
-    try {
-      const response = await axios.post(
-        "http://localhost:5030/api/blog/newComment",
-        {
-          UserId,
-          BlogId,
-          Content: commentText,
-        }
-      );
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:5030/api/blog/newComment",
+  //       {
+  //         UserId,
+  //         BlogId,
+  //         Content: commentText,
+  //       }
+  //     );
 
-      console.log("Comment saved:", response.data);
-      setCommentText("");
-    } catch (error) {
-      console.error("Failed to save comment:", error);
-    }
-  };
+  //     console.log("Comment saved:", response.data);
+  //     setCommentText("");
+  //   } catch (error) {
+  //     console.error("Failed to save comment:", error);
+  //   }
+  // };
 
   return (
     <div className="page-container-personalBlog">
       <div className="blogTopic">
-        <h1>Beaches of Sri Lanka</h1>
+        <h1>{blog.title}</h1>
       </div>
       {/* <WriterDetails/> */}
-      <BlogContent />
+
+      <div dangerouslySetInnerHTML={{ __html: blogContent }} />
+
       <div className="blogImages">
-        <img src={beachImage2} alt="beachImage2" />
+        <img src={blog.coverImageUrl} alt="beachImage2" />
       </div>
 
-      <BlogContent />
+      {/* <BlogContent /> */}
       <div className="blogImages columns-2 gap-x-20 ">
         <div>
           <img src={beachImage3} alt="beachImage3" />
         </div>
-        <div>
-          <BlogContent />
-        </div>
+        <div>{/* <BlogContent /> */}</div>
       </div>
       <div className="blogImages columns-2 gap-x-20 ">
         <div>
           <img src={beachImage3} alt="beachImage3" />
         </div>
-        <div>
-          <BlogContent />
-        </div>
+        <div>{/* <BlogContent /> */}</div>
       </div>
 
       <div className="writerDetails space-x-4">

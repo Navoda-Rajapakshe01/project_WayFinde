@@ -279,62 +279,62 @@ namespace Backend.Controllers
                 // Log the exception here if you have logging configured
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
-            }
+        }
 
 
-            //Add a new comment to the blog
-            [HttpPost("newComment")]
-            public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
+        //Add a new comment to the blog
+        [HttpPost("newComment")]
+        public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
+        {
+            var blog = await _context.Blogs.FindAsync(dto.BlogId);
+            if (blog == null)
+                return NotFound("Blog not found");
+
+            var user = await _context.UsersNew.FindAsync(dto.UserId);
+            if (user == null)
+                return NotFound("User not found");
+
+            var comment = new Comment
             {
-                var blog = await _context.Blogs.FindAsync(dto.BlogId);
-                if (blog == null)
-                    return NotFound("Blog not found");
+                Blog = blog,
+                User = user,
+                UserId = dto.UserId,
+                Content = dto.Content,
+                CreatedAt = DateTime.UtcNow
+            };
 
-                var user = await _context.UsersNew.FindAsync(dto.UserId);
-                if (user == null)
-                    return NotFound("User not found");
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
 
-                var comment = new Comment
-                {
-                    Blog = blog,
-                    User = user,
-                    UserId = dto.UserId,
-                    Content = dto.Content,
-                    CreatedAt = DateTime.UtcNow
-                };
+            return Ok(comment);
+        }
 
-                _context.Comments.Add(comment);
-                await _context.SaveChangesAsync();
+        // GET: api/blog/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
+        {
+            var blogs = await _context.Blogs
+                .Include(b => b.User) // if you want to include user data
+                .ToListAsync();
 
-                return Ok(comment);
-            }
+            return Ok(blogs);
+        }
 
-            // GET: api/blog/all
-            [HttpGet("all")]
-            public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
+        //Delete a blog in the profile
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteBlog(int id)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
             {
-                var blogs = await _context.Blogs
-                    .Include(b => b.User) // if you want to include user data
-                    .ToListAsync();
-
-                return Ok(blogs);
+                return NotFound(new { message = "Blog not found." });
             }
 
-            //Delete a blog in the profile
-            [HttpDelete("delete/{id}")]
-            public async Task<IActionResult> DeleteBlog(int id)
-            {
-                var blog = await _context.Blogs.FindAsync(id);
-                if (blog == null)
-                {
-                    return NotFound(new { message = "Blog not found." });
-                }
+            _context.Blogs.Remove(blog);
+            await _context.SaveChangesAsync();
 
-                _context.Blogs.Remove(blog);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Blog deleted successfully." });
-            }
+            return Ok(new { message = "Blog deleted successfully." });
+        }
 
         [HttpGet("proxy-blog-content")]
         public async Task<IActionResult> ProxyBlogContent([FromQuery] string url)
@@ -355,5 +355,5 @@ namespace Backend.Controllers
         }
 
 
-        }
+    }
     } 

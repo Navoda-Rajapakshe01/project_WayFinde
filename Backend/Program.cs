@@ -71,6 +71,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddHttpContextAccessor();
 
+// In your Program.cs or Startup.cs, add JSON serialization options:
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.MaxDepth = 32;
+});
+
+
 // Build the App
 var app = builder.Build();
 

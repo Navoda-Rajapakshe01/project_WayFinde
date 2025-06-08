@@ -73,7 +73,7 @@ function AppRoutes() {
         <Route path="/blog/:id" element={<PersonalBlog />} />
 
         <Route path="/chat" element={<PersonalBlog />} />
-        {/* <Route path="/blog/:id" element={<PersonalBlog />} /> */}
+
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
