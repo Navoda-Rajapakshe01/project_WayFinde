@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 
 import { FaComment, FaThumbsUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
-//import BlogContent from "../../Components/BlogComponents/BlogContent/BlogContent";
 import "../CSS/PersonalBlog.css";
 
 const beachImage2 = "/Blogimages/beach2.jpg";
@@ -12,33 +11,101 @@ const beachImage3 = "/Blogimages/beach3.jpg";
 
 const PersonalBlog = () => {
   console.log("PersonalBlog component mounted");
-  const { id } = useParams(); // Get ID from URL parameters
+  const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [commentText, setCommentText] = useState("");
   const [blogContent, setBlogContent] = useState("");
+  const [contentLoading, setContentLoading] = useState(false);
+  const [contentError, setContentError] = useState(null);
 
   PersonalBlog.propTypes = {
     UserId: PropTypes.string.isRequired,
     BlogId: PropTypes.string.isRequired,
   };
 
+  const fetchBlogContent = async (blogUrl) => {
+    if (!blogUrl) {
+      console.log("No blog URL provided");
+      return;
+    }
+
+    try {
+      setContentLoading(true);
+      setContentError(null);
+      console.log("Fetching blog content from:", blogUrl);
+
+      const contentResponse = await fetch(
+        `http://localhost:5030/api/blog/proxy-blog-content?url=${encodeURIComponent(
+          blogUrl
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            Accept:
+              "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Cache-Control": "no-cache",
+          },
+        }
+      );
+
+      console.log("Content response status:", contentResponse.status);
+
+      if (!contentResponse.ok) {
+        const errorText = await contentResponse.text();
+        console.error(
+          `Error fetching blog content: ${contentResponse.status} - ${errorText}`
+        );
+        throw new Error(
+          `Failed to fetch blog content: ${contentResponse.status} - ${errorText}`
+        );
+      }
+
+      const htmlContent = await contentResponse.text();
+      console.log(
+        "Successfully fetched HTML content, length:",
+        htmlContent.length
+      );
+
+      if (htmlContent && htmlContent.trim().length > 0) {
+        setBlogContent(htmlContent);
+      } else {
+        setContentError("Content is empty");
+      }
+    } catch (error) {
+      console.error("Error loading blog content:", error);
+      setContentError(error.message);
+    } finally {
+      setContentLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchBlog = async () => {
+      if (!id) {
+        setError("No blog ID provided");
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
 
+        console.log("Fetching blog with ID:", id);
         const response = await fetch(
           `http://localhost:5030/api/blog/display/${id}`,
           {
             method: "GET",
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
             },
           }
         );
+
+        console.log("Blog response status:", response.status);
 
         if (!response.ok) {
           if (response.status === 404) {
@@ -46,7 +113,10 @@ const PersonalBlog = () => {
           } else if (response.status === 400) {
             throw new Error("Invalid blog ID");
           } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            throw new Error(
+              `HTTP error! status: ${response.status} - ${errorText}`
+            );
           }
         }
 
@@ -54,35 +124,11 @@ const PersonalBlog = () => {
         console.log("Fetched blog data:", blogData);
         setBlog(blogData);
 
-        // Fetch HTML content from contentUrl (if available)
+        // Fetch HTML content separately
         if (blogData && blogData.blogUrl) {
-          try {
-            console.log("Fetching blog content from:", blogData.blogUrl);
-
-            const contentResponse = await fetch(
-              `http://localhost:5030/api/blog/proxy-blog-content?url=${encodeURIComponent(
-                blogData.blogUrl
-              )}`
-            );
-            if (!contentResponse.ok) {
-              console.error(
-                `Error fetching blog content: ${contentResponse.status}`
-              );
-              throw new Error(
-                `Failed to fetch blog content: ${contentResponse.status}`
-              );
-            }
-
-            const htmlContent = await contentResponse.text();
-            console.log("Successfully fetched HTML content");
-            setBlogContent(htmlContent);
-          } catch (contentError) {
-            console.error("Error loading blog content:", contentError);
-            // We don't set the main error state here to allow the blog to still display
-            // even if content loading fails
-          }
+          await fetchBlogContent(blogData.blogUrl);
         } else {
-          console.log("No contentUrl found in blog data:", blogData);
+          console.log("No blogUrl found in blog data");
         }
       } catch (err) {
         setError(err.message);
@@ -92,68 +138,89 @@ const PersonalBlog = () => {
       }
     };
 
-    if (id) {
-      fetchBlog();
-    }
+    fetchBlog();
   }, [id]);
 
+  const retryContentFetch = () => {
+    if (blog && blog.blogUrl) {
+      fetchBlogContent(blog.blogUrl);
+    }
+  };
+
   if (loading) {
-    return <div className="loading">Loading blog...</div>;
+    return (
+      <div className="loading">
+        <div>Loading blog...</div>
+        {contentLoading && <div>Loading content...</div>}
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="error">Error: {error}</div>;
+    return (
+      <div className="error">
+        <div>Error: {error}</div>
+        <button onClick={() => window.location.reload()}>Retry</button>
+      </div>
+    );
   }
 
   if (!blog) {
     return <div className="not-found">Blog not found</div>;
   }
 
-  // const submitComment = async () => {
-  //   if (!commentText.trim()) return;
-
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:5030/api/blog/newComment",
-  //       {
-  //         UserId,
-  //         BlogId,
-  //         Content: commentText,
-  //       }
-  //     );
-
-  //     console.log("Comment saved:", response.data);
-  //     setCommentText("");
-  //   } catch (error) {
-  //     console.error("Failed to save comment:", error);
-  //   }
-  // };
-
   return (
     <div className="page-container-personalBlog">
       <div className="blogTopic">
         <h1>{blog.title}</h1>
       </div>
-      {/* <WriterDetails/> */}
 
-      <div dangerouslySetInnerHTML={{ __html: blogContent }} />
+      {/* Blog Content Section */}
+      <div className="blog-content-section">
+        {contentLoading && (
+          <div className="content-loading">Loading blog content...</div>
+        )}
 
-      <div className="blogImages">
-        <img src={blog.coverImageUrl} alt="beachImage2" />
+        {contentError && (
+          <div className="content-error">
+            <p>Failed to load blog content: {contentError}</p>
+            <button onClick={retryContentFetch}>Retry Loading Content</button>
+          </div>
+        )}
+
+        {blogContent && !contentLoading && (
+          <div
+            className="blog-content"
+            dangerouslySetInnerHTML={{ __html: blogContent }}
+          />
+        )}
+
+        {!blogContent && !contentLoading && !contentError && blog.blogUrl && (
+          <div className="no-content">
+            <p>No content available</p>
+            <button onClick={retryContentFetch}>Try Loading Content</button>
+          </div>
+        )}
       </div>
 
-      {/* <BlogContent /> */}
-      <div className="blogImages columns-2 gap-x-20 ">
+      {blog.coverImageUrl && (
+        <div className="blogImages">
+          <img src={blog.coverImageUrl} alt="Blog cover" />
+        </div>
+      )}
+
+      <div className="blogImages columns-2 gap-x-20">
         <div>
           <img src={beachImage3} alt="beachImage3" />
         </div>
-        <div>{/* <BlogContent /> */}</div>
+        <div></div>
       </div>
-      <div className="blogImages columns-2 gap-x-20 ">
+
+      <div className="blogImages columns-2 gap-x-20">
         <div>
           <img src={beachImage3} alt="beachImage3" />
         </div>
-        <div>{/* <BlogContent /> */}</div>
+        <div></div>
       </div>
 
       <div className="writerDetails space-x-4">
@@ -165,7 +232,9 @@ const PersonalBlog = () => {
           />
         </div>
         <div className="name-container">
-          <div className="writerName">Written by Anne Frank</div>
+          <div className="writerName">
+            Written by {blog.User?.name || "Anonymous"}
+          </div>
           <div className="numOfFollowersFollowing">
             <div className="numOfFollowers">449 Followers</div>
             <div className="numOfFollowers">469 Followings</div>
@@ -175,7 +244,9 @@ const PersonalBlog = () => {
           <div className="follow_button">Follow</div>
         </Link>
       </div>
+
       <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
+
       <div>
         <div className="commentsArea">
           <div className="numberOfComments">Comments(265)</div>
@@ -191,161 +262,60 @@ const PersonalBlog = () => {
             <textarea
               className="commentInput"
               placeholder="Write your comment here..."
-            ></textarea>
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
           </div>
           <div className="functionButtons">
-            <button className="cancelButton">Cancel</button>
+            <button className="cancelButton" onClick={() => setCommentText("")}>
+              Cancel
+            </button>
             <button className="submitButton">Submit</button>
           </div>
           <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
         </div>
-        <div>
-          <div className="writerDetails space-x-4">
-            <div>
-              <img
-                src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-                alt="User Profile"
-                className="profile-img"
-              />
-            </div>
-            <div className="name-container">
-              <div className="writerName">Anne Frank</div>
-              <div className="numOfFollowersFollowing">
-                <div className="publishDay text-sm">Dec 27, 2024 </div>
-              </div>
-              <div></div>
-            </div>
-          </div>
-          <div>
-            This is a handy trick to keep up your sleeve for future use.
-            However, for now, it’s still experimental. The lack of support from
-            Firefox and Safari (on both desktop and iOS) means it’s not yet
-            ready for broader adoption.
-          </div>
-          <p className="comLikeIcons">
-            <span className="flex items-center gap-1">
-              <FaComment className="text-lg" />
-              <span className="numComLikes">2 Replies</span>
-            </span>
 
-            <span className="flex items-center gap-1">
-              <FaThumbsUp className="text-lg" />
-              <span className="numComLikes">26</span>
-            </span>
-          </p>
-          <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
-        </div>
-        <div>
-          <div className="writerDetails space-x-4">
-            <div>
-              <img
-                src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-                alt="User Profile"
-                className="profile-img"
-              />
-            </div>
-            <div className="name-container">
-              <div className="writerName">Anne Frank</div>
-              <div className="numOfFollowersFollowing">
-                <div className="publishDay text-sm">Dec 27, 2024 </div>
+        {/* Sample Comments */}
+        {[1, 2, 3, 4].map((index) => (
+          <div key={index}>
+            <div className="writerDetails space-x-4">
+              <div>
+                <img
+                  src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+                  alt="User Profile"
+                  className="profile-img"
+                />
               </div>
-              <div></div>
-            </div>
-          </div>
-          <div>
-            This is a handy trick to keep up your sleeve for future use.
-            However, for now, it’s still experimental. The lack of support from
-            Firefox and Safari (on both desktop and iOS) means it’s not yet
-            ready for broader adoption.
-          </div>
-          <p className="comLikeIcons">
-            <span className="flex items-center gap-1">
-              <FaComment className="text-lg" />
-              <span className="numComLikes">2 Replies</span>
-            </span>
-
-            <span className="flex items-center gap-1">
-              <FaThumbsUp className="text-lg" />
-              <span className="numComLikes">26</span>
-            </span>
-          </p>
-          <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
-        </div>
-        <div>
-          <div className="writerDetails space-x-4">
-            <div>
-              <img
-                src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-                alt="User Profile"
-                className="profile-img"
-              />
-            </div>
-            <div className="name-container">
-              <div className="writerName">Anne Frank</div>
-              <div className="numOfFollowersFollowing">
-                <div className="publishDay text-sm">Dec 27, 2024 </div>
+              <div className="name-container">
+                <div className="writerName">Anne Frank</div>
+                <div className="numOfFollowersFollowing">
+                  <div className="publishDay text-sm">Dec 27, 2024</div>
+                </div>
               </div>
-              <div></div>
             </div>
-          </div>
-          <div>
-            This is a handy trick to keep up your sleeve for future use.
-            However, for now, it’s still experimental. The lack of support from
-            Firefox and Safari (on both desktop and iOS) means it’s not yet
-            ready for broader adoption.
-          </div>
-          <p className="comLikeIcons">
-            <span className="flex items-center gap-1">
-              <FaComment className="text-lg" />
-              <span className="numComLikes">2 Replies</span>
-            </span>
-
-            <span className="flex items-center gap-1">
-              <FaThumbsUp className="text-lg" />
-              <span className="numComLikes">26</span>
-            </span>
-          </p>
-          <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
-        </div>
-        <div>
-          <div className="writerDetails space-x-4">
             <div>
-              <img
-                src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-                alt="User Profile"
-                className="profile-img"
-              />
+              This is a handy trick to keep up your sleeve for future use.
+              However, for now, it's still experimental. The lack of support
+              from Firefox and Safari (on both desktop and iOS) means it's not
+              yet ready for broader adoption.
             </div>
-            <div className="name-container">
-              <div className="writerName">Anne Frank</div>
-              <div className="numOfFollowersFollowing">
-                <div className="publishDay text-sm">Dec 27, 2024 </div>
-              </div>
-              <div></div>
-            </div>
+            <p className="comLikeIcons">
+              <span className="flex items-center gap-1">
+                <FaComment className="text-lg" />
+                <span className="numComLikes">2 Replies</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <FaThumbsUp className="text-lg" />
+                <span className="numComLikes">26</span>
+              </span>
+            </p>
+            <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
           </div>
-          <div>
-            This is a handy trick to keep up your sleeve for future use.
-            However, for now, it’s still experimental. The lack of support from
-            Firefox and Safari (on both desktop and iOS) means it’s not yet
-            ready for broader adoption.
-          </div>
-          <p className="comLikeIcons">
-            <span className="flex items-center gap-1">
-              <FaComment className="text-lg" />
-              <span className="numComLikes">2 Replies</span>
-            </span>
-
-            <span className="flex items-center gap-1">
-              <FaThumbsUp className="text-lg" />
-              <span className="numComLikes">26</span>
-            </span>
-          </p>
-          <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
-        </div>
+        ))}
       </div>
+
       <div className="allResponses">
-        <button>See all responses </button>
+        <button>See all responses</button>
       </div>
     </div>
   );

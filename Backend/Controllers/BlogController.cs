@@ -391,6 +391,8 @@ namespace Backend.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"General Error in ProxyBlogContent: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 return StatusCode(500, $"Error fetching content: {ex.Message}");
             }
         }
