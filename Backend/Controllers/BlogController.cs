@@ -344,9 +344,50 @@ namespace Backend.Controllers
 
             try
             {
+                // Validate URL format
+                if (!Uri.TryCreate(url, UriKind.Absolute, out var validatedUri))
+                {
+                    return BadRequest("Invalid URL format");
+                }
+
                 using var httpClient = new HttpClient();
-                var response = await httpClient.GetStringAsync(url);
-                return Content(response, "text/html");
+
+                // Set a reasonable timeout
+                httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+                // Add user agent header to avoid blocking
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "BlogProxyService/1.0");
+
+                // Log the URL being requested for debugging
+                Console.WriteLine($"Fetching content from: {url}");
+
+                var response = await httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"HTTP Error: {response.StatusCode} - {response.ReasonPhrase}");
+                    return StatusCode((int)response.StatusCode, $"Error fetching content: {response.ReasonPhrase}");
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (string.IsNullOrEmpty(content))
+                {
+                    return NotFound("Content is empty");
+                }
+
+                // Set appropriate content type
+                return Content(content, "text/html; charset=utf-8");
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request Error: {httpEx.Message}");
+                return StatusCode(500, $"Network error: {httpEx.Message}");
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                Console.WriteLine($"Timeout Error: {tcEx.Message}");
+                return StatusCode(408, "Request timeout");
             }
             catch (Exception ex)
             {
