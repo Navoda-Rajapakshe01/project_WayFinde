@@ -22,7 +22,7 @@ import {
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../CSS/BlogEditor.css";
+import "../CSS/BlogEditor.css"; // Import your CSS file for styling
 
 // ToolbarButton component defined outside of BlogEditor
 const ToolbarButton = ({ onClick, children, title, disabled = false }) => (
