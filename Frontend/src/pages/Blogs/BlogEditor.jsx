@@ -381,6 +381,7 @@ function BlogEditor() {
         setContent("");
         setBlogImages([]);
         setCoverImage(null);
+        navigate("/profile/profileBlogs"); // Redirect to blogs page after submission
         if (editorRef.current) {
           editorRef.current.innerHTML = "";
         }

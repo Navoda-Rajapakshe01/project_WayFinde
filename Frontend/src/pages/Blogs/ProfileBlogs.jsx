@@ -88,10 +88,10 @@ const ProfileSettings = () => {
     fetchProfileAndBlogs();
   }, []);
 
-  const handleFileClick = () => {
-    window.scrollTo(0, 0);
-    navigate("/uploadNewBlog"); // Navigate to your blog upload page
-  };
+  // const handleFileClick = () => {
+  //   window.scrollTo(0, 0);
+  //   navigate("/uploadNewBlog"); // Navigate to your blog upload page
+  // };
 
   const handleBlogDisplay = (blogId) => {
     console.log("Navigating to blog ID:", blogId);
@@ -212,9 +212,9 @@ const ProfileSettings = () => {
 
       <div className="profile-settings">
         <div className="button-wrapper">
-          <button onClick={handleFileClick} className="UploadBlogButton">
+          {/* <button onClick={handleFileClick} className="UploadBlogButton">
             Add Blog
-          </button>
+          </button> */}
           <button onClick={writeBlog} className="UploadBlogButton">
             Write blog
           </button>

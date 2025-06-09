@@ -110,7 +110,8 @@ const MainNavbar = () => {
         );
 
         setProfileData({
-          profileImage: response.data.profileImage || profileImageFromContext,
+          profileImage:
+            response.data.profilePictureUrl || profileImageFromContext,
           username: response.data.username || user?.username || "User",
           contactEmail:
             response.data.contactemail ||
@@ -153,11 +154,15 @@ const MainNavbar = () => {
 
   const handleProfileMenuClick = useCallback(
     (item) => {
-      if (item.name === "Logout") {
-        logout();
-      } else {
-        handleNavigation(item.path);
-      }
+      setIsOpen(false);
+
+      setTimeout(() => {
+        if (item.name === "Logout") {
+          logout();
+        } else {
+          handleNavigation(item.path);
+        }
+      }, 10);
     },
     [logout, handleNavigation]
   );
@@ -175,11 +180,11 @@ const MainNavbar = () => {
   ];
 
   const profileMenuItems = [
-    { name: "Profile", icon: <FaUserCircle />, path: "/profile" },
+    { name: "Profile", icon: <FaUserCircle />, path: "/profile/profileBlogs" },
     { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
     { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
     { name: "Chat", icon: <FaComments />, path: "/chat" },
-    { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
+    { name: "Blogs", icon: <FaNewspaper />, path: "/profile/profileBlogs" },
     { name: "Settings", icon: <FaCog />, path: "/settings" },
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
