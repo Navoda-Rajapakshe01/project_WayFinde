@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { FaComment, FaThumbsUp } from "react-icons/fa"; 
+import { FaComment, FaThumbsUp } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "../ImageGrid/ImageGrid.css";
 
@@ -10,14 +10,14 @@ const OtherBlogs = ({ excludeId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 6;
+  const blogsPerPage = 8;
 
   // Pagination logic for Other Blogs - FIXED: using blogs not otherBlogs
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
   const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
- 
+
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
@@ -140,7 +140,6 @@ const OtherBlogs = ({ excludeId }) => {
     fetchBlogs();
   }, [excludeId]);
 
-  
   const handleNavigate = (blogId) => {
     navigate(`/blog/${blogId}`); // Use actual blog ID
   };
@@ -260,10 +259,7 @@ const OtherBlogs = ({ excludeId }) => {
 };
 
 OtherBlogs.propTypes = {
-  excludeId: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number
-  ]), // Accept both string and number IDs
+  excludeId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accept both string and number IDs
 };
 
 export default OtherBlogs;

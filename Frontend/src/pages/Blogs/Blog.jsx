@@ -7,7 +7,7 @@ import "../CSS/Blog.css";
 
 const backgroundImage = "/Blogimages/blogbackground1.jpg";
 
-const { latestBlogData, trendingBlogData, otherBlogData } = blogData;
+const { latestBlogData, trendingBlogData } = blogData;
 const Blog = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,7 +29,6 @@ const Blog = () => {
       <ImageGrid
         latestBlogs={latestBlogData}
         trendingBlogs={trendingBlogData}
-        otherBlogs={otherBlogData}
       />
       <OtherBlogs />
     </div>
