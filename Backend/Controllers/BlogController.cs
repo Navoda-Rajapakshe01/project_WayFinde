@@ -279,63 +279,198 @@ namespace Backend.Controllers
                 // Log the exception here if you have logging configured
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
-            }
+        }
 
 
-            //Add a new comment to the blog
-            [HttpPost("newComment")]
-            public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
+        //Add a new comment to the blog
+        [HttpPost("newComment")]
+        public async Task<IActionResult> CreateComment([FromBody] CreateCommentDto dto)
+        {
+            var blog = await _context.Blogs.FindAsync(dto.BlogId);
+            if (blog == null)
+                return NotFound("Blog not found");
+
+            var user = await _context.UsersNew.FindAsync(dto.UserId);
+            if (user == null)
+                return NotFound("User not found");
+
+            var comment = new Comment
             {
-                var blog = await _context.Blogs.FindAsync(dto.BlogId);
-                if (blog == null)
-                    return NotFound("Blog not found");
+                Blog = blog,
+                User = user,
+                UserId = dto.UserId,
+                Content = dto.Content,
+                CreatedAt = DateTime.UtcNow
+            };
 
-                var user = await _context.UsersNew.FindAsync(dto.UserId);
-                if (user == null)
-                    return NotFound("User not found");
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
 
-                var comment = new Comment
+            return Ok(comment);
+        }
+
+        // GET: api/blog/all
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllBlogs()
+        {
+            var blogs = await _context.Blogs
+                .Include(b => b.User) // Include user data
+                .ToListAsync();
+
+            // Create a simplified object without circular references
+            var simplifiedBlogs = blogs.Select(b => new {
+                Id = b.Id,
+                Title = b.Title,
+                BlogUrl = b.BlogUrl,
+                CreatedAt = b.CreatedAt,
+                Location = b.Location,
+                Tags = b.Tags,
+                NumberOfComments = b.NumberOfComments,
+                NumberOfReads = b.NumberOfReads,
+                NumberOfReacts = b.NumberOfReacts,
+                Author = b.Author,
+                CoverImageUrl = b.CoverImageUrl,
+                ImageUrls = b.ImageUrls,
+                User = new
                 {
-                    Blog = blog,
-                    User = user,
-                    UserId = dto.UserId,
-                    Content = dto.Content,
-                    CreatedAt = DateTime.UtcNow
-                };
+                    Id = b.User.Id,
+                    Username = b.User.Username,
+                    ProfilePictureUrl = b.User.ProfilePictureUrl,
+                    Bio = b.User.Bio
+                    // Add other user properties you need
+                }
+            });
 
-                _context.Comments.Add(comment);
-                await _context.SaveChangesAsync();
+            return Ok(simplifiedBlogs);
+        }
 
-                return Ok(comment);
+
+        //Delete a blog in the profile
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteBlog(int id)
+        {
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
+            {
+                return NotFound(new { message = "Blog not found." });
             }
 
-            // GET: api/blog/all
-            [HttpGet("all")]
-            public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
-            {
-                var blogs = await _context.Blogs
-                    .Include(b => b.User) // if you want to include user data
-                    .ToListAsync();
+            _context.Blogs.Remove(blog);
+            await _context.SaveChangesAsync();
 
-                return Ok(blogs);
-            }
+            return Ok(new { message = "Blog deleted successfully." });
+        }
 
-            //Delete a blog in the profile
-            [HttpDelete("delete/{id}")]
-            public async Task<IActionResult> DeleteBlog(int id)
+        [HttpGet("proxy-blog-content")]
+        public async Task<IActionResult> ProxyBlogContent([FromQuery] string url)
+        {
+            if (string.IsNullOrEmpty(url))
+                return BadRequest("URL is required");
+
+            try
             {
-                var blog = await _context.Blogs.FindAsync(id);
-                if (blog == null)
+                // Validate URL format
+                if (!Uri.TryCreate(url, UriKind.Absolute, out var validatedUri))
                 {
-                    return NotFound(new { message = "Blog not found." });
+                    return BadRequest("Invalid URL format");
                 }
 
-                _context.Blogs.Remove(blog);
-                await _context.SaveChangesAsync();
+                using var httpClient = new HttpClient();
 
-                return Ok(new { message = "Blog deleted successfully." });
+                // Set a reasonable timeout
+                httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+                // Add user agent header to avoid blocking
+                httpClient.DefaultRequestHeaders.Add("User-Agent", "BlogProxyService/1.0");
+
+                // Log the URL being requested for debugging
+                Console.WriteLine($"Fetching content from: {url}");
+
+                var response = await httpClient.GetAsync(url);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"HTTP Error: {response.StatusCode} - {response.ReasonPhrase}");
+                    return StatusCode((int)response.StatusCode, $"Error fetching content: {response.ReasonPhrase}");
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (string.IsNullOrEmpty(content))
+                {
+                    return NotFound("Content is empty");
+                }
+
+                // Set appropriate content type
+                return Content(content, "text/html; charset=utf-8");
+            }
+            catch (HttpRequestException httpEx)
+            {
+                Console.WriteLine($"HTTP Request Error: {httpEx.Message}");
+                return StatusCode(500, $"Network error: {httpEx.Message}");
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                Console.WriteLine($"Timeout Error: {tcEx.Message}");
+                return StatusCode(408, "Request timeout");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"General Error in ProxyBlogContent: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                return StatusCode(500, $"Error fetching content: {ex.Message}");
+            }
+        }
+        // GET: api/Blog/{blogId}/comments
+        [HttpGet("{blogId}/comments")]
+        public async Task<ActionResult<IEnumerable<object>>> GetBlogComments(int blogId)
+        {
+            // Validate the blog ID
+            if (blogId <= 0)
+            {
+                return BadRequest("Invalid blog ID");
             }
 
+            try
+            {
+                // Check if the blog exists
+                var blogExists = await _context.Blogs.AnyAsync(b => b.Id == blogId);
+                if (!blogExists)
+                {
+                    return NotFound($"Blog with ID {blogId} not found");
+                }
 
+                // Get all comments for the specified blog, ordered by creation date
+                var comments = await _context.Comments
+                    .Where(c => c.Blog.Id == blogId)
+                    .Include(c => c.User)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .ToListAsync();
+
+                // Create simplified objects without circular references
+                var simplifiedComments = comments.Select(c => new {
+                    Id = c.Id,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt,
+                    User = new
+                    {
+                        Id = c.User.Id,
+                        Username = c.User.Username,
+                        ProfilePictureUrl = c.User.ProfilePictureUrl ?? string.Empty,
+                        Bio = c.User.Bio ?? string.Empty
+                    }
+                });
+
+                return Ok(simplifiedComments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
+                return StatusCode(500, "An error occurred while retrieving comments");
+            }
         }
-    } 
+
+
+
+    }
+} 

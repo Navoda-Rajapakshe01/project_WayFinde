@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   FaBook,
   FaBus,
@@ -23,86 +23,43 @@ import "./MainNavbar.css";
 const MainNavbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   // States
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
-  const [showSignInModal, setShowSignInModal] = useState(false);
   const [profileData, setProfileData] = useState({
-    profileImage: "/default-profile.png",
+    profileImage: "/defaultprofilepicture.png",
     username: "",
-    contactEmail: ""
+    contactEmail: "",
   });
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
-  
+
   // Context
   const profileImageContext = useContext(ProfileImageContext);
-  const profileImageFromContext = profileImageContext?.profileImage || "/default-profile.png";
-  
+  const profileImageFromContext =
+    profileImageContext?.profileImage || "/defaultprofilepicture.png";
+
   // Handle potential undefined context with default values
   const authContext = useContext(AuthContext);
   const user = authContext?.user || null;
   const loading = authContext?.loading || false;
-  const logout = authContext?.logout || (() => {
-    console.warn("Logout function not available");
-    localStorage.removeItem("token");
-    localStorage.removeItem("userProfile");
-    window.location.href = "/";
-  });
+  const logout = useCallback(() => {
+    if (authContext?.logout) {
+      authContext.logout();
+    } else {
+      console.warn("Logout function not available");
+      localStorage.removeItem("token");
+      localStorage.removeItem("userProfile");
+      window.location.href = "/";
+    }
+  }, [authContext]);
 
-  // Fetch user profile data when user is available
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!user) return;
-      
-      setIsLoadingProfile(true);
-      try {
-        const token = localStorage.getItem("token");
-        
-        if (!token) {
-          throw new Error("Authentication token not found");
-        }
-        
-        const response = await axios.get(
-          "http://localhost:5030/api/profile/me",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-        
-        setProfileData({
-          profileImage: response.data.profileImage || profileImageFromContext,
-          username: response.data.username || user?.username || "User",
-          contactEmail: response.data.contactemail || user?.contactemail || "user@example.com"
-        });
-      } catch (err) {
-        console.error("Error fetching profile data:", err);
-        
-        // Fallback to context data if available
-        setProfileData({
-          profileImage: profileImageFromContext,
-          username: user?.username || "User",
-          contactEmail: user?.contactemail || "user@example.com"
-        });
-      } finally {
-        setIsLoadingProfile(false);
-      }
-    };
-    
-    fetchProfileData();
-  }, [user, profileImageFromContext]);
-
-  // Skip rendering during loading
-  if (loading) return null;
-
-  // Set active tab based on location
+  // Set active tab based on location - Fixed dependency array
   useEffect(() => {
     setActiveTab(location.pathname);
-  }, [location]);
+  }, [location.pathname]);
 
-  // Close popup when clicking outside
+  // Close popup when clicking outside - Fixed event listener cleanup
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -112,28 +69,106 @@ const MainNavbar = () => {
         setIsOpen(false);
       }
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+
+    if (isOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Fetch user profile data - Fixed dependency array and error handling
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (!user) {
+        // Reset profile data when user is null
+        setProfileData({
+          profileImage: "/default-profile.png",
+          username: "",
+          contactEmail: "",
+        });
+        return;
+      }
+
+      setIsLoadingProfile(true);
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          throw new Error("Authentication token not found");
+        }
+
+        const response = await axios.get(
+          "http://localhost:5030/api/profile/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setProfileData({
+          profileImage:
+            response.data.profilePictureUrl || profileImageFromContext,
+          username: response.data.username || user?.username || "User",
+          contactEmail:
+            response.data.contactemail ||
+            user?.contactemail ||
+            "user@example.com",
+        });
+      } catch (err) {
+        console.error("Error fetching profile data:", err);
+
+        // Fallback to context data if available
+        setProfileData({
+          profileImage: profileImageFromContext,
+          username: user?.username || "User",
+          contactEmail: user?.contactemail || "user@example.com",
+        });
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchProfileData();
+  }, [user, profileImageFromContext]); // Fixed: removed user.username and user.contactemail
+
+  // Memoized handlers to prevent unnecessary re-renders
+  const handleNavigation = useCallback(
+    (path) => {
+      navigate(path);
+      setIsOpen(false);
+    },
+    [navigate]
+  );
+
+  const togglePopup = useCallback(() => {
+    setIsOpen((prev) => !prev);
   }, []);
 
-  const handleNavigation = (path) => {
-    navigate(path);
-    setIsOpen(false); // Close popup after navigation
-  };
-  
-  const togglePopup = () => setIsOpen(!isOpen);
-  
-  const handleSignIn = () => {
+  const handleSignIn = useCallback(() => {
     navigate("/signin");
-  };
+  }, [navigate]);
 
-  // const handleSignInOption = (type) => {
-  //   setShowSignInModal(false);
-  //   navigate(`/signup?role=${type}`);
-  // };
+  const handleProfileMenuClick = useCallback(
+    (item) => {
+      setIsOpen(false);
 
-  // const openModal = () => setShowSignInModal(true);
-  // const closeModal = () => setShowSignInModal(false);
+      setTimeout(() => {
+        if (item.name === "Logout") {
+          logout();
+        } else {
+          handleNavigation(item.path);
+        }
+      }, 10);
+    },
+    [logout, handleNavigation]
+  );
+
+  // Skip rendering during loading
+  if (loading) return null;
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -145,11 +180,11 @@ const MainNavbar = () => {
   ];
 
   const profileMenuItems = [
-    { name: "Profile", icon: <FaUserCircle />, path: "/profile" },
+    { name: "Profile", icon: <FaUserCircle />, path: "/profile/profileBlogs" },
     { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
     { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
     { name: "Chat", icon: <FaComments />, path: "/chat" },
-    { name: "Blogs", icon: <FaNewspaper />, path: "/personalblog" },
+    { name: "Blogs", icon: <FaNewspaper />, path: "/profile/profileBlogs" },
     { name: "Settings", icon: <FaCog />, path: "/settings" },
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
@@ -160,9 +195,9 @@ const MainNavbar = () => {
         {/* Logo Section */}
         <div className="navbar-logo">
           <Link to="/">
-            <img 
-              src={logo || "/placeholder.svg"} 
-              alt="WAYFIND" 
+            <img
+              src={logo || "/placeholder.svg"}
+              alt="WAYFIND"
               onError={(e) => {
                 e.target.onerror = null;
                 e.target.src = "/placeholder.svg";
@@ -194,12 +229,12 @@ const MainNavbar = () => {
             <div className="navbar-profile" onClick={togglePopup}>
               <div className="profile-wrapper">
                 <img
-                  src={profileData.profileImage || "/default-profile.png"}
+                  src={profileData.profileImage || "/defaultprofilepicture.png"}
                   alt="User Profile"
                   className="profile-img"
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = "/default-profile.png";
+                    e.target.src = "/defaultprofilepicture.png";
                   }}
                 />
                 <span className="profile-indicator"></span>
@@ -214,7 +249,7 @@ const MainNavbar = () => {
                       className="profile-img"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "/default-profile.png";
+                        e.target.src = "/defaultprofilepicture.png";
                       }}
                     />
                     <span className="profile-indicator"></span>
@@ -231,13 +266,7 @@ const MainNavbar = () => {
                       <div
                         key={item.name}
                         className="popup-item"
-                        onClick={() => {
-                          if (item.name === "Logout") {
-                            logout();
-                          } else {
-                            handleNavigation(item.path);
-                          }
-                        }}
+                        onClick={() => handleProfileMenuClick(item)}
                       >
                         <span className="popup-icon">{item.icon}</span>
                         <span>{item.name}</span>
@@ -249,37 +278,13 @@ const MainNavbar = () => {
             </div>
           ) : (
             <div className="auth-buttons">
-              <button className="signin-btn" onClick={handleSignIn}>Sign In</button>
+              <button className="signin-btn" onClick={handleSignIn}>
+                Sign In
+              </button>
             </div>
           )}
         </div>
       </div>
-
-      {/* Sign In Modal
-      {showSignInModal && (
-        <div className="signin-modal-overlay" onClick={closeModal}>
-          <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Sign In As</h3>
-            <div className="signin-options">
-              <button
-                className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}
-              >
-                Normal User
-              </button>
-              <button
-                className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}
-              >
-                Service Provider
-              </button>
-            </div>
-            <button className="close-modal-btn" onClick={closeModal}>
-              Close
-            </button>
-          </div>
-        </div>
-      )} */}
     </nav>
   );
 };

@@ -13,58 +13,6 @@ const ProfileSettings = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  //   //Delete blog from user profile
-  // const handleDeleteBlog = async (id) => {
-  //   const confirmDelete = window.confirm(
-  //     "Are you sure you want to delete this blog?"
-  //   );
-  //   if (!confirmDelete) return;
-
-  //   console.log("Deleting blog with ID:", id, "Type:", typeof id);
-
-  //   // Ensure ID is a valid integer
-  //   const blogId = parseInt(id);
-  //   if (isNaN(blogId) || blogId <= 0) {
-  //     alert("Invalid blog ID");
-  //     return;
-  //   }
-
-  //   try {
-  //     // Fixed URL to match backend endpoint (blogs plural)
-  //     const response = await fetch(`http://localhost:5030/api/blogs/${blogId}`, {
-  //       method: "DELETE",
-  //       headers: {
-  //         "Authorization": `Bearer ${localStorage.getItem("token")}`,
-  //         "Content-Type": "application/json", // Added content-type header
-  //       },
-  //     });
-
-  //     console.log("Response status:", response.status);
-  //     console.log("Response:", response); // Additional logging
-
-  //     if (response.ok) {
-  //       alert("Blog deleted successfully.");
-  //       // Refresh list or remove blog from state
-  //       // You might want to call a function to refresh your blog list here
-  //       // e.g., fetchBlogs() or setBlogList(prevBlogs => prevBlogs.filter(blog => blog.id !== id))
-  //     } else {
-  //       // Get detailed error information
-  //       const errorData = await response.json().catch(() => ({}));
-  //       console.error("Delete failed - Full error:", errorData);
-
-  //       // Log specific validation errors if they exist
-  //       if (errorData.errors) {
-  //         console.error("Validation errors:", errorData.errors);
-  //       }
-
-  //       alert(`Failed to delete blog: ${errorData.title || errorData.message || 'Validation error'}`);
-  //     }
-  //   } catch (error) {
-  //     console.error("Delete error:", error);
-  //     alert("An error occurred while deleting. Please check your connection.");
-  //   }
-  // };
-  // Fetch user profile and blogs from backend
   useEffect(() => {
     const fetchProfileAndBlogs = async () => {
       try {
@@ -140,14 +88,15 @@ const ProfileSettings = () => {
     fetchProfileAndBlogs();
   }, []);
 
-  const handleFileClick = () => {
-    window.scrollTo(0, 0);
-    navigate("/uploadNewBlog"); // Navigate to your blog upload page
-  };
+  // const handleFileClick = () => {
+  //   window.scrollTo(0, 0);
+  //   navigate("/uploadNewBlog"); // Navigate to your blog upload page
+  // };
 
   const handleBlogDisplay = (blogId) => {
+    console.log("Navigating to blog ID:", blogId);
     window.scrollTo(0, 0);
-    navigate(`/blog/${blogId}`); // Navigate to your blog upload page
+    navigate(`/blog/${blogId}`);
   };
 
   const handleDeleteBlog = async (blogId) => {
@@ -207,11 +156,13 @@ const ProfileSettings = () => {
         ) : (
           blogs.map((blog, index) => (
             <div
-              onClick={() =>
+              onClick={() => {
+                console.log("FULL BLOG OBJECT:", blog); // Add this line
+                console.log("Available properties:", Object.keys(blog));
                 handleBlogDisplay(
                   blog.id || blog.Id || blog.blogId || blog.BlogId
-                )
-              }
+                );
+              }}
               className="blog-card"
               key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}
             >
@@ -261,9 +212,9 @@ const ProfileSettings = () => {
 
       <div className="profile-settings">
         <div className="button-wrapper">
-          <button onClick={handleFileClick} className="UploadBlogButton">
+          {/* <button onClick={handleFileClick} className="UploadBlogButton">
             Add Blog
-          </button>
+          </button> */}
           <button onClick={writeBlog} className="UploadBlogButton">
             Write blog
           </button>
