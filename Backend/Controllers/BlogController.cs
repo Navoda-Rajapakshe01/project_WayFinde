@@ -317,7 +317,31 @@ namespace Backend.Controllers
                 .Include(b => b.User) // if you want to include user data
                 .ToListAsync();
 
-            return Ok(blogs);
+            // Create a simplified object without circular references
+            var simplifiedBlogs = blogs.Select(b => new {
+                Id = b.Id,
+                Title = b.Title,
+                BlogUrl = b.BlogUrl,
+                CreatedAt = b.CreatedAt,
+                Location = b.Location,
+                Tags = b.Tags,
+                NumberOfComments = b.NumberOfComments,
+                NumberOfReads = b.NumberOfReads,
+                NumberOfReacts = b.NumberOfReacts,
+                Author = b.Author,
+                CoverImageUrl = b.CoverImageUrl,
+                ImageUrls = b.ImageUrls,
+                User = new
+                {
+                    Id = b.User.Id,
+                    Username = b.User.Username,
+                    ProfilePictureUrl = b.User.ProfilePictureUrl,
+                    Bio = b.User.Bio
+                    // Add other user properties you need
+                }
+            });
+
+            return Ok(simplifiedBlogs);
         }
 
         //Delete a blog in the profile
@@ -394,6 +418,54 @@ namespace Backend.Controllers
                 Console.WriteLine($"General Error in ProxyBlogContent: {ex.Message}");
                 Console.WriteLine($"Stack Trace: {ex.StackTrace}");
                 return StatusCode(500, $"Error fetching content: {ex.Message}");
+            }
+        }
+        // GET: api/Blog/{blogId}/comments
+        [HttpGet("{blogId}/comments")]
+        public async Task<ActionResult<IEnumerable<object>>> GetBlogComments(int blogId)
+        {
+            // Validate the blog ID
+            if (blogId <= 0)
+            {
+                return BadRequest("Invalid blog ID");
+            }
+
+            try
+            {
+                // Check if the blog exists
+                var blogExists = await _context.Blogs.AnyAsync(b => b.Id == blogId);
+                if (!blogExists)
+                {
+                    return NotFound($"Blog with ID {blogId} not found");
+                }
+
+                // Get all comments for the specified blog, ordered by creation date
+                var comments = await _context.Comments
+                    .Where(c => c.Blog.Id == blogId)
+                    .Include(c => c.User)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .ToListAsync();
+
+                // Create simplified objects without circular references
+                var simplifiedComments = comments.Select(c => new {
+                    Id = c.Id,
+                    Content = c.Content,
+                    CreatedAt = c.CreatedAt,
+                    User = new
+                    {
+                        Id = c.User.Id,
+                        Username = c.User.Username,
+                        ProfilePictureUrl = c.User.ProfilePictureUrl ?? string.Empty,
+                        Bio = c.User.Bio ?? string.Empty
+                    }
+                });
+
+                return Ok(simplifiedComments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
+                return StatusCode(500, "An error occurred while retrieving comments");
             }
         }
 
