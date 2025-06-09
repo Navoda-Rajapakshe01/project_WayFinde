@@ -17,6 +17,7 @@ using System.Net;
 using Microsoft.Extensions.Logging;
 using Backend.DTO;
 using Azure.Storage.Blobs;
+using System.Xml.Linq;
 
 namespace Backend.Controllers
 {
@@ -421,53 +422,28 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Error fetching content: {ex.Message}");
             }
         }
-        // GET: api/Blog/{blogId}/comments
+        // In your BlogController.cs, update the GetBlogComments method
         [HttpGet("{blogId}/comments")]
         public async Task<ActionResult<IEnumerable<object>>> GetBlogComments(int blogId)
         {
-            // Validate the blog ID
-            if (blogId <= 0)
-            {
-                return BadRequest("Invalid blog ID");
-            }
+            // Existing code...
 
-            try
-            {
-                // Check if the blog exists
-                var blogExists = await _context.Blogs.AnyAsync(b => b.Id == blogId);
-                if (!blogExists)
+            // Create simplified objects without circular references
+            var simplifiedComments = comments.Select(c => new {
+                Id = c.Id,
+                Content = c.Content,
+                CreatedAt = c.CreatedAt,
+                User = new
                 {
-                    return NotFound($"Blog with ID {blogId} not found");
+                    Id = c.User.Id,
+                    Username = c.User.Username,
+                    ProfilePictureUrl = c.User.ProfilePictureUrl ?? string.Empty,
+                    Bio = c.User.Bio ?? string.Empty
                 }
+            }).ToList(); // Force evaluation to a List
 
-                // Get all comments for the specified blog, ordered by creation date
-                var comments = await _context.Comments
-                    .Where(c => c.Blog.Id == blogId)
-                    .Include(c => c.User)
-                    .OrderByDescending(c => c.CreatedAt)
-                    .ToListAsync();
-
-                // Create simplified objects without circular references
-                var simplifiedComments = comments.Select(c => new {
-                    Id = c.Id,
-                    Content = c.Content,
-                    CreatedAt = c.CreatedAt,
-                    User = new
-                    {
-                        Id = c.User.Id,
-                        Username = c.User.Username,
-                        ProfilePictureUrl = c.User.ProfilePictureUrl ?? string.Empty,
-                        Bio = c.User.Bio ?? string.Empty
-                    }
-                });
-
-                return Ok(simplifiedComments);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
-                return StatusCode(500, "An error occurred while retrieving comments");
-            }
+            // Return the list directly without additional wrapping
+            return Ok(simplifiedComments);
         }
 
 

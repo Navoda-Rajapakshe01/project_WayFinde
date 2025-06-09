@@ -246,6 +246,17 @@ const PersonalBlog = () => {
         throw new Error("Server returned invalid JSON");
       }
 
+      commentsData = JSON.parse(responseText);
+      // Extract the array from the $values property if it exists
+      if (commentsData && typeof commentsData === "object") {
+        if (commentsData.$values && Array.isArray(commentsData.$values)) {
+          console.log(
+            "Found comments in $values property, length:",
+            commentsData.$values.length
+          );
+          commentsData = commentsData.$values;
+        }
+      }
       console.log("Fetched comments (count):", commentsData?.length || 0);
       console.log(
         "First comment sample:",
