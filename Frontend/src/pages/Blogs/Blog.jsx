@@ -1,9 +1,9 @@
-import React from "react";
-import { useEffect } from "react";
-import HeroSection from "../../Components/HeroSection/HeroSection";
+import React, { useEffect } from "react";
+import OtherBlogs from "../../Components/BlogComponents/BlogSections/OtherBlogs";
 import ImageGrid from "../../Components/BlogComponents/ImageGrid/ImageGrid";
 import blogData from "../../Components/BlogComponents/blogData.json";
-import "../CSS/Blog.css"; 
+import HeroSection from "../../Components/HeroSection/HeroSection";
+import "../CSS/Blog.css";
 
 const backgroundImage = "/Blogimages/blogbackground1.jpg";
 
@@ -31,6 +31,7 @@ const Blog = () => {
         trendingBlogs={trendingBlogData}
         otherBlogs={otherBlogData}
       />
+      <OtherBlogs />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaComment } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "./ImageGrid.css";
+import PropTypes from "prop-types";
 
 const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
   const navigate = useNavigate();
@@ -237,5 +238,11 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
     </div>
   );
 };
+ImageGrid.propTypes = {
+  latestBlogs: PropTypes.array.isRequired,
+  trendingBlogs: PropTypes.array.isRequired,
+  otherBlogs: PropTypes.array.isRequired,
+};
+
 
 export default ImageGrid;

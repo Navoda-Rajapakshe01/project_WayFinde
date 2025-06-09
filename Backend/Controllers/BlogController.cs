@@ -311,10 +311,10 @@ namespace Backend.Controllers
 
         // GET: api/blog/all
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<Blog>>> GetAllBlogs()
+        public async Task<ActionResult<IEnumerable<object>>> GetAllBlogs()
         {
             var blogs = await _context.Blogs
-                .Include(b => b.User) // if you want to include user data
+                .Include(b => b.User) // Include user data
                 .ToListAsync();
 
             // Create a simplified object without circular references
@@ -343,6 +343,7 @@ namespace Backend.Controllers
 
             return Ok(simplifiedBlogs);
         }
+
 
         //Delete a blog in the profile
         [HttpDelete("delete/{id}")]
@@ -470,5 +471,6 @@ namespace Backend.Controllers
         }
 
 
+
     }
-    } 
+} 
