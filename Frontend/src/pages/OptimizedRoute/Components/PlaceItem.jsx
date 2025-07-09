@@ -4,31 +4,22 @@ import { FiTrash2 } from "react-icons/fi";
 import "./PlaceItem.css";
 
 const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
+  console.log("Received place:", place);
   const ref = useRef(null);
 
-  /* ---------- unwrap data ---------- */
-  const {
-    id,
-    placeName,
-    name,
-    avgTime,
-    avgSpend,
-    rating,
-    howManyRated,
-    imageUrl,
-  } = place;
-  const displayName = placeName || name || "Unnamed Place";
-
-  /* ---------- drag-and-drop ---------- */
   const [{ isDragging }, drag] = useDrag({
     type: "PLACE_ITEM",
     item: { index },
-    collect: (monitor) => ({ isDragging: monitor.isDragging() }),
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
   });
 
   const [{ handlerId }, drop] = useDrop({
     accept: "PLACE_ITEM",
-    collect: (monitor) => ({ handlerId: monitor.getHandlerId() }),
+    collect: (monitor) => ({
+      handlerId: monitor.getHandlerId(),
+    }),
     hover(item, monitor) {
       if (!ref.current) return;
       const dragIndex = item.index;
@@ -49,7 +40,19 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
 
   drag(drop(ref));
 
-  const defaultImage = `/placeholder.svg?height=200&width=300&query=${displayName} Sri Lanka`;
+  const {
+    id,
+    name,
+    avgTime,
+    avgSpend,
+    rating,
+    howManyRated,
+    mainImageUrl,
+    district,
+  } = place;
+
+  const displayName = name || "Unnamed Place";
+  const defaultImage = `/placeholder.svg?query=${displayName}`;
 
   return (
     <div
@@ -63,7 +66,7 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
 
       <div className="place-image-container-app">
         <img
-          src={imageUrl || defaultImage}
+          src={mainImageUrl || defaultImage}
           alt={displayName}
           className="place-image"
         />
@@ -74,27 +77,25 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
 
         <div className="place-info-grid">
           <div className="place-info-item">
-            <span className="info-label">Date</span>
-            <span className="info-value">
-              {new Date().toLocaleDateString("en-GB", {
-                day: "2-digit",
-                month: "2-digit",
-                year: "2-digit",
-              })}
-            </span>
-          </div>
-
-          <div className="place-info-item">
             <span className="info-label">Staying Time</span>
-            <span className="info-value">{avgTime || "24 hours"}</span>
+            <span className="info-value">{avgTime}</span>
           </div>
 
           <div className="place-info-item">
             <span className="info-label">Avg. Spent</span>
             <span className="info-value">
-              {avgSpend ? `LKR ${avgSpend.toLocaleString()}` : "LKR 50,000"}
+              {typeof avgSpend === "number"
+                ? `LKR ${avgSpend.toLocaleString()}`
+                : "N/A"}
             </span>
           </div>
+
+          {district?.name && (
+            <div className="place-info-item">
+              <span className="info-label">District</span>
+              <span className="info-value">{district.name}</span>
+            </div>
+          )}
         </div>
 
         <div className="place-rating-address">
@@ -103,19 +104,18 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
               <span
                 key={star}
                 className={`star ${
-                  star <= Math.round(rating || 4) ? "filled" : ""
+                  rating && star <= Math.round(rating) ? "filled" : ""
                 }`}
               >
                 ★
               </span>
             ))}
-            <span className="rating-value">{rating || 4.5}</span>
-            <span className="rating-count">({howManyRated || 2456})</span>
+            <span className="rating-value">{rating}</span>
+            <span className="rating-count">({howManyRated})</span>
           </div>
         </div>
       </div>
 
-      {/* --- Tailwind-styled remove button --- */}
       <button
         onClick={() => removePlace(id)}
         aria-label="Remove place"

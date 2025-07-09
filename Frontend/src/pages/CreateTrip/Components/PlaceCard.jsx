@@ -4,14 +4,14 @@ import "./PlaceCard.css";
 
 const PlaceCard = ({ place, onAddPlace, isSelected }) => {
   const {
-    _id,
-    placeName,
+    id,
+    name,
     rating,
     howManyRated,
     avgTime,
     avgSpend,
-    googleUrl,
-    imageUrl,
+    googleMapLink,
+    mainImageUrl,
   } = place;
 
   const handleAddClick = (e) => {
@@ -23,24 +23,26 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
     <div className={`place-card ${isSelected ? "selected" : ""}`}>
       <div className="place-image-container">
         <img
-          src={imageUrl}
-          alt={placeName}
+          src={mainImageUrl}
+          alt={name}
           className="place-image"
           onError={(e) => {
             e.target.style.display = "none";
-            console.warn(`Image failed to load for ${placeName}`);
+            console.warn(`Image failed to load for ${name}`);
           }}
         />
         <button
           className={`add-button ${isSelected ? "added" : ""}`}
           onClick={() => onAddPlace(place, isSelected)}
         >
-          <span style={{ fontSize: "18px", fontWeight: "bold" }}>＋</span>
+          <span style={{ fontSize: "18px", fontWeight: "bold" }}>
+            {isSelected ? "−" : "＋"}
+          </span>
         </button>
       </div>
 
       <div className="place-info">
-        <h3 className="place-name">{placeName}</h3>
+        <h3 className="place-name">{name}</h3>
         <div className="place-rating">
           <div className="stars">
             {[1, 2, 3, 4, 5].map((star) => (

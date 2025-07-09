@@ -91,6 +91,38 @@ namespace Backend.Controllers
              return Ok(places);  
         }
 
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var places = await _context.PlacesToVisit  // Use PlacesToVisit instead of Places
+                .Include(p => p.District)  // Include the related District data
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,  // PlaceName in your schema is `Name` in PlacesToVisit
+                    p.GoogleMapLink,  // GoogleUrl in your schema is `GoogleMapLink`
+                    p.Rating,
+                    p.HowManyRated,
+                    p.AvgTime,
+                    p.AvgSpend,
+                    p.PlaceType,
+                    p.MainImageUrl,  // ImageUrl in your schema is `MainImageUrl`
+
+                    // District data (ensure these fields exist in District model)
+                    District = new
+                    {
+                        p.District.Id,
+                        p.District.Name,  // DistrictName is `Name` in your District model
+                        p.District.SubTitle,
+                        p.District.ImageUrl
+                    }
+                })
+                .ToListAsync();
+
+            return Ok(places);
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> AddPlace([FromBody] AddPlaceDTO dto)
         {

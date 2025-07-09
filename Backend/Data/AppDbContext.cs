@@ -8,7 +8,7 @@ namespace Backend.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // Vehicles
+        // DbSets for your models
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
@@ -16,10 +16,18 @@ namespace Backend.Data
 
         // Places & Districts
         public DbSet<District> Districts { get; set; }
-        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
+        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }  // Corrected to your model name 'PlacesToVisit'
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<PlaceImage> PlaceImages { get; set; }
+
+        // Trip and TripPlace
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripPlace> TripPlaces { get; set; }
+        public DbSet<TripCollaborator> TripCollaborator { get; set; }
+        public DbSet<UserNew> UserNew { get; set; }
+
+
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
@@ -31,7 +39,7 @@ namespace Backend.Data
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
-        //Dashboard Notes (NEW)
+        // Dashboard Notes
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
@@ -45,19 +53,33 @@ namespace Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // DistrictWithPlacesCountDTO is a keyless DTO
-            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+            // Composite Key for TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasKey(tp => new { tp.TripId, tp.PlaceId });  // Composite key for TripPlace
 
-            // Precision for PricePerDay
-            modelBuilder.Entity<Vehicle>()
-                .Property(v => v.PricePerDay)
-                .HasPrecision(18, 2);
+            // Relationships between Trip and TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Trip)
+                .WithMany(t => t.TripPlaces)
+                .HasForeignKey(tp => tp.TripId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Trip
 
-            modelBuilder.Entity<Accommodation>()
-                .Property(a => a.PricePerDay)
-                .HasPrecision(18, 2);
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Place)
+                .WithMany(p => p.TripPlaces)
+                .HasForeignKey(tp => tp.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Place
 
-            // Seed Vehicles
+            // Default Timestamps for Trip
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            // Seeding Vehicles
             modelBuilder.Entity<Vehicle>().HasData(
                 new Vehicle
                 {
@@ -93,21 +115,14 @@ namespace Backend.Data
                 }
             );
 
-            // Seed Accommodations
+            // Seeding Accommodations
             modelBuilder.Entity<Accommodation>().HasData(
                 new Accommodation
                 {
                     Id = 1,
                     Name = "Earl's Regency",
                     Type = "Hotel",
-                    NumberOfGuests = 100,
-                    NumberOfBedRooms = 20,
-                    NumberOfBeds = 60,
-                    NumberOfBathRooms = 40,
-                    Location = "Thennekumbura",
-                    OwnerName = "Earl's regency group",
-                    OwnerCity = "Kandy",
-                    Description = "stay in free, make your day comfortable",
+                    Location = "Kandy",
                     PricePerDay = 56900m,
                     IsAvailable = true
                 },
@@ -116,20 +131,13 @@ namespace Backend.Data
                     Id = 2,
                     Name = "Sajeew Paradise",
                     Type = "Cabana suite",
-                    NumberOfGuests = 8,
-                    NumberOfBedRooms = 3,
-                    NumberOfBeds = 4,
-                    NumberOfBathRooms = 3,
-                    Location = "Oruthota",
-                    OwnerName = "Sajeewa Karalliyadda",
-                    OwnerCity = "Rajawella",
-                    Description = "happy holiday",
+                    Location = "Rajawella",
                     PricePerDay = 14900m,
                     IsAvailable = true
                 }
             );
 
-            // District
+            // Districts Configuration
             modelBuilder.Entity<District>()
                 .Property(d => d.Name)
                 .IsRequired()
@@ -139,7 +147,7 @@ namespace Backend.Data
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
-            // PlacesToVisit
+            // PlacesToVisit Configuration
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
@@ -153,13 +161,14 @@ namespace Backend.Data
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
 
+            // Review Configuration
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Place)
                 .WithMany(p => p.Reviews)
                 .HasForeignKey(r => r.PlaceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // TodoItem
+            // TodoItem Configuration
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
                 .IsRequired()
@@ -177,7 +186,7 @@ namespace Backend.Data
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // TravelBudget
+            // TravelBudget Configuration
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Description)
                 .IsRequired()
@@ -191,8 +200,7 @@ namespace Backend.Data
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // DashboardNote rules
-
+            // DashboardNote Configuration
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.NoteTitle)
                 .IsRequired()

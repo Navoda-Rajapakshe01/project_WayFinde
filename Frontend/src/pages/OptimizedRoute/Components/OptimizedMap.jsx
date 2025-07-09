@@ -13,7 +13,7 @@ const getLoader = () => {
   return loader;
 };
 
-const OptimizedMap = ({ markers = [] }) => {
+const OptimizedMap = ({ markers = [], onOptimizedOrder, onDistanceChange }) => {
   const mapDivRef = useRef(null);
   const mapRef = useRef(null);
   const directionsRenderer = useRef(null);
@@ -78,6 +78,23 @@ const OptimizedMap = ({ markers = [] }) => {
 
           clearCustomMarkers();
           drawCustomMarkers(result);
+
+          // ✅ Calculate total distance in KM
+          const totalDistanceMeters = result.routes[0].legs.reduce(
+            (sum, leg) => sum + (leg.distance?.value || 0),
+            0
+          );
+          const totalDistanceKm = (totalDistanceMeters / 1000).toFixed(2);
+
+          // ✅ Send distance to parent
+          if (onDistanceChange) {
+            onDistanceChange(totalDistanceKm);
+          }
+
+          const optimizedOrder = result.routes[0].waypoint_order;
+          if (onOptimizedOrder) {
+            onOptimizedOrder(optimizedOrder);
+          }
         } else {
           console.error("Directions request failed:", status);
         }

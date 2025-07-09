@@ -31,7 +31,7 @@ import ReserveVehicle from "./pages/ReserveVehicle";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
-import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
+import AllTrips from "./pages/AllTrips/AllTrips";
 
 import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
@@ -53,7 +53,7 @@ function AppRoutes() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
+        <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
         <Route path="/blog" element={<Blog />} />
@@ -88,7 +88,10 @@ function AppRoutes() {
           <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
-          <Route path="accommodation-management" element={<AccommodationManagement />} />
+          <Route
+            path="accommodation-management"
+            element={<AccommodationManagement />}
+          />
         </Route>
       </Routes>
 

@@ -41,7 +41,7 @@ const StartLocationModal = ({ places, onSelect, onClose }) => {
                   <option value="">Pick a starting location...</option>
                   {places.map((place) => (
                     <option key={place._id} value={place._id}>
-                      {place.placeName}
+                      {place.name}
                     </option>
                   ))}
                 </select>

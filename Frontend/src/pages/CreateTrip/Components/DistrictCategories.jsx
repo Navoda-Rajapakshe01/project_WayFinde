@@ -71,7 +71,7 @@ const DistrictCategories = ({ districts, onSelectDistrict }) => {
   // Group districts by category
   const getDistrictsForCategory = (categoryDistricts) => {
     return districts.filter((district) =>
-      categoryDistricts.includes(district.districtName)
+      categoryDistricts.includes(district.name)
     );
   };
 

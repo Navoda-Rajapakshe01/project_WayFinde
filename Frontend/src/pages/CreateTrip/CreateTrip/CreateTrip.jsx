@@ -42,8 +42,9 @@ const CreateTrip = () => {
     const fetchDistricts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5203/api/districts/getAll"
+          "http://localhost:5030/api/district/getAll"
         );
+        console.log("Fetched districts:", response.data);
         setDistricts(response.data);
         setLoading(false);
       } catch (error) {
@@ -60,7 +61,7 @@ const CreateTrip = () => {
     const fetchPlaces = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5203/api/places/getAll"
+          "http://localhost:5030/api/places/getAll"
         );
         setPlaces(response.data);
       } catch (error) {
@@ -108,11 +109,16 @@ const CreateTrip = () => {
     }
   }, [selectedPlaces]);
 
+  const filteredDistricts = districts.filter((district) =>
+    district.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const filteredPlaces = selectedDistrict
     ? places.filter(
         (place) =>
-          place.district?.districtName === selectedDistrict.districtName ||
-          place.district === selectedDistrict.id
+          (place.district?.name === selectedDistrict.name ||
+            place.district === selectedDistrict.id) &&
+          place.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
 
@@ -182,12 +188,12 @@ const CreateTrip = () => {
       // Select the place
       setSelectedPlaces((prev) => [...prev, place]);
 
-      if (place.googleUrl) {
-        const position = extractCoordinates(place.googleUrl);
+      if (place.googleMapLink) {
+        const position = extractCoordinates(place.googleMapLink);
         const newMarker = {
           id: place.id,
           position,
-          title: place.placeName,
+          title: place.name,
         };
         setMapMarkers((prev) => [...prev, newMarker]);
       }
@@ -222,8 +228,8 @@ const CreateTrip = () => {
     // Calculate distances between consecutive points
     for (let i = 1; i < orderedPlaces.length; i++) {
       const place = orderedPlaces[i];
-      if (place.googleUrl) {
-        const coords = extractCoordinates(place.googleUrl);
+      if (place.googleMapLink) {
+        const coords = extractCoordinates(place.googleMapLink);
 
         // Simple distance calculation (this is just an approximation)
         const latDiff = coords.lat - lastCoords.lat;
@@ -291,7 +297,7 @@ const CreateTrip = () => {
 
       // Send the data to the API
       const response = await axios.post(
-        "http://localhost:5203/api/trips/add-trip",
+        "http://localhost:5030/api/trips/add-trip",
         tripData
       );
 
@@ -411,10 +417,17 @@ const CreateTrip = () => {
               )}
             </div>
           ) : (
-            <DistrictCategories
-              districts={districts}
-              onSelectDistrict={handleDistrictSelect}
-            />
+            <>
+              {console.log("Passing districts to UI:", districts)}
+              <DistrictCategories
+                districts={districts.filter((district) =>
+                  district.name
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())
+                )}
+                onSelectDistrict={handleDistrictSelect}
+              />
+            </>
           )}
         </div>
 

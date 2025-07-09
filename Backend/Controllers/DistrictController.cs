@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
+using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +34,14 @@ namespace Backend.Controllers
                 .ToListAsync();
 
             return Ok(result);
+        }
+
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            // Fetch all districts and return them
+            var districts = await _context.Districts.OrderBy(d => d.Name).ToListAsync();
+            return Ok(districts);
         }
     }
 }

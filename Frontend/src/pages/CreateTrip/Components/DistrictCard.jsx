@@ -2,7 +2,7 @@ import React from "react";
 import "./DistrictCard.css";
 
 const DistrictCard = ({ district, onClick }) => {
-  const { districtName, imageUrl, subTitle } = district;
+  const { name: districtName, imageUrl, subTitle } = district;
 
   // Fallback image if missing
   const defaultImage = `/placeholder.svg?height=200&width=300&query=${districtName} Sri Lanka`;

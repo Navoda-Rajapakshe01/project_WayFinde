@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useRef,
 } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -21,6 +21,7 @@ import "./OptimizedRoute.css";
 const OptimizedRoute = () => {
   /* ──────────────────────────── state ─────────────────────────── */
   const { id } = useParams();
+  const navigate = useNavigate();
   const [trip, setTrip] = useState(null);
   const [places, setPlaces] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +30,7 @@ const OptimizedRoute = () => {
   const [mapMarkers, setMapMarkers] = useState([]);
   const [routePolyline, setRoutePolyline] = useState([]);
   const [successMessage, setSuccess] = useState("");
+  const [distanceKm, setDistanceKm] = useState(0);
 
   const timerRef = useRef(null); // holds success/error timer id
 
@@ -39,7 +41,7 @@ const OptimizedRoute = () => {
       try {
         setLoading(true);
         const { data } = await axios.post(
-          "http://localhost:5203/api/trips/getTripById",
+          "http://localhost:5030/api/trips/getTripById",
           { tripId: id }
         );
         if (!isCancelled && data) {
@@ -73,11 +75,11 @@ const OptimizedRoute = () => {
     }
 
     const markers = places.map((place, idx) => {
-      const position = extractCoordinates(place?.googleUrl);
+      const position = extractCoordinates(place?.GoogleMapLink);
       return {
         id: place.id,
         position,
-        title: place.placeName || place.name || "Unnamed Place",
+        title: place.Name || place.name || "Unnamed Place",
         order: idx + 1,
       };
     });
@@ -138,11 +140,14 @@ const OptimizedRoute = () => {
       places.map((p) => p.id)
     );
     try {
-      await axios.put("http://localhost:5203/api/trips/update-trip", {
+      await axios.put("http://localhost:5030/api/trips/update-trip", {
         TripId: id,
         PlaceIds: places.map((p) => p.id),
       });
       flashMessage(setSuccess, "Trip updated successfully!");
+      setTimeout(() => {
+        navigate("/alltrips");
+      }, 1000);
     } catch (err) {
       console.error("Error updating trip:", err);
       flashMessage(setError, "Failed to update trip. Please try again.");
@@ -157,6 +162,29 @@ const OptimizedRoute = () => {
   };
 
   useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const handleOptimizedOrder = useCallback(
+    (order) => {
+      if (!order || places.length < 3) return;
+
+      const origin = places[0];
+      const destination = places[places.length - 1];
+      const waypoints = places.slice(1, -1);
+
+      const reorderedWaypoints = order.map((i) => waypoints[i]);
+      const reorderedPlaces = [origin, ...reorderedWaypoints, destination];
+
+      //  Only update if the order is actually different
+      const isSame =
+        reorderedPlaces.length === places.length &&
+        reorderedPlaces.every((p, i) => p.id === places[i].id);
+
+      if (!isSame) {
+        setPlaces(reorderedPlaces);
+      }
+    },
+    [places]
+  );
 
   /* ────────────────────────── early UI ────────────────────────── */
   if (loading)
@@ -224,13 +252,18 @@ const OptimizedRoute = () => {
             />
             <TripSummaryCard
               title="Distance"
-              value={`${tripDetails.distance} km`}
+              value={`${distanceKm} km`}
               icon="navigation"
             />
           </div>
 
           <div className="map-container">
-            <OptimizedMap markers={mapMarkers} polyline={routePolyline} />
+            <OptimizedMap
+              markers={mapMarkers}
+              polyline={routePolyline}
+              onOptimizedOrder={handleOptimizedOrder}
+              onDistanceChange={setDistanceKm}
+            />
           </div>
 
           <div className="action-buttons">

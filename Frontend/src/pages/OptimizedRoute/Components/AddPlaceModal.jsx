@@ -17,12 +17,12 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
       try {
         setLoading(true);
         const districtsResponse = await axios.get(
-          "http://localhost:5203/api/districts/getAll"
+          "http://localhost:5030/api/district/getAll"
         );
         setDistricts(districtsResponse.data || []);
 
         const placesResponse = await axios.get(
-          "http://localhost:5203/api/places/getAll"
+          "http://localhost:5030/api/places/getAll"
         );
         setPlaces(placesResponse.data || []);
         setLoading(false);
@@ -41,14 +41,14 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
     if (selectedDistrict) {
       filtered = filtered.filter(
         (place) =>
-          place.district?.districtName === selectedDistrict.districtName ||
+          place.district?.name === selectedDistrict.name ||
           place.district === selectedDistrict.id
       );
     }
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter((place) =>
-        (place.placeName || place.name || "").toLowerCase().includes(query)
+        (place.name || place.name || "").toLowerCase().includes(query)
       );
     }
     filtered = filtered.filter((place) => !existingPlaceIds.includes(place.id));
@@ -103,7 +103,7 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
                 }`}
                 onClick={() => handleDistrictSelect(district)}
               >
-                {district.districtName}
+                {district.name}
               </div>
             ))}
             {selectedDistrict && (
@@ -196,14 +196,14 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
 };
 
 const PlaceCard = ({ place, onAddPlace }) => {
-  const displayName = place.placeName || place.name || "Unnamed Place";
+  const displayName = place.name || place.name || "Unnamed Place";
   const defaultImage = `/placeholder.svg?height=200&width=300&query=${displayName} Sri Lanka`;
 
   return (
     <div className="modal-place-card-adp">
       <div className="place-image-container-adp">
         <img
-          src={place.imageUrl || defaultImage}
+          src={place.mainImageUrl || defaultImage}
           alt={displayName}
           className="place-image-adp"
         />
