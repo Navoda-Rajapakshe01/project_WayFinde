@@ -6,11 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Backend/Migrations/20250521100947_UpdateDatabase.cs
     public partial class UpdateDatabase : Migration
-========
-    public partial class InitialCreateForUserNew : Migration
->>>>>>>> vehicleNew:Backend/Migrations/20250424182420_InitialCreateForUserNew.cs
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +17,6 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-<<<<<<<< HEAD:Backend/Migrations/20250521100947_UpdateDatabase.cs
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -31,10 +26,6 @@ namespace Backend.Migrations
                     LastLoginDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
-========
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
->>>>>>>> vehicleNew:Backend/Migrations/20250424182420_InitialCreateForUserNew.cs
                 },
                 constraints: table =>
                 {

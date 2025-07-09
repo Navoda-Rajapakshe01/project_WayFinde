@@ -11,15 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backend.Migrations
 {
-<<<<<<<< HEAD:Backend/Migrations/20250521100947_UpdateDatabase.Designer.cs
     [DbContext(typeof(AppDbContext))]
     [Migration("20250521100947_UpdateDatabase")]
     partial class UpdateDatabase
-========
-    [DbContext(typeof(UserDbContext))]
-    [Migration("20250525121544_AddUserNewChanges")]
-    partial class AddUserNewChanges
->>>>>>>> vehicleNew:Backend/Migrations/20250525121544_AddUserNewChanges.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

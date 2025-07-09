@@ -16,4 +16,3 @@
         public int? TripId { get; set; }  // Nullable TripId field
     }
 }
-

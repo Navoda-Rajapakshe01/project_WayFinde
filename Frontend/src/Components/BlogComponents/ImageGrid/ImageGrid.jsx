@@ -2,19 +2,20 @@ import React, { useRef, useState } from "react";
 import { FaChevronLeft, FaChevronRight, FaComment } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "./ImageGrid.css";
+import PropTypes from "prop-types";
 
-const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
+const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
   const navigate = useNavigate();
   const scrollContainerRefLatest = useRef(null); // Create ref for scrolling container
   const scrollContainerRefTrending = useRef(null); // Create ref for scrolling container
   const [currentPage, setCurrentPage] = useState(1);
-  const blogsPerPage = 6; // Number of blogs per page
+ //onst blogsPerPage = 6; // Number of blogs per page
 
   // Pagination logic for Other Blogs
-  const indexOfLastBlog = currentPage * blogsPerPage;
-  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = otherBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  const totalPages = Math.ceil(otherBlogs.length / blogsPerPage);
+  // const indexOfLastBlog = currentPage * blogsPerPage;
+  // const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  // const currentBlogs = otherBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
+  // const totalPages = Math.ceil(otherBlogs.length / blogsPerPage);
 
   const handleNavigate = (index) => {
     navigate(`/blog/blog${index + 1}`); // Navigate dynamically
@@ -165,6 +166,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
         </div>
       </div>
 
+<<<<<<< HEAD
       {/* Other Blogs Section */}
       <div className="mt-8">
         <h2 className="text-2xl font-bold mb-4">Other Blogs</h2>
@@ -248,8 +250,17 @@ const ImageGrid = ({ latestBlogs, trendingBlogs, otherBlogs }) => {
           </div>
         </div>
       </div>
+=======
+      
+>>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
     </div>
   );
 };
+ImageGrid.propTypes = {
+  latestBlogs: PropTypes.array.isRequired,
+  trendingBlogs: PropTypes.array.isRequired,
+  otherBlogs: PropTypes.array.isRequired,
+};
+
 
 export default ImageGrid;

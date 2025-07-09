@@ -16,7 +16,7 @@ public class PlacesToVisit
     public string? GoogleMapLink { get; set; }
 
     public int DistrictId { get; set; }
-    public required District District { get; set; }
+   
 
     public int? CategoryId { get; set; }
     public required Category Category { get; set; }

@@ -1,9 +1,13 @@
+import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
+<<<<<<< HEAD
 import { GoogleLogin } from "@react-oauth/google";
+=======
+>>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -147,24 +151,44 @@ const Login = () => {
       {showSignInModal && (
         <div
           className="signin-modal-overlay"
+<<<<<<< HEAD
           onClick={() => setShowSignInModal(false)}>
+=======
+          onClick={() => setShowSignInModal(false)}
+        >
+>>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
               <button
                 className="signin-option-btn"
+<<<<<<< HEAD
                 onClick={() => handleSignInOption("user")}>
+=======
+                onClick={() => handleSignInOption("user")}
+              >
+>>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
                 Normal User
               </button>
               <button
                 className="signin-option-btn"
+<<<<<<< HEAD
                 onClick={() => handleSignInOption("service")}>
+=======
+                onClick={() => handleSignInOption("service")}
+              >
+>>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
                 Service Provider
               </button>
             </div>
             <button
               className="close-modal-btn"
+<<<<<<< HEAD
               onClick={() => setShowSignInModal(false)}>
+=======
+              onClick={() => setShowSignInModal(false)}
+            >
+>>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
               Close
             </button>
           </div>
