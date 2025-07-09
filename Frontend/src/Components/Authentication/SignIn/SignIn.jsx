@@ -1,3 +1,4 @@
+import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +11,8 @@ const Login = () => {
     password: "",
   });
   const [error, setError] = useState("");
-  const [showSignInModal, setShowSignInModal] = useState(false); // 🛠️ Fixed: initialize modal state
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext);
 
@@ -21,44 +23,87 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
       const response = await axios.post(
         "http://localhost:5030/api/Auth/login",
-        formData
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       const token = response.data.token;
-
-      if (!token) {
-        throw new Error("No token received from server");
-      }
+      if (!token) throw new Error("No token received from server");
 
       localStorage.setItem("token", token);
-
-      const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      setUser(decodedToken);
-
-      window.location.href = "/";
+      await handleProfileFetch(token);
     } catch (error) {
-      console.error(error);
-      setError("Invalid credentials");
+      console.error("Login error:", error);
+      if (error.response) {
+        setError(error.response.data.message || "Invalid credentials");
+      } else if (error.request) {
+        setError("No response from server. Please check your connection.");
+      } else {
+        setError("Error during login. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // 🛠️ New function to handle modal sign-in option
+  // Google login success handler
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    const googleToken = credentialResponse.credential;
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5030/api/Auth/google", // Your backend endpoint
+        { token: googleToken },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      const jwt = response.data.token;
+      localStorage.setItem("token", jwt);
+      await handleProfileFetch(jwt);
+    } catch (err) {
+      console.error("Google login error:", err);
+      setError("Google login failed. Please try again.");
+    }
+  };
+
+  const handleProfileFetch = async (token) => {
+    try {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      const profileRes = await axios.get(
+        "http://localhost:5030/api/profile/me",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const userProfile = {
+        ...decodedToken,
+        ...profileRes.data,
+      };
+      setUser(userProfile);
+      localStorage.setItem("userProfile", JSON.stringify(userProfile));
+      window.location.href = "/";
+    } catch (profileError) {
+      console.error("Profile fetch error:", profileError);
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      setUser(decodedToken);
+      window.location.href = "/";
+    }
+  };
+
   const handleSignInOption = (type) => {
     setShowSignInModal(false);
     navigate(`/signup?role=${type}`);
-    if (type === "user") {
-      navigate("/signup"); // Navigate to user registration
-    } else if (type === "service") {
-      navigate("/signup"); // You can differentiate routes if needed
-    }
   };
-
-  const openModal = () => setShowSignInModal(true);
-  const closeModal = () => setShowSignInModal(false);
 
   return (
     <div className="login-page-container">
@@ -81,8 +126,18 @@ const Login = () => {
             onChange={handleChange}
             required
           />
-          <button type="submit">Login</button>
-          <p className="CreateNew" onClick={openModal}>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
+
+          <div style={{ marginTop: "1rem" }}>
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={() => setError("Google login failed")}
+            />
+          </div>
+
+          <p className="CreateNew" onClick={() => setShowSignInModal(true)}>
             Create a new Account
           </p>
           {error && <p className="error-message">{error}</p>}
@@ -90,7 +145,10 @@ const Login = () => {
       </div>
 
       {showSignInModal && (
-        <div className="signin-modal-overlay" onClick={closeModal}>
+        <div
+          className="signin-modal-overlay"
+          onClick={() => setShowSignInModal(false)}
+        >
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
@@ -107,7 +165,10 @@ const Login = () => {
                 Service Provider
               </button>
             </div>
-            <button className="close-modal-btn" onClick={closeModal}>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowSignInModal(false)}
+            >
               Close
             </button>
           </div>

@@ -49,6 +49,8 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
 // Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<BlobService>();
+
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -58,6 +60,7 @@ builder.Services.AddCors(options =>
             "https://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
+              .AllowCredentials()
               .AllowCredentials()
     );
 });
@@ -72,6 +75,16 @@ builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpContextAccessor();
+
+// In your Program.cs or Startup.cs, add JSON serialization options:
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.MaxDepth = 32;
+});
+
+
 // Build the App
 var app = builder.Build();
 
@@ -83,9 +96,8 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // For production, you might want a more restrictive CORS policy
-    // or comment this out if you don't need CORS in production
-    app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
+
+    app.UseCors("ProductionCorsPolicy");
 }
 
 // Apply CORS policy BEFORE auth

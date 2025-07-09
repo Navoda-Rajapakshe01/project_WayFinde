@@ -1,12 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.DTOs;
+using System.Text.Json;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Backend.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        //Profile
+        public DbSet<UserNew> UsersNew { get; set; } = null!;
+        public DbSet<Blog> Blogs { get; set; } = null!;
+        public DbSet<Post> Posts { get; set; } = null!;
+        public DbSet<Follows> Follows { get; set; } = null!;
 
         // DbSets for your models
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -34,7 +41,7 @@ namespace Backend.Data
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
-        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
@@ -47,7 +54,9 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-        public object Amenities { get; internal set; }
+        public object? Amenities { get; internal set; }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,12 +83,24 @@ namespace Backend.Data
             modelBuilder.Entity<Trip>()
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
+            // DistrictWithPlacesCountDTO is a keyless DTO
+            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+
+            // Precision for decimal properties
+            modelBuilder.Entity<Vehicle>()
+                .Property(v => v.PricePerDay)
+                .HasPrecision(18, 2);
 
             modelBuilder.Entity<Trip>()
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // Seeding Vehicles
+            // Fix for TravelBudget.Amount precision
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Amount)
+                .HasPrecision(18, 2);
+
+            // Seed Vehicles
             modelBuilder.Entity<Vehicle>().HasData(
                 new Vehicle
                 {
@@ -138,6 +159,7 @@ namespace Backend.Data
             );
 
             // Districts Configuration
+            // District configuration
             modelBuilder.Entity<District>()
                 .Property(d => d.Name)
                 .IsRequired()
@@ -148,6 +170,7 @@ namespace Backend.Data
                 .IsRequired();
 
             // PlacesToVisit Configuration
+            // PlacesToVisit configuration
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
@@ -162,6 +185,7 @@ namespace Backend.Data
                 .HasForeignKey(p => p.CategoryId);
 
             // Review Configuration
+            // Review configuration
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Place)
                 .WithMany(p => p.Reviews)
@@ -169,6 +193,7 @@ namespace Backend.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             // TodoItem Configuration
+            // TodoItem configuration
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
                 .IsRequired()
@@ -186,7 +211,7 @@ namespace Backend.Data
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // TravelBudget Configuration
+            // TravelBudget configuration
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Description)
                 .IsRequired()
@@ -200,7 +225,7 @@ namespace Backend.Data
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // DashboardNote Configuration
+            // DashboardNote configuration
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.NoteTitle)
                 .IsRequired()
@@ -221,6 +246,49 @@ namespace Backend.Data
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.UserId)
                 .IsRequired();
+
+            // Blog configuration
+            modelBuilder.Entity<Blog>()
+                .HasKey(b => b.Id);
+
+            modelBuilder.Entity<Blog>()
+                .HasOne(b => b.User)
+                .WithMany(u => u.Blogs)
+                .HasForeignKey(b => b.UserId);
+
+            // Configure Blog ImageUrls with value comparer
+            modelBuilder.Entity<Blog>()
+                .Property(b => b.ImageUrls)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
+                .Metadata.SetValueComparer(new ValueComparer<List<string>>(
+                    (c1, c2) => c1.SequenceEqual(c2),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()));
+
+            // Comment configuration
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Follows configuration (many-to-many relationship)
+            modelBuilder.Entity<Follows>()
+                .HasKey(f => new { f.FollowerID, f.FollowedID });
+
+            modelBuilder.Entity<Follows>()
+                .HasOne(f => f.Follower)
+                .WithMany(u => u.Following)
+                .HasForeignKey(f => f.FollowerID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Follows>()
+                .HasOne(f => f.Followed)
+                .WithMany(u => u.Followers)
+                .HasForeignKey(f => f.FollowedID)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

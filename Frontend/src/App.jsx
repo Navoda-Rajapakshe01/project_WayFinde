@@ -1,6 +1,8 @@
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import React from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 
+import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -9,18 +11,21 @@ import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
-import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
 import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
+import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import Accommodation from "./pages/Accommodation";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
+import BlogEditor from "./pages/Blogs/BlogEditor";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
+import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
+import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
 import PaymentGateway from "./pages/PaymentGateway";
 import Following from "./pages/Profile/Following";
@@ -63,8 +68,12 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
+
         <Route path="/chat" element={<PersonalBlog />} />
         <Route path="/blog/:id" element={<PersonalBlog />} />
+
+        <Route path="/chat" element={<PersonalBlog />} />
+
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/reservevehicle" element={<ReserveVehicle />} />
         <Route path="/paymentgateway" element={<PaymentGateway />} />
@@ -75,6 +84,13 @@ function AppRoutes() {
         <Route path="/profile/following" element={<Following />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
+        <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
+        <Route
+          path="/profile/profileBlogs/blogEditor"
+          element={<BlogEditor />}
+        />
+        <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
 
         <Route path="/plantrip" element={<CreateTrip />} />
         <Route path="/optimizedroute/:id" element={<OptimizedRoute />} />
@@ -102,13 +118,15 @@ function AppRoutes() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ProfileImageProvider>
-          <AppRoutes />
-        </ProfileImageProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <GoogleOAuthProvider clientId="114068341710-2i1qkqgprej37t78umijsckchgktcljm.apps.googleusercontent.com">
+      <BrowserRouter>
+        <AuthProvider>
+          <ProfileImageProvider>
+            <AppRoutes />
+          </ProfileImageProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </GoogleOAuthProvider>
   );
 }
 
