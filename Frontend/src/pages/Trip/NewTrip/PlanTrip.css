@@ -5,7 +5,7 @@
 }
 
 .header-fixed {
-  position: fixed;
+  position: relative;
   top: 60px;
   width: 100%;
   background: #f5f5f7;

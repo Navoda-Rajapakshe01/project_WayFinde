@@ -18,12 +18,12 @@ namespace Backend.Data
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
+        public DbSet<VehicleAmenity> VehicleAmenities { get; set; }
 
         // Places & Districts
         public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Review> Reviews { get; set; }
         public DbSet<PlaceImage> PlaceImages { get; set; }
 
         // Todo
@@ -31,12 +31,11 @@ namespace Backend.Data
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
-        public DbSet<Blog> Blogs { get; set; }
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
-        //Dashboard Notes (NEW)
+        // Dashboard Notes (NEW)
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
@@ -44,7 +43,7 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-        public object Amenities { get; internal set; }
+        public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
 
 >>>>>>> update-v2
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -62,86 +61,15 @@ namespace Backend.Data
             //     .WithMany()
             //     .HasForeignKey(b => b.UserId);
 =======
-            // Precision for PricePerDay
+            // Precision for PricePerDay (Vehicles)
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.PricePerDay)
                 .HasPrecision(18, 2);
 
+            // Precision for PricePerNight (Accommodations)
             modelBuilder.Entity<Accommodation>()
-                .Property(a => a.PricePerDay)
+                .Property(a => a.PricePerNight)
                 .HasPrecision(18, 2);
-
-            // Seed Vehicles
-            modelBuilder.Entity<Vehicle>().HasData(
-                new Vehicle
-                {
-                    Id = 1,
-                    Brand = "Toyota",
-                    Model = "Corolla",
-                    Type = "Sedan",
-                    NumberOfPassengers = 5,
-                    FuelType = "Petrol",
-                    TransmissionType = "Automatic",
-                    Location = "Colombo",
-                    OwnerName = "John Doe",
-                    OwnerCity = "Colombo",
-                    Description = "A comfortable and fuel-efficient city car.",
-                    PricePerDay = 45.00m,
-                    IsAvailable = true
-                },
-                new Vehicle
-                {
-                    Id = 2,
-                    Brand = "Suzuki",
-                    Model = "Wagon R",
-                    Type = "Mini Van",
-                    NumberOfPassengers = 4,
-                    FuelType = "Hybrid",
-                    TransmissionType = "Automatic",
-                    Location = "Kandy",
-                    OwnerName = "Jane Smith",
-                    OwnerCity = "Kandy",
-                    Description = "Perfect for short family trips and hill country.",
-                    PricePerDay = 38.50m,
-                    IsAvailable = true
-                }
-            );
-
-            // Seed Accommodations
-            modelBuilder.Entity<Accommodation>().HasData(
-                new Accommodation
-                {
-                    Id = 1,
-                    Name = "Earl's Regency",
-                    Type = "Hotel",
-                    NumberOfGuests = 100,
-                    NumberOfBedRooms = 20,
-                    NumberOfBeds = 60,
-                    NumberOfBathRooms = 40,
-                    Location = "Thennekumbura",
-                    OwnerName = "Earl's regency group",
-                    OwnerCity = "Kandy",
-                    Description = "stay in free, make your day comfortable",
-                    PricePerDay = 56900m,
-                    IsAvailable = true
-                },
-                new Accommodation
-                {
-                    Id = 2,
-                    Name = "Sajeew Paradise",
-                    Type = "Cabana suite",
-                    NumberOfGuests = 8,
-                    NumberOfBedRooms = 3,
-                    NumberOfBeds = 4,
-                    NumberOfBathRooms = 3,
-                    Location = "Oruthota",
-                    OwnerName = "Sajeewa Karalliyadda",
-                    OwnerCity = "Rajawella",
-                    Description = "happy holiday",
-                    PricePerDay = 14900m,
-                    IsAvailable = true
-                }
-            );
 
             // District
             modelBuilder.Entity<District>()
@@ -166,12 +94,6 @@ namespace Backend.Data
                 .HasOne(p => p.Category)
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
-
-            modelBuilder.Entity<Review>()
-                .HasOne(r => r.Place)
-                .WithMany(p => p.Reviews)
-                .HasForeignKey(r => r.PlaceId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // TodoItem
             modelBuilder.Entity<TodoItem>()
@@ -206,7 +128,6 @@ namespace Backend.Data
                 .HasDefaultValueSql("GETDATE()");
 
             // DashboardNote rules
-
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.NoteTitle)
                 .IsRequired()

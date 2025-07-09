@@ -75,8 +75,6 @@ const PlanTrip = () => {
 
   return (
     <div className="relative">
-      <MainNavbar />
-
       {/* Header Section */}
       <div className="header-fixed">
         <h2>Find Your Next Adventure</h2>
@@ -102,8 +100,7 @@ const PlanTrip = () => {
                   <p>{place.type}</p>
                   <button
                     className="select-btn"
-                    onClick={() => handleSelectPlace(place)}
-                  >
+                    onClick={() => handleSelectPlace(place)}>
                     {selectedPlaces.find((p) => p.id === place.id) ? (
                       <FaCheck />
                     ) : (
@@ -122,15 +119,13 @@ const PlanTrip = () => {
           <p>Review and customize your trip itinerary</p>
           <div
             id="map"
-            className="relative h-96 w-full rounded-lg shadow-md"
-          ></div>
+            className="relative h-96 w-full rounded-lg shadow-md"></div>
 
           {/* Next Button Below Map */}
           <div className="next-btn-container">
             <button
               onClick={() => setShowPopup("location")}
-              className="next-btn"
-            >
+              className="next-btn">
               Next
             </button>
           </div>
@@ -143,8 +138,7 @@ const PlanTrip = () => {
           <div className="popup-container-1">
             <button
               onClick={() => setShowPopup(null)}
-              className="popup-close-1"
-            >
+              className="popup-close-1">
               &times;
             </button>
             <h2 className="popup-title">Choose your Starting location</h2>
@@ -156,8 +150,7 @@ const PlanTrip = () => {
             </select>
             <button
               className="popup-confirm-1"
-              onClick={() => setShowPopup("dates")}
-            >
+              onClick={() => setShowPopup("dates")}>
               Confirm & Continue
             </button>
           </div>
@@ -171,14 +164,12 @@ const PlanTrip = () => {
             {/* Back Button */}
             <button
               onClick={() => setShowPopup("location")}
-              className="popup-back-1"
-            >
+              className="popup-back-1">
               ←
             </button>
             <button
               onClick={() => setShowPopup(null)}
-              className="popup-close-1"
-            >
+              className="popup-close-1">
               &times;
             </button>
 
@@ -215,8 +206,7 @@ const PlanTrip = () => {
             {/* ✅ Navigate to OptimizedTripRoute */}
             <button
               className="popup-confirm-1"
-              onClick={() => navigate("/trip-planner")}
-            >
+              onClick={() => navigate("/trip-planner")}>
               Confirm & Continue
             </button>
           </div>

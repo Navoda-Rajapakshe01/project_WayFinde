@@ -1,9 +1,7 @@
 .booking-form {
   padding: 2rem;
   max-width: 600px;
-  margin: 0 auto;
-  margin-top: 100px;
-  margin-bottom: 50px;
+  margin: 100px auto 50px auto;
 }
 
 .form-section {
@@ -12,7 +10,7 @@
 
 .form-section h3 {
   font-size: 1.5rem;
-  color: #2d2d2d;
+  color: var(--primary-dark);
   margin-bottom: 1rem;
 }
 
@@ -20,23 +18,30 @@ input {
   width: 100%;
   padding: 0.75rem;
   margin-bottom: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color, #ccc);
   border-radius: 8px;
   font-size: 1rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 8px var(--primary-light);
+  outline: none;
 }
 
 .next-button {
   padding: 0.75rem 1.5rem;
-  background-color: #19b9df;
+  background-color: var(--primary-color);
   color: #ffffff;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color var(--transition);
   width: 100%;
 }
 
 .next-button:hover {
-  background-color: #3aa69b;
+  background-color: var(--primary-dark);
 }
