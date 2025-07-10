@@ -189,10 +189,6 @@ const MainNavbar = () => {
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
-  const handleSignIn = () => {
-    navigate("/signin");
-  };
-
   return (
     <nav className="navbar">
       <div className="navbar-container">
