@@ -38,17 +38,6 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
-import AccommodationDetail from "./pages/AccommodationDetail";
-import AdminDashboard from "./pages/Admin/AdminDashboard";
-import PlacesManagement from "./Components/AdminProfile/places-management";
-import UsersManagement from "./Components/AdminProfile/users-management";
-import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
-import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
-import BlogManagement from "./Components/AdminProfile/blog-management";
-import ReviewsManagement from "./Components/AdminProfile/reviews-management";
-import UserAnalytics from "./Components/AdminProfile/user-analytics";
-import SettingsPanel from "./Components/AdminProfile/settings-panel";
-import EditPlace from "./Components/AdminProfile/edit-place";
 import AddTrip from "./pages/AddTrip";
 
 import "./App.css";
