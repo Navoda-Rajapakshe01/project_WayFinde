@@ -45,7 +45,7 @@ const CreateTrip = () => {
           "http://localhost:5030/api/district/getAll"
         );
         console.log("Fetched districts:", response.data);
-        setDistricts(response.data?.$values || []);
+        setDistricts(response.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching districts:", error);
@@ -63,7 +63,7 @@ const CreateTrip = () => {
         const response = await axios.get(
           "http://localhost:5030/api/places/getAll"
         );
-        setPlaces(response.data?.$values || []);
+        setPlaces(response.data);
       } catch (error) {
         console.error("Error fetching places:", error);
       }
