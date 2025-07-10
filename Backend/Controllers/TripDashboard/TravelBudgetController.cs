@@ -13,12 +13,31 @@ namespace Backend.Controllers
 
         public TravelBudgetController(AppDbContext context) => _context = context;
 
+        // GET: api/TravelBudget/trip/{tripId}
+        // Retrieves all budget entries for a specific trip
+        [HttpGet("trip/{tripId}")]
+        public async Task<ActionResult<IEnumerable<TravelBudget>>> GetByTripId(int tripId)
+        {
+            var trip = await _context.Trips.FindAsync(tripId);
+            if (trip == null)
+                return NotFound("Trip not found");
+
+            var budgets = await _context.TravelBudgets
+                .Where(b => b.TripId == tripId)
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+
+            return Ok(budgets);
+        }
+
         // GET: api/TravelBudget
+        // Retrieves all budget entries from the database
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TravelBudget>>> Get() =>
             await _context.TravelBudgets.ToListAsync();
 
         // GET: api/TravelBudget/{id}
+        // Retrieves a specific budget entry by its ID
         [HttpGet("{id}")]
         public async Task<ActionResult<TravelBudget>> Get(int id)
         {
@@ -27,6 +46,7 @@ namespace Backend.Controllers
         }
 
         // POST: api/TravelBudget
+        // Creates a new budget entry for a trip
         [HttpPost]
         public async Task<ActionResult<TravelBudget>> Post(TravelBudget travelBudget)
         {
@@ -43,6 +63,7 @@ namespace Backend.Controllers
         }
 
         // PUT: api/TravelBudget/{id}
+        // Updates an existing budget entry
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, TravelBudget travelBudget)
         {
@@ -63,6 +84,7 @@ namespace Backend.Controllers
         }
 
         // DELETE: api/TravelBudget/{id}
+        // Deletes a specific budget entry
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

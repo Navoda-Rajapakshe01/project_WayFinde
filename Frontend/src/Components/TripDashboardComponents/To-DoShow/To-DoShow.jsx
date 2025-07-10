@@ -3,38 +3,53 @@ import axios from 'axios';
 import { X, CheckCircle, Circle } from 'lucide-react';
 import './To-DoShow.css';
 
-const ToDoShow = ({ onClose }) => {
+const ToDoShow = ({ onClose, tripId }) => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch data from the backend (GET request)
+  //  Fetch data from the backend (GET request)
   useEffect(() => {
-    axios.get('http://localhost:5030/api/todo') // API endpoint
-      .then(res => {
-        const fetchedTodos = res.data.map(todo => ({
-          id: todo.id,
-          task: todo.taskName, // Use taskName from the API response
-          completed: todo.taskStatus === 'Completed' // Convert taskStatus to boolean
-        }));
-        setTodos(fetchedTodos); // Set the fetched data to state
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("GET error: ", err); // Log error if any
-        setLoading(false);
-      });
-  }, []);
+    if (tripId) {
+      axios.get(`http://localhost:5030/api/todo/trip/${tripId}`) // Use tripId in API endpoint
+        .then(res => {
+          const fetchedTodos = res.data.map(todo => ({
+            id: todo.id,
+            task: todo.taskName,
+            completed: todo.taskStatus === 'Completed'
+          }));
+          setTodos(fetchedTodos);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("GET error: ", err);
+          setLoading(false);
+        });
+    }
+  }, [tripId]);
 
-  // ✅ Toggle task completion status
+  //  Toggle task completion status
   const toggleComplete = (id) => {
-    setTodos(
-      todos.map(todo =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo
-      )
-    );
+    const todoToUpdate = todos.find(todo => todo.id === id);
+    if (!todoToUpdate) return;
+
+    const newStatus = todoToUpdate.completed ? 'Active' : 'Completed';
+    
+    axios.put(`http://localhost:5030/api/todo/${id}`, {
+      taskStatus: newStatus
+    })
+    .then(() => {
+      setTodos(
+        todos.map(todo =>
+          todo.id === id ? { ...todo, completed: !todo.completed } : todo
+        )
+      );
+    })
+    .catch(err => {
+      console.error("PUT error: ", err);
+    });
   };
 
-  // ✅ Filter todos
+  //  Filter todos
   const completedTodos = todos.filter(todo => todo.completed);
   const activeTodos = todos.filter(todo => !todo.completed);
 

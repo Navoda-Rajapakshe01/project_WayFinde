@@ -5,7 +5,7 @@
   position: relative;
   margin: 0;
   margin-bottom: 30px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 20px rgba(184, 102, 102, 0.15);
 }
 
 .dashboard-image {
@@ -20,8 +20,7 @@
   left: 20px;
   right: 20px;
   display: flex;
-  flex-wrap: wrap; /* Allows items to wrap on small screens */
-  gap: 20px;
+  flex-wrap: wrap;
   align-items: center;
   color: #fff;
   font-weight: 600;
@@ -41,9 +40,8 @@
   font-size: 1.2rem;
 }
 
-/* -------------------------- */
-/* ✅ Responsive Adjustments  */
-/* -------------------------- */
+/* Responsive styles for screens smaller than 768px */
+
 @media (max-width: 768px) {
   .dashboard-image-card {
     margin-left: 5%;
@@ -66,6 +64,9 @@
     font-size: 1rem;
   }
 }
+
+
+/*Responsive styles for screens smaller than 480px */
 
 @media (max-width: 480px) {
   .dashboard-image {

@@ -3,22 +3,24 @@ import axios from 'axios';
 import { X } from 'lucide-react';
 import './BudgetShow.css';
 
-const BudgetShow = ({ onClose }) => {
+const BudgetShow = ({ onClose, tripId }) => {
   const [expenses, setExpenses] = useState([]);
   const [totalBudget, setTotalBudget] = useState(0);
 
-  // ✅ Fetch expenses data from the backend
+  //  Fetch expenses data from the backend
   useEffect(() => {
-    axios.get('http://localhost:5030/api/TravelBudget')  // Change the URL if needed
-      .then((res) => {
-        setExpenses(res.data); // Set the fetched expenses into the state
-      })
-      .catch((err) => {
-        console.error("GET error: ", err); // Handle errors
-      });
-  }, []);
+    if (tripId) {
+      axios.get(`http://localhost:5030/api/TravelBudget/trip/${tripId}`)
+        .then((res) => {
+          setExpenses(res.data);
+        })
+        .catch((err) => {
+          console.error("GET error: ", err);
+        });
+    }
+  }, [tripId]);
 
-  // ✅ Calculate total budget when expenses change
+  //  Calculate total budget when expenses change
   useEffect(() => {
     if (expenses.length > 0) {
       const total = expenses.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);

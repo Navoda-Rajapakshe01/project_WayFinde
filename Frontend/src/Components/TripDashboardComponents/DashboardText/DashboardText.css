@@ -41,7 +41,7 @@
   }
   
   .navbar-spacing {
-    height: 80px; /* Adjust this value for more or less space */
+    height: 80px; 
   }
 
   @media (max-width: 600px) {

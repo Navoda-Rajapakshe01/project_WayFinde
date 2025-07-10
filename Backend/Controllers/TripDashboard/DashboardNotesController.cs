@@ -18,6 +18,7 @@ namespace Backend.Controllers
         }
 
         // GET: api/DashboardNotes
+        // Retrieves all dashboard notes from the database
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DashboardNote>>> GetDashboardNotes()
         {
@@ -37,6 +38,7 @@ namespace Backend.Controllers
         }
 
         // GET: api/DashboardNotes/{id}
+        // Retrieves a specific dashboard note by its ID
         [HttpGet("{id}")]
         public async Task<ActionResult<DashboardNote>> GetDashboardNote(int id)
         {
@@ -50,6 +52,7 @@ namespace Backend.Controllers
         }
 
         // GET: api/DashboardNote/trip/{tripId}
+        // Retrieves all notes associated with a specific trip
         [HttpGet("trip/{tripId}")]
         public async Task<ActionResult<IEnumerable<DashboardNote>>> GetNotesByTrip(int tripId)
         {
@@ -66,6 +69,7 @@ namespace Backend.Controllers
         }
 
         // POST: api/DashboardNote
+        // Creates a new dashboard note for a trip
         [HttpPost]
         public async Task<ActionResult<DashboardNote>> PostDashboardNote(DashboardNote note)
         {
@@ -80,6 +84,7 @@ namespace Backend.Controllers
         }
 
         // PUT: api/DashboardNote/{id}
+        // Updates an existing dashboard note
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDashboardNote(int id, DashboardNote updatedNote)
         {
@@ -101,6 +106,7 @@ namespace Backend.Controllers
         }
 
         // DELETE: api/DashboardNote/{id}
+        // Deletes a specific dashboard note
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDashboardNote(int id)
         {

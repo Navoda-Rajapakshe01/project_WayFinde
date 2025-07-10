@@ -5,10 +5,12 @@ import TravelBudget from '../TravelBudget/TravelBudget';
 import VehicleRent from '../VehicleRent/VehicleRent';
 import PlacesToStay from '../PlacesToStay/PlacesToStay';
 
-const CustomButtons = () => {
-  const [activeButton, setActiveButton] = useState('');
+const CustomButtons = ({ tripId }) => {
+  console.log('CustomButtons received tripId:', tripId);  // Debug log
+  const [activeButton, setActiveButton] = useState('todo-list');
 
   const handleButtonClick = (button) => {
+    console.log('Button clicked:', button);  // Debug log
     setActiveButton(button);
   };
 
@@ -42,8 +44,8 @@ const CustomButtons = () => {
       </div>
       
       {/* Make sure TodoList component exists and is properly exported */}
-      {activeButton === 'todo-list' && <TodoList />}
-      {activeButton === 'budget' && <TravelBudget />}
+      {activeButton === 'todo-list' && <TodoList tripId={tripId} />}
+      {activeButton === 'budget' && <TravelBudget tripId={tripId} />}
       {activeButton === 'vehicle-rent' && <VehicleRent />}
       {activeButton === 'places' && <PlacesToStay />}
 

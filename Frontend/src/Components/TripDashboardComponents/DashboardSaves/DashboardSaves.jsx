@@ -4,7 +4,7 @@ import SavesComment from '../SavesComment/SavesComment';
 import ToDoShow from '../To-DoShow/To-DoShow';
 import BudgetShow from '../BudgetShow/BudgetShow';
 
-function DashboardSaves() {
+function DashboardSaves({ tripId }) {
   const [hotelComments, setHotelComments] = useState([]);
   const [vehicleComments, setVehicleComments] = useState([]);
   const [showTodoPopup, setShowTodoPopup] = useState(false);
@@ -101,9 +101,8 @@ function DashboardSaves() {
       </div>
 
       {/* Conditionally render popups */}
-      {showTodoPopup && <ToDoShow onClose={() => setShowTodoPopup(false)} />}
-
-      {showBudgetPopup && <BudgetShow onClose={() => setShowBudgetPopup(false)} />}
+      {showTodoPopup && <ToDoShow onClose={() => setShowTodoPopup(false)} tripId={tripId} />}
+      {showBudgetPopup && <BudgetShow onClose={() => setShowBudgetPopup(false)} tripId={tripId} />}
     </div>
   );
 }

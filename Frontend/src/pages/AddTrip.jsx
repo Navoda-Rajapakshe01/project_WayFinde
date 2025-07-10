@@ -3,15 +3,16 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './AddTrip.css';
 
-const API_BASE_URL = 'http://localhost:5030/api/Trips';
+const TRIPS_API_URL = 'http://localhost:5030/api/Trips';
+const TRIP_PLACES_API_URL = 'http://localhost:5030/api/TripPlaces';
 
 const AddTrip = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
-  const [placeIds, setPlaceIds] = useState(['']); // Array to store place IDs for TripPlaces
+  const [successMessage, setSuccessMessage] = useState('');
 
+  // Trip form state
   const [tripData, setTripData] = useState({
-    Id: '',
     Name: '',
     Description: '',
     StartDate: '',
@@ -22,7 +23,13 @@ const AddTrip = () => {
     UserId: ''
   });
 
-  const handleChange = (e) => {
+  // Trip Places form state
+  const [tripPlaceData, setTripPlaceData] = useState({
+    tripId: '',
+    placeId: ''
+  });
+
+  const handleTripChange = (e) => {
     const { name, value } = e.target;
     setTripData(prevState => ({
       ...prevState,
@@ -31,33 +38,22 @@ const AddTrip = () => {
     setError('');
   };
 
-  // Handle change for place IDs input
-  const handlePlaceIdChange = (index, value) => {
-    const newPlaceIds = [...placeIds];
-    // Ensure the input is a valid positive number
-    const placeId = value.replace(/\D/g, '');
-    newPlaceIds[index] = placeId;
-    setPlaceIds(newPlaceIds);
+  const handleTripPlaceChange = (e) => {
+    const { name, value } = e.target;
+    setTripPlaceData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+    setError('');
   };
 
-  // Add new place ID input field
-  const addPlaceId = () => {
-    setPlaceIds([...placeIds, '']);
-  };
-
-  const handleSubmit = async (e) => {
+  const handleTripSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     
     try {
-      // Filter out empty place IDs and convert to numbers
-      const validPlaceIds = placeIds
-        .filter(id => id.trim() !== '')
-        .map(id => parseInt(id));
-
-      // First, create the trip
       const tripFormData = {
-        id: parseInt(tripData.Id),
         name: tripData.Name,
         description: tripData.Description,
         startDate: new Date(tripData.StartDate).toISOString(),
@@ -65,36 +61,69 @@ const AddTrip = () => {
         totalSpend: parseFloat(tripData.TotalSpend),
         tripDistance: parseFloat(tripData.TripDistance),
         tripTime: parseFloat(tripData.TripTime),
-        userId: parseInt(tripData.UserId),
-        tripPlaces: [] // Initialize empty array
+        userId: parseInt(tripData.UserId)
       };
 
-      // Create the trip first
-      const tripResponse = await axios.post(API_BASE_URL, tripFormData, {
+      const response = await axios.post(TRIPS_API_URL, tripFormData, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
-      if (tripResponse.data && tripResponse.data.id) {
-        // Now create the TripPlaces entries
-        const tripId = tripResponse.data.id;
-        
-        // Use the batch endpoint to add all places at once
-        await axios.post(`${API_BASE_URL}/places/batch`, {
-          tripId: tripId,
-          placeIds: validPlaceIds
+      if (response.data) {
+        setSuccessMessage(`Trip created successfully! Trip ID: ${response.data.id}. You can now add places to this trip.`);
+        // Clear the form
+        setTripData({
+          Name: '',
+          Description: '',
+          StartDate: '',
+          EndDate: '',
+          TotalSpend: '',
+          TripDistance: '',
+          TripTime: '',
+          UserId: ''
         });
-
-        console.log('Trip and places added successfully!');
-        alert('Trip and places added successfully!');
-        navigate('/trips');
       }
     } catch (error) {
       console.error('Error details:', error.response?.data || error.message);
       
       if (error.response) {
         const errorMessage = error.response.data.message || error.response.data.error || 'Failed to add trip';
+        setError(errorMessage);
+      } else if (error.request) {
+        setError('No response from server. Please check your connection and make sure the backend is running.');
+      } else {
+        setError('Error preparing request: ' + error.message);
+      }
+    }
+  };
+
+  const handleTripPlaceSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccessMessage('');
+    
+    try {
+      const response = await axios.post(TRIP_PLACES_API_URL, {
+        tripId: parseInt(tripPlaceData.tripId),
+        placeId: parseInt(tripPlaceData.placeId)
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.data) {
+        setSuccessMessage('Place added to trip successfully!');
+        
+        // Navigate to trip dashboard with the trip ID
+        navigate(`/tripdashboard/${tripPlaceData.tripId}`);
+      }
+    } catch (error) {
+      console.error('Error details:', error.response?.data || error.message);
+      
+      if (error.response) {
+        const errorMessage = error.response.data.message || error.response.data.error || 'Failed to add place to trip';
         setError(errorMessage);
       } else if (error.request) {
         setError('No response from server. Please check your connection and make sure the backend is running.');
@@ -112,27 +141,22 @@ const AddTrip = () => {
           {error}
         </div>
       )}
-      <form onSubmit={handleSubmit} className="trip-form">
-        <div className="form-group">
-          <label>Trip ID</label>
-          <input
-            type="number"
-            name="Id"
-            value={tripData.Id}
-            onChange={handleChange}
-            required
-            placeholder="Enter Trip ID"
-            min="1"
-          />
+      {successMessage && (
+        <div className="success-message">
+          {successMessage}
         </div>
+      )}
 
+      {/* Trip Form */}
+      <form onSubmit={handleTripSubmit} className="trip-form">
+        <h2>Create New Trip</h2>
         <div className="form-group">
           <label>User ID</label>
           <input
             type="number"
             name="UserId"
             value={tripData.UserId}
-            onChange={handleChange}
+            onChange={handleTripChange}
             required
             placeholder="Enter User ID"
             min="1"
@@ -145,7 +169,7 @@ const AddTrip = () => {
             type="text"
             name="Name"
             value={tripData.Name}
-            onChange={handleChange}
+            onChange={handleTripChange}
             required
             placeholder="Enter trip name"
             maxLength="100"
@@ -157,20 +181,21 @@ const AddTrip = () => {
           <textarea
             name="Description"
             value={tripData.Description}
-            onChange={handleChange}
+            onChange={handleTripChange}
             required
             placeholder="Enter trip description"
             maxLength="500"
           />
         </div>
-
+         
+          
         <div className="form-group">
           <label>Start Date</label>
           <input
             type="datetime-local"
             name="StartDate"
             value={tripData.StartDate}
-            onChange={handleChange}
+            onChange={handleTripChange}
             required
           />
         </div>
@@ -181,7 +206,7 @@ const AddTrip = () => {
             type="datetime-local"
             name="EndDate"
             value={tripData.EndDate}
-            onChange={handleChange}
+            onChange={handleTripChange}
             required
           />
         </div>
@@ -192,7 +217,7 @@ const AddTrip = () => {
             type="number"
             name="TotalSpend"
             value={tripData.TotalSpend}
-            onChange={handleChange}
+            onChange={handleTripChange}
             step="0.01"
             required
             placeholder="Enter total spend"
@@ -206,7 +231,7 @@ const AddTrip = () => {
             type="number"
             name="TripDistance"
             value={tripData.TripDistance}
-            onChange={handleChange}
+            onChange={handleTripChange}
             step="0.1"
             required
             placeholder="Enter trip distance"
@@ -220,37 +245,12 @@ const AddTrip = () => {
             type="number"
             name="TripTime"
             value={tripData.TripTime}
-            onChange={handleChange}
+            onChange={handleTripChange}
             step="0.5"
             required
             placeholder="Enter trip time"
             min="0"
           />
-        </div>
-
-        {/* Visit Places Section */}
-        <div className="visit-places-section">
-          <h3>Trip Places</h3>
-          {placeIds.map((placeId, index) => (
-            <div key={index} className="form-group">
-              <label>Place ID {index + 1}</label>
-              <input
-                type="number"
-                value={placeId}
-                onChange={(e) => handlePlaceIdChange(index, e.target.value)}
-                placeholder="Enter Place ID from Places table"
-                min="1"
-                required
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addPlaceId}
-            className="add-place-button"
-          >
-            Add Another Place ID
-          </button>
         </div>
 
         <div className="button-group">
@@ -265,7 +265,46 @@ const AddTrip = () => {
             type="submit"
             className="submit-button"
           >
-            Add Trip
+            Create Trip
+          </button>
+        </div>
+      </form>
+
+      {/* Trip Places Form */}
+      <form onSubmit={handleTripPlaceSubmit} className="trip-form">
+        <h2>Add Place to Trip</h2>
+        <div className="form-group">
+          <label>Trip ID</label>
+          <input
+            type="number"
+            name="tripId"
+            value={tripPlaceData.tripId}
+            onChange={handleTripPlaceChange}
+            required
+            placeholder="Enter Trip ID"
+            min="1"
+          />
+        </div>
+
+        <div className="form-group">
+          <label>Place ID</label>
+          <input
+            type="number"
+            name="placeId"
+            value={tripPlaceData.placeId}
+            onChange={handleTripPlaceChange}
+            required
+            placeholder="Enter Place ID"
+            min="1"
+          />
+        </div>
+
+        <div className="button-group">
+          <button
+            type="submit"
+            className="submit-button"
+          >
+            Add Place to Trip
           </button>
         </div>
       </form>

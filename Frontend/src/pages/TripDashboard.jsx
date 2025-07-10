@@ -1,5 +1,6 @@
 import MainNavbar from "../Components/MainNavbar/MainNavbar";
 import React from 'react';
+import { useParams } from 'react-router-dom';
 import DashboardText from '../Components/TripDashboardComponents/DashboardText/DashboardText';
 import DashboardImage from "../Components/TripDashboardComponents/DashboardImage/DashboardImage";
 import DashboardMap from "../Components/TripDashboardComponents/DashboardMap/DashboardMap";
@@ -8,6 +9,9 @@ import WeatherWidget from "../Components/TripDashboardComponents/WeatherWidget/W
 import './TripDashboard.css';
 
 const TripDashboard = () => {
+  const { tripId } = useParams();
+  console.log('TripDashboard tripId:', tripId);  // Debug log
+
   return (
     <div className="dashboard-container">
       <MainNavbar />
@@ -18,7 +22,7 @@ const TripDashboard = () => {
       <div className="split-content">
         <div className="main-content">
           <DashboardImage />
-          <TabNavigation/>
+          <TabNavigation tripId={tripId} />
         </div>
         <div className="side-content">
           <DashboardMap />

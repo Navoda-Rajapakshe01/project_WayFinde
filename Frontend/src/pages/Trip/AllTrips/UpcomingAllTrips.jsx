@@ -185,7 +185,7 @@ const UpcomingAllTrips = () => {
           </div>
         </div>
 
-        {/* ✅ Right Side - Show trip details when a card is clicked */}
+        {/*  Right Side - Show trip details when a card is clicked */}
         <div className="trip-details">
           {selectedTrip ? (
             <>
@@ -204,7 +204,7 @@ const UpcomingAllTrips = () => {
         </div>
       </div>
 
-      {/* ✅ Popup Section */}
+      {/*  Popup Section */}
       {showPopup === "invite" && (
         <div className="popup-overlay-3" onClick={() => setShowPopup(null)}>
           <div

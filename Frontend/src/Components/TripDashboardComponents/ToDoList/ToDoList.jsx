@@ -3,7 +3,8 @@ import './TodoList.css';
 import TodoPopup from '../TodoPopup/TodoPopup';
 import axios from 'axios';  // Import Axios for API requests
 
-const TodoList = () => {
+const TodoList = ({ tripId }) => {
+  console.log('TodoList received tripId:', tripId);  // Debug log
   const [notes, setNotes] = useState([]);  // Empty array to store data from backend
   const [searchText, setSearchText] = useState('');
   const [filter, setFilter] = useState('ALL');
@@ -11,44 +12,55 @@ const TodoList = () => {
 
   //Fetch data from the backend (GET request)
   useEffect(() => {
-    axios.get('http://localhost:5030/api/todo')  // API endpoint
-      .then(res => {
-        const fetchedTodos = res.data.map(todo => ({
-          id: todo.id,
-          text: todo.taskName,  // Use taskName from the API response
-          completed: todo.taskStatus === 'Completed' // Convert taskStatus to boolean
-        }));
-        setNotes(fetchedTodos);  // Set the fetched data to state
-      })
-      .catch(err => console.error("GET error: ", err));  // Log error if any
-  }, []);
+    console.log('Fetching todos for tripId:', tripId);  // Debug log
+    if (tripId) {
+      axios.get(`http://localhost:5030/api/todo/trip/${tripId}`)  // Use tripId in the API endpoint
+        .then(res => {
+          console.log('Received todos:', res.data);
+          const fetchedTodos = res.data.map(todo => ({
+            id: todo.id,
+            text: todo.taskName,
+            completed: todo.taskStatus === 'Completed'
+          }));
+          setNotes(fetchedTodos);
+        })
+        .catch(err => console.error("GET error: ", err));
+    }
+  }, [tripId]);
 
   //Update task status (PUT request)
   const handleTaskStatusChange = (id, currentStatus) => {
     const newStatus = currentStatus === "Active" ? "Completed" : "Active";
 
-    axios.put(`http://localhost:5030/api/todo/ToggleStatus/${id}`, { taskStatus: newStatus })
+    axios.put(`http://localhost:5030/api/todo/ToggleStatus/${id}`, { 
+      taskStatus: newStatus,
+      tripId: parseInt(tripId)  // Include tripId in the update
+    })
       .then(res => {
         const updatedTask = res.data;
         setNotes(notes.map(note => 
           note.id === id ? { ...note, completed: newStatus === 'Completed' } : note
         ));
       })
-      .catch(err => console.error("PUT error: ", err));  // Log error if any
+      .catch(err => console.error("PUT error: ", err));
   };
 
   // Handle adding a new note
   const handleAddNewNote = (newNoteText) => {
+    console.log('Adding new todo with tripId:', tripId);
     const newTodo = {
-      taskName: newNoteText,  // taskName is sent in the request
-      taskStatus: 'Active',   // Default status when creating a new task
-      createdAt: new Date(),  // Send current time as createdAt
+      taskName: newNoteText,
+      taskStatus: 'Active',
+      createdAt: new Date(),
       updatedAt: new Date(),
-      tripId: "1" // Send current time as updatedAt
+      tripId: tripId.toString()  // Convert tripId to string to match DTO
     };
+    console.log('New todo object:', newTodo);
 
     axios.post('http://localhost:5030/api/todo', newTodo)
       .then(res => {
+        console.log('Todo added successfully:', res.data);
+        alert('Todo added successfully');
         const added = {
           id: res.data.id,
           text: res.data.taskName,
@@ -57,7 +69,10 @@ const TodoList = () => {
         setNotes([...notes, added]);
         setIsPopupOpen(false);
       })
-      .catch(err => console.error("POST error: ", err));
+      .catch(err => {
+        console.error("POST error: ", err);
+        console.error("Error details:", err.response?.data);
+      });
   };
 
   // Handle search input change

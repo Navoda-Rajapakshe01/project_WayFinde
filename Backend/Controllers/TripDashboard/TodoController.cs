@@ -20,7 +20,33 @@ namespace Backend.Controllers
             _context = context;
         }
 
+        // GET: api/Todo/trip/{tripId}
+        // Retrieves all todo items associated with a specific trip
+        [HttpGet("trip/{tripId}")]
+        public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItemsByTrip(int tripId)
+        {
+            var trip = await _context.Trips.FindAsync(tripId);
+            if (trip == null)
+                return NotFound("Trip not found");
+
+            var todoItems = await _context.TodoItems
+                .Where(t => t.TripId == tripId)
+                .Select(t => new TodoItemDTO
+                {
+                    Id = t.Id.ToString(),
+                    TaskName = t.TaskName,
+                    TaskStatus = t.TaskStatus,
+                    CreatedAt = t.CreatedAt,
+                    UpdatedAt = t.UpdatedAt,
+                    TripId = t.TripId.ToString()
+                })
+                .ToListAsync();
+
+            return Ok(todoItems);
+        }
+
         // GET: api/Todo
+        // Retrieves all todo items from the database
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItemDTO>>> GetTodoItems()
         {
@@ -39,6 +65,7 @@ namespace Backend.Controllers
         }
 
         // GET: api/Todo/{id}
+        // Retrieves a specific todo item by its ID
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItemDTO>> GetTodoItem(int id)
         {
@@ -64,6 +91,7 @@ namespace Backend.Controllers
         }
 
         // POST: api/Todo
+        // Creates a new todo item for a trip
         [HttpPost]
         public async Task<ActionResult<TodoItemDTO>> CreateTodoItem([FromBody] TodoItemDTO todoItemDto)
         {
@@ -72,11 +100,18 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
             }
 
+            // Validate that the trip exists
+            var trip = await _context.Trips.FindAsync(int.Parse(todoItemDto.TripId));
+            if (trip == null)
+            {
+                return BadRequest("Invalid TripId");
+            }
+
             var todoItem = new TodoItem
             {
                 TaskName = todoItemDto.TaskName,
                 TaskStatus = "Active", // Set default status to "Active"
-                TripId = 1 // Set default TripId to 1
+                TripId = int.Parse(todoItemDto.TripId) // Use TripId from the DTO
             };
 
             _context.TodoItems.Add(todoItem);
@@ -95,7 +130,8 @@ namespace Backend.Controllers
             return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, createdItem);
         }
 
-        // PUT: api/Todo/{id}
+        // PUT/UPDATE: api/Todo/{id}
+        // Updates an existing todo item
         [HttpPut("{id}")]
         public async Task<ActionResult<TodoItemDTO>> UpdateTodoItem(int id, [FromBody] TodoItemDTO todoItemDto)
         {
@@ -130,7 +166,7 @@ namespace Backend.Controllers
         }
 
         // PUT: api/Todo/ToggleStatus/{id}
-        // Endpoint to toggle task completion (Active/Completed)
+        // Toggles the completion status of a todo item between Active and Completed
         [HttpPut("ToggleStatus/{id}")]
         public async Task<ActionResult<TodoItemDTO>> ToggleTaskStatus(int id)
         {

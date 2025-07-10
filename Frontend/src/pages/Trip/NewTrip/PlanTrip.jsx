@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { useNavigate } from "react-router-dom"; //  Import useNavigate
 import "./PlanTrip.css";
 import MainNavbar from "../../../Components/MainNavbar/MainNavbar";
 import placesData from "../places.json";
@@ -10,7 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 const GOOGLE_MAPS_API_KEY = "AIzaSyAM3iuCz-gy_ZCKscaWWhlsaQ5WUabyy2w";
 
 const PlanTrip = () => {
-  const navigate = useNavigate(); // ✅ Initialize useNavigate correctly
+  const navigate = useNavigate(); //  Initialize useNavigate correctly
 
   const [places, setPlaces] = useState([]);
   const [selectedPlaces, setSelectedPlaces] = useState([]);
@@ -212,7 +212,7 @@ const PlanTrip = () => {
               </div>
             </div>
 
-            {/* ✅ Navigate to OptimizedTripRoute */}
+            {/*  Navigate to OptimizedTripRoute */}
             <button
               className="popup-confirm-1"
               onClick={() => navigate("/trip-planner")}
