@@ -141,33 +141,20 @@ const UsersManagement = () => {
     <div className="users-management">
       <div className="adminsection-header">
         <h1 className="page-title">Users Management</h1>
-        <button className="add-button" onClick={handleAddUser}>
+        <button className="adminadd-button" onClick={handleAddUser}>
           <FaUserPlus /> Add New User
         </button>
       </div>
 
-      <div className="filter-bar">
-        <div className="search-box">
-          <FaSearch className="search-icon" />
+      <div className="adminfilter-bar">
+        <div className="adminsearch-box">
+          <FaSearch className="adminsearch-icon" />
           <input
             type="text"
             placeholder="Search users..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </div>
-
-        <div className="filter-dropdown">
-          <FaFilter className="filter-icon" />
-          <select
-            value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value)}
-          >
-            <option value="all">All Roles</option>
-            <option value="admin">Admin</option>
-            <option value="editor">Editor</option>
-            <option value="user">User</option>
-          </select>
         </div>
       </div>
 
@@ -200,16 +187,16 @@ const UsersManagement = () => {
                 </td>
                 <td>{user.lastLogin}</td>
                 <td>
-                  <div className="action-buttons">
+                  <div className="adminaction-buttons">
                     <button
-                      className="edit-button"
+                      className="adminedit-button"
                       onClick={() => handleEditUser(user)}
                       title="Edit"
                     >
                       <FaEdit />
                     </button>
                     <button
-                      className="delete-button"
+                      className="admindelete-button"
                       onClick={() => handleDeleteUser(user.id)}
                       title="Delete"
                     >
@@ -229,7 +216,7 @@ const UsersManagement = () => {
             <div className="modal-header">
               <h2>{currentUser ? "Edit User" : "Add New User"}</h2>
               <button
-                className="close-button"
+                className="adminclose-button"
                 onClick={() => setShowAddModal(false)}
               >
                 ×
@@ -307,12 +294,12 @@ const UsersManagement = () => {
             </div>
             <div className="modal-footer">
               <button
-                className="cancel-button"
+                className="admincancel-button"
                 onClick={() => setShowAddModal(false)}
               >
                 Cancel
               </button>
-              <button className="save-button">Save User</button>
+              <button className="adminsave-button">Save User</button>
             </div>
           </div>
         </div>

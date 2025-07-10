@@ -232,5 +232,24 @@ namespace Backend.Controllers
             return Ok(count);
         }
 
+        // GET: api/places/popular
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularPlaces()
+        {
+            var popularPlaces = await _context.PlacesToVisit
+                .Include(p => p.Reviews)
+                .Select(p => new {
+                    Id = p.Id,
+                    Name = p.Name,
+                    District = p.District,
+                    Rating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
+                })
+                .OrderByDescending(p => p.Rating)
+                .Take(5)
+                .ToListAsync();
+
+            return Ok(popularPlaces);
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using Backend.Services;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,9 +36,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
+//Cloudinary
+builder.Services.AddSingleton(new Cloudinary(new Account(
+    "diccvuqqo",
+    "269366281956762",
+    "80wa84I1eT5EwO6CW3RIAtW56rc"
+)));
+
+
+
 
 // Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -67,6 +78,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+{
+    // For production, you might want a more restrictive CORS policy
+    // or comment this out if you don't need CORS in production
+    app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
 }
 
 // Use CORS - Important: This must be called before UseAuthentication and UseAuthorization
