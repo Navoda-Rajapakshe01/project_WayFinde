@@ -38,5 +38,7 @@ public class PlacesToVisit
 
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
+
+    public ICollection<Review> Reviews { get; set; } = new List<Review>();
     }
 }
