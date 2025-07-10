@@ -36,13 +36,15 @@ import UserProfileSettings from "./pages/Profile/Setting";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
-import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
-import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
-import OptimizedTripRoute from "./pages/Trip/OptimizedTrip/OptimizedTripRoute";
+import AllTrips from "./pages/AllTrips/AllTrips";
+
 import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
+
+import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
+import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
 import "./App.css";
 
@@ -56,9 +58,7 @@ function AppRoutes() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/plantrip" element={<PlanTrip />} />
-        <Route path="/trip-planner" element={<OptimizedTripRoute />} />
-        <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
+        <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
         <Route path="/vehicle/supplier" element={<VehicleSupplier />} />
@@ -89,6 +89,9 @@ function AppRoutes() {
           element={<BlogEditor />}
         />
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
+
+        <Route path="/plantrip" element={<CreateTrip />} />
+        <Route path="/optimizedroute/:id" element={<OptimizedRoute />} />
 
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
