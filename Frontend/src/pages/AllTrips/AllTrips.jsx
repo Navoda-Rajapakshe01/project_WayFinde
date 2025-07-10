@@ -240,7 +240,7 @@ const AllTrips = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       console.log(`Viewing trip: ${trip.name}`);
-                      navigate("/trip-dashboard"); // navigate to TripDashboard page
+                      navigate(`/trip-dashboard/${trip.id}`); // navigate to TripDashboard page
                     }}
                   >
                     View
