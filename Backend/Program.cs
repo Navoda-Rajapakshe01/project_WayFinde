@@ -1,9 +1,8 @@
 ﻿using Backend.Data;
-using Scalar.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Backend.Services;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CloudinaryDotNet;
 
@@ -11,7 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add AppDbContext with NavodaConnection (only one context to avoid duplication)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -45,6 +47,7 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
+builder.Services.AddScoped<VehicleReservationService>();
 
 // Add CORS policies
 builder.Services.AddCors(options =>
@@ -95,9 +98,12 @@ else
 }
 
 // Enable CORS before auth
+// Apply CORS policy BEFORE Authentication middleware
 app.UseCors("AllowReactApp");
 
+// Use HTTPS redirection
 app.UseHttpsRedirection();
+// Enable Authentication and Authorization middlewares
 app.UseAuthentication();
 app.UseAuthorization();
 

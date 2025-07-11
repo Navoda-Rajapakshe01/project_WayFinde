@@ -233,8 +233,7 @@ const MainNavbar = () => {
                 key={item.name}
                 className={`navbar-item${
                   activeTab === item.path ? " active" : ""
-                }`}
-              >
+                }`}>
                 <Link to={item.path} className="navbar-link">
                   <span className="navbar-icon">{item.icon}</span>
                   <span className="navbar-text">{item.name}</span>
@@ -287,8 +286,7 @@ const MainNavbar = () => {
                       <div
                         key={item.name}
                         className="popup-item"
-                        onClick={() => handleProfileMenuClick(item)}
-                      >
+                        onClick={() => handleProfileMenuClick(item)}>
                         <span className="popup-icon">{item.icon}</span>
                         <span>{item.name}</span>
                       </div>

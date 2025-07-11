@@ -5,7 +5,6 @@ import HeroSection from "../../Components/HeroSection/HeroSection";
 import MainNavbar from "../../Components/MainNavbar/MainNavbar";
 import DistrictCard from "../../Components/ThingsToDo/DistrictCard";
 import "../CSS/ThingsToDo.css";
-import "../../App.css";
 import axios from "axios";
 
 const ThingsToDo = () => {
@@ -30,46 +29,43 @@ const ThingsToDo = () => {
   }, []);
 
   return (
-    <div className="things-to-do-page-container">
-      <MainNavbar />
+    <div className="page-container">
       <HeroSection
         title={<>Discover & Explore: Unmissable Experiences Await!</>}
-        subtitle={<>Get inspired by Sri Lanka’s beauty and plan your perfect escape.</>}
         backgroundImage="https://res.cloudinary.com/enchanting/q_70,f_auto,c_lfill,g_auto/exodus-web/2022/05/sri-lanka.jpg"
         placeHolder="Search Your Destination Here..."
         color="black"
         showSearchBar={true}
       />
 
-      <div className="things-to-do-content-section">
-        <div className="things-to-do-section-header">
-          <h2 className="things-to-do-section-title">Explore by District</h2>
-          <p className="things-to-do-section-subtitle">
+      <div className="content-section">
+        <div className="section-header">
+          <h2 className="section-title">Explore by District</h2>
+          <p className="section-subtitle">
             Discover the unique charm and attractions of each region
           </p>
         </div>
 
         {loading && (
-          <div className="things-to-do-loading-container">
-            <div className="things-to-do-loading-spinner"></div>
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
             <p>Loading districts...</p>
           </div>
         )}
 
         {error && !loading && (
-          <div className="things-to-do-error-container">
+          <div className="error-container">
             <p>{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="things-to-do-retry-button"
-            >
+              className="retry-button">
               Try Again
             </button>
           </div>
         )}
 
         {!loading && !error && (
-          <section className="things-to-do-district-container">
+          <section className="district-container">
             {districts.length > 0 ? (
               districts.map((district) => (
                 <DistrictCard
@@ -80,7 +76,7 @@ const ThingsToDo = () => {
                 />
               ))
             ) : (
-              <div className="things-to-do-no-districts">
+              <div className="no-districts">
                 <p>
                   No districts available at the moment. Please check back later.
                 </p>

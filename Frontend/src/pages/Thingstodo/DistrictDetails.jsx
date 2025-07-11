@@ -21,7 +21,7 @@ const DistrictDetails = () => {
         .get(`http://localhost:5030/api/places/by-district-name/${slug}`)
         .then((res) => {
           setPlaces(res.data);
-          setFilteredPlaces(res.data);
+          setFilteredPlaces(res.data); // Show all by default
           setLoading(false);
         })
         .catch((err) => {
@@ -34,67 +34,70 @@ const DistrictDetails = () => {
     window.scrollTo(0, 0);
   }, [slug]);
 
+  // Handle navigation to detailed page of the place
   const handleCardClick = (placeId) => {
     navigate(`/things-to-do/${slug}/${placeId}`);
   };
 
   return (
-    <div className="district-details-container">
-      <header className="district-details-header">
-        <h2 className="district-details-title">Places to Visit</h2>
-        <p className="district-details-subtitle">
+    <div className="district-places-container">
+      <header className="district-header">
+        <h2 className="district-title">Places to Visit</h2>
+        <p className="district-subtitle">
           Explore the best attractions in {slug.replace(/-/g, " ")}
         </p>
       </header>
 
-      <div className="district-details-categories-wrapper">
+      {/* Categories Component */}
+      <div className="categories-wrapper">
         <Categories places={places} setFilteredPlaces={setFilteredPlaces} />
       </div>
 
+      {/* Loading State */}
       {loading && (
-        <div className="district-details-loading">
-          <div className="district-details-spinner"></div>
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
           <p>Loading places...</p>
         </div>
       )}
 
+      {/* Error State */}
       {error && !loading && (
-        <div className="district-details-error">
+        <div className="error-container">
           <p>{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="district-details-retry-btn"
+            className="retry-button"
           >
             Try Again
           </button>
         </div>
       )}
 
+      {/* Places Grid */}
       {!loading && !error && (
-        <div className="district-details-grid">
+        <div className="places-grid">
           {filteredPlaces.length ? (
             filteredPlaces.map((place) => (
               <div
                 key={place.id}
-                className="district-details-card"
+                className="place-card"
                 onClick={() => handleCardClick(place.id)}
               >
-                <div className="district-details-image-wrapper">
+                <div className="place-image-container">
                   <img
                     src={place.mainImageUrl || "/placeholder.jpg"}
                     alt={place.name}
-                    className="district-details-image"
+                    className="place-image"
                   />
                   {place.category && (
-                    <span className="district-details-category">
-                      {place.category}
-                    </span>
+                    <span className="place-category">{place.category}</span>
                   )}
                 </div>
-                <div className="district-details-info">
-                  <h3 className="district-details-name">{place.name}</h3>
+                <div className="place-info">
+                  <h3 className="place-name">{place.name}</h3>
                   <button
-                    className="district-details-view-btn"
+                    className="view-details-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCardClick(place.id);
@@ -106,9 +109,7 @@ const DistrictDetails = () => {
               </div>
             ))
           ) : (
-            <p className="district-details-no-places">
-              No places available for this category.
-            </p>
+            <p className="no-places">No places available for this category.</p>
           )}
         </div>
       )}

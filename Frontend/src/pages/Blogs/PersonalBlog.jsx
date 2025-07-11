@@ -498,8 +498,7 @@ const PersonalBlog = () => {
             <button
               className="cancelButton"
               onClick={() => setCommentText("")}
-              disabled={commentSubmitting || !commentText.trim()}
-            >
+              disabled={commentSubmitting || !commentText.trim()}>
               Cancel
             </button>
             <button
@@ -507,16 +506,14 @@ const PersonalBlog = () => {
               onClick={handleSubmitComment}
               disabled={
                 commentSubmitting || !commentText.trim() || !currentUser
-              }
-            >
+              }>
               {commentSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
           {commentError && (
             <div
               className="error-message"
-              style={{ color: "red", marginTop: "5px" }}
-            >
+              style={{ color: "red", marginTop: "5px" }}>
               Error: {commentError}
             </div>
           )}

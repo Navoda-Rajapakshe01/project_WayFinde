@@ -9,7 +9,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
   const scrollContainerRefLatest = useRef(null); // Create ref for scrolling container
   const scrollContainerRefTrending = useRef(null); // Create ref for scrolling container
   const [currentPage, setCurrentPage] = useState(1);
- //onst blogsPerPage = 6; // Number of blogs per page
+  //onst blogsPerPage = 6; // Number of blogs per page
 
   // Pagination logic for Other Blogs
   // const indexOfLastBlog = currentPage * blogsPerPage;
@@ -44,8 +44,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
           {/* 🔹 Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefLatest)}
-          >
+            onClick={() => handleScrollLeft(scrollContainerRefLatest)}>
             <FaChevronLeft />
           </button>
 
@@ -53,21 +52,18 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
           <div
             ref={scrollContainerRefLatest}
             className="scroll-container"
-            style={{ scrollBehavior: "smooth" }}
-          >
+            style={{ scrollBehavior: "smooth" }}>
             {latestBlogs.map((blog, index) => (
               <div
                 key={index}
                 className="blog-card"
-                onClick={() => handleNavigate(index)}
-              >
+                onClick={() => handleNavigate(index)}>
                 <img src={blog.img} alt={blog.topic} className="blog-image" />
                 <p className="paragraph-muted">
                   <Link
                     to={`/profile/${blog.writerName}`}
                     className="profile-link"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                    onClick={(e) => e.stopPropagation()}>
                     {blog.writerName}
                   </Link>
                 </p>
@@ -91,8 +87,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
           {/* 🔹 Scroll Right Button */}
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefLatest)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefLatest)}>
             <FaChevronRight />
           </button>
         </div>
@@ -105,8 +100,7 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
           {/* 🔹 Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollLeft(scrollContainerRefTrending)}>
             <FaChevronLeft />
           </button>
 
@@ -114,21 +108,18 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
           <div
             ref={scrollContainerRefTrending}
             className="scroll-container"
-            style={{ scrollBehavior: "smooth" }}
-          >
+            style={{ scrollBehavior: "smooth" }}>
             {trendingBlogs.map((blog, index) => (
               <div
                 key={index}
                 className="blog-card"
-                onClick={() => handleNavigate(index)}
-              >
+                onClick={() => handleNavigate(index)}>
                 <img src={blog.img} alt={blog.topic} className="blog-image" />
                 <p className="paragraph-muted">
                   <Link
                     to={`/profile/${blog.writerName}`}
                     className="profile-link"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                    onClick={(e) => e.stopPropagation()}>
                     {blog.writerName}
                   </Link>
                 </p>
@@ -150,14 +141,11 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
 
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefTrending)}>
             <FaChevronRight />
           </button>
         </div>
       </div>
-
-      
     </div>
   );
 };
@@ -166,6 +154,5 @@ ImageGrid.propTypes = {
   trendingBlogs: PropTypes.array.isRequired,
   otherBlogs: PropTypes.array.isRequired,
 };
-
 
 export default ImageGrid;
