@@ -50,4 +50,11 @@ Thumbs.db
 /.vs
 /appsettings.json
 /appsettings.Development.json
+
+.vs/ 
+
 .vs
+
+node_modules/ 
+node_modules/ 
+Frontend/node_modules/

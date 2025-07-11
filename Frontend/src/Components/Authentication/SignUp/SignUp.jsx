@@ -44,6 +44,7 @@ const Register = () => {
 
       const response = await axios.post(
         "http://localhost:5030/api/Auth/register",
+        
         apiData,
         {
           headers: {

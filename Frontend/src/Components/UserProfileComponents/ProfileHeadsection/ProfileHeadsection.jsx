@@ -1,55 +1,109 @@
-import { Link, useLocation} from "react-router-dom";
-
-import "./ProfileHeadsection.css";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const ProfileHeadSection = () => {
-  // const navigate = useNavigate(); // Used to redirect
-  const location = useLocation(); // Get current URL path
-  const stats = [
-    { name: "Posts", value: 10, path: "/posts" },
-    { name: "Blogs", value: 5, path: "/blogs" },
-    { name: "Followers", value: 100, path: "/followers" },
-    { name: "Following", value: 120, path: "/following" },
-  ];
+  const [username, setUsername] = useState("");
+  const [profilePictureUrl, setProfilePictureUrl] = useState("");
+  const navigate = useNavigate();
 
-  // Redirect to "/posts" if the current path is not in stats
-  // useEffect(() => {
-  //   const isValidPath = stats.some((stat) => stat.path === location.pathname);
-  //   if (!isValidPath) {
-  //     navigate("/posts", { replace: true }); // Redirect to "/posts"
-  //   }
-  // }, [location.pathname, navigate]);
+  const handleEditClick = () => {
+    window.scrollTo(0, 0);
+    navigate("/settings"); // your target route
+  };
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "http://localhost:5030/api/profile/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const { username, profilePictureUrl } = response.data;
+        setUsername(username);
+        setProfilePictureUrl(profilePictureUrl);
+      } catch (error) {
+        console.error(
+          "Failed to fetch profile:",
+          error.response?.data || error.message
+        );
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
   return (
-    <div className="page-container">
-      {/* profile image part */}
-      <div className="profile_container">
+    <div className="profile-page">
+      <div className="profile-header">
         <img
-          src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
-          alt="profile image"
-          className="profile_image"
+          className="profile-avatar"
+          src={profilePictureUrl || "defaultprofilepicture.png"}
+          alt="Profile"
         />
-        <div className="profile_info">
-          <div className="profile_name">Writer name</div>
-          <div className="grid grid-cols-4 gap-4 text-center">
-            {stats.map((stat) => (
-              <Link key={stat.name} to={stat.path} className="cursor-pointer">
-                <div
-                  className={`p-2 transition duration-300 hover:bg-gray-200 rounded-lg ${
-                    location.pathname === stat.path
-                      ? "underline font-bold text-blue-600"
-                      : ""
-                  }`}
-                >
-                  <p className="text-lg font-bold">{stat.value}</p>
-                  <p>{stat.name}</p>
-                </div>
-              </Link>
-            ))}
+        <div className="profile-info">
+          <h1>{username || "Loading..."}</h1>
+          <div className="profile-stats">
+            <div>
+              <strong>Posts</strong>
+              <br />
+              15
+            </div>
+            <div>
+              <strong>Blogs</strong>
+              <br />5
+            </div>
+            <div>
+              <strong>Followers</strong>
+              <br />
+              512
+            </div>
+            <div>
+              <strong>Following</strong>
+              <br />
+              300
+            </div>
           </div>
-          <div>
-            <button className="editProfilebutton">Edit Profile</button>
-          </div>
+          <p className="bio">
+            Exploring hidden gems around the world, one journey at a time! ✈️
+            <br />
+            🌍 Always looking for the next great adventure.
+          </p>
+
+          <button
+            className="edit-profile-btn"
+            onClick={() => navigate("/settings")}
+          >
+            Edit Profile
+          </button>
         </div>
+      </div>
+
+      <div className="profile-tabs">
+        <NavLink to="/profile/posts" activeClassName="active">
+          Posts
+        </NavLink>
+        <NavLink to="/profile/profileBlogs" activeClassName="active">
+          Blogs
+        </NavLink>
+        <NavLink to="/profile/saved" activeClassName="active">
+          Saved
+        </NavLink>
+        <NavLink to="/profile/trips" activeClassName="active">
+          Trips
+        </NavLink>
+        <NavLink to="/profile/reviews" activeClassName="active">
+          Reviews
+        </NavLink>
+        <NavLink to="/profile/bookings" activeClassName="active">
+          Bookings
+        </NavLink>
       </div>
     </div>
   );

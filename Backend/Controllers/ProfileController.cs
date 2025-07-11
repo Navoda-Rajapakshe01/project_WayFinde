@@ -1,4 +1,4 @@
-﻿﻿using Backend.Models;
+using Backend.Models;
 
 using Backend.DTOs;
 using CloudinaryDotNet.Actions;

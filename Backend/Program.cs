@@ -8,7 +8,7 @@ using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Database Context
+// Add AppDbContext with NavodaConnection (only one context to avoid duplication)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -26,46 +26,67 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"])),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["AppSettings:Token"] 
+                    ?? throw new InvalidOperationException("JWT Token key is missing in configuration (AppSettings:Token).")
+                )
+            ),
             ValidateIssuerSigningKey = true,
         };
     });
 
-// Cloudinary setup - load from appsettings.json for security and flexibility
-var cloudName = builder.Configuration["Cloudinary:CloudName"];
-var apiKey = builder.Configuration["Cloudinary:ApiKey"];
-var apiSecret = builder.Configuration["Cloudinary:ApiSecret"];
+// Cloudinary Configuration
+builder.Services.AddSingleton(new Cloudinary(new Account(
+    "diccvuqqo",
+    "269366281956762",
+    "80wa84I1eT5EwO6CW3RIAtW56rc"
+)));
 
-builder.Services.AddSingleton(new Cloudinary(new Account(cloudName, apiKey, apiSecret)));
-
-// Add application services
+// Register project services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<BlobService>();
 builder.Services.AddScoped<VehicleReservationService>();
 
-// Add CORS policy to allow your React app URLs
+// Add CORS policies
 builder.Services.AddCors(options =>
 {
+    // Development policy for local React apps
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins(
-            "http://localhost:5173",
-            "https://localhost:5174",
-            "https://localhost:5175")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials());
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5174", "https://localhost:5175")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+    );
+
+    // Production policy (customize as needed)
+    options.AddPolicy("ProductionCorsPolicy", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
 });
 
-// Add controllers
-builder.Services.AddControllers();
+// Add Controllers with JSON options
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.MaxDepth = 32;
+});
 
-// Swagger for API documentation
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add SignalR and HTTP Context
+builder.Services.AddSignalR();
+builder.Services.AddHttpContextAccessor();
+
+// Build the app
 var app = builder.Build();
 
-// Enable Swagger in Development environment only
+// Enable Swagger in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -73,20 +94,20 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // Example: Add a more restrictive CORS policy for production
-    // app.UseCors("ProductionCorsPolicy"); 
+    app.UseCors("ProductionCorsPolicy");
 }
 
+// Enable CORS before auth
 // Apply CORS policy BEFORE Authentication middleware
 app.UseCors("AllowReactApp");
 
 // Use HTTPS redirection
 app.UseHttpsRedirection();
-
 // Enable Authentication and Authorization middlewares
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<Backend.Hubs.NotificationHub>("/notificationHub");
 
 app.Run();
