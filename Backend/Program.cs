@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IWeatherService, WeatherService>();
 
-// Add Database Context
+// Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RandulaConnection")));
 
@@ -32,67 +32,82 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"])),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["AppSettings:Token"] 
+                    ?? throw new InvalidOperationException("JWT Token key is missing in configuration (AppSettings:Token).")
+                )
+            ),
             ValidateIssuerSigningKey = true,
         };
     });
-//Cloudinary
+
+// Cloudinary Configuration
 builder.Services.AddSingleton(new Cloudinary(new Account(
     "diccvuqqo",
     "269366281956762",
     "80wa84I1eT5EwO6CW3RIAtW56rc"
 )));
 
-
-
-
-// Add services to container
+// Register project services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<BlobService>();
 
-// Configure CORS
+// Add CORS policies
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowReactApp",
-        builder =>
-        {
-            builder.WithOrigins("http://localhost:5173") // Frontend URL
-                   .AllowAnyHeader()
-                   .AllowAnyMethod()
-                   .AllowCredentials();
-        });
+    // Development policy for local React apps
+    options.AddPolicy("AllowReactApp", policy =>
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5174", "https://localhost:5175")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials()
+    );
+
+    // Production policy (customize as needed)
+    options.AddPolicy("ProductionCorsPolicy", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+    );
 });
 
-// Add Controllers
-builder.Services.AddControllers();
+// Add Controllers with JSON options
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.MaxDepth = 32;
+});
 
-// Swagger for API Documentation
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Build the App
+// Add SignalR and HTTP Context
+builder.Services.AddSignalR();
+builder.Services.AddHttpContextAccessor();
+
+// Build the app
 var app = builder.Build();
 
-// Enable Swagger in Development
+// Enable Swagger in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("AllowReactApp"); // Use dev CORS policy in development
 }
+else
 {
-    // For production, you might want a more restrictive CORS policy
-    // or comment this out if you don't need CORS in production
-    app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
+    app.UseCors("ProductionCorsPolicy"); // Use production CORS policy otherwise
 }
-
-// Use CORS - Important: This must be called before UseAuthentication and UseAuthorization
-app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<Backend.Hubs.NotificationHub>("/notificationHub");
 
 app.Run();

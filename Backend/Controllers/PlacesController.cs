@@ -129,7 +129,8 @@ namespace Backend.Controllers
                 DistrictId = dto.DistrictId,
                 District = district,
                 CategoryId = dto.CategoryId,
-                Category = category!
+                Category = category!,
+                PlaceImage = new List<PlaceImage>() // Set to an empty list or as appropriate
             };
 
             _context.PlacesToVisit.Add(place);
@@ -190,14 +191,14 @@ namespace Backend.Controllers
             place.DistrictId = dto.DistrictId;
             place.District = district;
             place.CategoryId = dto.CategoryId;
-            place.Category = category;
+            place.Category = category ?? place.Category;
 
             try
             {
                 // Save changes to the database
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "An error occurred while updating the place.");
             }
@@ -250,6 +251,19 @@ namespace Backend.Controllers
 
             return Ok(popularPlaces);
         }
+
+        // GET: api/places/11/images
+        [HttpGet("{placeId}/images")]
+        public async Task<IActionResult> GetPlaceImages(int placeId)
+        {
+            var images = await _context.PlaceImages
+                .Where(pi => pi.PlaceId == placeId)
+                .Select(pi => pi.ImageUrl)
+                .ToListAsync();
+
+            return Ok(images);
+        }
+
 
     }
 }

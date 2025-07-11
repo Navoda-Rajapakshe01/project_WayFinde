@@ -1,4 +1,4 @@
-namespace Backend.DTOs
+﻿namespace Backend.DTOs
 {
     public class UpdatePlaceDTO
     {
@@ -10,6 +10,6 @@ namespace Backend.DTOs
         public string GoogleMapLink { get; set; }
         public string MainImageUrl { get; set; }
         public int DistrictId { get; set; }
-        public int? CategoryId { get; set; }  
+        public int? CategoryId { get; set; }
     }
 }

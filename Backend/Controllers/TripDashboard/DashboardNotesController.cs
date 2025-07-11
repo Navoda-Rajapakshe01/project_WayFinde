@@ -10,31 +10,43 @@ namespace Backend.Controllers
     [ApiController]
     public class DashboardNoteController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly AppDbContext _appDbContext;
 
-        public DashboardNoteController(AppDbContext context)
+
+        public DashboardNoteController(AppDbContext appDbContext)
         {
-            _context = context;
+            _appDbContext = appDbContext;
+
         }
 
         // GET: api/DashboardNotes
         // Retrieves all dashboard notes from the database
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DashboardNote>>> GetDashboardNotes()
+        public async Task<ActionResult<IEnumerable<DashboardNoteWithUserDTO>>> GetDashboardNotes()
         {
-            var notes = await _context.DashboardNote
-                .Select(note => new DashboardNote
-                {
-                    Id = note.Id,
-                    NoteTitle = note.NoteTitle,
-                    NoteDescription = note.NoteDescription,
-                    CreatedAt = note.CreatedAt,
-                    UpdatedAt = note.UpdatedAt,
-                    TripId = note.TripId
-                })
-                .ToListAsync();
+            // Get all notes
+            var notes = await _appDbContext.DashboardNote.ToListAsync();
 
-            return Ok(notes);
+            // Get all users whose IDs are in notes (to reduce DB calls)
+            var userIds = notes.Select(n => n.UserId).Distinct().ToList();
+            var users = await _appDbContext.UsersNew
+                                .Where(u => userIds.Contains(u.Id))
+                                .ToDictionaryAsync(u => u.Id);
+
+            // Map to DTO combining note + user info
+            var result = notes.Select(note => new DashboardNoteWithUserDTO
+            {
+                Id = note.Id,
+                NoteTitle = note.NoteTitle,
+                NoteDescription = note.NoteDescription,
+                CreatedDate = note.CreatedDate,
+                CreatedTime = note.CreatedTime,
+                UserId = note.UserId,
+                Username = users.TryGetValue(note.UserId, out var user) ? user.Username : "Unknown",
+                ProfilePictureUrl = users.TryGetValue(note.UserId, out var user2) ? user2.ProfilePictureUrl : null
+            }).ToList();
+
+            return Ok(result);
         }
 
         // GET: api/DashboardNotes/{id}
@@ -42,7 +54,7 @@ namespace Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DashboardNote>> GetDashboardNote(int id)
         {
-            var note = await _context.DashboardNote
+            var note = await _appDbContext.DashboardNote
                 .FirstOrDefaultAsync(n => n.Id == id);
 
             if (note == null)
@@ -54,18 +66,35 @@ namespace Backend.Controllers
         // GET: api/DashboardNote/trip/{tripId}
         // Retrieves all notes associated with a specific trip
         [HttpGet("trip/{tripId}")]
-        public async Task<ActionResult<IEnumerable<DashboardNote>>> GetNotesByTrip(int tripId)
+        public async Task<ActionResult<IEnumerable<DashboardNoteWithUserDTO>>> GetNotesByTrip(int tripId)
         {
-            var trip = await _context.Trips.FindAsync(tripId);
+            var trip = await _appDbContext.Trips.FindAsync(tripId);
             if (trip == null)
                 return NotFound("Trip not found");
 
-            var notes = await _context.DashboardNote
+            var notes = await _appDbContext.DashboardNote
                 .Where(n => n.TripId == tripId)
-                .OrderByDescending(n => n.CreatedAt)
+                .OrderByDescending(n => n.CreatedDate)
                 .ToListAsync();
 
-            return Ok(notes);
+            var userIds = notes.Select(n => n.UserId).Distinct().ToList();
+            var users = await _appDbContext.UsersNew
+                                .Where(u => userIds.Contains(u.Id))
+                                .ToDictionaryAsync(u => u.Id);
+
+            var result = notes.Select(note => new DashboardNoteWithUserDTO
+            {
+                Id = note.Id,
+                NoteTitle = note.NoteTitle,
+                NoteDescription = note.NoteDescription,
+                CreatedDate = note.CreatedDate,
+                CreatedTime = note.CreatedTime,
+                UserId = note.UserId,
+                Username = users.TryGetValue(note.UserId, out var user) ? user.Username : "Unknown",
+                ProfilePictureUrl = users.TryGetValue(note.UserId, out var user2) ? user2.ProfilePictureUrl : null
+            }).ToList();
+
+            return Ok(result);
         }
 
         // POST: api/DashboardNote
@@ -73,12 +102,12 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<ActionResult<DashboardNote>> PostDashboardNote(DashboardNote note)
         {
-            var trip = await _context.Trips.FindAsync(note.TripId);
+            var trip = await _appDbContext.Trips.FindAsync(note.TripId);
             if (trip == null)
                 return BadRequest("Invalid TripId");
 
-            _context.DashboardNote.Add(note);
-            await _context.SaveChangesAsync();
+            _appDbContext.DashboardNote.Add(note);
+            await _appDbContext.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetDashboardNote), new { id = note.Id }, note);
         }
@@ -91,7 +120,7 @@ namespace Backend.Controllers
             if (id != updatedNote.Id)
                 return BadRequest();
 
-            var existingNote = await _context.DashboardNote.FindAsync(id);
+            var existingNote = await _appDbContext.DashboardNote.FindAsync(id);
             if (existingNote == null)
                 return NotFound();
 
@@ -99,8 +128,8 @@ namespace Backend.Controllers
             existingNote.NoteDescription = updatedNote.NoteDescription;
             existingNote.UpdatedAt = DateTime.UtcNow;
 
-            _context.Entry(existingNote).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            _appDbContext.Entry(existingNote).State = EntityState.Modified;
+            await _appDbContext.SaveChangesAsync();
 
             return NoContent();
         }
@@ -110,12 +139,12 @@ namespace Backend.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDashboardNote(int id)
         {
-            var note = await _context.DashboardNote.FindAsync(id);
+            var note = await _appDbContext.DashboardNote.FindAsync(id);
             if (note == null)
                 return NotFound();
 
-            _context.DashboardNote.Remove(note);
-            await _context.SaveChangesAsync();
+            _appDbContext.DashboardNote.Remove(note);
+            await _appDbContext.SaveChangesAsync();
 
             return NoContent();
         }

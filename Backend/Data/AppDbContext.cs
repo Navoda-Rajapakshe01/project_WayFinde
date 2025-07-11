@@ -1,12 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.DTOs;
+using System.Text.Json;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Backend.Data
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+        //Profile
+        public DbSet<UserNew> UsersNew { get; set; } = null!;
+        public DbSet<Blog> Blogs { get; set; } = null!;
+        public DbSet<Post> Posts { get; set; } = null!;
+        public DbSet<Follows> Follows { get; set; } = null!;
 
         // Vehicles
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -19,25 +26,27 @@ namespace Backend.Data
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<PlaceImage> PlaceImages { get; set; }
+
+        // Trip and TripPlace
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripPlace> TripPlaces { get; set; }
+        public DbSet<TripCollaborator> TripCollaborator { get; set; }
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
 
         // Blogs
         public DbSet<BlogImage> BlogImages { get; set; }
-        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Comment> Comments { get; set; }
 
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
-        // Trips
-        public DbSet<Trip> Trips { get; set; }
-        public DbSet<TripPlace> TripPlaces { get; set; }
-
         // Users
         public DbSet<User> Users { get; set; }
 
-        //Dashboard Notes (NEW)
+        // Dashboard Notes
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
@@ -45,26 +54,50 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-        public object Amenities { get; internal set; }
+        public object? Amenities { get; internal set; }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure TripPlaces trigger
-            modelBuilder.Entity<Trip>()
-                .ToTable("Trips", t => t.HasTrigger("InsertTripPlacesAfterTripInsert"));
+            // Composite Key for TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasKey(tp => new { tp.TripId, tp.PlaceId });  // Composite key for TripPlace
 
+            // Relationships between Trip and TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Trip)
+                .WithMany(t => t.TripPlaces)
+                .HasForeignKey(tp => tp.TripId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Trip
+
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Place)
+                .WithMany(p => p.TripPlaces)
+                .HasForeignKey(tp => tp.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Place
+
+            // Default Timestamps for Trip
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
             // DistrictWithPlacesCountDTO is a keyless DTO
             modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
 
-            // Precision for PricePerDay
+            // Precision for decimal properties
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.PricePerDay)
                 .HasPrecision(18, 2);
 
-            modelBuilder.Entity<Accommodation>()
-                .Property(a => a.PricePerDay)
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            // Fix for TravelBudget.Amount precision
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Amount)
                 .HasPrecision(18, 2);
 
             // Seed Vehicles
@@ -103,21 +136,14 @@ namespace Backend.Data
                 }
             );
 
-            // Seed Accommodations
+            // Seeding Accommodations
             modelBuilder.Entity<Accommodation>().HasData(
                 new Accommodation
                 {
                     Id = 1,
                     Name = "Earl's Regency",
                     Type = "Hotel",
-                    NumberOfGuests = 100,
-                    NumberOfBedRooms = 20,
-                    NumberOfBeds = 60,
-                    NumberOfBathRooms = 40,
-                    Location = "Thennekumbura",
-                    OwnerName = "Earl's regency group",
-                    OwnerCity = "Kandy",
-                    Description = "stay in free, make your day comfortable",
+                    Location = "Kandy",
                     PricePerDay = 56900m,
                     IsAvailable = true
                 },
@@ -126,20 +152,14 @@ namespace Backend.Data
                     Id = 2,
                     Name = "Sajeew Paradise",
                     Type = "Cabana suite",
-                    NumberOfGuests = 8,
-                    NumberOfBedRooms = 3,
-                    NumberOfBeds = 4,
-                    NumberOfBathRooms = 3,
-                    Location = "Oruthota",
-                    OwnerName = "Sajeewa Karalliyadda",
-                    OwnerCity = "Rajawella",
-                    Description = "happy holiday",
+                    Location = "Rajawella",
                     PricePerDay = 14900m,
                     IsAvailable = true
                 }
             );
 
-            // District
+            // Districts Configuration
+            // District configuration
             modelBuilder.Entity<District>()
                 .Property(d => d.Name)
                 .IsRequired()
@@ -149,7 +169,8 @@ namespace Backend.Data
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
-            // PlacesToVisit
+            // PlacesToVisit Configuration
+            // PlacesToVisit configuration
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
@@ -163,13 +184,16 @@ namespace Backend.Data
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
 
+            // Review Configuration
+            // Review configuration
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Place)
                 .WithMany(p => p.Reviews)
                 .HasForeignKey(r => r.PlaceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // TodoItem
+            // TodoItem Configuration
+            // TodoItem configuration
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
                 .IsRequired()
@@ -187,7 +211,7 @@ namespace Backend.Data
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // TravelBudget
+            // TravelBudget configuration
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Description)
                 .IsRequired()
@@ -311,6 +335,49 @@ namespace Backend.Data
 
             // TripPlace composite key
             modelBuilder.Entity<TripPlace>().HasKey(tp => new { tp.TripId, tp.PlaceId });
+
+            // Blog configuration
+            modelBuilder.Entity<Blog>()
+                .HasKey(b => b.Id);
+
+            modelBuilder.Entity<Blog>()
+                .HasOne(b => b.User)
+                .WithMany(u => u.Blogs)
+                .HasForeignKey(b => b.UserId);
+
+            // Configure Blog ImageUrls with value comparer
+            modelBuilder.Entity<Blog>()
+                .Property(b => b.ImageUrls)
+                .HasConversion(
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
+                .Metadata.SetValueComparer(new ValueComparer<List<string>>(
+                    (c1, c2) => c1.SequenceEqual(c2),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToList()));
+
+            // Comment configuration
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany()
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Follows configuration (many-to-many relationship)
+            modelBuilder.Entity<Follows>()
+                .HasKey(f => new { f.FollowerID, f.FollowedID });
+
+            modelBuilder.Entity<Follows>()
+                .HasOne(f => f.Follower)
+                .WithMany(u => u.Following)
+                .HasForeignKey(f => f.FollowerID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Follows>()
+                .HasOne(f => f.Followed)
+                .WithMany(u => u.Followers)
+                .HasForeignKey(f => f.FollowedID)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

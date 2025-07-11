@@ -7,13 +7,13 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5030",
+        target: "http://localhost:5203",
         changeOrigin: true,
         secure: false,
       },
     },
   },
   optimizeDeps: {
-    include: ['sweetalert2'],
+    include: ["sweetalert2", "react-dnd", "react-dnd-html5-backend"],
   },
 });
