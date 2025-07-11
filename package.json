@@ -12,7 +12,6 @@
     "cors": "^2.8.5",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.503.0",
-    "react": "^19.1.0",
     "quill": "^2.0.3",
     "react": "^18.2.0",
     "react-datepicker": "^8.1.0",

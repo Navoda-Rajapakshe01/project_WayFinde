@@ -54,6 +54,7 @@ namespace Backend.Controllers
             _userService = userService;
             _logger = logger;
             _blobService = blobService;
+            _httpContextAccessor = httpContextAccessor;
             _dbContext = dbContext;
             _config = config;
         }
@@ -168,7 +169,7 @@ namespace Backend.Controllers
                 var author = User.FindFirst("name")?.Value ??
                             User.FindFirst("username")?.Value ??
                             User.FindFirst(ClaimTypes.Name)?.Value ??
-                            User.Identity.Name ??
+                            (User.Identity != null ? User.Identity.Name : null) ??
                             "Unknown Author";
 
                 // Save blog metadata to DB
@@ -277,7 +278,7 @@ namespace Backend.Controllers
 
                 return Ok(blog);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception here if you have logging configured
                 return StatusCode(500, "An error occurred while retrieving the blog");

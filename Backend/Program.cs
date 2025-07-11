@@ -9,16 +9,9 @@ using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Commented out NavodaConnection for AppDbContext to avoid duplicate registration
-/*
+// Add AppDbContext with NavodaConnection (only one context to avoid duplication)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
-*/
-
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -31,61 +24,66 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["AppSettings:Token"])),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["AppSettings:Token"] 
+                    ?? throw new InvalidOperationException("JWT Token key is missing in configuration (AppSettings:Token).")
+                )
+            ),
             ValidateIssuerSigningKey = true,
         };
     });
 
-// Cloudinary
+// Cloudinary Configuration
 builder.Services.AddSingleton(new Cloudinary(new Account(
     "diccvuqqo",
     "269366281956762",
     "80wa84I1eT5EwO6CW3RIAtW56rc"
 )));
 
-// Add services to container
+// Register project services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
 
-
-// Add CORS policy
+// Add CORS policies
 builder.Services.AddCors(options =>
 {
+    // Development policy for local React apps
     options.AddPolicy("AllowReactApp", policy =>
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5174",
-            "https://localhost:5175")
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5174", "https://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials()
-              .AllowCredentials()
+    );
+
+    // Production policy (customize as needed)
+    options.AddPolicy("ProductionCorsPolicy", policy =>
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod()
     );
 });
 
-// Add Controllers
-builder.Services.AddControllers();
-// Add SignalR
-builder.Services.AddSignalR();
-
-
-// Swagger for API Documentation
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddHttpContextAccessor();
-
-// In your Program.cs or Startup.cs, add JSON serialization options:
+// Add Controllers with JSON options
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.MaxDepth = 32;
 });
 
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// Build the App
+// Add SignalR and HTTP Context
+builder.Services.AddSignalR();
+builder.Services.AddHttpContextAccessor();
+
+// Build the app
 var app = builder.Build();
 
-// Enable Swagger in Development
+// Enable Swagger in development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -93,20 +91,17 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-
     app.UseCors("ProductionCorsPolicy");
 }
 
-// Apply CORS policy BEFORE auth
+// Enable CORS before auth
 app.UseCors("AllowReactApp");
 
 app.UseHttpsRedirection();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-// Map SignalR hubs
 app.MapHub<Backend.Hubs.NotificationHub>("/notificationHub");
 
 app.Run();
