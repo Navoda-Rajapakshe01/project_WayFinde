@@ -172,7 +172,7 @@ const MainNavbar = () => {
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
-    { name: "Plan a Trip", icon: <FaPlaneDeparture />, path: "/plantrip" },
+    { name: "Plan a Trip", icon: <FaPlaneDeparture />, path: null },
     { name: "Accommodation", icon: <FaHotel />, path: "/accommodation" },
     { name: "Vehicle", icon: <FaBus />, path: "/vehicle" },
     { name: "Blog", icon: <FaBook />, path: "/blog" },
@@ -208,19 +208,40 @@ const MainNavbar = () => {
 
         {/* Main Navigation Menu */}
         <ul className="navbar-menu">
-          {menuItems.map((item) => (
-            <li
-              key={item.name}
-              className={`navbar-item${
-                activeTab === item.path ? " active" : ""
-              }`}
-            >
-              <Link to={item.path} className="navbar-link">
-                <span className="navbar-icon">{item.icon}</span>
-                <span className="navbar-text">{item.name}</span>
-              </Link>
-            </li>
-          ))}
+          {menuItems.map((item) => {
+            if (item.name === "Plan a Trip") {
+              return (
+                <li key={item.name} className="navbar-item dropdown-trip">
+                  <div className="navbar-link dropdown-toggle">
+                    <span className="navbar-icon">{item.icon}</span>
+                    <span className="navbar-text">Plan a Trip ▾</span>
+                    <div className="dropdown-menu-trip">
+                      <Link to="/plantrip" className="dropdown-item">
+                        Create a New Trip
+                      </Link>
+                      <Link to="/alltrips" className="dropdown-item">
+                        My All Trips
+                      </Link>
+                    </div>
+                  </div>
+                </li>
+              );
+            }
+
+            return (
+              <li
+                key={item.name}
+                className={`navbar-item${
+                  activeTab === item.path ? " active" : ""
+                }`}
+              >
+                <Link to={item.path} className="navbar-link">
+                  <span className="navbar-icon">{item.icon}</span>
+                  <span className="navbar-text">{item.name}</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
         {/* Profile or Auth Buttons */}
