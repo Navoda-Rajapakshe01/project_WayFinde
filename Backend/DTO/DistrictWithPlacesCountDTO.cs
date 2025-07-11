@@ -1,4 +1,4 @@
-namespace Backend.DTOs
+﻿namespace Backend.DTOs
 {
    public class DistrictWithPlacesCountDTO
 {
@@ -6,7 +6,8 @@ namespace Backend.DTOs
     public string Name { get; set; }
     public string ImageUrl { get; set; }
     public string Slug { get; set; }
-    public int PlacesCount { get; set; }  
+        public string SubTitle { get; set; }
+        public int PlacesCount { get; set; }  
 }
 
 }

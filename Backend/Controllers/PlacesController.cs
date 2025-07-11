@@ -20,8 +20,6 @@ namespace Backend.Controllers
             _context = context;
         }
 
-
-
         // GET: api/places
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetAllPlaces()
@@ -53,7 +51,6 @@ namespace Backend.Controllers
         // GET: api/places/2 - For getting details of a single place
         [HttpGet("{id:int}")]
         public async Task<ActionResult<PlacesToVisit>> GetPlaceDetails(int id)
-
         {
             // Find the place by its ID
             var place = await _context.PlacesToVisit
@@ -66,15 +63,6 @@ namespace Backend.Controllers
 
             return Ok(place);
         }
-
-        // GET: api/categories
-        [HttpGet("categories")]
-        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
-        {
-            var categories = await _context.Categories.ToListAsync();
-            return Ok(categories);
-        }
-
 
         [HttpGet("by-category/{categoryId}")]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByCategory(int categoryId)
@@ -161,7 +149,7 @@ namespace Backend.Controllers
                 .FirstOrDefaultAsync(p =>
                     p.Name.ToLower() == dto.Name.ToLower().Trim() &&
                     p.DistrictId == dto.DistrictId &&
-                    p.Id != id); // Ensure it’s not the same place being updated
+                    p.Id != id); // Ensure it's not the same place being updated
 
             if (existingPlace != null)
             {
@@ -205,8 +193,6 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
-
-
         // DELETE: api/places/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePlace(int id)
@@ -232,24 +218,16 @@ namespace Backend.Controllers
             return Ok(count);
         }
 
-        // GET: api/places/popular
-        [HttpGet("popular")]
-        public async Task<IActionResult> GetPopularPlaces()
+        // GET: api/11/images
+        [HttpGet("{placeId}/images")]
+        public async Task<IActionResult> GetPlaceImages(int placeId)
         {
-            var popularPlaces = await _context.PlacesToVisit
-                .Include(p => p.Reviews)
-                .Select(p => new {
-                    Id = p.Id,
-                    Name = p.Name,
-                    District = p.District,
-                    Rating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
-                })
-                .OrderByDescending(p => p.Rating)
-                .Take(5)
+            var images = await _context.PlaceImages
+                .Where(pi => pi.PlaceId == placeId)
+                .Select(pi => pi.ImageUrl)
                 .ToListAsync();
 
-            return Ok(popularPlaces);
+            return Ok(images);
         }
-
     }
 }

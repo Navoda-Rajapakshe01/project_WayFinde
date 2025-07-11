@@ -1,4 +1,5 @@
 ﻿using Backend.Data;
+using Backend.DTOs;
 using Backend.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -12,10 +13,10 @@ namespace Backend.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly UserDbContext context;
+        private readonly AppDbContext context;
         private readonly IConfiguration configuration;
 
-        public AuthService(UserDbContext context, IConfiguration configuration)
+        public AuthService(AppDbContext context, IConfiguration configuration)
         {
             this.context = context;
             this.configuration = configuration;
