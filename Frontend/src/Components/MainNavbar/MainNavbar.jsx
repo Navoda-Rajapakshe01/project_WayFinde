@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import {
   FaBook,
   FaBus,
@@ -21,24 +20,16 @@ import { ProfileImageContext } from "../UserProfileComponents/ProfileImageContex
 import "./MainNavbar.css";
 
 const MainNavbar = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  // Use a default value for profileImage if context is undefined
+  const profileImageContext = useContext(ProfileImageContext);
+  const profileImage =
+    profileImageContext?.profileImage || "/default-profile.png";
 
-  // States
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
-  const [profileData, setProfileData] = useState({
-    profileImage: "/default-profile.png",
-    username: "",
-    contactEmail: "",
-  });
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
-
-  // Context
-  const profileImageContext = useContext(ProfileImageContext);
-  const profileImageFromContext =
-    profileImageContext?.profileImage || "/default-profile.png";
+  const navigate = useNavigate();
 
   // Handle potential undefined context with default values
   const authContext = useContext(AuthContext);
@@ -49,66 +40,15 @@ const MainNavbar = () => {
     (() => {
       console.warn("Logout function not available");
       localStorage.removeItem("token");
-      localStorage.removeItem("userProfile");
       window.location.href = "/";
     });
-
-  // Fetch user profile data when user is available
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!user) return;
-
-      setIsLoadingProfile(true);
-      try {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-          throw new Error("Authentication token not found");
-        }
-
-        const response = await axios.get(
-          "http://localhost:5030/api/profile/me",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setProfileData({
-          profileImage: response.data.profileImage || profileImageFromContext,
-          username: response.data.username || user?.username || "User",
-          contactEmail:
-            response.data.contactemail ||
-            user?.contactemail ||
-            "user@example.com",
-        });
-      } catch (err) {
-        console.error("Error fetching profile data:", err);
-
-        // Fallback to context data if available
-        setProfileData({
-          profileImage: profileImageFromContext,
-          username: user?.username || "User",
-          contactEmail: user?.contactemail || "user@example.com",
-        });
-      } finally {
-        setIsLoadingProfile(false);
-      }
-    };
-
-    fetchProfileData();
-  }, [user, profileImageFromContext]);
 
   // Skip rendering during loading
   if (loading) return null;
 
-  // Set active tab based on location
-  useEffect(() => {
-    setActiveTab(location.pathname);
-  }, [location]);
+  const handleNavigation = (path) => navigate(path);
+  const togglePopup = () => setIsOpen(!isOpen);
 
-  // Close popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -122,24 +62,9 @@ const MainNavbar = () => {
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const handleNavigation = (path) => {
-    navigate(path);
-    setIsOpen(false); // Close popup after navigation
-  };
-
-  const togglePopup = () => setIsOpen(!isOpen);
-
-  const handleSignIn = () => {
-    navigate("/signin");
-  };
-
-  // const handleSignInOption = (type) => {
-  //   setShowSignInModal(false);
-  //   navigate(/signup?role=${type});
-  // };
-
-  // const openModal = () => setShowSignInModal(true);
-  // const closeModal = () => setShowSignInModal(false);
+  useEffect(() => {
+    setActiveTab(location.pathname);
+  }, [location]);
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -159,10 +84,10 @@ const MainNavbar = () => {
     { name: "Settings", icon: <FaCog />, path: "/settings" },
     { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
-  console.log("Auth loading:", loading);
-  console.log("User:", user);
-  console.log("Token:", localStorage.getItem("token"));
-  console.log("Role:", localStorage.getItem("role"));
+
+  const handleSignIn = () => {
+    navigate("/signin");
+  };
 
   return (
     <nav className="navbar">
@@ -170,14 +95,7 @@ const MainNavbar = () => {
         {/* Logo Section */}
         <div className="navbar-logo">
           <Link to="/">
-            <img
-              src={logo || "/placeholder.svg"}
-              alt="WAYFIND"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "/placeholder.svg";
-              }}
-            />
+            <img src={logo || "/placeholder.svg"} alt="WAYFIND" />
           </Link>
         </div>
 
@@ -203,13 +121,11 @@ const MainNavbar = () => {
             <div className="navbar-profile" onClick={togglePopup}>
               <div className="profile-wrapper">
                 <img
-                  src={profileData.profileImage || "/default-profile.png"}
+                  src={
+                    user.profileImg || "Frontend/public/DefaultProfileImage.jpg"
+                  }
                   alt="User Profile"
                   className="profile-img"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/default-profile.png";
-                  }}
                 />
                 <span className="profile-indicator"></span>
               </div>
@@ -218,17 +134,14 @@ const MainNavbar = () => {
                 <div className="profile-popup">
                   <div className="popup-header">
                     <img
-                      src={profileData.profileImage}
+                      src={profileImage}
                       alt="User Profile"
                       className="profile-img"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/default-profile.png";
-                      }}
                     />
+                    <span className="profile-indicator"></span>
                     <div className="popup-user-info">
-                      <h4>{profileData.username}</h4>
-                      <p>@{profileData.contactEmail}</p>
+                      <h4>{user?.username || "User"}</h4>
+                      <p>@{user?.email || "user@example.com"}</p>
                     </div>
                   </div>
 
@@ -255,17 +168,15 @@ const MainNavbar = () => {
               )}
             </div>
           ) : (
-            <div className="auth-buttons">
-              <button className="signin-btn" onClick={handleSignIn}>
-                Sign In
-              </button>
+            <div>
+              <button onClick={handleSignIn}>Sign In</button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Sign In Modal
-      {showSignInModal && (
+      {/* Sign In Modal */}
+      {/* {showSignInModal && (
         <div className="signin-modal-overlay" onClick={closeModal}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
@@ -287,8 +198,8 @@ const MainNavbar = () => {
               Close
             </button>
           </div>
-        </div>
-      )} */}
+        </div> */}
+      {/* )} */}
     </nav>
   );
 };
