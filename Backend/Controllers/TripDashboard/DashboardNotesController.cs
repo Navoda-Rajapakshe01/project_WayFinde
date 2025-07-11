@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Models;
-using Backend.DTOs;  // <-- Import your DTO namespace
+using Backend.DTOs;
 
 namespace Backend.Controllers
 {
@@ -11,12 +11,12 @@ namespace Backend.Controllers
     public class DashboardNoteController : ControllerBase
     {
         private readonly AppDbContext _appDbContext;
-        private readonly UserDbContext _userDbContext;
 
-        public DashboardNoteController(AppDbContext appDbContext, UserDbContext userDbContext)
+
+        public DashboardNoteController(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
-            _userDbContext = userDbContext;
+
         }
 
         // GET: api/DashboardNotes
@@ -28,7 +28,7 @@ namespace Backend.Controllers
 
             // Get all users whose IDs are in notes (to reduce DB calls)
             var userIds = notes.Select(n => n.UserId).Distinct().ToList();
-            var users = await _userDbContext.UsersNew
+            var users = await _appDbContext.UsersNew
                             .Where(u => userIds.Contains(u.Id))
                             .ToDictionaryAsync(u => u.Id);
 
@@ -42,7 +42,7 @@ namespace Backend.Controllers
                 CreatedTime = note.CreatedTime,
                 UserId = note.UserId,
                 Username = users.TryGetValue(note.UserId, out var user) ? user.Username : "Unknown",
-                UrlImages = users.TryGetValue(note.UserId, out var user2) ? user2.ProfilePictureUrl : null
+                ProfilePictureUrl = users.TryGetValue(note.UserId, out var user2) ? user2.ProfilePictureUrl : null
             }).ToList();
 
             return Ok(result);
@@ -56,7 +56,7 @@ namespace Backend.Controllers
             if (note == null)
                 return NotFound();
 
-            var user = await _userDbContext.UsersNew.FindAsync(note.UserId);
+            var user = await _appDbContext.UsersNew.FindAsync(note.UserId);
             if (user == null)
                 return NotFound("User not found");
 
@@ -69,7 +69,7 @@ namespace Backend.Controllers
                 CreatedTime = note.CreatedTime,
                 UserId = note.UserId,
                 Username = user.Username,
-                UrlImages = user.ProfilePictureUrl
+                ProfilePictureUrl = user.ProfilePictureUrl
             };
 
             return Ok(dto);
@@ -85,7 +85,7 @@ namespace Backend.Controllers
                 .ThenByDescending(n => n.CreatedTime)
                 .ToListAsync();
 
-            var user = await _userDbContext.UsersNew.FindAsync(userId);
+            var user = await _appDbContext.UsersNew.FindAsync(userId);
             if (user == null)
                 return NotFound("User not found");
 
@@ -98,7 +98,7 @@ namespace Backend.Controllers
                 CreatedTime = note.CreatedTime,
                 UserId = user.Id,
                 Username = user.Username,
-                UrlImages = user.ProfilePictureUrl
+                ProfilePictureUrl = user.ProfilePictureUrl
             }).ToList();
 
             return Ok(result);
