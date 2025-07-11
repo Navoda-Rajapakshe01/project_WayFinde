@@ -16,7 +16,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Microsoft.Extensions.Logging;
 using Backend.DTO;
+using Azure;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
+
 
 namespace Backend.Controllers
 {
@@ -309,6 +312,8 @@ namespace Backend.Controllers
             return Ok(comment);
         }
 
+
+
         // GET: api/blog/all
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<object>>> GetAllBlogs()
@@ -467,6 +472,29 @@ namespace Backend.Controllers
             {
                 _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
                 return StatusCode(500, "An error occurred while retrieving comments");
+            }
+        }
+        [HttpGet("blogDescription")]
+        private async Task<string> GetFirst100WordsFromBlobAsync(string blobUrl)
+        {
+            try
+            {
+                // Parse the blob URL to get container and blob name
+                var uri = new Uri(blobUrl);
+                var blobClient = new BlobClient(uri);
+
+                // Download the blob content as text
+                var downloadInfo = await blobClient.DownloadAsync();
+                using var reader = new StreamReader(downloadInfo.Value.Content, Encoding.UTF8);
+                var content = await reader.ReadToEndAsync();
+
+                // Extract first 100 words
+                var words = content.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                return string.Join(" ", words.Take(100));
+            }
+            catch
+            {
+                return "No description available";
             }
         }
 
