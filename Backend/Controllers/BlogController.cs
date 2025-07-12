@@ -313,35 +313,43 @@ namespace Backend.Controllers
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<object>>> GetAllBlogs()
         {
-            var blogs = await _context.Blogs
-                .Include(b => b.User) // Include user data
-                .ToListAsync();
+            try
+            {
+                var blogs = await _context.Blogs
+                    .Include(b => b.User) // Include user data
+                    .ToListAsync();
 
-            // Create a simplified object without circular references
-            var simplifiedBlogs = blogs.Select(b => new {
-                Id = b.Id,
-                Title = b.Title,
-                BlogUrl = b.BlogUrl,
-                CreatedAt = b.CreatedAt,
-                Location = b.Location,
-                Tags = b.Tags,
-                NumberOfComments = b.NumberOfComments,
-                NumberOfReads = b.NumberOfReads,
-                NumberOfReacts = b.NumberOfReacts,
-                Author = b.Author,
-                CoverImageUrl = b.CoverImageUrl,
-                ImageUrls = b.ImageUrls,
-                User = new
-                {
-                    Id = b.User.Id,
-                    Username = b.User.Username,
-                    ProfilePictureUrl = b.User.ProfilePictureUrl,
-                    Bio = b.User.Bio
-                    // Add other user properties you need
-                }
-            });
+                // Create a simplified object without circular references
+                var simplifiedBlogs = blogs.Select(b => new {
+                    Id = b.Id,
+                    Title = b.Title ?? string.Empty,
+                    BlogUrl = b.BlogUrl ?? string.Empty,
+                    CreatedAt = b.CreatedAt,
+                    Location = b.Location ?? string.Empty,
+                    Tags = b.Tags ?? new List<string>(), // Prevent null reference
+                    NumberOfComments = b.NumberOfComments,
+                    NumberOfReads = b.NumberOfReads,
+                    NumberOfReacts = b.NumberOfReacts,
+                    Author = b.Author ?? string.Empty,
+                    CoverImageUrl = b.CoverImageUrl ?? string.Empty,
+                    ImageUrls = b.ImageUrls ?? new List<string>(),
+                    //Description = b.Description ?? string.Empty,
+                    User = b.User == null ? new { Id = Guid.Empty, Username = "Unknown", ProfilePictureUrl = (string)null, Bio = (string)null } : new
+                    {
+                        Id = b.User.Id,
+                        Username = b.User.Username ?? string.Empty,
+                        ProfilePictureUrl = b.User.ProfilePictureUrl,
+                        Bio = b.User.Bio
+                    }
+                }).ToList();
 
-            return Ok(simplifiedBlogs);
+                return Ok(simplifiedBlogs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetAllBlogs: {Message}", ex.Message);
+                return StatusCode(500, new { message = ex.Message, stack = ex.StackTrace });
+            }
         }
 
 
