@@ -11,6 +11,7 @@ namespace Backend.Data
     {
         //Profile
         public DbSet<UserNew> UsersNew { get; set; } = null!;
+        public DbSet<UserNew> UserNew { get; set; } = null!;
         public DbSet<Blog> Blogs { get; set; } = null!;
         public DbSet<Post> Posts { get; set; } = null!;
         public DbSet<Follows> Follows { get; set; } = null!;

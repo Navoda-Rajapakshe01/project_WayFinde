@@ -18,6 +18,7 @@ import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
+import PlanTrip from "./Components/BlogComponents/BlogPages/BlogPage1";
 import Accommodation from "./pages/Accommodation";
 import AccommodationDetail from "./pages/AccommodationDetail";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -45,7 +46,6 @@ import VehicleDetail from "./pages/VehicleDetail";
 
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
-import UpcomingAllTrips from "./pages/Trip/AllTrips/UpcomingAllTrips";
 
 import "./App.css";
 
@@ -61,7 +61,7 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/plantrip" element={<CreateTrip />} />
         <Route path="/trip-planner" element={<PlanTrip />} />
-        <Route path="/upcomingtrips" element={<UpcomingAllTrips />} />
+        <Route path="/upcomingtrips" element={<AllTrips />} />
         <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />

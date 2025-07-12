@@ -12,13 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
     [Migration("20250526004959_RemoveUserFromDashboardNote")]
     partial class RemoveUserFromDashboardNote
-========
-    [Migration("20250426054104_AddGoogleMapLinkColumn")]
-    partial class AddGoogleMapLinkColumn
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,40 +243,6 @@ namespace Backend.Migrations
                     b.ToTable("AccommodationReviews");
                 });
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
-========
-            modelBuilder.Entity("Backend.Models.Blog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Author")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NumberOfReacts")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NumberOfReads")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UploadDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Blogs");
-                });
-
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
             modelBuilder.Entity("Backend.Models.BlogImage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -338,18 +299,10 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
-========
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("CreatedTime")
-                        .HasColumnType("time");
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
 
                     b.Property<string>("NoteDescription")
                         .IsRequired()
@@ -360,7 +313,6 @@ namespace Backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
                     b.Property<int>("TripId")
                         .HasColumnType("int");
 
@@ -373,13 +325,6 @@ namespace Backend.Migrations
 
                     b.HasIndex("TripId");
 
-========
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                     b.ToTable("DashboardNote");
                 });
 
@@ -404,22 +349,12 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
-========
-                    b.Property<string>("SubTitle")
-                        .HasColumnType("nvarchar(max)");
-
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                     b.HasKey("Id");
 
                     b.ToTable("Districts");
                 });
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
             modelBuilder.Entity("Backend.Models.Place", b =>
-========
-            modelBuilder.Entity("Backend.Models.Review", b =>
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -427,7 +362,6 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -518,31 +452,6 @@ namespace Backend.Migrations
                         .IsUnique();
 
                     b.ToTable("PlacesToVisit");
-========
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PlaceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlaceId");
-
-                    b.ToTable("Reviews");
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                 });
 
             modelBuilder.Entity("Backend.Models.TodoItem", b =>
@@ -567,26 +476,18 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
                     b.Property<int>("TripId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
-========
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("Id");
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
                     b.HasIndex("TripId");
 
-========
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                     b.ToTable("TodoItems");
                 });
 
@@ -611,7 +512,6 @@ namespace Backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
                     b.Property<int>("TripId")
                         .HasColumnType("int");
 
@@ -619,14 +519,11 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2");
 
-========
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                     b.HasKey("Id");
 
                     b.ToTable("TravelBudgets");
                 });
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
             modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
                     b.Property<int>("Id")
@@ -714,8 +611,6 @@ namespace Backend.Migrations
                     b.ToTable("Users");
                 });
 
-========
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
             modelBuilder.Entity("Backend.Models.Vehicle", b =>
                 {
                     b.Property<int>("Id")
@@ -1007,7 +902,6 @@ namespace Backend.Migrations
                     b.Navigation("Accommodation");
                 });
 
-<<<<<<<< HEAD:Backend/Migrations/20250526004959_RemoveUserFromDashboardNote.Designer.cs
             modelBuilder.Entity("Backend.Models.DashboardNote", b =>
                 {
                     b.HasOne("Backend.Models.Trip", null)
@@ -1063,17 +957,6 @@ namespace Backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-========
-            modelBuilder.Entity("Backend.Models.Review", b =>
-                {
-                    b.HasOne("PlacesToVisit", "Place")
-                        .WithMany("Reviews")
-                        .HasForeignKey("PlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Place");
->>>>>>>> origin/update-v2:Backend/Migrations/20250426054104_AddGoogleMapLinkColumn.Designer.cs
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>

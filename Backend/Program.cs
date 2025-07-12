@@ -17,9 +17,7 @@ builder.Services.AddScoped<IWeatherService, WeatherService>();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("RandulaConnection")));
 
-// Register UserDbContext in the container
-builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RandulaConnection")));
+
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -97,13 +95,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors("AllowReactApp"); // Use dev CORS policy in development
+    // Skip HTTPS redirection in development
 }
 else
 {
     app.UseCors("ProductionCorsPolicy"); // Use production CORS policy otherwise
+    app.UseHttpsRedirection(); // Only use HTTPS redirection in production
 }
 
-app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -69,9 +69,11 @@ namespace Backend.Services
                     Username = request.Username,
                     ContactEmail = request.ContactEmail,
                     Role = request.Role,
-                    ServiceType = request.ServiceType ?? "", // Ensure ServiceType is never null
-                    PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password)
+                    ServiceType = request.ServiceType ?? "" // Ensure ServiceType is never null
                 };
+                
+                // Hash password after user object is created
+                user.PasswordHash = new PasswordHasher<UserNew>().HashPassword(user, request.Password);
 
                 // Add user to context and save changes
                 await context.UsersNew.AddAsync(user);

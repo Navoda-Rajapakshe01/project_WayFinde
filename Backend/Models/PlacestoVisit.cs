@@ -34,7 +34,7 @@ namespace Backend.Models
         public string? PlaceType { get; set; }
 
         // Navigation properties for relationships
-        public required ICollection<TripPlace> TripPlaces { get; set; }
+        public required ICollection<TripPlace> TripPlaces { get; set; } = new List<TripPlace>();
 
         // Foreign key relationships
         public int DistrictId { get; set; }

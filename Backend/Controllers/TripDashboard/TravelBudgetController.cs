@@ -11,12 +11,49 @@ namespace Backend.Controllers
     {
         private readonly AppDbContext _context;
 
-        public TravelBudgetController(AppDbContext context) => _context = context;
+        public TravelBudgetController(AppDbContext context)
+        {
+            _context = context;
+        }
+        
+        // GET: api/TravelBudget
+        // Retrieves all travel‑budget records
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TravelBudget>>> GetTravelBudgets()
+        {
+            var budgets = await _context.TravelBudgets
+                .Select(b => new TravelBudget
+                {
+                    Id          = b.Id,
+                    Description = b.Description,
+                    Amount      = b.Amount,
+                    CreatedAt   = b.CreatedAt,
+                    UpdatedAt   = b.UpdatedAt,
+                    TripId      = b.TripId
+                })
+                .ToListAsync();
+
+            return Ok(budgets);
+        }
+
+        // GET: api/TravelBudget/{id}
+        // Retrieves a specific travel‑budget item by ID
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TravelBudget>> GetTravelBudget(int id)
+        {
+            var budget = await _context.TravelBudgets
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (budget == null)
+                return NotFound();
+
+            return Ok(budget);
+        }
 
         // GET: api/TravelBudget/trip/{tripId}
-        // Retrieves all budget entries for a specific trip
+        // Retrieves all budget items belonging to a given trip
         [HttpGet("trip/{tripId}")]
-        public async Task<ActionResult<IEnumerable<TravelBudget>>> GetByTripId(int tripId)
+        public async Task<ActionResult<IEnumerable<TravelBudget>>> GetBudgetsByTrip(int tripId)
         {
             var trip = await _context.Trips.FindAsync(tripId);
             if (trip == null)
@@ -30,68 +67,58 @@ namespace Backend.Controllers
             return Ok(budgets);
         }
 
-        // GET: api/TravelBudget
-        // Retrieves all budget entries from the database
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TravelBudget>>> Get() =>
-            await _context.TravelBudgets.ToListAsync();
-
-        // GET: api/TravelBudget/{id}
-        // Retrieves a specific budget entry by its ID
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TravelBudget>> Get(int id)
-        {
-            var travelBudget = await _context.TravelBudgets.FindAsync(id);
-            return travelBudget == null ? NotFound() : Ok(travelBudget);
-        }
-
         // POST: api/TravelBudget
-        // Creates a new budget entry for a trip
+        // Creates a new travel‑budget entry
         [HttpPost]
-        public async Task<ActionResult<TravelBudget>> Post(TravelBudget travelBudget)
+        public async Task<ActionResult<TravelBudget>> PostTravelBudget(TravelBudget budget)
         {
-            var trip = await _context.Trips.FindAsync(travelBudget.TripId);
+            var trip = await _context.Trips.FindAsync(budget.TripId);
             if (trip == null)
                 return BadRequest("Invalid TripId");
 
-            travelBudget.CreatedAt = DateTime.UtcNow;
-            travelBudget.UpdatedAt = DateTime.UtcNow;
-            
-            _context.TravelBudgets.Add(travelBudget);
+            budget.CreatedAt = DateTime.UtcNow;
+            budget.UpdatedAt = DateTime.UtcNow;
+
+            _context.TravelBudgets.Add(budget);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(Get), new { id = travelBudget.Id }, travelBudget);
+
+            return CreatedAtAction(nameof(GetTravelBudget), new { id = budget.Id }, budget);
         }
 
         // PUT: api/TravelBudget/{id}
-        // Updates an existing budget entry
+        // Updates an existing travel‑budget entry
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, TravelBudget travelBudget)
+        public async Task<IActionResult> PutTravelBudget(int id, TravelBudget updatedBudget)
         {
-            if (id != travelBudget.Id) 
+            if (id != updatedBudget.Id)
                 return BadRequest();
 
             var existingBudget = await _context.TravelBudgets.FindAsync(id);
             if (existingBudget == null)
                 return NotFound();
 
-            existingBudget.Description = travelBudget.Description;
-            existingBudget.Amount = travelBudget.Amount;
-            existingBudget.UpdatedAt = DateTime.UtcNow;
+            existingBudget.Description = updatedBudget.Description;
+            existingBudget.Amount      = updatedBudget.Amount;
+            existingBudget.UpdatedAt   = DateTime.UtcNow;
 
             _context.Entry(existingBudget).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
 
         // DELETE: api/TravelBudget/{id}
-        // Deletes a specific budget entry
+        // Deletes a specific travel‑budget entry
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteTravelBudget(int id)
         {
-            var travelBudget = await _context.TravelBudgets.FindAsync(id);
-            if (travelBudget == null) return NotFound();
-            _context.TravelBudgets.Remove(travelBudget);
+            var budget = await _context.TravelBudgets.FindAsync(id);
+            if (budget == null)
+                return NotFound();
+
+            _context.TravelBudgets.Remove(budget);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
     }

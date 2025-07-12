@@ -130,6 +130,7 @@ namespace Backend.Controllers
                 District = district,
                 CategoryId = dto.CategoryId,
                 Category = category!,
+                TripPlaces = new List<TripPlace>(),
                 PlaceImage = new List<PlaceImage>() // Set to an empty list or as appropriate
             };
 

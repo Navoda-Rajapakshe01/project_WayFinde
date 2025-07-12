@@ -8,10 +8,10 @@ using Backend.Data;
 using Backend.Models;
 using Backend.DTOs;
 
-namespace Backend.Data
+namespace Backend.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/trips")]
     public class TripsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -41,10 +41,10 @@ namespace Backend.Data
 
             var trip = new Trip
             {
-                TripName = dto.TripName,
+                Name = dto.TripName,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
-                UserId = dto.UserId,
+                UserId = int.Parse(dto.UserId),
                 TripPlaces = dto.PlaceIds.Select(pid => new TripPlace { PlaceId = pid }).ToList()
             };
 
@@ -71,11 +71,11 @@ namespace Backend.Data
             var tripDto = new TripDetailsDto
             {
                 Id = trip.Id,
-                TripName = trip.TripName,
+                TripName = trip.Name,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = trip.TripDistance,
-                TripTime = trip.TripTime,
+                TripDistance = (double?)trip.TripDistance,
+                TripTime = trip.TripTime.ToString(),
                 TotalSpend = (decimal?)trip.TotalSpend,
 
                 Places = trip.TripPlaces.Select(tp => new PlaceDto
@@ -116,13 +116,13 @@ namespace Backend.Data
             if (trip == null)
                 return NotFound(new { message = "Trip not found" });
 
-            trip.TripName = request.TripName ?? trip.TripName;
-            trip.TripDistance = request.TripDistance ?? trip.TripDistance;
-            trip.TripTime = request.TripTime ?? trip.TripTime;
+            trip.Name = request.TripName ?? trip.Name;
+            trip.TripDistance = request.TripDistance.HasValue ? (decimal)request.TripDistance.Value : trip.TripDistance;
+            trip.TripTime = !string.IsNullOrEmpty(request.TripTime) ? decimal.Parse(request.TripTime) : trip.TripTime;
             trip.TotalSpend = request.TotalSpend ?? trip.TotalSpend;
             trip.StartDate = request.StartDate ?? trip.StartDate;
             trip.EndDate = request.EndDate ?? trip.EndDate;
-            trip.UserId = request.UserId ?? trip.UserId;
+            trip.UserId = !string.IsNullOrEmpty(request.UserId) ? int.Parse(request.UserId) : trip.UserId;
 
             if (request.PlaceIds != null && request.PlaceIds.Any())
             {
@@ -163,11 +163,11 @@ namespace Backend.Data
             var tripDto = new TripDetailsDto
             {
                 Id = trip.Id,
-                TripName = trip.TripName,
+                TripName = trip.Name,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = trip.TripDistance,
-                TripTime = trip.TripTime,
+                TripDistance = (double?)trip.TripDistance,
+                TripTime = trip.TripTime.ToString(),
                 TotalSpend = (decimal?)trip.TotalSpend,
 
                 Places = trip.TripPlaces?
@@ -199,7 +199,7 @@ namespace Backend.Data
             var result = trips.Select(trip => new
             {
                 id = trip.Id,
-                tripName = trip.TripName,
+                tripName = trip.Name,
                 startDate = trip.StartDate,
                 endDate = trip.EndDate,
                 tripDistance = trip.TripDistance,

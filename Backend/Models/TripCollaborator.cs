@@ -25,5 +25,7 @@ namespace Backend.Models
         public UserNew User { get; set; }
 
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
     }
 }
