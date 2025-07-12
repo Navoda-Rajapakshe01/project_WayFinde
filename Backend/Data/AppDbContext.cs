@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Backend.DTOs;
 using Backend.Models;
-using Backend.DTOs;
-using System.Text.Json;
-using Newtonsoft.Json;
+using Backend.Models.User;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Backend.Data
 {
@@ -46,6 +47,7 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
+        public DbSet<BlogReaction> BlogReactions { get; set; }
         public object? Amenities { get; internal set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -270,6 +272,11 @@ namespace Backend.Data
                 .WithMany(u => u.Followers)
                 .HasForeignKey(f => f.FollowedID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Add unique constraint to prevent multiple reactions from same user
+            modelBuilder.Entity<BlogReaction>()
+                .HasIndex(r => new { r.BlogId, r.UserId })
+                .IsUnique();
         }
     }
 }
