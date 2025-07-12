@@ -177,3 +177,34 @@
   opacity: 0.7;
   cursor: not-allowed;
 }
+
+.follow_button {
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.follow_button:hover {
+  background-color: #1d4ed8;
+}
+
+.follow_button.following {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.follow_button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.follow-react-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
