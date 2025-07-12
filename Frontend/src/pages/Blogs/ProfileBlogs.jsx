@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "../CSS/ProfileBlogs.css";
 
-const ProfileSettings = () => {
-  const [blogs, setBlogs] = useState([]); // Always initialize as empty array
+const ProfileBlogs = () => {
+  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,67 +19,150 @@ const ProfileSettings = () => {
         setLoading(true);
         setError(null);
 
-        const res = await fetch("http://localhost:5030/api/profile/me", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        // Step 1: Fetch user profile data
+        const profileResponse = await fetch(
+          "http://localhost:5030/api/profile/me",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
-        if (!res.ok) {
+        if (!profileResponse.ok) {
           throw new Error("Failed to fetch user data");
         }
 
-        const data = await res.json();
-        console.log("=== FULL API RESPONSE ===");
-        console.log(JSON.stringify(data, null, 2));
+        const userData = await profileResponse.json();
+        console.log("User profile data:", userData);
+        setUser(userData);
 
-        setUser(data);
+        // Get current user ID to filter blogs
+        const currentUserId = userData.id || userData.Id;
 
-        // Handle Entity Framework JSON serialization format
-        let blogsData = null;
-
-        // Check for different possible blog locations
-        if (data.Blogs && data.Blogs.$values) {
-          // Entity Framework format with capital B
-          blogsData = data.Blogs.$values;
-          console.log("Found blogs in Blogs.$values:", blogsData);
-        } else if (data.blogs && data.blogs.$values) {
-          // Entity Framework format with lowercase b
-          blogsData = data.blogs.$values;
-          console.log("Found blogs in blogs.$values:", blogsData);
-        } else if (data.Blogs && Array.isArray(data.Blogs)) {
-          // Direct array with capital B
-          blogsData = data.Blogs;
-          console.log("Found blogs in Blogs (direct array):", blogsData);
-        } else if (data.blogs && Array.isArray(data.blogs)) {
-          // Direct array with lowercase b
-          blogsData = data.blogs;
-          console.log("Found blogs in blogs (direct array):", blogsData);
-        } else {
-          console.log("No blogs found in expected locations");
-          console.log("Available keys:", Object.keys(data));
+        if (!currentUserId) {
+          console.error("User ID not found in profile data");
+          throw new Error("Unable to determine user ID");
         }
 
-        console.log("Final blogs data:", blogsData);
-        console.log("Blogs length:", blogsData ? blogsData.length : "N/A");
+        // Step 2: Fetch all blogs with comment and reaction counts from the same endpoint
+        const blogsResponse = await fetch(
+          "http://localhost:5030/api/blog/all",
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
-        if (Array.isArray(blogsData)) {
-          setBlogs(blogsData);
-          console.log(
-            "Successfully set blogs array with length:",
-            blogsData.length
+        if (!blogsResponse.ok) {
+          throw new Error(`HTTP error! Status: ${blogsResponse.status}`);
+        }
+
+        const data = await blogsResponse.json();
+
+        // Log the full response structure for debugging
+        console.log("API Response Type:", typeof data);
+        console.log(
+          "API Response Structure:",
+          JSON.stringify(data).substring(0, 200) + "..."
+        );
+
+        // Better extraction of blogs array with more robust checks (same as OtherBlogs)
+        let blogsArray = [];
+
+        if (Array.isArray(data)) {
+          blogsArray = data;
+        } else if (data && typeof data === "object") {
+          // Check for various possible response formats
+          if (data.$values && Array.isArray(data.$values)) {
+            blogsArray = data.$values; // .NET reference tracking format
+          } else if (data.value && Array.isArray(data.value)) {
+            blogsArray = data.value; // Common REST API format
+          } else if (data.blogs && Array.isArray(data.blogs)) {
+            blogsArray = data.blogs; // Custom wrapper format
+          } else if (data.items && Array.isArray(data.items)) {
+            blogsArray = data.items; // Another common format
+          } else if (data.data && Array.isArray(data.data)) {
+            blogsArray = data.data; // Another common format
+          }
+        }
+
+        // If still empty, log detailed error
+        if (blogsArray.length === 0) {
+          console.error("Could not find blogs array in API response:", data);
+          console.error(
+            "Response structure:",
+            JSON.stringify(data, null, 2).substring(0, 500) + "..."
           );
         } else {
-          console.warn(
-            "Blogs data is not an array or is null/undefined:",
-            blogsData
-          );
-          setBlogs([]);
+          console.log(`Found ${blogsArray.length} total blogs`);
+          // Log the structure of the first blog for debugging
+          if (blogsArray[0]) {
+            console.log(
+              "First blog structure:",
+              JSON.stringify(blogsArray[0], null, 2)
+            );
+          }
         }
+
+        // Step 3: Filter blogs to get only those from current user
+        const userBlogs = blogsArray.filter((blog) => {
+          const blogUserId =
+            blog.userId ||
+            blog.UserId ||
+            (blog.user && (blog.user.id || blog.user.Id));
+          return blogUserId === currentUserId;
+        });
+
+        console.log(`Found ${userBlogs.length} blogs for current user`);
+
+        // Step 4: Process blog data with comment and reaction counts (using same logic as OtherBlogs)
+        const processedBlogs = userBlogs.map((blog) => {
+          // Ensure we have a valid ID by checking all possible property names
+          const blogId = blog.id ?? blog.Id ?? blog.blogId ?? blog.BlogId;
+
+          // Log if ID might be missing
+          if (blogId === undefined) {
+            console.warn("Blog missing ID:", blog);
+          }
+
+          return {
+            id: blogId,
+            title: blog.title ?? blog.Title ?? "Untitled",
+            author:
+              blog.author ?? blog.Author ?? userData.username ?? "Anonymous",
+            location: blog.location ?? blog.Location ?? "",
+            coverImageUrl:
+              blog.coverImageUrl ?? blog.CoverImageUrl ?? blog.imageUrl ?? "",
+
+            // Extract comment count with more robust property checking (same as OtherBlogs)
+            commentCount:
+              blog.numberOfComments ??
+              blog.NumberOfComments ??
+              blog.commentCount ??
+              blog.CommentCount ??
+              blog.commentsCount ??
+              0,
+
+            // Extract reaction count with more robust property checking (same as OtherBlogs)
+            reactionCount:
+              blog.NumberOfReacts ??
+              blog.numberOfReacts ??
+              blog.reactionCount ??
+              blog.ReactionCount ??
+              blog.reactionsCount ??
+              blog.ReactionsCount ??
+              blog.likesCount ??
+              0,
+          };
+        });
+
+        setBlogs(processedBlogs);
       } catch (error) {
         console.error("Error fetching profile and blogs:", error.message);
         setError(error.message);
-        setBlogs([]); // Ensure blogs remains an array even on error
+        setBlogs([]);
       } finally {
         setLoading(false);
       }
@@ -88,57 +171,71 @@ const ProfileSettings = () => {
     fetchProfileAndBlogs();
   }, []);
 
-  // const handleFileClick = () => {
-  //   window.scrollTo(0, 0);
-  //   navigate("/uploadNewBlog"); // Navigate to your blog upload page
-  // };
-
   const handleBlogDisplay = (blogId) => {
-    console.log("Navigating to blog ID:", blogId);
-    window.scrollTo(0, 0);
-    navigate(`/blog/${blogId}`);
+    if (blogId) {
+      navigate(`/blog/${blogId}`);
+    } else {
+      console.error("Blog ID is undefined");
+    }
   };
 
   const handleDeleteBlog = async (blogId) => {
-    if (!window.confirm("Are you sure you want to delete this blog?")) return;
+    if (!blogId) {
+      console.error("Blog ID is undefined");
+      return;
+    }
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this blog?"
+    );
+    if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5030/api/blog/delete/${blogId}`);
-      alert("Blog deleted successfully.");
-      // optionally refresh blog list
-      // Remove the deleted blog from the state
-      setBlogs((prevBlogs) =>
-        prevBlogs.filter(
-          (blog) =>
-            (blog.id || blog.Id || blog.blogId || blog.BlogId) !== blogId
-        )
+      const response = await axios.delete(
+        `http://localhost:5030/api/blog/${blogId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
       );
+
+      if (response.status === 200) {
+        // Remove the deleted blog from the state
+        setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
+        console.log("Blog deleted successfully");
+      }
     } catch (error) {
-      console.error("Failed to delete blog:", error);
-      alert("Failed to delete blog.");
+      console.error("Error deleting blog:", error);
+      setError("Failed to delete blog. Please try again.");
     }
   };
 
   const writeBlog = () => {
-    window.scrollTo(0, 0);
     navigate("/profile/profileBlogs/blogEditor");
   };
 
   if (loading) {
     return (
-      <div>
+      <div className="profile-blogs-container">
         <ProfileHeadSection user={user} />
-        <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>
+        <div className="blog-container">
+          <p style={{ textAlign: "center", marginTop: "2rem" }}>
+            Loading blogs...
+          </p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div>
+      <div className="profile-blogs-container">
         <ProfileHeadSection user={user} />
-        <div style={{ textAlign: "center", marginTop: "2rem", color: "red" }}>
-          Error: {error}
+        <div className="blog-container">
+          <p style={{ textAlign: "center", marginTop: "2rem", color: "red" }}>
+            Error: {error}
+          </p>
         </div>
       </div>
     );
@@ -156,22 +253,16 @@ const ProfileSettings = () => {
         ) : (
           blogs.map((blog, index) => (
             <div
-              onClick={() => {
-                console.log("FULL BLOG OBJECT:", blog); // Add this line
-                console.log("Available properties:", Object.keys(blog));
-                handleBlogDisplay(
-                  blog.id || blog.Id || blog.blogId || blog.BlogId
-                );
-              }}
+              onClick={() => handleBlogDisplay(blog.id)}
               className="blog-card"
-              key={blog.id || blog.Id || blog.blogId || blog.BlogId || index}
+              key={blog.id || index}
             >
               <img
                 src={blog.coverImageUrl}
                 alt="Blog"
                 className="blog-image"
                 onError={(e) => {
-                  e.target.src = "/placeholder-image.jpg"; // Fallback image
+                  e.target.src = "/placeholder-image.jpg";
                 }}
               />
 
@@ -179,7 +270,7 @@ const ProfileSettings = () => {
                 <p className="blog-name">{blog.title}</p>
                 <p className="blog-topic">
                   <strong>
-                    {blog.location !== "undefined"
+                    {blog.location !== "undefined" && blog.location
                       ? blog.location
                       : "No location specified"}
                   </strong>
@@ -187,18 +278,20 @@ const ProfileSettings = () => {
                 <p className="blog-description">Author: {blog.author}</p>
                 <div className="blog-actions">
                   <span>
-                    <FaCommentAlt className="icon" /> Comments
+                    <FaCommentAlt className="icon" />
+                    Comments{" "}
+                    {blog.commentCount > 0 ? `(${blog.commentCount})` : "(0)"}
                   </span>
                   <span>
-                    <FaThumbsUp className="icon" /> Likes
+                    <FaThumbsUp className="icon" />
+                    Likes{" "}
+                    {blog.reactionCount > 0 ? `(${blog.reactionCount})` : "(0)"}
                   </span>
 
                   <span
                     onClick={(e) => {
                       e.stopPropagation(); // prevent triggering blog display
-                      handleDeleteBlog(
-                        blog.id || blog.Id || blog.blogId || blog.BlogId
-                      );
+                      handleDeleteBlog(blog.id);
                     }}
                   >
                     <FaTrash className="icon" /> Delete
@@ -212,9 +305,6 @@ const ProfileSettings = () => {
 
       <div className="profile-settings">
         <div className="button-wrapper">
-          {/* <button onClick={handleFileClick} className="UploadBlogButton">
-            Add Blog
-          </button> */}
           <button onClick={writeBlog} className="UploadBlogButton">
             Write blog
           </button>
@@ -224,4 +314,4 @@ const ProfileSettings = () => {
   );
 };
 
-export default ProfileSettings;
+export default ProfileBlogs;
