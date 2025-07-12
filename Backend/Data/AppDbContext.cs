@@ -231,8 +231,8 @@ namespace Backend.Data
                 .HasDefaultValueSql("GETDATE()");
 
             modelBuilder.Entity<TravelBudget>()
-                .HasOne<Trip>()
-                .WithMany()
+                .HasOne(t => t.Trip)
+                .WithMany(t => t.TravelBudgets)
                 .HasForeignKey(t => t.TripId)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -329,8 +329,8 @@ namespace Backend.Data
                 .IsRequired();
 
             modelBuilder.Entity<DashboardNote>()
-                .HasOne<Trip>()
-                .WithMany()
+                .HasOne(d => d.Trip)
+                .WithMany(t => t.DashboardNotes)
                 .HasForeignKey(d => d.TripId)
                 .OnDelete(DeleteBehavior.Cascade);
 

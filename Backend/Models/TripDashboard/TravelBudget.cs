@@ -12,19 +12,21 @@ namespace Backend.Models
 
         [Required]
         [MaxLength(200)]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
+        // Foreign key to Trip
         [Required]
         public int TripId { get; set; }
+
+        [ForeignKey(nameof(TripId))]
+        public Trip Trip { get; set; } = null!;
     }
 }

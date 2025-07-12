@@ -25,5 +25,8 @@ namespace Backend.Models
 
         [Required]
         public int TripId { get; set; }
+
+        [ForeignKey(nameof(TripId))]
+        public Trip Trip { get; set; } = null!;
     }
 }
