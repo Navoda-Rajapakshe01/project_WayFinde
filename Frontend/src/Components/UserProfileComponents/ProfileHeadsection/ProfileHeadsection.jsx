@@ -8,8 +8,8 @@ const ProfileHeadSection = () => {
   const [bio, setBio] = useState("");
   const [blogCount, setBlogCount] = useState(0);
   const [postCount, setPostCount] = useState(0);
-  const [followerCount, setFollowerCount] = useState(0);
-  const [followingCount, setFollowingCount] = useState(0);
+  const [FollowerCount, setFollowerCount] = useState(0);
+  const [FollowingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -52,8 +52,8 @@ const ProfileHeadSection = () => {
           blogCount,
           postsCount,
           postCount,
-          followersCount,
-          followingCount,
+          FollowersCount,
+          FollowingCount,
         } = response.data;
 
         // Set user profile data
@@ -64,8 +64,8 @@ const ProfileHeadSection = () => {
         // Set counts with fallbacks for different property names
         setBlogCount(blogsCount || blogCount || 0);
         setPostCount(postsCount || postCount || 0);
-        setFollowerCount(followersCount || 0);
-        setFollowingCount(followingCount || 0);
+        setFollowerCount(FollowersCount || 0);
+        setFollowingCount(FollowingCount || 0);
       } catch (error) {
         console.error(
           "Failed to fetch profile:",
@@ -113,12 +113,12 @@ const ProfileHeadSection = () => {
               <div>
                 <strong>Followers</strong>
                 <br />
-                {followerCount}
+                {FollowerCount}
               </div>
               <div>
                 <strong>Following</strong>
                 <br />
-                {followingCount}
+                {FollowingCount}
               </div>
             </div>
             <p className="bio">{bio || "No bio available"}</p>

@@ -148,6 +148,9 @@ namespace Backend.Controllers
                 })
                 .ToListAsync();
 
+            // Get blog count
+            int blogCount = userBlogs.Count;
+
             return Ok(new
             {
                 user.Id,
@@ -155,6 +158,9 @@ namespace Backend.Controllers
                 user.ContactEmail,
                 user.Bio,
                 user.ProfilePictureUrl,
+                FollowersCount = user.FollowersCount,
+                FollowingCount = user.FollowingCount,
+                BlogCount = blogCount,
                 Blogs = userBlogs
             });
         }

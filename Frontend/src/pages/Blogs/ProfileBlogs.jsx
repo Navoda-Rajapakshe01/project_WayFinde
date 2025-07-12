@@ -275,7 +275,7 @@ const ProfileBlogs = () => {
                       : "No location specified"}
                   </strong>
                 </p>
-                <p className="blog-description">Author: {blog.author}</p>
+                
                 <div className="blog-actions">
                   <span>
                     <FaCommentAlt className="icon" />
