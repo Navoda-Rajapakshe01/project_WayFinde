@@ -24,6 +24,9 @@ const PersonalBlog = () => {
   const [comments, setComments] = useState([]);
   const [commentSubmitting, setCommentSubmitting] = useState(false);
   const [commentError, setCommentError] = useState(null);
+  const [reactionCount, setReactionCount] = useState(0);
+  const [hasReacted, setHasReacted] = useState(false);
+  const [reactionLoading, setReactionLoading] = useState(false);
 
   PersonalBlog.propTypes = {
     UserId: PropTypes.string.isRequired,
@@ -154,8 +157,20 @@ const PersonalBlog = () => {
         throw new Error(errorData || "Failed to submit comment");
       }
 
-      const newComment = await response.json();
-      console.log("Comment submitted successfully:", newComment);
+      const responseData = await response.json();
+      console.log("Comment submitted successfully:", responseData);
+      const newComment = responseData.comment || responseData;
+
+      // Update the blog's comment count if returned from API
+      if (responseData.blogCommentCount !== undefined) {
+        // If we have blog reference, update it
+        if (blog) {
+          setBlog({
+            ...blog,
+            commentCount: responseData.blogCommentCount,
+          });
+        }
+      }
 
       // Add the new comment to the comments list
       setComments((prevComments) => {
@@ -188,7 +203,6 @@ const PersonalBlog = () => {
       setCommentSubmitting(false);
     }
   };
-
   //function to fetch comments for the current blog
   const fetchComments = async () => {
     if (!id) {
@@ -292,6 +306,79 @@ const PersonalBlog = () => {
       console.error("Error fetching comments:", error);
     }
   };
+  // Function to fetch reaction count
+  const fetchReactionCount = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5030/api/blog/${id}/reactions/count`
+      );
+
+      if (response.ok) {
+        const count = await response.json();
+        setReactionCount(count);
+      }
+    } catch (error) {
+      console.error("Error fetching reaction count:", error);
+    }
+  };
+
+  // Function to check if user has reacted
+  const checkUserReaction = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch(
+        `http://localhost:5030/api/blog/${id}/reactions/status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const hasReacted = await response.json();
+        setHasReacted(hasReacted);
+      }
+    } catch (error) {
+      console.error("Error checking user reaction:", error);
+    }
+  };
+
+  // Function to handle reaction toggle
+  const handleReaction = async () => {
+    try {
+      if (!currentUser) {
+        alert("You must be logged in to react to this blog");
+        return;
+      }
+
+      setReactionLoading(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:5030/api/blog/${id}/react`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setHasReacted(data.reacted);
+        setReactionCount(data.count);
+      }
+    } catch (error) {
+      console.error("Error toggling reaction:", error);
+    } finally {
+      setReactionLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -350,7 +437,13 @@ const PersonalBlog = () => {
           setLoading(false);
         }
       };
-      await Promise.all([fetchBlog(), fetchCurrentUser(), fetchComments()]);
+      await Promise.all([
+        fetchBlog(),
+        fetchCurrentUser(),
+        fetchComments(),
+        fetchReactionCount(),
+        checkUserReaction(),
+      ]);
     };
 
     fetchData();
@@ -443,6 +536,23 @@ const PersonalBlog = () => {
         </div>
         <Link>
           <div className="follow_button">Follow</div>
+          <div className="reaction-button-container">
+            <button
+              className={`reaction-button ${hasReacted ? "reacted" : ""}`}
+              onClick={handleReaction}
+              disabled={reactionLoading || !currentUser}
+            >
+              <FaThumbsUp
+                className={`reaction-icon ${hasReacted ? "active" : ""}`}
+              />
+              <span className="reaction-text">
+                {hasReacted ? "Liked" : "Like"}
+              </span>
+              <span className="reaction-count">
+                {reactionCount > 0 && `(${reactionCount})`}
+              </span>
+            </button>
+          </div>
         </Link>
       </div>
 
