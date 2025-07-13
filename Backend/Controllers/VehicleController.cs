@@ -2,74 +2,201 @@
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Backend.DTOs;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace Backend.Controllers
-{
+{ 
     [ApiController]
     [Route("api/[controller]")]
     public class VehicleController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly Cloudinary _cloudinary;
 
-        public VehicleController(AppDbContext context)
+        public VehicleController(AppDbContext context, Cloudinary cloudinary)
         {
             _context = context;
+            _cloudinary = cloudinary;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles()
+        [HttpPost]
+        public async Task<IActionResult> CreateVehicle([FromForm] VehicleCreateDto dto)
         {
-            var vehicles = await _context.Vehicles
-                .Include(v => v.Images)
-                .Include(v => v.Reviews)
-                .ToListAsync();
+            if (dto == null) return BadRequest();
 
-            return Ok(vehicles);
+            // Validate DistrictId exists in Districts table (optional but recommended)
+            var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
+            if (!districtExists)
+            {
+                return BadRequest($"District with Id {dto.DistrictId} does not exist.");
+            }
+
+            var vehicle = new Vehicle
+            {
+                Brand = dto.Brand,
+                Model = dto.Model,
+                PricePerDay = dto.PricePerDay,
+                Location = dto.Location,
+                Type = dto.Type,
+                NumberOfPassengers = dto.NumberOfPassengers,
+                FuelType = dto.FuelType,
+                TransmissionType = dto.TransmissionType,
+                DistrictId = dto.DistrictId,   // <-- Set DistrictId here
+                IsAvailable = true
+            };
+
+            // Save vehicle first to get Id
+            _context.Vehicles.Add(vehicle);
+            await _context.SaveChangesAsync();
+
+            // Handle amenities
+            if (dto.Amenities != null)
+            {
+                foreach (var amenity in dto.Amenities)
+                {
+                    _context.VehicleAmenities.Add(new VehicleAmenity
+                    {
+                        VehicleId = vehicle.Id,
+                        AmenityName = amenity
+                    });
+                }
+            }
+
+            // Handle image uploads to Cloudinary
+            if (dto.Images != null)
+            {
+                foreach (var file in dto.Images)
+                {
+                    var imageUrl = await UploadFileToCloudinary(file);
+
+                    _context.VehicleImages.Add(new VehicleImage
+                    {
+                        VehicleId = vehicle.Id,
+                        ImageUrl = imageUrl
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(vehicle);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Vehicle>> GetVehicle(int id)
+        private async Task<string> UploadFileToCloudinary(IFormFile file)
+        {
+            await using var stream = file.OpenReadStream();
+
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(file.FileName, stream),
+                Folder = "vehicles" // Optional: folder in Cloudinary
+            };
+
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+                return uploadResult.SecureUrl.ToString();
+
+            throw new Exception("Failed to upload image to Cloudinary.");
+        }
+
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] VehicleUpdateStatusDto dto)
+        {
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null) return NotFound();
+
+            vehicle.IsAvailable = dto.Status == "Available";
+            await _context.SaveChangesAsync();
+
+            return Ok(vehicle);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteVehicle(int id)
         {
             var vehicle = await _context.Vehicles
                 .Include(v => v.Images)
-                .Include(v => v.Reviews)
+                .Include(v => v.Amenities)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            if (vehicle == null) return NotFound();
+
+            if (vehicle.Images != null)
+                _context.VehicleImages.RemoveRange(vehicle.Images);
+
+            if (vehicle.Amenities != null)
+                _context.VehicleAmenities.RemoveRange(vehicle.Amenities);
+
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet("/api/bookings/vehicle/{vehicleId}")]
+        public async Task<IActionResult> GetBookingsByVehicle(int vehicleId)
+        {
+            var bookings = await _context.VehicleReservations
+                .Where(b => b.VehicleId == vehicleId)
+                .ToListAsync();
+
+            return Ok(bookings);
+        }
+
+        private VehicleDto MapToDto(Vehicle vehicle)
+        {
+            return new VehicleDto
+            {
+                Id = vehicle.Id,
+                Brand = vehicle.Brand,
+                Model = vehicle.Model,
+                Type = vehicle.Type ?? string.Empty,
+                NumberOfPassengers = vehicle.NumberOfPassengers,
+                FuelType = vehicle.FuelType ?? string.Empty,
+                TransmissionType = vehicle.TransmissionType ?? string.Empty,
+                Location = vehicle.Location ?? string.Empty,
+                PricePerDay = vehicle.PricePerDay,
+                IsAvailable = vehicle.IsAvailable,
+                ImageUrls = vehicle.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>(),
+                Amenities = vehicle.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>(),
+                // Optional: include DistrictId in DTO if needed
+                DistrictId = vehicle.DistrictId
+            };
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehicles()
+        {
+            var vehicles = await _context.Vehicles
+                .Include(v => v.Images)
+                .Include(v => v.Amenities)
+                .ToListAsync();
+
+            var dtos = vehicles.Select(MapToDto);
+            return Ok(dtos);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<VehicleDto>> GetVehicle(int id)
+        {
+            var vehicle = await _context.Vehicles
+                .Include(v => v.Images)
+                .Include(v => v.Amenities)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vehicle == null)
                 return NotFound();
 
-            return Ok(vehicle);
-        }
-
-        [HttpPost("{id}/reviews")]
-        public async Task<ActionResult> AddReview(int id, VehicleReview review)
-        {
-            var vehicle = await _context.Vehicles.FindAsync(id);
-            if (vehicle == null)
-                return NotFound();
-
-            review.VehicleId = id;
-            _context.VehicleReviews.Add(review);
-            await _context.SaveChangesAsync();
-
-            return Ok(review);
-        }
-
-        [HttpPost("{id}/reserve")]
-        public async Task<ActionResult> ReserveVehicle(int id, VehicleReservation reservation)
-        {
-            var vehicle = await _context.Vehicles.FindAsync(id);
-            if (vehicle == null || !vehicle.IsAvailable)
-                return BadRequest("Vehicle not available");
-
-            reservation.VehicleId = id;
-            _context.VehicleReservations.Add(reservation);
-
-            // Optional: mark vehicle unavailable
-            vehicle.IsAvailable = false;
-            await _context.SaveChangesAsync();
-
-            return Ok(reservation);
+            return Ok(MapToDto(vehicle));
         }
     }
 }

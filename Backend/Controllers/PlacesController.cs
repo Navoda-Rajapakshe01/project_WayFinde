@@ -20,7 +20,7 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        
+
 
         // GET: api/places
         [HttpGet]
@@ -29,8 +29,8 @@ namespace Backend.Controllers
             var places = await _context.PlacesToVisit.ToListAsync();
             return Ok(places);
         }
-        
-       
+
+
 
         // GET: api/places/2 - For getting details of a single place
         [HttpGet("{id:int}")]
@@ -49,7 +49,7 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
-        
+
 
 
         [HttpGet("by-category/{categoryId}")]
@@ -57,161 +57,19 @@ namespace Backend.Controllers
         {
             // Fetch places that belong to the given categoryId
             var places = await _context.PlacesToVisit
-            .Where(p => p.CategoryId == categoryId)  
+            .Where(p => p.CategoryId == categoryId)
             .ToListAsync();
 
             // If no places found, return a 404 Not Found
             if (places == null || places.Count == 0)
-            return NotFound("No places found for this category");
-
-             return Ok(places);  
-        }
-
-        [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll()
-        {
-            var places = await _context.PlacesToVisit  // Use PlacesToVisit instead of Places
-                .Include(p => p.District)  // Include the related District data
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Name,  // PlaceName in your schema is `Name` in PlacesToVisit
-                    p.GoogleMapLink,  // GoogleUrl in your schema is `GoogleMapLink`
-                    p.Rating,
-                    p.HowManyRated,
-                    p.AvgTime,
-                    p.AvgSpend,
-                    p.PlaceType,
-                    p.MainImageUrl,  // ImageUrl in your schema is `MainImageUrl`
-
-                    // District data (ensure these fields exist in District model)
-                    District = new
-                    {
-                        p.District.Id,
-                        p.District.Name,  // DistrictName is `Name` in your District model
-                        p.District.SubTitle,
-                        p.District.ImageUrl
-                    }
-                })
-                .ToListAsync();
+                return NotFound("No places found for this category");
 
             return Ok(places);
         }
 
 
-        [HttpPost]
-        public async Task<IActionResult> AddPlace([FromBody] AddPlaceDTO dto)
-        {
-            // Check if a place with the same name already exists
-            var existingPlace = await _context.PlacesToVisit
-            .FirstOrDefaultAsync(p => 
-                p.Name.ToLower() == dto.Name.ToLower().Trim() &&
-                p.DistrictId == dto.DistrictId);
 
-        if (existingPlace != null)
-        {
-            return Conflict("A place with the same name already exists in this district.");
-        }
 
-            // Check related entities exist
-            var district = await _context.Districts.FindAsync(dto.DistrictId);
-            if (district == null) return BadRequest("District not found.");
-
-            var category = dto.CategoryId.HasValue 
-                ? await _context.Categories.FindAsync(dto.CategoryId.Value)
-                : null;
-
-            if (dto.CategoryId.HasValue && category == null)
-                return BadRequest("Category not found.");
-
-            // Create the new place
-            var place = new PlacesToVisit
-            {
-                Name = dto.Name,
-                MainImageUrl = dto.MainImageUrl,
-                Description = dto.Description,
-                History = dto.History,
-                OpeningHours = dto.OpeningHours,
-                Address = dto.Address,
-                GoogleMapLink = dto.GoogleMapLink,
-                DistrictId = dto.DistrictId,
-                District = district,
-                CategoryId = dto.CategoryId,
-                Category = category!
-            };
-
-            _context.PlacesToVisit.Add(place);
-            await _context.SaveChangesAsync();
-
-            return Ok(place);
-        }
-
-        // PATCH: api/places/5
-        [HttpPatch("{id:int}")]
-        public async Task<IActionResult> UpdatePlace(int id, [FromBody] UpdatePlaceDTO dto)
-        {
-            // Check if the DTO is valid
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            // Find the place by its ID
-            var place = await _context.PlacesToVisit
-                .Where(p => p.Id == id)
-                .FirstOrDefaultAsync();
-
-            if (place == null)
-            {
-                return NotFound("Place not found");
-            }
-
-            // Check if a place with the same name exists in the district
-            var existingPlace = await _context.PlacesToVisit
-                .FirstOrDefaultAsync(p =>
-                    p.Name.ToLower() == dto.Name.ToLower().Trim() &&
-                    p.DistrictId == dto.DistrictId &&
-                    p.Id != id); // Ensure it’s not the same place being updated
-
-            if (existingPlace != null)
-            {
-                return Conflict("A place with the same name already exists in this district.");
-            }
-
-            // Check if related entities exist
-            var district = await _context.Districts.FindAsync(dto.DistrictId);
-            if (district == null) return BadRequest("District not found.");
-
-            var category = dto.CategoryId.HasValue
-                ? await _context.Categories.FindAsync(dto.CategoryId.Value)
-                : null;
-
-            if (dto.CategoryId.HasValue && category == null)
-                return BadRequest("Category not found.");
-
-            // Update the place details
-            place.Name = dto.Name;
-            place.Description = dto.Description;
-            place.History = dto.History;
-            place.OpeningHours = dto.OpeningHours;
-            place.Address = dto.Address;
-            place.GoogleMapLink = dto.GoogleMapLink;
-            place.MainImageUrl = dto.MainImageUrl;
-            place.DistrictId = dto.DistrictId;
-            place.District = district;
-            place.CategoryId = dto.CategoryId;
-            place.Category = category;
-
-            try
-            {
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, "An error occurred while updating the place.");
-            }
-
-            return Ok(place);
-        }
 
 
 
@@ -222,14 +80,14 @@ namespace Backend.Controllers
             var place = await _context.PlacesToVisit.FindAsync(id);
 
             if (place == null)
-        {
-            return NotFound("Place not found");
-        }
+            {
+                return NotFound("Place not found");
+            }
 
-        _context.PlacesToVisit.Remove(place);
-        await _context.SaveChangesAsync();
+            _context.PlacesToVisit.Remove(place);
+            await _context.SaveChangesAsync();
 
-        return Ok("Place deleted successfully");
+            return Ok("Place deleted successfully");
         }
 
         // GET: api/places/count
@@ -241,7 +99,7 @@ namespace Backend.Controllers
         }
 
         // GET: api/places/popular
-       
+
 
         // GET: api/11/images
         [HttpGet("{placeId}/images")]

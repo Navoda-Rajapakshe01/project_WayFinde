@@ -1,4 +1,4 @@
-﻿using Backend.Models;
+using Backend.Models;
 
 using Backend.DTOs;
 using CloudinaryDotNet.Actions;
@@ -14,9 +14,9 @@ using Backend.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Controllers
-{
+{ 
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class ProfileController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -44,7 +44,11 @@ namespace Backend.Controllers
             if (userId == null || !Guid.TryParse(userId, out Guid userGuid))
                 return Unauthorized();
 
-            var result = await _userService.UpdateUserAsync(userGuid, updateProfileDto.Username, updateProfileDto.ContactEmail, updateProfileDto.ProfilePictureUrl);
+            var result = await _userService.UpdateUserAsync(
+                userGuid,
+                updateProfileDto.Username,
+                updateProfileDto.ContactEmail,
+                updateProfileDto.ProfilePictureUrl ?? string.Empty);
             if (!result) return NotFound("User not found");
 
             return Ok("Profile updated successfully");
