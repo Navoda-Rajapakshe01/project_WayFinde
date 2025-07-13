@@ -24,7 +24,7 @@ const Register = () => {
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
 
-  const navigate = useNavigate();
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,9 +65,7 @@ const Register = () => {
       return; // Prevent form submission
     }
 
-    // Create a copy of the form data for the API request
-    const apiData = { ...formData };
-
+    
     if (!validateEmail(formData.contactEmail)) {
       setEmailError("Please enter a valid email address");
       return;
