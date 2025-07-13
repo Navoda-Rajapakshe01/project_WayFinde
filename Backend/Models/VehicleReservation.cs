@@ -3,25 +3,17 @@
     public class VehicleReservation
     {
         public int Id { get; set; }
-
-        //user info
-        public string FullName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string PhoneNumber { get; set; } = string.Empty;
-        public string DriversLicenseNumber { get; set; } = string.Empty;
-
-        //Blling info
-        public string BillingName { get; set; } = string.Empty;
-        public string StreetAddress { get; set; } = string.Empty;
-        public string City { get; set; } = string.Empty;
-        public string State { get; set; } = string.Empty;
-        public string ZipCode { get; set; } = string.Empty;
-
-
-        public DateTime ReservationDate { get; set; } = DateTime.Now;
-
         public int VehicleId { get; set; }
-        public Vehicle? Vehicle { get; set; }
-
+        public Vehicle Vehicle { get; set; }
+        public string CustomerName { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string PickupLocation { get; set; } = string.Empty;
+        public string ReturnLocation { get; set; } = string.Empty;
+        public string AdditionalRequirements { get; set; } = string.Empty;
+        public decimal TotalAmount { get; set; }
+        public string Status { get; set; } = "Pending";
+        public DateTime BookingDate { get; set; } = DateTime.UtcNow;
+        public int? TripId { get; set; }  // Nullable TripId field
     }
 }

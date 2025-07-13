@@ -1,14 +1,14 @@
 /* Base Variables */
 :root {
   --primary-color: #14b9d5;
-  --primary-dark: #0E8A9E;
-  --primary-light: #5ED6E5;
-  --secondary-color: #14B9D5;
+  --primary-dark: #0e8a9e;
+  --primary-light: #5ed6e5;
+  --secondary-color: #14b9d5;
   --text-muted: rgba(255, 255, 255, 0.8);
   --border-color: rgba(255, 255, 255, 0.2);
   --transition: all 0.3s ease;
   --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 40px;
+  --margin-top: 40px;
 }
 
 .logo {
@@ -44,18 +44,18 @@
 }
 
 /* Home Section Styles */
-.homesection-padding { 
-  padding: 60px 0; 
+.homesection-padding {
+  padding: 60px 0;
 }
 
-.homesection-title { 
+.homesection-title {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 15px;
   color: #333;
 }
 
-.homesection-subtitle { 
+.homesection-subtitle {
   font-size: 1.1rem;
   color: #666;
   margin-bottom: 40px;
@@ -75,10 +75,10 @@
   cursor: pointer;
 }
 .homebtn-outline {
-  border-color: var(--primary-color, #14B9D5);
-  color: var(--primary-color, #14B9D5);
+  border-color: var(--primary-color, #14b9d5);
+  color: var(--primary-color, #14b9d5);
 }
 .homebtn-outline:hover {
-  background-color: var(--primary-color, #14B9D5);
+  background-color: var(--primary-color, #14b9d5);
   color: #fff;
 }
