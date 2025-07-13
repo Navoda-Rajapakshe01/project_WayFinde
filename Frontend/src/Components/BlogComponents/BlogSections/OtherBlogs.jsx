@@ -115,6 +115,18 @@ const OtherBlogs = ({ excludeId }) => {
               blog.user?.Username ??
               blog.User?.Username ??
               "Anonymous",
+
+            reactionCount:
+              blog.NumberOfReacts ??
+              blog.numberOfReacts ??
+              blog.reactionCount ??
+              blog.ReactionCount ??
+              blog.reactionsCount ??
+              blog.ReactionsCount ??
+              blog.likesCount ??
+              0,
+
+            commentCount: blog.numberOfComments ?? blog.numberOfComments ?? 0,
           };
         });
 
@@ -200,11 +212,17 @@ const OtherBlogs = ({ excludeId }) => {
             <p className="blog-meta">
               <span className="meta-item">
                 <FaComment className="icon" />
-                <span>Comments</span>
+                <span>
+                  Comments{" "}
+                  {blog.commentCount > 0 ? `(${blog.commentCount})` : ""}
+                </span>
               </span>
               <span className="meta-item">
                 <FaThumbsUp className="icon" />
-                <span>Likes</span>
+                <span>
+                  Likes{" "}
+                  {blog.reactionCount > 0 ? `(${blog.reactionCount})` : ""}
+                </span>
               </span>
             </p>
           </div>
