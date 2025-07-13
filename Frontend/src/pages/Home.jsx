@@ -2,7 +2,6 @@ import React from "react";
 import HeroSection from "../Components/HeroSection/HeroSection";
 import ServicesOverviewSection from "../Components/HomeSections/ServiceOverviewSection";
 import LocationSection from "../Components/LocationSection/LocationSection";
-import FeaturedListingsSection from "../Components/HomeSections/FeaturedListingsSection";
 import BlogPostSection from "../Components/BlogComponents/BlogPostSection/BlogPostSection";
 
 function Home() {
@@ -26,9 +25,6 @@ function Home() {
         title="Explore Popular Destinations"
         subtitle="Get inspired for your next adventure"
       />
-
-      {/* 3. Featured Stays & Rides (Accommodation & Vehicles) */}
-      <FeaturedListingsSection />
 
       {/* 4. Latest from Our Travelers (Blogs) */}
       <BlogPostSection
