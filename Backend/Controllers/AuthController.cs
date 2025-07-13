@@ -305,6 +305,47 @@ namespace Backend.Controllers
         }
 
 
+        // Add this method to your AuthController class
+        // IMPORTANT: REMOVE THIS ENDPOINT AFTER CREATING THE FIRST ADMIN
+        [HttpPost("setup-initial-admin")]
+        public async Task<IActionResult> SetupInitialAdmin([FromBody] AdminCreateDto model)
+        {
+            // Check if any admin exists
+            bool adminExists = await _context.UsersNew.AnyAsync(u => u.Role == "Admin");
+            if (adminExists)
+            {
+                return BadRequest("Admin already exists");
+            }
+
+            // Check if username or email already exists
+            bool userExists = await _context.UsersNew.AnyAsync(u =>
+                u.Username == model.Username || u.ContactEmail == model.Email);
+            if (userExists)
+            {
+                return BadRequest("Username or email already exists");
+            }
+
+            // Create admin user
+            var passwordHasher = new PasswordHasher<UserNew>();
+            var newAdmin = new UserNew
+            {
+                Id = Guid.NewGuid(),
+                Username = model.Username,
+                ContactEmail = model.Email,
+                Role = "Admin",
+                PasswordHash = passwordHasher.HashPassword(null, model.Password),
+                RegisteredDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
+                LastLoginDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
+            };
+
+            // Add to database
+            _context.UsersNew.Add(newAdmin);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Initial admin created successfully" });
+        }
+
+
 
     }
 }

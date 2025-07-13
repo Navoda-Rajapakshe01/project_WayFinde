@@ -1,7 +1,9 @@
 
+
 ﻿using Backend.DTOs;
 
 ﻿﻿using Microsoft.EntityFrameworkCore;
+
 
 using Backend.Models;
 using Backend.Models.User;
@@ -60,7 +62,9 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
+
         public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
+
 
         public DbSet<BlogReaction> BlogReactions { get; set; }
         public object? Amenities { get; internal set; }

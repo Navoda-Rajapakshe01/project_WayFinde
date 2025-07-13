@@ -23,18 +23,24 @@ const Register = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
+const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  // Update form data using functional update for better performance
+  setFormData((prev) => ({ ...prev, [name]: value }));
+  
+  // Clear any previous error
+  if (name === "contactEmail") {
+    setEmailError("");
+  }
+};
 
-    if (name === "contactEmail") setEmailError("");
-  };
-
-  const validateEmail = (email) => {
-    // Simple email regex validation
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
+const validateEmail = (email) => {
+  // Simple email regex validation
+  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return regex.test(email);
+};
   };
 
   const handleEmailBlur = () => {
@@ -55,6 +61,16 @@ const Register = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+
+    // Validate email before submission
+    if (!validateEmail(formData.contactEmail)) {
+      setEmailError("Please enter a valid email address");
+      return; // Prevent form submission
+    }
+
+    // Create a copy of the form data for the API request
+    const apiData = { ...formData };
 
     if (!validateEmail(formData.contactEmail)) {
       setEmailError("Please enter a valid email address");
@@ -80,8 +96,15 @@ const Register = () => {
       console.log("Sending registration data:", apiData);
       const response = await axios.post(
         "http://localhost:5030/api/Auth/register",
+
+
         apiData,
-        { headers: { "Content-Type": "application/json" } }
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+
       );
       console.log("Registration response:", response.data);
 
@@ -92,12 +115,17 @@ const Register = () => {
     } catch (error) {
       console.error("Registration error:", error);
       if (error.response) {
+
+        // The server responded with a status code outside the 2xx range
+        console.error("Error response data:", error.response.data);
+
         const errorMessage =
           typeof error.response.data === "string"
             ? error.response.data
             : error.response.data?.message ||
               error.response.data?.title ||
               "Registration failed. Please check your information and try again.";
+
         setError(errorMessage);
       } else if (error.request) {
         setError(
@@ -150,14 +178,20 @@ const Register = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
+
+            required
+          >
+
             <option value="NormalUser">Normal User</option>
             <option value="TransportProvider">Transport Provider</option>
             <option value="AccommodationProvider">
               Accommodation Provider
             </option>
 
+
             <option value="ServiceProvider">Service Provider</option>{" "}
             {/* Added this option */}
+
           </select>
 
           {/* Only show serviceType dropdown if role is exactly "ServiceProvider" */}

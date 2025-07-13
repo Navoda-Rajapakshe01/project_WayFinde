@@ -41,6 +41,31 @@ const Login = () => {
       if (!token) throw new Error("No token received from server");
 
       localStorage.setItem("token", token);
+
+      // Check for admin credentials
+      if (formData.username === "admin" && token) {
+        // Decode token to check role
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+        const userRole =
+          decodedToken.role ||
+          decodedToken.Role ||
+          decodedToken[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+
+        if (userRole === "Admin") {
+          console.log("Admin login detected");
+          setUser({
+            ...decodedToken,
+            isAdmin: true,
+          });
+          localStorage.setItem("isAdmin", "true");
+          navigate("/admin");
+          return;
+        }
+      }
+
+      // Continue with normal user login flow
       await handleProfileFetch(token);
     } catch (error) {
       console.error("Login error:", error);
@@ -79,11 +104,33 @@ const Login = () => {
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
 
+
+      // Check if user is admin
+      const userRole =
+        decodedToken.role ||
+        decodedToken.Role ||
+        decodedToken[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ];
+
+      if (userRole === "Admin") {
+        setUser({
+          ...decodedToken,
+          isAdmin: true,
+        });
+        localStorage.setItem("isAdmin", "true");
+        navigate("/admin");
+        return;
+      }
+
+      // Continue with normal user profile fetch
+
       // Auto-detect the role claim key
       const roleClaimKey = Object.keys(decodedToken).find((k) =>
         k.toLowerCase().includes("role")
       );
       const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
+
 
       const profileRes = await axios.get(
         "http://localhost:5030/api/Auth/profile",

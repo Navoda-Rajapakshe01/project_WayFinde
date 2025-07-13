@@ -246,9 +246,11 @@ namespace Backend.Migrations
 
 
 
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
 
 
                     b.Property<string>("ImageUrls")
@@ -695,6 +697,7 @@ namespace Backend.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
 
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -746,6 +749,7 @@ namespace Backend.Migrations
 
                     b.Property<int>("TripId")
                         .HasColumnType("int");
+
 
                     b.Property<int>("BlogId")
                         .HasColumnType("int");
@@ -1186,6 +1190,7 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
                 {
                     b.HasOne("Backend.Models.Trip", "Trip")
@@ -1234,6 +1239,7 @@ namespace Backend.Migrations
 
                     b.Navigation("District");
                 });
+
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
                 {
