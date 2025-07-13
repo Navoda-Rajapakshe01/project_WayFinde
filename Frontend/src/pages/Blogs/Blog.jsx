@@ -1,13 +1,13 @@
-import React, { useEffect } from "react";
-import OtherBlogs from "../../Components/BlogComponents/BlogSections/OtherBlogs";
+import React from "react";
+import { useEffect } from "react";
+import HeroSection from "../../Components/HeroSection/HeroSection";
 import ImageGrid from "../../Components/BlogComponents/ImageGrid/ImageGrid";
 import blogData from "../../Components/BlogComponents/blogData.json";
-import HeroSection from "../../Components/HeroSection/HeroSection";
-import "../CSS/Blog.css";
+import "../CSS/Blog.css"; 
 
 const backgroundImage = "/Blogimages/blogbackground1.jpg";
 
-const { latestBlogData, trendingBlogData } = blogData;
+const { latestBlogData, trendingBlogData, otherBlogData } = blogData;
 const Blog = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -29,8 +29,8 @@ const Blog = () => {
       <ImageGrid
         latestBlogs={latestBlogData}
         trendingBlogs={trendingBlogData}
+        otherBlogs={otherBlogData}
       />
-      <OtherBlogs />
     </div>
   );
 };

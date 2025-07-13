@@ -30,7 +30,25 @@ namespace Backend.Controllers
             return Ok(places);
         }
         
-       
+        // GET: api/places/by-district-name/nuwara-eliya
+        [HttpGet("by-district-name/{slug}")]
+        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
+        {
+            // Find the district by the slug
+            var district = await _context.Districts
+                .FirstOrDefaultAsync(d => d.Slug.ToLower() == slug.ToLower());
+
+            // If district not found, return a 404 Not Found
+            if (district == null)
+                return NotFound("District not found");
+
+            // Get places belonging to the found district
+            var places = await _context.PlacesToVisit
+                .Where(p => p.DistrictId == district.Id)
+                .ToListAsync();
+
+            return Ok(places);
+        }
 
         // GET: api/places/2 - For getting details of a single place
         [HttpGet("{id:int}")]
@@ -49,7 +67,13 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
-        
+        // GET: api/categories
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            return Ok(categories);
+        }
 
 
         [HttpGet("by-category/{categoryId}")]
@@ -66,38 +90,6 @@ namespace Backend.Controllers
 
              return Ok(places);  
         }
-
-        [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll()
-        {
-            var places = await _context.PlacesToVisit  // Use PlacesToVisit instead of Places
-                .Include(p => p.District)  // Include the related District data
-                .Select(p => new
-                {
-                    p.Id,
-                    p.Name,  // PlaceName in your schema is `Name` in PlacesToVisit
-                    p.GoogleMapLink,  // GoogleUrl in your schema is `GoogleMapLink`
-                    p.Rating,
-                    p.HowManyRated,
-                    p.AvgTime,
-                    p.AvgSpend,
-                    p.PlaceType,
-                    p.MainImageUrl,  // ImageUrl in your schema is `MainImageUrl`
-
-                    // District data (ensure these fields exist in District model)
-                    District = new
-                    {
-                        p.District.Id,
-                        p.District.Name,  // DistrictName is `Name` in your District model
-                        p.District.SubTitle,
-                        p.District.ImageUrl
-                    }
-                })
-                .ToListAsync();
-
-            return Ok(places);
-        }
-
 
         [HttpPost]
         public async Task<IActionResult> AddPlace([FromBody] AddPlaceDTO dto)
@@ -241,7 +233,23 @@ namespace Backend.Controllers
         }
 
         // GET: api/places/popular
-       
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularPlaces()
+        {
+            var popularPlaces = await _context.PlacesToVisit
+                .Include(p => p.Reviews)
+                .Select(p => new {
+                    Id = p.Id,
+                    Name = p.Name,
+                    District = p.District,
+                    Rating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0
+                })
+                .OrderByDescending(p => p.Rating)
+                .Take(5)
+                .ToListAsync();
+
+            return Ok(popularPlaces);
+        }
 
         // GET: api/11/images
         [HttpGet("{placeId}/images")]
