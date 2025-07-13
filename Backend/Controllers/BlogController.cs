@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Backend.Services;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization; 
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Backend.Data;
@@ -16,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Net;
 using Microsoft.Extensions.Logging;
 using Backend.DTO;
-using Azure;
+using Azure; 
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Specialized;
 

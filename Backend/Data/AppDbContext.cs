@@ -20,6 +20,7 @@ namespace Backend.Data
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
         public DbSet<VehicleReservation> VehicleReservations { get; set; }
+        public DbSet<VehicleAmenity> VehicleAmenities { get; set; }
 
         // Places & Districts
         public DbSet<District> Districts { get; set; }
@@ -54,7 +55,7 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-        public object? Amenities { get; internal set; }
+        public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -99,64 +100,6 @@ namespace Backend.Data
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Amount)
                 .HasPrecision(18, 2);
-
-            // Seed Vehicles
-            modelBuilder.Entity<Vehicle>().HasData(
-                new Vehicle
-                {
-                    Id = 1,
-                    Brand = "Toyota",
-                    Model = "Corolla",
-                    Type = "Sedan",
-                    NumberOfPassengers = 5,
-                    FuelType = "Petrol",
-                    TransmissionType = "Automatic",
-                    Location = "Colombo",
-                    OwnerName = "John Doe",
-                    OwnerCity = "Colombo",
-                    Description = "A comfortable and fuel-efficient city car.",
-                    PricePerDay = 45.00m,
-                    IsAvailable = true
-                },
-                new Vehicle
-                {
-                    Id = 2,
-                    Brand = "Suzuki",
-                    Model = "Wagon R",
-                    Type = "Mini Van",
-                    NumberOfPassengers = 4,
-                    FuelType = "Hybrid",
-                    TransmissionType = "Automatic",
-                    Location = "Kandy",
-                    OwnerName = "Jane Smith",
-                    OwnerCity = "Kandy",
-                    Description = "Perfect for short family trips and hill country.",
-                    PricePerDay = 38.50m,
-                    IsAvailable = true
-                }
-            );
-
-            // Seeding Accommodations
-            modelBuilder.Entity<Accommodation>().HasData(
-                new Accommodation
-                {
-                    Id = 1,
-                    Name = "Earl's Regency",
-                    Type = "Hotel",
-                    Location = "Kandy",
-                    PricePerDay = 56900m,
-                    IsAvailable = true
-                },
-                new Accommodation
-                {
-                    Id = 2,
-                    Name = "Sajeew Paradise",
-                    Type = "Cabana suite",
-                    Location = "Rajawella",
-                    PricePerDay = 14900m,
-                    IsAvailable = true
-                }
-            );
 
             // Districts Configuration
             // District configuration

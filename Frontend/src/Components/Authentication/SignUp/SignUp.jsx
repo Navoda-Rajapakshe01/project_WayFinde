@@ -5,6 +5,9 @@ import "./SignUp.css";
 
 const Register = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Determine initial role from query param; map "service" to "ServiceProvider"
   const queryParams = new URLSearchParams(location.search);
   const initialRole =
     queryParams.get("role") === "service" ? "ServiceProvider" : "NormalUser";
@@ -13,16 +16,33 @@ const Register = () => {
     username: "",
     password: "",
     contactEmail: "",
-    role: initialRole, // Set the initial role based on query parameter
+    role: initialRole,
     serviceType: "",
   });
 
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+  const [emailError, setEmailError] = useState("");
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "contactEmail") setEmailError("");
+  };
+
+  const validateEmail = (email) => {
+    // Simple email regex validation
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+  };
+
+  const handleEmailBlur = () => {
+    if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -30,27 +50,32 @@ const Register = () => {
     setError("");
     setSuccess("");
 
-    // Create a copy of the form data for the API request
-    const apiData = { ...formData };
+    if (!validateEmail(formData.contactEmail)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
 
-    // If user is not a service provider, send empty string for serviceType
-    if (apiData.role !== "ServiceProvider") {
+    // Prepare API data: if role is NOT one of the providers, clear serviceType
+    const apiData = { ...formData };
+    if (
+      ![
+        "ServiceProvider",
+        "TransportProvider",
+        "AccommodationProvider",
+      ].includes(apiData.role)
+    ) {
       apiData.serviceType = "";
     }
 
-    try {
-      // Log the data being sent to help debug
-      console.log("Sending registration data:", apiData);
+    // You might want to normalize serviceType as well if needed
+    // But your backend should decide on allowed values anyway
 
+    try {
+      console.log("Sending registration data:", apiData);
       const response = await axios.post(
         "http://localhost:5030/api/Auth/register",
-        
         apiData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
       console.log("Registration response:", response.data);
 
@@ -60,26 +85,19 @@ const Register = () => {
       }, 1800);
     } catch (error) {
       console.error("Registration error:", error);
-
-      // Enhanced error handling
       if (error.response) {
-        // The server responded with a status code outside the 2xx range
-        console.error("Error response data:", error.response.data);
         const errorMessage =
           typeof error.response.data === "string"
             ? error.response.data
             : error.response.data?.message ||
               error.response.data?.title ||
               "Registration failed. Please check your information and try again.";
-
         setError(errorMessage);
       } else if (error.request) {
-        // The request was made but no response was received
         setError(
           "No response from server. Please check your connection and try again."
         );
       } else {
-        // Something happened in setting up the request
         setError("Registration failed. Please try again later.");
       }
     }
@@ -115,8 +133,11 @@ const Register = () => {
             placeholder="Email"
             value={formData.contactEmail}
             onChange={handleChange}
+            onBlur={handleEmailBlur}
+            className={emailError ? "input-error" : ""}
             required
           />
+          {emailError && <p className="field-error-message">{emailError}</p>}
 
           {/* Role selection */}
           <select
@@ -124,12 +145,16 @@ const Register = () => {
             value={formData.role}
             onChange={handleChange}
             required>
-            <option value="">Select Role</option>
             <option value="NormalUser">Normal User</option>
-            <option value="ServiceProvider">Service Provider</option>
+            <option value="TransportProvider">Transport Provider</option>
+            <option value="AccommodationProvider">
+              Accommodation Provider
+            </option>
+            <option value="ServiceProvider">Service Provider</option>{" "}
+            {/* Added this option */}
           </select>
 
-          {/* Conditional service type dropdown */}
+          {/* Only show serviceType dropdown if role is exactly "ServiceProvider" */}
           {formData.role === "ServiceProvider" && (
             <select
               name="serviceType"
@@ -145,6 +170,7 @@ const Register = () => {
           )}
 
           <button type="submit">Register</button>
+
           {success && <p className="success-message">{success}</p>}
           {error && <p className="error-message">{error}</p>}
         </form>
