@@ -26,7 +26,7 @@ namespace Backend.Models
                 //public District? District { get; set; } = null!;
                 
 
-                public string Location { get; set; } = null;
+                public string Location { get; set; } = string.Empty;
                 public List<string> Tags { get; set; } = new List<string>();
 
                 public int NumberOfComments { get; set; } = 0;
@@ -42,6 +42,7 @@ namespace Backend.Models
 
                 public List<string> ImageUrls { get; set; } = new();
                 public string Description { get; set; } = string.Empty;
+
 
         // One blog has many comments
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();

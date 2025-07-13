@@ -1,192 +1,189 @@
 .pagination button {
-    padding: 0.5rem 1rem;
-    background-color: #19b9df;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .pagination button:hover:not(:disabled) {
-    background-color: #3aa69b;
-  }
-  
-  .pagination button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  .pagination button.active {
-    background-color: #ff8c42;
-  }
+  padding: 0.5rem 1rem;
+  background-color: #19b9df;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
 
-  .custom-container {
-    
-    margin-left:100px;
-    margin-right:100px;
-    
-    padding-top: 32px;    /* same as py-8 in Tailwind */
-    padding-bottom: 32px;
-  }
-  .LatestBlogsHeading{
-    font-size: 24px;     /* Equivalent to text-2xl */
-  font-weight: 700;    /* Equivalent to font-bold */
+.pagination button:hover:not(:disabled) {
+  background-color: #3aa69b;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pagination button.active {
+  background-color: #ff8c42;
+}
+
+.custom-container {
+  margin-left: 100px;
+  margin-right: 100px;
+
+  padding-top: 32px; /* same as py-8 in Tailwind */
+  padding-bottom: 32px;
+}
+.LatestBlogsHeading {
+  font-size: 24px; /* Equivalent to text-2xl */
+  font-weight: 700; /* Equivalent to font-bold */
   margin-bottom: 16px; /* Equivalent to mb-4 */
-  }
+}
 
-  .ScrollButtonsSection{
-    position: relative;   /* relative positioning */
-  display: flex;        /* flex container */
-  align-items: center;  /* vertically center items */
-  }
+.ScrollButtonsSection {
+  position: relative; /* relative positioning */
+  display: flex; /* flex container */
+  align-items: center; /* vertically center items */
+}
 
-  .ScrollButtonLeft{
-    position: absolute;
-    left: 0;
-    z-index: 10;
-    background-color: #e5e7eb; /* Tailwind's gray-200 */
-    padding: 0.5rem;
-    border-radius: 9999px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  .scroll-button-right {
-    position: absolute;
-    right: 0;
-    z-index: 10;
-    background-color: #e5e7eb; /* bg-gray-200 */
-    padding: 0.5rem; /* p-2 */
-    border-radius: 9999px; /* rounded-full */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
-    border: none;
-    cursor: pointer;
-  }
-  
-  .scroll-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 1rem; /* space-x-4 = 16px */
-    padding: 0.5rem; /* p-2 = 8px */
-    scroll-behavior: smooth;
-  
-    /* Hide scrollbar - cross-browser */
-    scrollbar-width: none; /* Firefox */
-  }
-  
-  .scroll-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
-  }
+.ScrollButtonLeft {
+  position: absolute;
+  left: 0;
+  z-index: 10;
+  background-color: #e5e7eb; /* Tailwind's gray-200 */
+  padding: 0.5rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.scroll-button-right {
+  position: absolute;
+  right: 0;
+  z-index: 10;
+  background-color: #e5e7eb; /* bg-gray-200 */
+  padding: 0.5rem; /* p-2 */
+  border-radius: 9999px; /* rounded-full */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+  border: none;
+  cursor: pointer;
+}
 
-  .blog-card {
-    min-width: 300px;
-    padding: 1rem; /* p-4 = 16px */
-    border-radius: 0.5rem; /* rounded-lg = 8px */
-    cursor: pointer;
-  
-    /* Equivalent to shadow-2xl */
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-  .blog-image {
-    width: 100%;                /* w-full */
-    height: 10rem;              /* h-40 → 40 * 0.25rem = 10rem = 160px */
-    object-fit: cover;          /* object-cover */
-    border-radius: 0.5rem;      /* rounded-lg = 8px */
-  }
-  .paragraph-muted {
-    color: #4b5563; /* text-gray-600 */
-  }
-  
-  .profile-link {
-    color: #4b5563; /* text-blue-500 */
-    text-decoration: none;
-  }
-  
-  .profile-link:hover {
-    text-decoration: underline; /* hover:underline */
-  }
+.scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem; /* space-x-4 = 16px */
+  padding: 0.5rem; /* p-2 = 8px */
+  scroll-behavior: smooth;
 
-  .TrendingBlogsSection{
-    margin-top: 2rem; /* Tailwind's mt-8 equals 32px */
-  }
-      
-  .TrendingBlogsHeading{
-    font-size: 1.5rem;       /* Tailwind's text-2xl = 24px */
-  font-weight: bold;       /* Tailwind's font-bold */
-  margin-bottom: 1rem;     /* Tailwind's mb-4 = 16px */
-  }
+  /* Hide scrollbar - cross-browser */
+  scrollbar-width: none; /* Firefox */
+}
 
-  .blog-title {
-    font-weight: 600; /* Tailwind's font-semibold */
-  }
-  
-  .blog-description {
-    color: #4B5563; /* Tailwind's text-gray-600 */
-  }
-  
-  .blog-meta {
-    display: inline-flex;
-    align-items: center;
-    column-gap: 0.5rem; /* Tailwind's space-x-2 = gap between children */
-    margin-top: 0.5rem;
-  }
-  
-  .meta-item {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem; /* Tailwind's gap-1 */
-  }
-  
-  .icon {
-    font-size: 1.25rem; /* Tailwind's text-xl = 20px */
-  }
-  .OtherBlogsSection{
-    margin-top: 2rem;
-  }
-  .other-blog-grid{
-    display: grid;
-  grid-template-columns: repeat(4,1fr); /* Tailwind's grid-cols-2 */
-  column-gap:10px;
+.scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.blog-card {
+  min-width: 300px;
+  padding: 1rem; /* p-4 = 16px */
+  border-radius: 0.5rem; /* rounded-lg = 8px */
+  cursor: pointer;
+
+  /* Equivalent to shadow-2xl */
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+.blog-image {
+  width: 100%; /* w-full */
+  height: 10rem; /* h-40 → 40 * 0.25rem = 10rem = 160px */
+  object-fit: cover; /* object-cover */
+  border-radius: 0.5rem; /* rounded-lg = 8px */
+}
+.paragraph-muted {
+  color: #4b5563; /* text-gray-600 */
+}
+
+.profile-link {
+  color: #4b5563; /* text-blue-500 */
+  text-decoration: none;
+}
+
+.profile-link:hover {
+  text-decoration: underline; /* hover:underline */
+}
+
+.TrendingBlogsSection {
+  margin-top: 2rem; /* Tailwind's mt-8 equals 32px */
+}
+
+.TrendingBlogsHeading {
+  font-size: 1.5rem; /* Tailwind's text-2xl = 24px */
+  font-weight: bold; /* Tailwind's font-bold */
+  margin-bottom: 1rem; /* Tailwind's mb-4 = 16px */
+}
+
+.blog-title {
+  font-weight: 600; /* Tailwind's font-semibold */
+}
+
+.blog-description {
+  color: #4b5563; /* Tailwind's text-gray-600 */
+}
+
+.blog-meta {
+  display: inline-flex;
+  align-items: center;
+  column-gap: 0.5rem; /* Tailwind's space-x-2 = gap between children */
+  margin-top: 0.5rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem; /* Tailwind's gap-1 */
+}
+
+.icon {
+  font-size: 1.25rem; /* Tailwind's text-xl = 20px */
+}
+.OtherBlogsSection {
+  margin-top: 2rem;
+}
+.other-blog-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Tailwind's grid-cols-2 */
+  column-gap: 10px;
   row-gap: 10px;
-  margin-left:5px;
+  margin-left: 5px;
   margin-right: 25px;
-  }
+}
 
-  .pagination-container{
-    display: flex;
+.pagination-container {
+  display: flex;
   justify-content: center; /* aligns items horizontally at the center */
-  margin-top: 1rem; 
-  }
-  .pagination-container {
-    display: flex;                   /* flex */
-    align-items: center;            /* items-center */
-    gap: 0.5rem;                    /* space-x-2 */
-  }
-  
-  .pagination-page {
-    padding: 0.25rem 0.75rem;       /* px-3 py-1 */
-    border-radius: 0.5rem;          /* rounded-lg */
-    background-color: #d1d5db;      /* bg-gray-300 */
-    color: #000000;                 /* text-black */
-    border: none;
-    cursor: pointer;
-  }
-  
-  .pagination-page.active {
-    background-color: #3b82f6;      /* bg-blue-500 */
-    color: white;                   /* text-white */
-  }
-  .pagination-button {
-    padding: 0.25rem 0.75rem;         /* px-3 py-1 → padding: 0.25rem top/bottom, 0.75rem left/right */
-    background-color: #d1d5db;        /* bg-gray-300 */
-    border-radius: 0.5rem;            /* rounded-lg */
-    margin-right: 0.5rem;             /* mr-2 */
-    cursor: pointer;
-    
-  }
-  
-  .pagination-button:disabled {
-    opacity: 0.5;                     /* disabled:opacity-50 */
-    cursor: not-allowed;
-  }
-    
+  margin-top: 1rem;
+}
+.pagination-container {
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  gap: 0.5rem; /* space-x-2 */
+}
+
+.pagination-page {
+  padding: 0.25rem 0.75rem; /* px-3 py-1 */
+  border-radius: 0.5rem; /* rounded-lg */
+  background-color: #d1d5db; /* bg-gray-300 */
+  color: #000000; /* text-black */
+  border: none;
+  cursor: pointer;
+}
+
+.pagination-page.active {
+  background-color: #3b82f6; /* bg-blue-500 */
+  color: white; /* text-white */
+}
+.pagination-button {
+  padding: 0.25rem 0.75rem; /* px-3 py-1 → padding: 0.25rem top/bottom, 0.75rem left/right */
+  background-color: #d1d5db; /* bg-gray-300 */
+  border-radius: 0.5rem; /* rounded-lg */
+  margin-right: 0.5rem; /* mr-2 */
+  cursor: pointer;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5; /* disabled:opacity-50 */
+  cursor: not-allowed;
+}

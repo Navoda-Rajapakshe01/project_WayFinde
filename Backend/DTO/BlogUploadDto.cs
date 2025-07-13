@@ -6,17 +6,17 @@ namespace Backend.DTOs
     public class UploadBlogDto
     {
         [Required]
-        public IFormFile Document { get; set; }
+        public required IFormFile Document { get; set; }
 
         [Required]
-        public IFormFile Image { get; set; }
+        public required IFormFile Image { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public required string Title { get; set; }
 
         [Required]
-        public string Author { get; set; }
+        public required string Author { get; set; }
 
-        public string Location { get; set; }
+        public required string Location { get; set; }
     }
 }

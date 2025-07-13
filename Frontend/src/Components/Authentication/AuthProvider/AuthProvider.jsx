@@ -9,22 +9,20 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Set up axios instance with authentication
   const setupAuthenticatedAxios = (token) => {
     return axios.create({
-      baseURL: 'https://localhost:7138',
+      baseURL: "https://localhost:7138",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
   };
 
-  // Function to fetch user profile from backend
   const fetchUserProfile = async (token) => {
     try {
       const api = setupAuthenticatedAxios(token);
-      const response = await api.get('/api/Auth/profile');
+      const response = await api.get("/api/Auth/profile");
       return response.data;
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -35,45 +33,59 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem("token");
-      
-      if (token && typeof token === 'string' && token.trim() !== '') {
+      console.log("[AuthProvider] token from localStorage:", token);
+
+      if (token && typeof token === "string" && token.trim() !== "") {
         try {
-          // Validate token format
-          if (token.split('.').length === 3) {
-            // Decode token to get basic user info
+          if (token.split(".").length === 3) {
             const decodedToken = jwtDecode(token);
-            
-            // Check if token is expired
+            console.log("[AuthProvider] Decoded token:", decodedToken);
+
             const currentTime = Date.now() / 1000;
             if (decodedToken.exp && decodedToken.exp < currentTime) {
-              console.warn("Token expired");
+              console.warn("[AuthProvider] Token expired");
               localStorage.removeItem("token");
               setUser(null);
             } else {
-              // Token is valid, fetch additional user data from profile endpoint
               const userProfile = await fetchUserProfile(token);
-              
-              if (userProfile) {
-                // Combine token data with profile data
-                setUser({
-                  ...decodedToken,
-                  ...userProfile
-                });
-              } else {
-                // If profile fetch fails, just use token data
-                setUser(decodedToken);
-              }
+              console.log("[AuthProvider] User profile from API:", userProfile);
+
+              // 🟢 Map claims to cleaner properties
+              const roleClaim =
+                decodedToken[
+                  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+                ];
+              const usernameClaim =
+                decodedToken[
+                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+                ];
+
+              const normalizedUser = {
+                ...decodedToken,
+                ...userProfile,
+                role: roleClaim,
+                username: usernameClaim,
+              };
+
+              console.log(
+                "[AuthProvider] Normalized user object:",
+                normalizedUser
+              );
+
+              setUser(normalizedUser);
             }
           } else {
-            console.warn("Invalid token format");
+            console.warn("[AuthProvider] Invalid token format");
             localStorage.removeItem("token");
           }
         } catch (error) {
-          console.error("Error processing token:", error);
+          console.error("[AuthProvider] Error processing token:", error);
           localStorage.removeItem("token");
         }
+      } else {
+        console.log("[AuthProvider] No token found");
       }
-      
+
       setLoading(false);
     };
 
@@ -86,19 +98,16 @@ const AuthProvider = ({ children }) => {
     window.location.href = "/";
   };
 
-  // Extended setUser function to handle profile updates
   const updateUser = async (userData) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return false;
-      
+
       const api = setupAuthenticatedAxios(token);
-      
-      // Call API to update user profile
-      await api.put('/api/User/update', userData);
-      
-      // Update local state with new data
-      setUser(prev => ({...prev, ...userData}));
+
+      await api.put("/api/User/update", userData);
+
+      setUser((prev) => ({ ...prev, ...userData }));
       return true;
     } catch (error) {
       console.error("Error updating user:", error);
@@ -107,17 +116,18 @@ const AuthProvider = ({ children }) => {
   };
 
   if (loading) {
-    return <div>Loading authentication...</div>; // Optional loading indicator
+    return <div>Loading authentication...</div>;
   }
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      setUser, 
-      updateUser, // Add the update function to context
-      logout,
-      isAuthenticated: !!user 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        updateUser,
+        logout,
+        isAuthenticated: !!user,
+      }}>
       {children}
     </AuthContext.Provider>
   );

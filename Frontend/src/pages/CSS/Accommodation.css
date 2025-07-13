@@ -1,0 +1,994 @@
+/* Accommodation.css */
+
+.accommodation-page-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Filter section styles */
+.accommodation-filter-section {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.accommodation-section-title {
+  font-size: 1.6rem;
+  margin: 0;
+  color: #333;
+}
+
+.toggle-filter-btn {
+  background: none;
+  border: none;
+  color: #2196f3;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.accommodation-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.accommodation-filter-input {
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.accommodation-filter-input:focus {
+  outline: none;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.price-range {
+  grid-column: span 2;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-input {
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.filter-actions {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.apply-btn {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.apply-btn:hover {
+  background-color: #0b7dda;
+}
+
+.reset-btn {
+  background-color: #f8f9fa;
+  color: #555;
+  border: 1px solid #ddd;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.reset-btn:hover {
+  background-color: #e9ecef;
+}
+
+/* Accommodation listings styles */
+.accommodation-listings-section {
+  margin-bottom: 3rem;
+}
+
+.accommodation-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.load-more-btn {
+  display: block;
+  margin: 2rem auto 0;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.load-more-btn:hover {
+  background-color: #0b7dda;
+}
+
+/* No results message */
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 1.5rem;
+  color: #666;
+}
+
+/* Popular locations section */
+.popular-locations-section {
+  margin-bottom: 3rem;
+}
+
+.locations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.location-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 180px;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.location-card:hover {
+  transform: scale(1.03);
+}
+
+.location-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.location-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+}
+
+.location-name {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.location-count {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Loading container */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #2196f3;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+.booking-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .accommodation-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-range {
+    grid-column: span 1;
+  }
+
+  .filter-actions {
+    grid-column: span 1;
+  }
+
+  .accommodation-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .locations-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+/* AccommodationCard.css */
+
+.accommodation-card {
+  position: relative;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.accommodation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.accommodation-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.accommodation-card-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.accommodation-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.accommodation-name {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #333;
+  flex: 1;
+}
+
+.accommodation-type {
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: 0.5rem;
+}
+
+.accommodation-location {
+  display: flex;
+  align-items: center;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.accommodation-location::before {
+  content: "📍";
+  margin-right: 0.5rem;
+}
+
+.accommodation-price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2196f3;
+  margin-bottom: 0.8rem;
+}
+
+.accommodation-price span {
+  font-size: 0.9rem;
+  font-weight: normal;
+  color: #666;
+}
+
+.accommodation-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.accommodation-detail {
+  display: flex;
+  align-items: center;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.accommodation-detail i {
+  margin-right: 0.3rem;
+}
+
+.accommodation-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.amenity-tag {
+  display: inline-block;
+  background-color: #e9f5e9;
+  color: #2196f3;
+  padding: 0.25rem 0.5rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.more-tag {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.accommodation-description {
+  color: #555;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  flex-grow: 1;
+}
+
+.accommodation-status {
+  margin-bottom: 1rem;
+}
+
+.status-available {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.status-unavailable,
+.status-booked {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.status-maintenance {
+  color: #ffc107;
+  font-weight: 600;
+}
+
+.accommodation-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-top: auto;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.status-toggle-btn,
+.view-bookings-btn,
+.edit-btn,
+.delete-btn,
+.book-now-btn {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.status-toggle-btn {
+  width: 100%;
+}
+
+.status-toggle-btn.available {
+  background-color: #dc3545;
+  color: white;
+}
+
+.status-toggle-btn.available:hover {
+  background-color: #c82333;
+}
+
+.status-toggle-btn.unavailable {
+  background-color: #28a745;
+  color: white;
+}
+
+.status-toggle-btn.unavailable:hover {
+  background-color: #218838;
+}
+
+.book-now-btn {
+  background-color: #2196f3;
+  color: white;
+  width: 100%;
+}
+
+.book-now-btn:hover {
+  background-color: #0b7dda;
+}
+
+.view-bookings-btn {
+  flex: 1;
+  background-color: #2196f3;
+  color: white;
+}
+
+.view-bookings-btn:hover {
+  background-color: #0b7dda;
+}
+
+.edit-btn {
+  flex: 1;
+  background-color: #ff9800;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #e68a00;
+}
+
+.delete-btn {
+  flex: 1;
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #da190b;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .status-toggle-btn,
+  .view-bookings-btn,
+  .edit-btn,
+  .delete-btn,
+  .book-now-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* AccommodationFilter.css */
+
+.accommodation-filter-section {
+  background-color: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.toggle-filter-btn {
+  background: none;
+  border: none;
+  color: #2196f3;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.accommodation-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.accommodation-filter-input {
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.accommodation-filter-input:focus {
+  outline: none;
+  border-color: #2196f3;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+.price-range {
+  grid-column: 1 / -1;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-input {
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.filter-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.apply-btn,
+.reset-btn {
+  padding: 0.7rem 1.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.apply-btn {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+}
+
+.apply-btn:hover {
+  background-color: #0b7dda;
+}
+
+.reset-btn {
+  background-color: #f8f9fa;
+  color: #555;
+  border: 1px solid #ddd;
+}
+
+.reset-btn:hover {
+  background-color: #e9ecef;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .accommodation-filter-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .price-range {
+    grid-column: 1;
+  }
+}
+
+/* General page layout */
+.accommodation-detail-page {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 15px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.accommodation-detail-page h2 {
+  margin-bottom: 25px;
+  font-weight: 700;
+  font-size: 2rem;
+  text-align: center;
+  color: #004085;
+}
+
+/* Accommodation card layout */
+.accommodation-detail-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  background-color: #fefefe;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 0.1);
+}
+
+.accommodation-images {
+  flex: 1 1 320px;
+  max-width: 320px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+}
+
+.accommodation-main-image {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+  border-radius: 8px;
+}
+
+.accommodation-info {
+  flex: 2 1 540px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.accommodation-info h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.75rem;
+  color: #222;
+}
+
+.accommodation-info p {
+  margin: 6px 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Amenities styling */
+.accommodation-amenities {
+  margin-top: 15px;
+}
+
+.accommodation-amenities h4 {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #004085;
+}
+
+.amenity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.amenity-tag {
+  background-color: #cfe2ff;
+  color: #084298;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+/* Description */
+.accommodation-description {
+  margin-top: 15px;
+  font-style: italic;
+  color: #555;
+}
+
+/* Book Now button */
+.accommodation-info > button {
+  margin-top: 20px;
+  width: 160px;
+  align-self: flex-start;
+  font-weight: 600;
+  background-color: #004085;
+  border-color: #004085;
+  transition: background-color 0.3s ease;
+}
+
+.accommodation-info > button:hover,
+.accommodation-info > button:focus {
+  background-color: #003060;
+  border-color: #003060;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 48, 96, 0.6);
+}
+
+/* Modal customizations */
+.modal-dialog {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0 auto !important;
+  max-width: 700px;
+  width: 90%;
+}
+
+.modal-content {
+  max-height: 85vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Modal header */
+.modal-header {
+  background-color: #e9f0ff;
+  color: #004085;
+  font-weight: 700;
+  font-size: 1.25rem;
+  border-bottom: 1px solid #dee2e6;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* Close button */
+.btn-close {
+  filter: brightness(0.3);
+  transition: filter 0.2s ease;
+}
+
+.btn-close:hover {
+  filter: brightness(0.7);
+}
+
+/* Modal body image */
+.modal-body img.img-fluid.rounded {
+  max-width: 100%;
+  height: auto;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Booking summary box */
+.booking-summary {
+  border: 1px solid #b6d4fe;
+  background-color: #e7f1ff;
+  color: #084298;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 6px;
+}
+
+/* Form spacing */
+.form-group,
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.form-label {
+  font-weight: 600;
+  color: #004085;
+}
+
+/* Input and textarea styling */
+.form-control {
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 8px 12px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #004085;
+  box-shadow: 0 0 5px rgba(0, 64, 133, 0.5);
+  outline: none;
+}
+
+/* Number input overrides */
+input[type="number"].form-control {
+  -moz-appearance: textfield;
+}
+
+input[type="number"].form-control::-webkit-inner-spin-button,
+input[type="number"].form-control::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Datepicker styling overrides */
+.react-datepicker-wrapper {
+  width: 100% !important;
+}
+
+.react-datepicker__input-container input {
+  width: 100%;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border: 1px solid #ced4da;
+}
+
+.react-datepicker__input-container input:focus {
+  border-color: #004085;
+  box-shadow: 0 0 5px rgba(0, 64, 133, 0.5);
+}
+
+/* Alert messages */
+.alert-success {
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.alert-danger {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+/* Buttons at bottom of modal */
+.d-flex.justify-content-end {
+  margin-top: 15px;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.me-2 {
+  margin-right: 0.5rem !important;
+}
+
+/* Buttons styling */
+.modal-body button.btn {
+  min-width: 120px;
+  padding: 0.6rem 1.25rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767px) {
+  .accommodation-detail-card {
+    flex-direction: column;
+  }
+
+  .accommodation-images,
+  .accommodation-info {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .accommodation-main-image {
+    height: 200px;
+  }
+
+  .accommodation-info > button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 575px) {
+  .modal-dialog {
+    max-width: 95%;
+  }
+
+  .modal-body .d-flex.justify-content-end {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .modal-body .d-flex.justify-content-end button {
+    width: 100%;
+  }
+}
+
+/* Animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #2196f3;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+/* Optional: backdrop blur for modal */
+.modal-backdrop.show {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.4);
+}

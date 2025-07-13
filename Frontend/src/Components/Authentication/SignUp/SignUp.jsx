@@ -5,6 +5,9 @@ import "./SignUp.css";
 
 const Register = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  // Determine initial role from query param; map "service" to "ServiceProvider"
   const queryParams = new URLSearchParams(location.search);
   const initialRole =
     queryParams.get("role") === "service" ? "ServiceProvider" : "NormalUser";
@@ -13,13 +16,14 @@ const Register = () => {
     username: "",
     password: "",
     contactEmail: "",
-    role: initialRole, // Set the initial role based on query parameter
+    role: initialRole,
     serviceType: "",
   });
 
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -42,6 +46,7 @@ const Register = () => {
     }
   };
 
+
   // Email validation function using regex
   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -53,6 +58,7 @@ const Register = () => {
     setError("");
     setSuccess("");
 
+
     // Validate email before submission
     if (!validateEmail(formData.contactEmail)) {
       setEmailError("Please enter a valid email address");
@@ -62,17 +68,31 @@ const Register = () => {
     // Create a copy of the form data for the API request
     const apiData = { ...formData };
 
-    // If user is not a service provider, send empty string for serviceType
-    if (apiData.role !== "ServiceProvider") {
+    if (!validateEmail(formData.contactEmail)) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    // Prepare API data: if role is NOT one of the providers, clear serviceType
+    const apiData = { ...formData };
+    if (
+      ![
+        "ServiceProvider",
+        "TransportProvider",
+        "AccommodationProvider",
+      ].includes(apiData.role)
+    ) {
       apiData.serviceType = "";
     }
 
-    try {
-      // Log the data being sent to help debug
-      console.log("Sending registration data:", apiData);
+    // You might want to normalize serviceType as well if needed
+    // But your backend should decide on allowed values anyway
 
+    try {
+      console.log("Sending registration data:", apiData);
       const response = await axios.post(
         "http://localhost:5030/api/Auth/register",
+
 
         apiData,
         {
@@ -80,6 +100,7 @@ const Register = () => {
             "Content-Type": "application/json",
           },
         }
+
       );
       console.log("Registration response:", response.data);
 
@@ -89,11 +110,11 @@ const Register = () => {
       }, 1800);
     } catch (error) {
       console.error("Registration error:", error);
-
-      // Enhanced error handling
       if (error.response) {
+
         // The server responded with a status code outside the 2xx range
         console.error("Error response data:", error.response.data);
+
         const errorMessage =
           typeof error.response.data === "string"
             ? error.response.data
@@ -103,12 +124,10 @@ const Register = () => {
 
         setError(errorMessage);
       } else if (error.request) {
-        // The request was made but no response was received
         setError(
           "No response from server. Please check your connection and try again."
         );
       } else {
-        // Something happened in setting up the request
         setError("Registration failed. Please try again later.");
       }
     }
@@ -155,23 +174,31 @@ const Register = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
+
             required
           >
+
             <option value="NormalUser">Normal User</option>
             <option value="TransportProvider">Transport Provider</option>
             <option value="AccommodationProvider">
               Accommodation Provider
             </option>
+
+
+
+            <option value="ServiceProvider">Service Provider</option>{" "}
+            {/* Added this option */}
+
+
           </select>
 
-          {/* Conditional service type dropdown */}
+          {/* Only show serviceType dropdown if role is exactly "ServiceProvider" */}
           {formData.role === "ServiceProvider" && (
             <select
               name="serviceType"
               value={formData.serviceType}
               onChange={handleChange}
-              required
-            >
+              required>
               <option value="">Select Service Type</option>
               <option value="TransportProvider">Transport Provider</option>
               <option value="AccommodationProvider">
@@ -181,6 +208,7 @@ const Register = () => {
           )}
 
           <button type="submit">Register</button>
+
           {success && <p className="success-message">{success}</p>}
           {error && <p className="error-message">{error}</p>}
         </form>

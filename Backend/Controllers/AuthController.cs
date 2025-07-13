@@ -20,7 +20,7 @@ using System.Text;
 
 
 
-namespace Backend.Controller
+namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -118,7 +118,7 @@ namespace Backend.Controller
             });
         }
 
-        [Authorize(Roles = "normaluser")]
+        [Authorize(Roles = "NormalUser")]
         [HttpGet]
         public IActionResult AuthenticatedOnlyEndpoint()
         {
@@ -304,6 +304,7 @@ namespace Backend.Controller
             return Ok(new { exists = user != null });
         }
 
+
         // Add this method to your AuthController class
         // IMPORTANT: REMOVE THIS ENDPOINT AFTER CREATING THE FIRST ADMIN
         [HttpPost("setup-initial-admin")]
@@ -343,6 +344,7 @@ namespace Backend.Controller
 
             return Ok(new { message = "Initial admin created successfully" });
         }
+
 
 
     }

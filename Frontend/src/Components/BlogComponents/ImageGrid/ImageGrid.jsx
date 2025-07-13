@@ -10,6 +10,7 @@ import "./ImageGrid.css";
 
 const ImageGrid = () => {
   const navigate = useNavigate();
+
   const scrollContainerRefLatest = useRef(null);
   const scrollContainerRefTrending = useRef(null);
 
@@ -98,6 +99,7 @@ const ImageGrid = () => {
     } else {
       console.error("Blog ID is undefined");
     }
+
   };
 
   // Scroll Left
@@ -131,8 +133,7 @@ const ImageGrid = () => {
           {/* Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefLatest)}
-          >
+            onClick={() => handleScrollLeft(scrollContainerRefLatest)}>
             <FaChevronLeft />
           </button>
 
@@ -140,6 +141,7 @@ const ImageGrid = () => {
           <div
             ref={scrollContainerRefLatest}
             className="scroll-container"
+
             style={{ scrollBehavior: "smooth" }}
           >
             {latestBlogs.length > 0 ? (
@@ -192,13 +194,13 @@ const ImageGrid = () => {
             ) : (
               <p className="no-blogs">No latest blogs available</p>
             )}
+
           </div>
 
           {/* Scroll Right Button */}
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefLatest)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefLatest)}>
             <FaChevronRight />
           </button>
         </div>
@@ -211,8 +213,7 @@ const ImageGrid = () => {
           {/* Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollLeft(scrollContainerRefTrending)}>
             <FaChevronLeft />
           </button>
 
@@ -220,6 +221,7 @@ const ImageGrid = () => {
           <div
             ref={scrollContainerRefTrending}
             className="scroll-container"
+
             style={{ scrollBehavior: "smooth" }}
           >
             {trendingBlogs.length > 0 ? (
@@ -273,12 +275,12 @@ const ImageGrid = () => {
             ) : (
               <p className="no-blogs">No trending blogs available</p>
             )}
+
           </div>
 
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefTrending)}>
             <FaChevronRight />
           </button>
         </div>
