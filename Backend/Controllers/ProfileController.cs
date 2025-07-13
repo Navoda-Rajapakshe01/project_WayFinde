@@ -14,9 +14,9 @@ using Backend.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Controllers
-{
+{ 
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] 
     public class ProfileController : ControllerBase
     {
         private readonly IAuthService _authService;

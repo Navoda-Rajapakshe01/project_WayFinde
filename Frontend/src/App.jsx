@@ -1,6 +1,12 @@
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import React from "react";
-import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import React, { useContext } from "react";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  useLocation,
+  Navigate,
+} from "react-router-dom";
 
 import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
@@ -12,8 +18,10 @@ import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
+import { AuthContext } from "./Components/Authentication/AuthContext/AuthContext";
 import ForgotPassword from "./Components/Authentication/ForgotPassword/ForgotPassword";
 import ResetPassword from "./Components/Authentication/ResetPassword/ResetPassword";
+
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
 import Footer from "./Components/Footer/Footer";
@@ -39,17 +47,20 @@ import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import AllTrips from "./pages/AllTrips/AllTrips";
-
 import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
+import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
+import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
 import "./App.css";
 
 function AppRoutes() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const { user, loading } = useContext(AuthContext);
+  console.log("AppRoutes user:", user);
 
   return (
     <>
@@ -60,12 +71,26 @@ function AppRoutes() {
         <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
-        <Route path="/vehicle/supplier" element={<VehicleSupplier />} />
+        <Route
+          path="/vehicle/supplier"
+          element={
+            user?.role === "TransportProvider" ? (
+              <VehicleSupplier />
+            ) : (
+              <Navigate to="/vehicle" replace />
+            )
+          }
+        />
         <Route
           path="/accommodation/supplier"
-          element={<AccommodationSupplier />}
+          element={
+            user?.role === "AccommodationProvider" ? (
+              <AccommodationSupplier />
+            ) : (
+              <Navigate to="/accommodation" replace />
+            )
+          }
         />
-
         <Route path="/blog" element={<Blog />} />
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
@@ -73,11 +98,8 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-        <Route path="/chat" element={<PersonalBlog />} />
+        <Route path="/chat" element={<Chat />} />
         <Route path="/blog/:id" element={<PersonalBlog />} />
-
-        <Route path="/chat" element={<PersonalBlog />} />
-
         <Route path="/settings" element={<UserProfileSettings />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/blog" element={<Blog />} />
@@ -94,10 +116,8 @@ function AppRoutes() {
           element={<BlogEditor />}
         />
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
-
         <Route path="/plantrip" element={<CreateTrip />} />
         <Route path="/optimizedroute/:id" element={<OptimizedRoute />} />
-
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />

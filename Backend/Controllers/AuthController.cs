@@ -118,7 +118,7 @@ namespace Backend.Controllers
             });
         }
 
-        [Authorize(Roles = "normaluser")]
+        [Authorize(Roles = "NormalUser")]
         [HttpGet]
         public IActionResult AuthenticatedOnlyEndpoint()
         {

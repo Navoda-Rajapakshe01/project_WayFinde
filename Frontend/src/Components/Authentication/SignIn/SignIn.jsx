@@ -56,13 +56,12 @@ const Login = () => {
     }
   };
 
-  // Google login success handler
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     const googleToken = credentialResponse.credential;
 
     try {
       const response = await axios.post(
-        "http://localhost:5030/api/Auth/google", // Your backend endpoint
+        "http://localhost:5030/api/Auth/google",
         { token: googleToken },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -79,24 +78,54 @@ const Login = () => {
   const handleProfileFetch = async (token) => {
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+      // Auto-detect the role claim key
+      const roleClaimKey = Object.keys(decodedToken).find((k) =>
+        k.toLowerCase().includes("role")
+      );
+      const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
+
       const profileRes = await axios.get(
-        "http://localhost:5030/api/profile/me",
+        "http://localhost:5030/api/Auth/profile",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       const userProfile = {
         ...decodedToken,
         ...profileRes.data,
+        role: roleClaim,
       };
+
       setUser(userProfile);
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
-      window.location.href = "/";
+
+      if (roleClaim === "TransportProvider") {
+        window.location.href = "/vehicle/supplier";
+      } else if (roleClaim === "AccommodationProvider") {
+        window.location.href = "/accommodation/supplier";
+      } else {
+        window.location.href = "/";
+      }
     } catch (profileError) {
       console.error("Profile fetch error:", profileError);
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      setUser(decodedToken);
-      window.location.href = "/";
+
+      const roleClaimKey = Object.keys(decodedToken).find((k) =>
+        k.toLowerCase().includes("role")
+      );
+      const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
+
+      setUser({ ...decodedToken, role: roleClaim });
+
+      if (roleClaim === "TransportProvider") {
+        window.location.href = "/vehicle/supplier";
+      } else if (roleClaim === "AccommodationProvider") {
+        window.location.href = "/accommodation/supplier";
+      } else {
+        window.location.href = "/";
+      }
     }
   };
 
@@ -153,8 +182,7 @@ const Login = () => {
       {showSignInModal && (
         <div
           className="signin-modal-overlay"
-          onClick={() => setShowSignInModal(false)}
-        >
+          onClick={() => setShowSignInModal(false)}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
@@ -171,8 +199,7 @@ const Login = () => {
             </div>
             <button
               className="close-modal-btn"
-              onClick={() => setShowSignInModal(false)}
-            >
+              onClick={() => setShowSignInModal(false)}>
               Close
             </button>
           </div>

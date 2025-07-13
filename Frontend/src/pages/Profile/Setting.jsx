@@ -265,4 +265,4 @@ const ProfileSettings = () => {
   );
 };
 
-export default Setting;
+export default ProfileSettings;
