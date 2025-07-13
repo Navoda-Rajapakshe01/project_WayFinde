@@ -152,6 +152,9 @@ namespace Backend.Controllers
                 })
                 .ToListAsync();
 
+            // Get blog count
+            int blogCount = userBlogs.Count;
+
             return Ok(new
             {
                 user.Id,
@@ -159,6 +162,9 @@ namespace Backend.Controllers
                 user.ContactEmail,
                 user.Bio,
                 user.ProfilePictureUrl,
+                FollowersCount = user.FollowersCount,
+                FollowingCount = user.FollowingCount,
+                BlogCount = blogCount,
                 Blogs = userBlogs
             });
         }
@@ -190,6 +196,134 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("Password changed successfully.");
+        }
+
+        // Controllers/ProfileController.cs
+
+        // POST: api/profile/{userId}/follow
+        [HttpPost("{userId}/follow")]
+        [Authorize]
+        public async Task<IActionResult> FollowUser(Guid userId)
+        {
+            var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (currentUserIdClaim == null)
+                return Unauthorized();
+
+            if (!Guid.TryParse(currentUserIdClaim.Value, out Guid currentUserId))
+                return BadRequest("Invalid user ID format");
+
+            // Don't allow following yourself
+            if (userId == currentUserId)
+                return BadRequest("You cannot follow yourself");
+
+            // Find both users
+            var currentUser = await _context.UsersNew.FindAsync(currentUserId);
+            var targetUser = await _context.UsersNew.FindAsync(userId);
+
+            if (targetUser == null)
+                return NotFound("User not found");
+
+            // Check if already following
+            var existingFollow = await _context.Follows
+                .FirstOrDefaultAsync(uf => uf.FollowerID == currentUserId && uf.FollowedID == userId);
+
+            if (existingFollow != null)
+            {
+                // Already following, so unfollow
+                _context.Follows.Remove(existingFollow);
+
+                // Decrement counters
+                targetUser.FollowersCount = Math.Max(0, targetUser.FollowersCount - 1);
+                currentUser.FollowingCount = Math.Max(0, currentUser.FollowingCount - 1);
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { following = false, followerCount = targetUser.FollowersCount });
+            }
+
+            // Not following, so follow
+            _context.Follows.Add(new Follows
+            {
+                FollowerID = currentUserId,
+                FollowedID = userId,
+                FollowDate = DateTime.UtcNow,
+                Follower = await _context.UsersNew.FindAsync(currentUserId),
+                Followed = await _context.UsersNew.FindAsync(userId)
+
+            });
+
+            // Increment counters
+            targetUser.FollowersCount++;
+            currentUser.FollowingCount++;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { following = true, followerCount = targetUser.FollowersCount });
+        }
+        [HttpGet("{userId}/followers/count")]
+        public async Task<ActionResult<int>> GetFollowersCount(Guid userId)
+        {
+            var user = await _context.UsersNew.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(user.FollowersCount);
+        }
+
+        [HttpGet("{userId}/following/count")]
+        public async Task<ActionResult<int>> GetFollowingCount(Guid userId)
+        {
+            var user = await _context.UsersNew.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found");
+
+            return Ok(user.FollowingCount);
+        }
+
+        // GET: api/profile/{userId}/following/status
+        [HttpGet("{userId}/following/status")]
+        [Authorize]
+        public async Task<ActionResult<bool>> CheckFollowingStatus(Guid userId)
+        {
+            var currentUserIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (currentUserIdClaim == null)
+                return Unauthorized();
+
+            if (!Guid.TryParse(currentUserIdClaim.Value, out Guid currentUserId))
+                return BadRequest("Invalid user ID format");
+
+            bool isFollowing = await _context.Follows
+                .AnyAsync(uf => uf.FollowerID == currentUserId && uf.FollowedID == userId);
+
+            return Ok(isFollowing);
+        }
+
+        [HttpPost("admin/sync-follow-counts")]
+        [Authorize(Roles = "Admin")] // Restrict to admin users
+        public async Task<IActionResult> SyncFollowCounts()
+        {
+            // Get all users
+            var users = await _context.UsersNew.ToListAsync();
+
+            foreach (var user in users)
+            {
+                // Count followers
+                var followerCount = await _context.Follows
+                    .CountAsync(uf => uf.FollowedID == user.Id);
+
+                // Count following
+                var followingCount = await _context.Follows
+                    .CountAsync(uf => uf.FollowerID == user.Id);
+
+                // Update user counts
+                user.FollowersCount = followerCount;
+                user.FollowingCount = followingCount;
+            }
+
+            // Save all changes at once
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Follow counts synchronized successfully" });
         }
 
     }

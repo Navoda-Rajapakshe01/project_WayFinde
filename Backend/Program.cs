@@ -47,7 +47,11 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
+
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 builder.Services.AddScoped<VehicleReservationService>();
+
 
 // Add CORS policies
 builder.Services.AddCors(options =>
