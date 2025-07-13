@@ -188,7 +188,7 @@ namespace Backend.Controllers
                 // Save blog metadata to DB
                 var blog = new Blog
                 {
-                    Title = title.Trim(),`
+                    Title = title.Trim(),
                     BlogUrl = blobUrl,
                     Author = author,
                     UserId = userId,
