@@ -9,11 +9,15 @@ using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Database Context
+// Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
+// Commented out NavodaConnection for AppDbContext to avoid duplicate registration
+/*
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+*/
 
 
 // Add Authentication with JWT Bearer
@@ -31,15 +35,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
-//Cloudinary
+
+// Cloudinary
 builder.Services.AddSingleton(new Cloudinary(new Account(
     "diccvuqqo",
     "269366281956762",
     "80wa84I1eT5EwO6CW3RIAtW56rc"
 )));
-
-
-
 
 // Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -56,6 +58,7 @@ builder.Services.AddCors(options =>
             "https://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
+              .AllowCredentials()
               .AllowCredentials()
     );
 });
@@ -75,7 +78,7 @@ builder.Services.AddHttpContextAccessor();
 // In your Program.cs or Startup.cs, add JSON serialization options:
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     options.JsonSerializerOptions.MaxDepth = 32;
 });
 
@@ -94,7 +97,6 @@ else
 
     app.UseCors("ProductionCorsPolicy");
 }
-
 
 // Apply CORS policy BEFORE auth
 app.UseCors("AllowReactApp");
