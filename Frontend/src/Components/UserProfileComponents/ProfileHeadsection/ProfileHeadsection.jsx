@@ -90,11 +90,11 @@ const ProfileHeadSection = () => {
         <div className="profile-header">
           <img
             className="profile-avatar"
-            src={profilePictureUrl || "defaultprofilepicture.png"}
+            src={profilePictureUrl || "/defaultprofilepicture.png"}
             alt="Profile"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = "defaultprofilepicture.png";
+              e.target.src = "/defaultprofilepicture.png";
             }}
           />
           <div className="profile-info">

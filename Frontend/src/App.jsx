@@ -12,6 +12,8 @@ import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
+import ForgotPassword from "./Components/Authentication/ForgotPassword/ForgotPassword";
+import ResetPassword from "./Components/Authentication/ResetPassword/ResetPassword";
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
 import Footer from "./Components/Footer/Footer";
@@ -84,6 +86,8 @@ function AppRoutes() {
         <Route path="/profile/following" element={<Following />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
         <Route

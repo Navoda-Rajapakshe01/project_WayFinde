@@ -69,3 +69,21 @@
   margin-bottom: 12px;
   text-align: center;
 }
+.input-error {
+  border: 1px solid #ff3333 !important;
+  background-color: #fff8f8;
+}
+
+.field-error-message {
+  color: #ff3333;
+  font-size: 0.8rem;
+  margin: 2px 0 0 0;
+  text-align: left;
+}
+
+.input-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
