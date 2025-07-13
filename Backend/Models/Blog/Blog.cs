@@ -41,9 +41,9 @@ namespace Backend.Models
                 public string CoverImageUrl { get; set; } = string.Empty;
 
                 public List<string> ImageUrls { get; set; } = new();
+                public string Description { get; set; } = string.Empty;
 
-
-                // One blog has many comments
-                public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        // One blog has many comments
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }
 }
