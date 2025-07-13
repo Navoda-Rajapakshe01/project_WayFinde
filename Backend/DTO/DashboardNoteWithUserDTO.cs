@@ -11,7 +11,7 @@ namespace Backend.DTOs
 
         // Extra user info from UserDbContext
         public string Username { get; set; } = string.Empty;
-        public string? UrlImages { get; set; }
+        public string? ProfilePictureUrl { get; set; }
 
         // Add this property to make date + time available as one field:
         public DateTime CreatedAt => CreatedDate + CreatedTime;

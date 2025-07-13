@@ -16,7 +16,7 @@ namespace Backend.Data
         public DbSet<Post> Posts { get; set; } = null!;
         public DbSet<Follows> Follows { get; set; } = null!;
 
-        // Vehicles
+        // DbSets for your models
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
@@ -24,10 +24,18 @@ namespace Backend.Data
 
         // Places & Districts
         public DbSet<District> Districts { get; set; }
-        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
+        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }  // Corrected to your model name 'PlacesToVisit'
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<PlaceImage> PlaceImages { get; set; }
+
+        // Trip and TripPlace
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripPlace> TripPlaces { get; set; }
+        public DbSet<TripCollaborator> TripCollaborator { get; set; }
+        public DbSet<UserNew> UserNew { get; set; }
+
+
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
@@ -39,7 +47,7 @@ namespace Backend.Data
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
-        //Dashboard Notes (NEW)
+        // Dashboard Notes
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
@@ -56,6 +64,27 @@ namespace Backend.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Composite Key for TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasKey(tp => new { tp.TripId, tp.PlaceId });  // Composite key for TripPlace
+
+            // Relationships between Trip and TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Trip)
+                .WithMany(t => t.TripPlaces)
+                .HasForeignKey(tp => tp.TripId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Trip
+
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Place)
+                .WithMany(p => p.TripPlaces)
+                .HasForeignKey(tp => tp.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Place
+
+            // Default Timestamps for Trip
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
             // DistrictWithPlacesCountDTO is a keyless DTO
             modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
 
@@ -64,9 +93,9 @@ namespace Backend.Data
                 .Property(v => v.PricePerDay)
                 .HasPrecision(18, 2);
 
-            modelBuilder.Entity<Accommodation>()
-                .Property(a => a.PricePerDay)
-                .HasPrecision(18, 2);
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
 
             // Fix for TravelBudget.Amount precision
             modelBuilder.Entity<TravelBudget>()
@@ -109,21 +138,14 @@ namespace Backend.Data
                 }
             );
 
-            // Seed Accommodations
+            // Seeding Accommodations
             modelBuilder.Entity<Accommodation>().HasData(
                 new Accommodation
                 {
                     Id = 1,
                     Name = "Earl's Regency",
                     Type = "Hotel",
-                    NumberOfGuests = 100,
-                    NumberOfBedRooms = 20,
-                    NumberOfBeds = 60,
-                    NumberOfBathRooms = 40,
-                    Location = "Thennekumbura",
-                    OwnerName = "Earl's regency group",
-                    OwnerCity = "Kandy",
-                    Description = "stay in free, make your day comfortable",
+                    Location = "Kandy",
                     PricePerDay = 56900m,
                     IsAvailable = true
                 },
@@ -132,19 +154,13 @@ namespace Backend.Data
                     Id = 2,
                     Name = "Sajeew Paradise",
                     Type = "Cabana suite",
-                    NumberOfGuests = 8,
-                    NumberOfBedRooms = 3,
-                    NumberOfBeds = 4,
-                    NumberOfBathRooms = 3,
-                    Location = "Oruthota",
-                    OwnerName = "Sajeewa Karalliyadda",
-                    OwnerCity = "Rajawella",
-                    Description = "happy holiday",
+                    Location = "Rajawella",
                     PricePerDay = 14900m,
                     IsAvailable = true
                 }
             );
 
+            // Districts Configuration
             // District configuration
             modelBuilder.Entity<District>()
                 .Property(d => d.Name)
@@ -155,6 +171,7 @@ namespace Backend.Data
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
+            // PlacesToVisit Configuration
             // PlacesToVisit configuration
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
@@ -169,6 +186,7 @@ namespace Backend.Data
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
 
+            // Review Configuration
             // Review configuration
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Place)
@@ -176,6 +194,7 @@ namespace Backend.Data
                 .HasForeignKey(r => r.PlaceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // TodoItem Configuration
             // TodoItem configuration
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
