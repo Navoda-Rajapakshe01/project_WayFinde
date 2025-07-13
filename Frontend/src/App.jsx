@@ -45,6 +45,7 @@ import TripDashboard from "./pages/TripDashboard";
 import Vehicle from "./pages/Vehicle";
 import VehicleBookingForm from "./pages/VehicleBookingForm";
 import VehicleDetail from "./pages/VehicleDetail";
+import ProfileBookingContent from "./Components/UserProfileComponents/ProfileBookingContent/ProfileBookingContent";
 
 import "./App.css";
 
@@ -89,6 +90,7 @@ function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
+        <Route path="/profile/bookings" element={<ProfileBookingContent />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
         <Route
           path="/profile/profileBlogs/blogEditor"
