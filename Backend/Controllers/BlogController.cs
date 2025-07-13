@@ -349,7 +349,7 @@ namespace Backend.Controllers
                     CoverImageUrl = b.CoverImageUrl ?? string.Empty,
                     ImageUrls = b.ImageUrls ?? new List<string>(),
                     //Description = b.Description ?? string.Empty,
-                    User = b.User == null ? new { Id = Guid.Empty, Username = "Unknown", ProfilePictureUrl = (string)null, Bio = (string)null } : new
+                    User = b.User == null ? new { Id = Guid.Empty, Username = "Unknown", ProfilePictureUrl = (string?)null, Bio = (string?)null } : new
                     {
                         Id = b.User.Id,
                         Username = b.User.Username ?? string.Empty,
@@ -486,24 +486,25 @@ namespace Backend.Controllers
 
                 return Ok(simplifiedComments);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
-                return StatusCode(500, "An error occurred while retrieving comments");
-            }
-       
-        // Controllers/BlogController.cs
-
-        // GET: api/Blog/{blogId}/reactions/count
-        [HttpGet("{blogId}/reactions/count")]
-        public async Task<ActionResult<int>> GetBlogReactionsCount(int blogId)
+        catch (Exception ex)
         {
-            var count = await _context.BlogReactions
-                .Where(r => r.BlogId == blogId)
-                .CountAsync();
-
-            return Ok(count);
+            _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
+            return StatusCode(500, "An error occurred while retrieving comments");
         }
+    }
+
+    // Controllers/BlogController.cs
+
+    // GET: api/Blog/{blogId}/reactions/count
+    [HttpGet("{blogId}/reactions/count")]
+    public async Task<ActionResult<int>> GetBlogReactionsCount(int blogId)
+    {
+        var count = await _context.BlogReactions
+            .Where(r => r.BlogId == blogId)
+            .CountAsync();
+
+        return Ok(count);
+    }
 
         // GET: api/Blog/{blogId}/reactions/status
         [HttpGet("{blogId}/reactions/status")]
@@ -569,6 +570,7 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { reacted = true, count = blog.NumberOfReacts });
+        }
 
         [HttpGet("blogDescription")]
         private async Task<string> GetFirst100WordsFromBlobAsync(string blobUrl)
@@ -593,84 +595,6 @@ namespace Backend.Controllers
                 return "No description available";
             }
 
-        }
-        // Controllers/BlogController.cs
-
-        // GET: api/Blog/{blogId}/reactions/count
-        [HttpGet("{blogId}/reactions/count")]
-        public async Task<ActionResult<int>> GetBlogReactionsCount(int blogId)
-        {
-            var count = await _context.BlogReactions
-                .Where(r => r.BlogId == blogId)
-                .CountAsync();
-
-            return Ok(count);
-        }
-
-        // GET: api/Blog/{blogId}/reactions/status
-        [HttpGet("{blogId}/reactions/status")]
-        [Authorize]
-        public async Task<ActionResult<bool>> GetUserReactionStatus(int blogId)
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                return Unauthorized();
-
-            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
-                return BadRequest("Invalid user ID format");
-
-            bool hasReacted = await _context.BlogReactions
-                .AnyAsync(r => r.BlogId == blogId && r.UserId == userId);
-
-            return Ok(hasReacted);
-        }
-
-        // POST: api/Blog/{blogId}/react
-        [HttpPost("{blogId}/react")]
-        [Authorize]
-        public async Task<IActionResult> ReactToBlog(int blogId)
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                return Unauthorized();
-
-            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
-                return BadRequest("Invalid user ID format");
-
-            // Find the blog
-            var blog = await _context.Blogs.FindAsync(blogId);
-            if (blog == null)
-                return NotFound("Blog not found");
-
-            // Check if already reacted
-            var existingReaction = await _context.BlogReactions
-                .FirstOrDefaultAsync(r => r.BlogId == blogId && r.UserId == userId);
-
-            if (existingReaction != null)
-            {
-                // Remove reaction (toggle)
-                _context.BlogReactions.Remove(existingReaction);
-
-                // Decrease reaction count on the blog itself
-                blog.NumberOfReacts = Math.Max(0, blog.NumberOfReacts - 1);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { reacted = false, count = blog.NumberOfReacts });
-            }
-
-            // Add new reaction
-            _context.BlogReactions.Add(new BlogReaction
-            {
-                BlogId = blogId,
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
-            });
-
-            // Increase reaction count on the blog
-            blog.NumberOfReacts++;
-            await _context.SaveChangesAsync();
-
-            return Ok(new { reacted = true, count = blog.NumberOfReacts });
         }
 
 

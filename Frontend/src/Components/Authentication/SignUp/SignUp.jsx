@@ -20,10 +20,9 @@ const Register = () => {
     serviceType: "",
   });
 
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-  const [emailError, setEmailError] = useState("");
-const navigate = useNavigate();
+const [success, setSuccess] = useState("");
+const [error, setError] = useState("");
+const [emailError, setEmailError] = useState("");
 
 const handleChange = (e) => {
   const { name, value } = e.target;
@@ -34,7 +33,6 @@ const handleChange = (e) => {
   if (name === "contactEmail") {
     setEmailError("");
   }
-};
 
 const validateEmail = (email) => {
   // Simple email regex validation
@@ -72,13 +70,7 @@ const validateEmail = (email) => {
     // Create a copy of the form data for the API request
     const apiData = { ...formData };
 
-    if (!validateEmail(formData.contactEmail)) {
-      setEmailError("Please enter a valid email address");
-      return;
-    }
-
     // Prepare API data: if role is NOT one of the providers, clear serviceType
-    const apiData = { ...formData };
     if (
       ![
         "ServiceProvider",

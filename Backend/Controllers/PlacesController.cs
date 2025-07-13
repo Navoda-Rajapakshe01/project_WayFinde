@@ -30,8 +30,6 @@ namespace Backend.Controllers
             return Ok(places);
         }
 
-
-
         // GET: api/places/2 - For getting details of a single place
         [HttpGet("{id:int}")]
         public async Task<ActionResult<PlacesToVisit>> GetPlaceDetails(int id)
@@ -49,7 +47,25 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
+        // GET: api/places/by-district-name/nuwara-eliya
+        [HttpGet("by-district-name/{slug}")]
+        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
+        {
+            // Find the district by the slug
+            var district = await _context.Districts
+                .FirstOrDefaultAsync(d => d.Slug.ToLower() == slug.ToLower());
 
+            // If district not found, return a 404 Not Found
+            if (district == null)
+                return NotFound("District not found");
+
+            // Get places belonging to the found district
+            var places = await _context.PlacesToVisit
+                .Where(p => p.DistrictId == district.Id)
+                .ToListAsync();
+
+            return Ok(places);
+        }
 
 
         [HttpGet("by-category/{categoryId}")]
