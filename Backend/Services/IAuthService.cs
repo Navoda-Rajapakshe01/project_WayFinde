@@ -1,5 +1,5 @@
 ﻿using Backend.Models;
-using Backend.DTOs;
+
 namespace Backend.Services
 {
     public interface IAuthService

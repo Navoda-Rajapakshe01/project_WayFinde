@@ -1,21 +1,17 @@
-
-using Backend.Data;
-using Backend.DTO;
-using Backend.DTOs;
-using Backend.Models;
-using Backend.Services;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Authorization;
+﻿using Backend.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Backend.Data;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -29,24 +25,18 @@ namespace Backend.Controller
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly Cloudinary _cloudinary;
-        private readonly AppDbContext _context;
-        private readonly IEmailService _emailService;
-        private readonly IConfiguration _configuration;
+        private readonly UserDbContext _context;
 
         public AuthController(
              Cloudinary cloudinary,
-             AppDbContext context,
+             UserDbContext context,
              IAuthService authService,
-             IUserService userService,
-             IEmailService emailService,
-             IConfiguration configuration)
+             IUserService userService)
         {
             _cloudinary = cloudinary;
             _context = context;
             _authService = authService;
             _userService = userService;
-            _emailService = emailService;
-            _configuration = configuration;
         }
 
 
@@ -101,14 +91,6 @@ namespace Backend.Controller
             {
                 return Unauthorized(new { message = "Invalid username or password." });
             }
-            // ✅ Set token in HttpOnly cookie
-            Response.Cookies.Append("jwt", token, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,                // Use HTTPS in production
-                SameSite = SameSiteMode.Strict, // Helps prevent CSRF
-                Expires = DateTimeOffset.UtcNow.AddHours(1)
-            });
 
             // Return the token to the frontend
             return Ok(new
@@ -150,6 +132,58 @@ namespace Backend.Controller
             });
         }
 
+        [HttpPut("update-profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
+        {
+            var userId = User.FindFirst("id")?.Value;
+            if (userId == null || !Guid.TryParse(userId, out Guid userGuid))
+                return Unauthorized();
+
+            var result = await _userService.UpdateUserAsync(userGuid, updateProfileDto.Username, updateProfileDto.ContactEmail, updateProfileDto.ProfilePictureUrl);
+            if (!result) return NotFound("User not found");
+
+            return Ok("Profile updated successfully");
+        }
+
+        [HttpPost("upload-profile-picture")]
+        public async Task<IActionResult> UploadProfilePicture([FromForm] IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            // Upload to Cloudinary (or your storage)
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(image.FileName, image.OpenReadStream()),
+                Folder = "profile_pictures"
+            };
+            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.StatusCode != System.Net.HttpStatusCode.OK)
+                return StatusCode(500, "Cloudinary upload failed.");
+
+            string imageUrl = uploadResult.SecureUrl.ToString();
+
+            // ✅ Extract user ID from token claims
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User not authenticated.");
+
+            int userId;
+            if (!int.TryParse(userIdClaim.Value, out userId))
+                return BadRequest("Invalid user ID.");
+
+            // Save image URL to user's profile
+            var user = await _context.UsersNew.FindAsync(userId);
+            if (user == null)
+                return NotFound("User not found.");
+
+            user.ProfilePictureUrl = imageUrl;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { profilePictureUrl = imageUrl });
+        }
 
 
 
@@ -158,190 +192,6 @@ namespace Backend.Controller
         public IActionResult AdminOnlyEndpoint()
         {
             return Ok("You are an admin!");
-        }
-
-        [Authorize]
-        [HttpDelete("delete-account")]
-        public async Task<IActionResult> DeleteAccount()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                return Unauthorized();
-
-            var userId = Guid.Parse(userIdClaim.Value);
-            var user = await _context.UsersNew.FindAsync(userId);
-            if (user == null)
-                return NotFound("User not found");
-
-            _context.UsersNew.Remove(user);
-            await _context.SaveChangesAsync();
-
-            return Ok("User deleted successfully.");
-        }
-
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            // Find user by email
-            var user = await _context.UsersNew.FirstOrDefaultAsync(u => u.ContactEmail == model.Email);
-
-            // Don't reveal if user exists for security reasons
-            if (user == null)
-                return Ok(new { message = "If your email exists in our system, you will receive a password reset link shortly." });
-
-            // Generate a secure reset token
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.ContactEmail)
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
-            };
-
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-
-            // Create reset URL
-            var resetUrl = $"{Request.Scheme}://{Request.Host}/reset-password?token={WebUtility.UrlEncode(tokenString)}";
-
-            // Send email with reset link
-            await _emailService.SendPasswordResetEmailAsync(model.Email, resetUrl);
-
-            return Ok(new { message = "If your email exists in our system, you will receive a password reset link shortly." });
-        }
-
-        [HttpGet("validate-reset-token")]
-        public IActionResult ValidateResetToken([FromQuery] string token)
-        {
-            if (string.IsNullOrEmpty(token))
-                return BadRequest(new { message = "Token is required." });
-
-            // Decode the token if it's URL encoded
-            var decodedToken = WebUtility.UrlDecode(token);
-
-            try
-            {
-                // Validate the token
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
-
-                tokenHandler.ValidateToken(decodedToken, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                return Ok(new { isValid = true });
-            }
-            catch
-            {
-                return BadRequest(new { message = "Invalid token format." });
-            }
-        }
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
-
-            try
-            {
-                // Validate and get claims from token
-                var principal = tokenHandler.ValidateToken(model.Token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (userIdClaim == null || !Guid.TryParse(userIdClaim, out Guid userId))
-                    return BadRequest(new { message = "Invalid token." });
-
-                var user = await _context.UsersNew.FindAsync(userId);
-                if (user == null)
-                    return BadRequest(new { message = "User not found." });
-
-                // Update password with new hash
-                var passwordHasher = new Microsoft.AspNetCore.Identity.PasswordHasher<UserNew>();
-                user.PasswordHash = passwordHasher.HashPassword(user, model.NewPassword);
-
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Password has been reset successfully." });
-            }
-            catch
-            {
-                return BadRequest(new { message = "Invalid or expired token." });
-            }
-        }
-        [HttpPost("check-email-exists")]
-        public async Task<IActionResult> CheckEmailExists([FromBody] ForgotPasswordDto model)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var user = await _context.UsersNew.FirstOrDefaultAsync(u => u.ContactEmail == model.Email);
-
-            return Ok(new { exists = user != null });
-        }
-
-        // Add this method to your AuthController class
-        // IMPORTANT: REMOVE THIS ENDPOINT AFTER CREATING THE FIRST ADMIN
-        [HttpPost("setup-initial-admin")]
-        public async Task<IActionResult> SetupInitialAdmin([FromBody] AdminCreateDto model)
-        {
-            // Check if any admin exists
-            bool adminExists = await _context.UsersNew.AnyAsync(u => u.Role == "Admin");
-            if (adminExists)
-            {
-                return BadRequest("Admin already exists");
-            }
-
-            // Check if username or email already exists
-            bool userExists = await _context.UsersNew.AnyAsync(u =>
-                u.Username == model.Username || u.ContactEmail == model.Email);
-            if (userExists)
-            {
-                return BadRequest("Username or email already exists");
-            }
-
-            // Create admin user
-            var passwordHasher = new PasswordHasher<UserNew>();
-            var newAdmin = new UserNew
-            {
-                Id = Guid.NewGuid(),
-                Username = model.Username,
-                ContactEmail = model.Email,
-                Role = "Admin",
-                PasswordHash = passwordHasher.HashPassword(null, model.Password),
-                RegisteredDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
-                LastLoginDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
-            };
-
-            // Add to database
-            _context.UsersNew.Add(newAdmin);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "Initial admin created successfully" });
         }
 
 

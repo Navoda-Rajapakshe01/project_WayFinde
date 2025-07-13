@@ -5,9 +5,9 @@ namespace Backend.Services
 {
     public class UserService : IUserService
     {
-        private readonly AppDbContext _context;
+        private readonly UserDbContext _context;
 
-        public UserService(AppDbContext context)
+        public UserService(UserDbContext context)
         {
             _context = context;
         }

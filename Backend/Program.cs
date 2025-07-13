@@ -9,15 +9,16 @@ using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Commented out NavodaConnection for AppDbContext to avoid duplicate registration
-/*
+// Add Database Context
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
-*/
+
+// Register UserDbContext in the container
+builder.Services.AddDbContext<UserDbContext>(options =>
+
+    
+options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+
 
 
 // Add Authentication with JWT Bearer
@@ -35,20 +36,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
-
-// Cloudinary
+//Cloudinary
 builder.Services.AddSingleton(new Cloudinary(new Account(
     "diccvuqqo",
     "269366281956762",
     "80wa84I1eT5EwO6CW3RIAtW56rc"
 )));
 
+
+
+
 // Add services to container
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<BlobService>();
-builder.Services.AddTransient<IEmailService, EmailService>();
-
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -58,8 +58,7 @@ builder.Services.AddCors(options =>
             "https://localhost:5175")
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials()
-              .AllowCredentials()
+              .AllowCredentials() 
     );
 });
 
@@ -73,16 +72,6 @@ builder.Services.AddSignalR();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHttpContextAccessor();
-
-// In your Program.cs or Startup.cs, add JSON serialization options:
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-    options.JsonSerializerOptions.MaxDepth = 32;
-});
-
-
 // Build the App
 var app = builder.Build();
 
@@ -94,9 +83,11 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-
-    app.UseCors("ProductionCorsPolicy");
+    // For production, you might want a more restrictive CORS policy
+    // or comment this out if you don't need CORS in production
+    app.UseCors("ProductionCorsPolicy"); // Define this policy in the services section if needed
 }
+
 
 // Apply CORS policy BEFORE auth
 app.UseCors("AllowReactApp");

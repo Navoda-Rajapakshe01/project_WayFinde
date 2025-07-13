@@ -1,157 +1,55 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useLocation} from "react-router-dom";
+
+import "./ProfileHeadsection.css";
 
 const ProfileHeadSection = () => {
-  const [username, setUsername] = useState("");
-  const [profilePictureUrl, setProfilePictureUrl] = useState("");
-  const [bio, setBio] = useState("");
-  const [blogCount, setBlogCount] = useState(0);
-  const [postCount, setPostCount] = useState(0);
-  const [FollowerCount, setFollowerCount] = useState(0);
-  const [FollowingCount, setFollowingCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const navigate = useNavigate(); // Used to redirect
+  const location = useLocation(); // Get current URL path
+  const stats = [
+    { name: "Posts", value: 10, path: "/posts" },
+    { name: "Blogs", value: 5, path: "/blogs" },
+    { name: "Followers", value: 100, path: "/followers" },
+    { name: "Following", value: 120, path: "/following" },
+  ];
 
-  const navigate = useNavigate();
-
-  const handleEditClick = () => {
-    window.scrollTo(0, 0);
-    navigate("/settings");
-  };
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const token = localStorage.getItem("token");
-        if (!token) {
-          throw new Error("No authentication token found");
-        }
-
-        console.log("Fetching user profile data...");
-        const response = await axios.get(
-          "http://localhost:5030/api/profile/me",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log("Profile data received:", response.data);
-
-        // Extract user details from response
-        const {
-          username,
-          profilePictureUrl,
-          bio,
-          blogsCount,
-          blogCount,
-          postsCount,
-          postCount,
-          FollowersCount,
-          FollowingCount,
-        } = response.data;
-
-        // Set user profile data
-        setUsername(username || "User");
-        setProfilePictureUrl(profilePictureUrl);
-        setBio(bio || "No bio available");
-
-        // Set counts with fallbacks for different property names
-        setBlogCount(blogsCount || blogCount || 0);
-        setPostCount(postsCount || postCount || 0);
-        setFollowerCount(FollowersCount || 0);
-        setFollowingCount(FollowingCount || 0);
-      } catch (error) {
-        console.error(
-          "Failed to fetch profile:",
-          error.response?.data || error.message
-        );
-        setError("Failed to load profile data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-
+  // Redirect to "/posts" if the current path is not in stats
+  // useEffect(() => {
+  //   const isValidPath = stats.some((stat) => stat.path === location.pathname);
+  //   if (!isValidPath) {
+  //     navigate("/posts", { replace: true }); // Redirect to "/posts"
+  //   }
+  // }, [location.pathname, navigate]);
   return (
-    <div className="profile-page">
-      {loading ? (
-        <div className="loading-indicator">Loading profile...</div>
-      ) : error ? (
-        <div className="error-message">{error}</div>
-      ) : (
-        <div className="profile-header">
-          <img
-            className="profile-avatar"
-            src={profilePictureUrl || "/defaultprofilepicture.png"}
-            alt="Profile"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/defaultprofilepicture.png";
-            }}
-          />
-          <div className="profile-info">
-            <h1>{username || "Loading..."}</h1>
-            <div className="profile-stats">
-              <div>
-                <strong>Posts</strong>
-                <br />
-                {postCount}
-              </div>
-              <div>
-                <strong>Blogs</strong>
-                <br />
-                {blogCount}
-              </div>
-              <div>
-                <strong>Followers</strong>
-                <br />
-                {FollowerCount}
-              </div>
-              <div>
-                <strong>Following</strong>
-                <br />
-                {FollowingCount}
-              </div>
-            </div>
-            <p className="bio">{bio || "No bio available"}</p>
-
-            <button
-              className="edit-profile-btn"
-              onClick={() => navigate("/settings")}
-            >
-              Edit Profile
-            </button>
+    <div className="page-container">
+      {/* profile image part */}
+      <div className="profile_container">
+        <img
+          src="https://static.flashintel.ai/image/9/4/5/945db06270b111fab0848c6d2a3f8f74.jpeg"
+          alt="profile image"
+          className="profile_image"
+        />
+        <div className="profile_info">
+          <div className="profile_name">Writer name</div>
+          <div className="grid grid-cols-4 gap-4 text-center">
+            {stats.map((stat) => (
+              <Link key={stat.name} to={stat.path} className="cursor-pointer">
+                <div
+                  className={`p-2 transition duration-300 hover:bg-gray-200 rounded-lg ${
+                    location.pathname === stat.path
+                      ? "underline font-bold text-blue-600"
+                      : ""
+                  }`}
+                >
+                  <p className="text-lg font-bold">{stat.value}</p>
+                  <p>{stat.name}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div>
+            <button className="editProfilebutton">Edit Profile</button>
           </div>
         </div>
-      )}
-
-      <div className="profile-tabs">
-        <NavLink to="/profile/posts" activeClassName="active">
-          Posts
-        </NavLink>
-        <NavLink to="/profile/profileBlogs" activeClassName="active">
-          Blogs
-        </NavLink>
-        <NavLink to="/profile/saved" activeClassName="active">
-          Saved
-        </NavLink>
-        <NavLink to="/profile/trips" activeClassName="active">
-          Trips
-        </NavLink>
-        <NavLink to="/profile/reviews" activeClassName="active">
-          Reviews
-        </NavLink>
-        <NavLink to="/profile/bookings" activeClassName="active">
-          Bookings
-        </NavLink>
       </div>
     </div>
   );
