@@ -82,19 +82,12 @@ namespace Backend.Data
                 {
                     Id = tp.Place.Id,
                     Name = tp.Place.Name,
-                    GoogleMapLink = tp.Place.GoogleMapLink,
-                    AvgTime = tp.Place.AvgTime,
+                    GoogleMapLink = tp.Place.GoogleMapLink!,
+                    AvgTime = tp.Place.AvgTime!,
                     AvgSpend = tp.Place.AvgSpend,
                     Rating = tp.Place.Rating,
-                    HowManyRated = tp.Place.HowManyRated,
-                    MainImageUrl = tp.Place.MainImageUrl,
-                    District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
-                    {
-                        Id = tp.Place.District.Id,
-                        Name = tp.Place.District.Name,
-                        SubTitle = tp.Place.District.SubTitle,
-                        ImageUrl = tp.Place.District.ImageUrl
-                    } : null
+                    HowManyRated = tp.Place.HowManyRated ?? 0,
+                    MainImageUrl = tp.Place.MainImageUrl
                 }).ToList()
             };
 
@@ -140,6 +133,10 @@ namespace Backend.Data
 
                 var toAdd = request.PlaceIds.Except(existingPlaceIds).ToList();
 
+                if (trip.TripPlaces == null)
+                {
+                    trip.TripPlaces = new List<TripPlace>();
+                }
                 foreach (var placeId in toAdd)
                 {
                     trip.TripPlaces.Add(new TripPlace
@@ -176,7 +173,8 @@ namespace Backend.Data
                     {
                         Id = tp.Place.Id,
                         Name = tp.Place.Name,
-                        GoogleMapLink = tp.Place.GoogleMapLink
+                        GoogleMapLink = tp.Place.GoogleMapLink!,
+                        MainImageUrl = tp.Place.MainImageUrl
                     }).ToList() ?? new List<PlaceDto>()
             };
 
@@ -211,19 +209,12 @@ namespace Backend.Data
                 {
                     Id = tp.Place.Id,
                     Name = tp.Place.Name,
-                    GoogleMapLink = tp.Place.GoogleMapLink,
-                    AvgTime = tp.Place.AvgTime,
+                    GoogleMapLink = tp.Place.GoogleMapLink!,
+                    AvgTime = tp.Place.AvgTime!,
                     AvgSpend = tp.Place.AvgSpend,
                     Rating = tp.Place.Rating,
-                    HowManyRated = tp.Place.HowManyRated,
-                    MainImageUrl = tp.Place.MainImageUrl,
-                    District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
-                    {
-                        Id = tp.Place.District.Id,
-                        Name = tp.Place.District.Name,
-                        SubTitle = tp.Place.District.SubTitle,
-                        ImageUrl = tp.Place.District.ImageUrl
-                    } : null
+                    HowManyRated = tp.Place.HowManyRated ?? 0,
+                    MainImageUrl = tp.Place.MainImageUrl
                 }).ToList()
             });
 

@@ -24,7 +24,7 @@ namespace Backend.Models
 
         // Rating and number of ratings
         public double? Rating { get; set; }
-        public int HowManyRated { get; set; } = 0;
+        public int? HowManyRated { get; set; }
 
         // Average spend and time for the place
         public decimal? AvgSpend { get; set; }
@@ -40,7 +40,7 @@ namespace Backend.Models
         public int DistrictId { get; set; }
         public required District District { get; set; }
 
-        public int? CategoryId { get; set; }
+        public required int CategoryId { get; set; }
         public required Category Category { get; set; }
 
         // Reviews and images related to this place
