@@ -1,6 +1,8 @@
 .blogTopic{
     font-weight: bold;
    text-align: center;
+   margin-top: 50px;
+   font-size: 30px;
    
  }
  .page-container-personalBlog{
@@ -133,3 +135,76 @@
  .allResponses button:hover{
    background-color: #3aa69b; 
  }
+ .reaction-button-container {
+  margin-left: 15px;
+}
+
+.reaction-button {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #95989c;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reaction-button:hover {
+  background-color: #e4e6e9;
+}
+
+.reaction-button.reacted {
+  color: #1877f2;
+  font-weight: bold;
+}
+
+.reaction-icon {
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+.reaction-icon.active {
+  color: #1877f2;
+}
+
+.reaction-count {
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.reaction-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.follow_button {
+  padding: 8px 16px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.follow_button:hover {
+  background-color: #1d4ed8;
+}
+
+.follow_button.following {
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.follow_button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.follow-react-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

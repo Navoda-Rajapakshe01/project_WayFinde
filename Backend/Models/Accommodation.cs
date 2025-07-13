@@ -9,7 +9,7 @@
         public int NumberOfBedRooms { get; set; }
         public int NumberOfBeds { get; set; }
         public int NumberOfBathRooms { get; set; }
-        
+
         public string? Location { get; set; }
         public string? OwnerName { get; set; }
         public string? OwnerCity { get; set; }

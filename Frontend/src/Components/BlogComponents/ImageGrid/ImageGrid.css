@@ -23,11 +23,10 @@
   }
 
   .custom-container {
-    max-width: 1200px;  /* or 1024px, 768px etc., depending on your design */
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 16px;   /* same as px-4 in Tailwind */
-    padding-right: 16px;
+    
+    margin-left:100px;
+    margin-right:100px;
+    
     padding-top: 32px;    /* same as py-8 in Tailwind */
     padding-bottom: 32px;
   }
@@ -146,11 +145,11 @@
   }
   .other-blog-grid{
     display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Tailwind's grid-cols-2 */
-  column-gap: 1.5rem; /* Tailwind's gap-x-6 (1.5rem = 24px) */
-  row-gap: 1.5rem;    /* Tailwind's gap-y-6 */
-  margin-left: 6.25rem;  /* Tailwind's ml-25 (6.25rem = 100px) */
-  margin-right: 6.25rem; /* Tailwind's mr-25 */
+  grid-template-columns: repeat(4,1fr); /* Tailwind's grid-cols-2 */
+  column-gap:10px;
+  row-gap: 10px;
+  margin-left:5px;
+  margin-right: 25px;
   }
 
   .pagination-container{
