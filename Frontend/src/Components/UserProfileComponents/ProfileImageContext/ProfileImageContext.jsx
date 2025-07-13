@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 // Create context with default values
 export const ProfileImageContext = createContext({
   profileImage: "/default-profile.png",
-  setProfileImage: () => {}
+  setProfileImage: () => {},
 });
 
 // Provider component
@@ -29,5 +29,5 @@ export const ProfileImageProvider = ({ children }) => {
 };
 
 ProfileImageProvider.propTypes = {
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
 };
