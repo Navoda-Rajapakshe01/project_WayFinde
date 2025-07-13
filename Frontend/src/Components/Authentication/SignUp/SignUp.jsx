@@ -155,8 +155,12 @@ const Register = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
+
             required
           >
+
+            
+
             <option value="NormalUser">Normal User</option>
             <option value="TransportProvider">Transport Provider</option>
             <option value="AccommodationProvider">
@@ -170,8 +174,7 @@ const Register = () => {
               name="serviceType"
               value={formData.serviceType}
               onChange={handleChange}
-              required
-            >
+              required>
               <option value="">Select Service Type</option>
               <option value="TransportProvider">Transport Provider</option>
               <option value="AccommodationProvider">

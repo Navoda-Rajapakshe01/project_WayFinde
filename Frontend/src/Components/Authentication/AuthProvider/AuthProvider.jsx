@@ -12,11 +12,11 @@ const AuthProvider = ({ children }) => {
   // Set up axios instance with authentication
   const setupAuthenticatedAxios = (token) => {
     return axios.create({
-      baseURL: 'https://localhost:7138',
+      baseURL: "https://localhost:7138",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
   };
 
@@ -24,7 +24,7 @@ const AuthProvider = ({ children }) => {
   const fetchUserProfile = async (token) => {
     try {
       const api = setupAuthenticatedAxios(token);
-      const response = await api.get('/api/Auth/profile');
+      const response = await api.get("/api/Auth/profile");
       return response.data;
     } catch (error) {
       console.error("Error fetching user profile:", error);
@@ -35,14 +35,14 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem("token");
-      
-      if (token && typeof token === 'string' && token.trim() !== '') {
+
+      if (token && typeof token === "string" && token.trim() !== "") {
         try {
           // Validate token format
-          if (token.split('.').length === 3) {
+          if (token.split(".").length === 3) {
             // Decode token to get basic user info
             const decodedToken = jwtDecode(token);
-            
+
             // Check if token is expired
             const currentTime = Date.now() / 1000;
             if (decodedToken.exp && decodedToken.exp < currentTime) {
@@ -52,12 +52,12 @@ const AuthProvider = ({ children }) => {
             } else {
               // Token is valid, fetch additional user data from profile endpoint
               const userProfile = await fetchUserProfile(token);
-              
+
               if (userProfile) {
                 // Combine token data with profile data
                 setUser({
                   ...decodedToken,
-                  ...userProfile
+                  ...userProfile,
                 });
               } else {
                 // If profile fetch fails, just use token data
@@ -73,7 +73,7 @@ const AuthProvider = ({ children }) => {
           localStorage.removeItem("token");
         }
       }
-      
+
       setLoading(false);
     };
 
@@ -91,14 +91,14 @@ const AuthProvider = ({ children }) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return false;
-      
+
       const api = setupAuthenticatedAxios(token);
-      
+
       // Call API to update user profile
-      await api.put('/api/User/update', userData);
-      
+      await api.put("/api/User/update", userData);
+
       // Update local state with new data
-      setUser(prev => ({...prev, ...userData}));
+      setUser((prev) => ({ ...prev, ...userData }));
       return true;
     } catch (error) {
       console.error("Error updating user:", error);
@@ -111,13 +111,14 @@ const AuthProvider = ({ children }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      setUser, 
-      updateUser, // Add the update function to context
-      logout,
-      isAuthenticated: !!user 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        updateUser, // Add the update function to context
+        logout,
+        isAuthenticated: !!user,
+      }}>
       {children}
     </AuthContext.Provider>
   );

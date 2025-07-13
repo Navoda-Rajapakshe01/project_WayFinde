@@ -20,8 +20,9 @@ import Footer from "./Components/Footer/Footer";
 import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
-import Accommodation from "./pages/Accommodation";
-import AccommodationDetail from "./pages/AccommodationDetail";
+import Accommodation from "./pages/Accommodation/Accommodation";
+import AccommodationSupplier from "./pages/AccommodationSupplier/AccommodationSupplier";
+import AccommodationDetail from "./pages/Accommodation/AccommodationDetailPage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import Blog from "./pages/Blogs/Blog";
 import BlogEditor from "./pages/Blogs/BlogEditor";
@@ -29,24 +30,20 @@ import PersonalBlog from "./pages/Blogs/PersonalBlog";
 import ProfileBlogDisplay from "./pages/Blogs/ProfileBlogDisplay";
 import ProfileBlogs from "./pages/Blogs/ProfileBlogs";
 import Home from "./pages/Home";
-import PaymentGateway from "./pages/PaymentGateway";
+import Chat from "./pages/Profile/Chat";
 import Following from "./pages/Profile/Following";
 import Followers from "./pages/Profile/Follwers";
 import Profile from "./pages/Profile/Profile";
 import UserProfileSettings from "./pages/Profile/Setting";
-import ReserveVehicle from "./pages/ReserveVehicle";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import AllTrips from "./pages/AllTrips/AllTrips";
 
 import TripDashboard from "./pages/TripDashboard";
-import Vehicle from "./pages/Vehicle";
-import VehicleBookingForm from "./pages/VehicleBookingForm";
-import VehicleDetail from "./pages/VehicleDetail";
-
-import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
-import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
+import Vehicle from "./pages/Vehicle/Vehicle";
+import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
+import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
 
 import "./App.css";
 
@@ -63,6 +60,12 @@ function AppRoutes() {
         <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
+        <Route path="/vehicle/supplier" element={<VehicleSupplier />} />
+        <Route
+          path="/accommodation/supplier"
+          element={<AccommodationSupplier />}
+        />
+
         <Route path="/blog" element={<Blog />} />
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
@@ -70,16 +73,12 @@ function AppRoutes() {
         <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
-
         <Route path="/chat" element={<PersonalBlog />} />
         <Route path="/blog/:id" element={<PersonalBlog />} />
 
         <Route path="/chat" element={<PersonalBlog />} />
 
         <Route path="/settings" element={<UserProfileSettings />} />
-        <Route path="/reservevehicle" element={<ReserveVehicle />} />
-        <Route path="/paymentgateway" element={<PaymentGateway />} />
-        <Route path="/vehiclebookingform" element={<VehicleBookingForm />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/profile/blog" element={<Blog />} />
         <Route path="/profile/followers" element={<Followers />} />

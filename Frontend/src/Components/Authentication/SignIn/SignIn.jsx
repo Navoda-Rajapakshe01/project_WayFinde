@@ -160,14 +160,12 @@ const Login = () => {
             <div className="signin-options">
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}
-              >
+                onClick={() => handleSignInOption("user")}>
                 Normal User
               </button>
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}
-              >
+                onClick={() => handleSignInOption("service")}>
                 Service Provider
               </button>
             </div>

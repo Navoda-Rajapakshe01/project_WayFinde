@@ -1,6 +1,10 @@
+
 ﻿using Azure.Storage.Blobs;
 using Backend.Data;
 using Backend.DTO;
+
+using Backend.Models;
+
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Models.User;
@@ -16,8 +20,15 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+
 using System.Security.Claims;
 using System.Text;
+
+using Microsoft.Extensions.Logging;
+using Backend.DTO;
+using Azure;
+using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Specialized;
 
 namespace Backend.Controllers
 {
@@ -52,6 +63,7 @@ namespace Backend.Controllers
             _userService = userService;
             _logger = logger;
             _blobService = blobService;
+            _httpContextAccessor = httpContextAccessor;
             _dbContext = dbContext;
             _config = config;
         }
@@ -166,7 +178,7 @@ namespace Backend.Controllers
                 var author = User.FindFirst("name")?.Value ??
                             User.FindFirst("username")?.Value ??
                             User.FindFirst(ClaimTypes.Name)?.Value ??
-                            User.Identity.Name ??
+                            (User.Identity != null ? User.Identity.Name : null) ??
                             "Unknown Author";
 
                 // Save blog metadata to DB
@@ -275,7 +287,7 @@ namespace Backend.Controllers
 
                 return Ok(blog);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception here if you have logging configured
                 return StatusCode(500, "An error occurred while retrieving the blog");
@@ -316,6 +328,8 @@ namespace Backend.Controllers
                 blogCommentCount = blog.NumberOfComments  // Return updated count
             });
         }
+
+
 
         // GET: api/blog/all
         [HttpGet("all")]
@@ -484,7 +498,7 @@ namespace Backend.Controllers
                 _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
                 return StatusCode(500, "An error occurred while retrieving comments");
             }
-        }
+       
         // Controllers/BlogController.cs
 
         // GET: api/Blog/{blogId}/reactions/count
@@ -562,6 +576,30 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { reacted = true, count = blog.NumberOfReacts });
+
+        [HttpGet("blogDescription")]
+        private async Task<string> GetFirst100WordsFromBlobAsync(string blobUrl)
+        {
+            try
+            {
+                // Parse the blob URL to get container and blob name
+                var uri = new Uri(blobUrl);
+                var blobClient = new BlobClient(uri);
+
+                // Download the blob content as text
+                var downloadInfo = await blobClient.DownloadAsync();
+                using var reader = new StreamReader(downloadInfo.Value.Content, Encoding.UTF8);
+                var content = await reader.ReadToEndAsync();
+
+                // Extract first 100 words
+                var words = content.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                return string.Join(" ", words.Take(100));
+            }
+            catch
+            {
+                return "No description available";
+            }
+
         }
 
 
