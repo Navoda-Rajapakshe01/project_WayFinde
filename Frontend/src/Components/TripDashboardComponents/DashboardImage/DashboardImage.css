@@ -49,8 +49,41 @@
   font-size: 1.2rem;
 }
 
-/* Responsive styles for screens smaller than 768px */
+/* Settings Icon Styles */
+.settings-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #ffffff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
 
+.settings-icon:hover {
+  background: #f5f5f5;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.settings-icon-svg {
+  color: #333333;
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.settings-icon:hover .settings-icon-svg {
+  transform: rotate(90deg);
+}
+
+/* Responsive styles for screens smaller than 768px */
 @media (max-width: 768px) {
   .dashboard-image-card {
     margin-left: 5%;
@@ -74,9 +107,244 @@
   .icon {
     font-size: 1rem;
   }
+
+  .settings-icon {
+    width: 35px;
+    height: 35px;
+    top: 15px;
+    right: 15px;
+  }
+
+  .settings-icon-svg {
+    font-size: 1rem;
+  }
 }
 
-/*Responsive styles for screens smaller than 480px */
+/* Modal Styles - Updated z-index to appear above navbar */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* Increased z-index to appear above navbar */
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 520px;
+  max-height: 85vh; /* Reduced height to ensure it stays within viewport */
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+  animation: modalSlideIn 0.3s ease-out;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 10000; /* Ensure content is above overlay */
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 20px 20px 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.modal-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.modal-close {
+  background: #f7fafc;
+  border: none;
+  font-size: 1.2rem;
+  color: #718096;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.modal-close:hover {
+  background: #edf2f7;
+  color: #2d3748;
+  transform: scale(1.05);
+}
+
+.modal-body {
+  padding: 28px;
+  background: #ffffff;
+  border-radius: 0 0 20px 20px;
+}
+
+.form-group {
+  margin-bottom: 28px;
+}
+
+.form-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.form-input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  color: #2d3748;
+  transition: all 0.2s ease;
+  background: #f8f9fa;
+  font-weight: 500;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #4299e1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  transform: translateY(-1px);
+}
+
+.date-counter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #f8f9fa;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+}
+
+.date-counter-wrapper:hover {
+  border-color: #cbd5e0;
+}
+
+.date-display {
+  flex: 1;
+  padding: 8px 0;
+}
+
+.date-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.date-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.date-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.decrease-btn {
+  background: #e2e8f0;
+  color: #718096;
+}
+
+.decrease-btn:hover {
+  background: #cbd5e0;
+  color: #4a5568;
+  transform: scale(1.1);
+}
+
+.increase-btn {
+  background: #48bb78;
+  color: white;
+}
+
+.increase-btn:hover {
+  background: #38a169;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+/* Save button container - moved inside modal body */
+.save-button-container {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+}
+
+.save-button {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+  letter-spacing: -0.01em;
+  width: 100%;
+  max-width: 200px;
+}
+
+.save-button:hover {
+  background: linear-gradient(135deg, #70d2f9 0%, #70d2f9 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(114, 194, 221, 0.4);
+}
+
+.save-button:active {
+  transform: translateY(0);
+}
+
+/* Removed modal-footer since save button is now in modal body */
 
 @media (max-width: 480px) {
   .dashboard-image {
@@ -98,5 +366,34 @@
 
   .icon {
     font-size: 0.9rem;
+  }
+
+  .settings-icon {
+    width: 32px;
+    height: 32px;
+    top: 12px;
+    right: 12px;
+  }
+
+  .settings-icon-svg {
+    font-size: 0.9rem;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .saved-button-container {
+    margin-top: 30px;
+    padding-top: 20px;
   }
 }
