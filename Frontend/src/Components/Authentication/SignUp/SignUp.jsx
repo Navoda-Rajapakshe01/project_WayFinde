@@ -19,7 +19,6 @@ const Register = () => {
     role: initialRole,
     serviceType: "",
   });
-
 const [success, setSuccess] = useState("");
 const [error, setError] = useState("");
 const [emailError, setEmailError] = useState("");
@@ -34,11 +33,18 @@ const handleChange = (e) => {
     setEmailError("");
   }
 
-const validateEmail = (email) => {
-  // Simple email regex validation
-  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return regex.test(email);
-};
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Update form data
+    setFormData({ ...formData, [name]: value });
+
+    // Clear any previous error
+    if (name === "contactEmail") {
+      setEmailError("");
+    }
   };
 
   const handleEmailBlur = () => {
@@ -48,6 +54,7 @@ const validateEmail = (email) => {
       setEmailError("");
     }
   };
+
 
   // Email validation function using regex
   const validateEmail = (email) => {
@@ -181,8 +188,10 @@ const validateEmail = (email) => {
             </option>
 
 
+
             <option value="ServiceProvider">Service Provider</option>{" "}
             {/* Added this option */}
+
 
           </select>
 

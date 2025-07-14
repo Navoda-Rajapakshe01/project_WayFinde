@@ -125,11 +125,13 @@ const Login = () => {
 
       // Continue with normal user profile fetch
 
+
       // Auto-detect the role claim key
       const roleClaimKey = Object.keys(decodedToken).find((k) =>
         k.toLowerCase().includes("role")
       );
       const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
+
 
 
       const profileRes = await axios.get(

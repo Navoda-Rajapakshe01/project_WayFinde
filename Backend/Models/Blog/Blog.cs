@@ -44,7 +44,6 @@ namespace Backend.Models
                 public string Description { get; set; } = string.Empty;
 
 
-
         // One blog has many comments
         public ICollection<Comment> Comments { get; set; } = new List<Comment>();
     }

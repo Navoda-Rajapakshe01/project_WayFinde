@@ -253,6 +253,7 @@ namespace Backend.Migrations
 
 
 
+
                     b.Property<string>("ImageUrls")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -698,6 +699,7 @@ namespace Backend.Migrations
 
 
 
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -749,6 +751,7 @@ namespace Backend.Migrations
 
                     b.Property<int>("TripId")
                         .HasColumnType("int");
+
 
 
                     b.Property<int>("BlogId")
@@ -1191,6 +1194,7 @@ namespace Backend.Migrations
                 });
 
 
+
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
                 {
                     b.HasOne("Backend.Models.Trip", "Trip")
@@ -1239,6 +1243,7 @@ namespace Backend.Migrations
 
                     b.Navigation("District");
                 });
+
 
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>

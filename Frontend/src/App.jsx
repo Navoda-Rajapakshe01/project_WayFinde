@@ -19,9 +19,11 @@ import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 
+
 import { AuthContext } from "./Components/Authentication/AuthContext/AuthContext";
 import ForgotPassword from "./Components/Authentication/ForgotPassword/ForgotPassword";
 import ResetPassword from "./Components/Authentication/ResetPassword/ResetPassword";
+
 
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
@@ -49,9 +51,14 @@ import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
 import AllTrips from "./pages/AllTrips/AllTrips";
 import TripDashboard from "./pages/TripDashboard";
+
+import ProfileBookingContent from "./Components/UserProfileComponents/ProfileBookingContent/ProfileBookingContent";
+
+
 import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
+
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
@@ -111,6 +118,7 @@ function AppRoutes() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/profile/profileBlogs" element={<ProfileBlogs />} />
+        <Route path="/profile/bookings" element={<ProfileBookingContent />} />
         <Route path="/uploadNewBlog" element={<UploadNewBlog />} />
         <Route
           path="/profile/profileBlogs/blogEditor"
