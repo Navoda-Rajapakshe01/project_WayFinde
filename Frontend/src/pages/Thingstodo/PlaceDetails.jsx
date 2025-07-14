@@ -61,7 +61,7 @@ const PlaceDetails = () => {
 
   const fetchGalleryImages = async (placeId) => {
     try {
-      const response = await axios.get(`/api/places/${placeId}/images`);
+      const response = await axios.get(`http://localhost:5030/api/places/${placeId}/images`);
       return response.data;
     } catch (error) {
       console.error("Failed to fetch images", error);

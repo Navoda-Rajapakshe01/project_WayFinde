@@ -366,6 +366,7 @@ namespace Backend.Controllers
                     ImageUrls = b.ImageUrls ?? new List<string>(),
                     Description = b.Description ?? string.Empty,
                     User = b.User == null ? new { Id = Guid.Empty, Username = "Unknown", ProfilePictureUrl = (string)null, Bio = (string)null } : new
+
                     {
                         Id = b.User.Id,
                         Username = b.User.Username ?? string.Empty,
@@ -503,24 +504,25 @@ namespace Backend.Controllers
 
                 return Ok(simplifiedComments);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
-                return StatusCode(500, "An error occurred while retrieving comments");
-            }
-       
-        // Controllers/BlogController.cs
-
-        // GET: api/Blog/{blogId}/reactions/count
-        [HttpGet("{blogId}/reactions/count")]
-        public async Task<ActionResult<int>> GetBlogReactionsCount(int blogId)
+        catch (Exception ex)
         {
-            var count = await _context.BlogReactions
-                .Where(r => r.BlogId == blogId)
-                .CountAsync();
-
-            return Ok(count);
+            _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
+            return StatusCode(500, "An error occurred while retrieving comments");
         }
+    }
+
+    // Controllers/BlogController.cs
+
+    // GET: api/Blog/{blogId}/reactions/count
+    [HttpGet("{blogId}/reactions/count")]
+    public async Task<ActionResult<int>> GetBlogReactionsCount(int blogId)
+    {
+        var count = await _context.BlogReactions
+            .Where(r => r.BlogId == blogId)
+            .CountAsync();
+
+        return Ok(count);
+    }
 
         // GET: api/Blog/{blogId}/reactions/status
         [HttpGet("{blogId}/reactions/status")]
@@ -586,6 +588,7 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { reacted = true, count = blog.NumberOfReacts });
+        }
 
         [HttpGet("blogDescription")]
         private async Task<string> GetFirst100WordsFromBlobAsync(string blobUrl)
@@ -767,8 +770,5 @@ namespace Backend.Controllers
 
             return Ok(new { reacted = true, count = blog.NumberOfReacts });
         }
-
-
-
     }
 } 

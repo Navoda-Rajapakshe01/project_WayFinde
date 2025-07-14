@@ -38,27 +38,27 @@ const ThingsToDo = () => {
         showSearchBar={true}
       />
 
-      <div className="content-section">
-        <div className="section-header">
-          <h2 className="section-title">Explore by District</h2>
-          <p className="section-subtitle">
+      <div className="ttd-content-section">
+        <div className="ttd-section-header">
+          <h2 className="ttd-section-title">Explore by District</h2>
+          <p className="ttd-section-subtitle">
             Discover the unique charm and attractions of each region
           </p>
         </div>
 
         {loading && (
-          <div className="loading-container">
-            <div className="loading-spinner"></div>
+          <div className="ttd-loading-container">
+            <div className="ttd-loading-spinner"></div>
             <p>Loading districts...</p>
           </div>
         )}
 
         {error && !loading && (
-          <div className="error-container">
+          <div className="ttd-error-container">
             <p>{error}</p>
             <button
               onClick={() => window.location.reload()}
-              className="retry-button">
+              className="ttd-retry-button">
               Try Again
             </button>
           </div>

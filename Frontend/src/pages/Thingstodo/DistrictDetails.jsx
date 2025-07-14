@@ -40,34 +40,34 @@ const DistrictDetails = () => {
   };
 
   return (
-    <div className="district-places-container">
-      <header className="district-header">
-        <h2 className="district-title">Places to Visit</h2>
-        <p className="district-subtitle">
+    <div className="ttd-district-places-container">
+      <header className="ttd-district-header">
+        <h2 className="ttd-district-title">Places to Visit</h2>
+        <p className="ttd-district-subtitle">
           Explore the best attractions in {slug.replace(/-/g, " ")}
         </p>
       </header>
 
       {/* Categories Component */}
-      <div className="categories-wrapper">
+      <div className="ttd-categories-wrapper">
         <Categories places={places} setFilteredPlaces={setFilteredPlaces} />
       </div>
 
       {/* Loading State */}
       {loading && (
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
+        <div className="ttd-loading-container">
+          <div className="ttd-loading-spinner"></div>
           <p>Loading places...</p>
         </div>
       )}
 
       {/* Error State */}
       {error && !loading && (
-        <div className="error-container">
+        <div className="ttd-error-container">
           <p>{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="retry-button"
+            className="ttd-retry-button"
           >
             Try Again
           </button>
@@ -76,28 +76,28 @@ const DistrictDetails = () => {
 
       {/* Places Grid */}
       {!loading && !error && (
-        <div className="places-grid">
+        <div className="ttd-places-grid">
           {filteredPlaces.length ? (
             filteredPlaces.map((place) => (
               <div
                 key={place.id}
-                className="place-card"
+                className="ttd-place-card"
                 onClick={() => handleCardClick(place.id)}
               >
-                <div className="place-image-container">
+                <div className="ttd-place-image-container">
                   <img
                     src={place.mainImageUrl || "/placeholder.jpg"}
                     alt={place.name}
-                    className="place-image"
+                    className="ttd-place-image"
                   />
                   {place.category && (
-                    <span className="place-category">{place.category}</span>
+                    <span className="ttd-place-category">{place.category}</span>
                   )}
                 </div>
-                <div className="place-info">
-                  <h3 className="place-name">{place.name}</h3>
+                <div className="ttd-place-info">
+                  <h3 className="ttd-place-name">{place.name}</h3>
                   <button
-                    className="view-details-btn"
+                    className="ttd-view-details-btn"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCardClick(place.id);
@@ -109,7 +109,7 @@ const DistrictDetails = () => {
               </div>
             ))
           ) : (
-            <p className="no-places">No places available for this category.</p>
+            <p className="ttd-no-places">No places available for this category.</p>
           )}
         </div>
       )}
