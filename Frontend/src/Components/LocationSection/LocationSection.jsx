@@ -14,13 +14,9 @@ const LocationSection = ({
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch("http://localhost:5030/api/places");
+        const response = await fetch("http://localhost:5030/api/places/top-rated");
         const data = await response.json();
-
-        const sortedLocations = data.sort(
-          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-        );
-        setLocations(sortedLocations);
+        setLocations(data); // no need to sort if API already returns top rated
       } catch (error) {
         console.error("Failed to fetch locations:", error);
       }
@@ -29,9 +25,8 @@ const LocationSection = ({
     fetchLocations();
   }, []);
 
-  const displayedLocations = locations.slice(0, 4);
-
-  if (displayedLocations.length === 0) {
+  // Guard: show nothing if no locations
+  if (!locations || locations.length === 0) {
     return null;
   }
 
@@ -44,15 +39,17 @@ const LocationSection = ({
         </div>
 
         <div className="location-cards-grid">
-          {displayedLocations.map((location) => (
+          {locations.map((location) => (
             <LocationCard key={location.id} location={location} />
           ))}
         </div>
 
-        {locations.length > displayedLocations.length && (
-            <div className="view-all-container text-center">
-                <a href="/thingstodo" className="homebtn homebtn-outline">Discover More Destinations</a>
-            </div>
+        {locations.length >= 4 && (
+          <div className="view-all-container text-center">
+            <a href="/thingstodo" className="homebtn homebtn-outline">
+              Discover More Destinations
+            </a>
+          </div>
         )}
       </div>
     </section>
