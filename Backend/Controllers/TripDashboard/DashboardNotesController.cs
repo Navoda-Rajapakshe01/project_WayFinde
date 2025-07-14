@@ -104,7 +104,31 @@ namespace Backend.Controllers
 
             return NoContent();
         }
+       
 
+        // PATCH: api/DashboardNote/5  (partial update: title and/or description)
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> PatchDashboardNote(int id, [FromBody] PatchDashboardNoteDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var note = await _context.DashboardNote.FindAsync(id);
+            if (note is null)
+                return NotFound("Dashboard note not found");
+
+            if (dto.NoteTitle is not null)
+                note.NoteTitle = dto.NoteTitle.Trim();
+
+            if (dto.NoteDescription is not null)
+                note.NoteDescription = dto.NoteDescription.Trim();
+
+            note.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return Ok(note);
+        }
+        
         // DELETE: api/DashboardNote/{id}
         // Deletes a specific dashboard note
         [HttpDelete("{id}")]

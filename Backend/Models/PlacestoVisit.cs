@@ -23,28 +23,24 @@ namespace Backend.Models
         public string? GoogleMapLink { get; set; }
 
         // Rating and number of ratings
-        public double? Rating { get; set; }
-        public int HowManyRated { get; set; } = 0;
+        public int? HowManyRated { get; set; }
 
         // Average spend and time for the place
         public decimal? AvgSpend { get; set; }
         public string? AvgTime { get; set; }
 
-        // Type of the place (e.g., relax, do, stay)
-        public string? PlaceType { get; set; }
-
         // Navigation properties for relationships
-        public required ICollection<TripPlace> TripPlaces { get; set; } = new List<TripPlace>();
+        public required ICollection<TripPlace> TripPlaces { get; set; }
 
         // Foreign key relationships
         public int DistrictId { get; set; }
         public required District District { get; set; }
 
-        public int? CategoryId { get; set; }
+        public required int CategoryId { get; set; }
         public required Category Category { get; set; }
 
         // Reviews and images related to this place
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
-        public ICollection<PlaceImage>? PlaceImage { get; set; }
-    }
+        public ICollection<PlaceImage>? PlaceImage { get;set;}
+}
 }

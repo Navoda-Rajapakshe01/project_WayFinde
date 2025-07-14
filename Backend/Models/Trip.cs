@@ -46,6 +46,7 @@ namespace Backend.Models
 
         // Navigation properties
         public virtual ICollection<TripPlace> TripPlaces { get; set; } = new List<TripPlace>();
+        public virtual ICollection<TripDate> TripDates { get; set; } = new List<TripDate>();
         public virtual ICollection<TripCollaborator> TripCollaborators { get; set; } = new List<TripCollaborator>();
         public virtual ICollection<TodoItem> TodoItems { get; set; } = new List<TodoItem>();
         public virtual ICollection<DashboardNote> DashboardNotes { get; set; } = new List<DashboardNote>();

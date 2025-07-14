@@ -27,5 +27,6 @@ namespace Backend.Models
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+        public bool IsAccepted { get; set; } = false;
     }
 }

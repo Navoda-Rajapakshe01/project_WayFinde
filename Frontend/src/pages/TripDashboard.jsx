@@ -21,7 +21,7 @@ const TripDashboard = () => {
       </div>
       <div className="split-content">
         <div className="main-content">
-          <DashboardImage />
+          <DashboardImage tripId={tripId} />
           <TabNavigation tripId={tripId} />
         </div>
         <div className="side-content">

@@ -30,9 +30,9 @@ namespace Backend.Data
         public DbSet<PlaceImage> PlaceImages { get; set; }
 
         // Trip and TripPlace
-        public DbSet<Trip> Trips { get; set; }
         public DbSet<TripPlace> TripPlaces { get; set; }
         public DbSet<TripCollaborator> TripCollaborator { get; set; }
+        public DbSet<Trip> Trips { get; set; }
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
@@ -44,9 +44,6 @@ namespace Backend.Data
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
-        // Users
-        public DbSet<User> Users { get; set; }
-
         // Dashboard Notes
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
@@ -56,6 +53,9 @@ namespace Backend.Data
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
         public object? Amenities { get; internal set; }
+
+        // TripDate
+        public DbSet<TripDate> TripDate { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -171,7 +171,6 @@ namespace Backend.Data
                 .IsRequired();
 
             // PlacesToVisit Configuration
-            // PlacesToVisit configuration
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
@@ -181,9 +180,16 @@ namespace Backend.Data
                 .IsRequired();
 
             modelBuilder.Entity<PlacesToVisit>()
-                .HasOne(p => p.Category)
-                .WithMany()
-                .HasForeignKey(p => p.CategoryId);
+                .Property(p => p.Description)
+                .IsRequired();
+
+            modelBuilder.Entity<PlacesToVisit>()
+                .Property(p => p.DistrictId)
+                .IsRequired();
+
+            modelBuilder.Entity<PlacesToVisit>()
+                .Property(p => p.CategoryId)
+                .IsRequired();
 
             // Review Configuration
             // Review configuration
@@ -236,104 +242,6 @@ namespace Backend.Data
                 .HasForeignKey(t => t.TripId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Trip
-            modelBuilder.Entity<Trip>(entity =>
-            {
-                entity.ToTable("Trips");
-
-                entity.Property(e => e.Id)
-                    .HasColumnName("Id")
-                    .UseIdentityColumn();
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(100);
-
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasMaxLength(500);
-
-                entity.Property(e => e.StartDate)
-                    .IsRequired();
-
-                entity.Property(e => e.EndDate)
-                    .IsRequired();
-
-                entity.Property(e => e.TotalSpend)
-                    .HasColumnType("decimal(18,2)")
-                    .IsRequired();
-
-                entity.Property(e => e.TripDistance)
-                    .HasColumnType("decimal(18,2)")
-                    .IsRequired();
-
-                entity.Property(e => e.TripTime)
-                    .HasColumnType("decimal(18,2)")
-                    .IsRequired();
-
-                entity.Property(e => e.UserId)
-                    .IsRequired();
-
-                entity.Property(e => e.CreatedAt)
-                    .HasDefaultValueSql("GETDATE()")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.UpdatedAt)
-                    .HasDefaultValueSql("GETDATE()")
-                    .ValueGeneratedOnAddOrUpdate();
-            });
-
-            // User
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.HasKey(u => u.Id);
-
-                entity.Property(u => u.Id)
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(u => u.FullName)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(u => u.Email)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(u => u.CreatedAt)
-                    .HasDefaultValueSql("GETDATE()");
-
-                entity.Property(u => u.UpdatedAt)
-                    .HasDefaultValueSql("GETDATE()");
-            });
-
-            // DashboardNote rules
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.NoteTitle)
-                .IsRequired()
-                .HasMaxLength(200);
-
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.NoteDescription)
-                .IsRequired();
-
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.CreatedAt)
-                .HasDefaultValueSql("GETDATE()");
-
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.UpdatedAt)
-                .HasDefaultValueSql("GETDATE()");
-
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.TripId)
-                .IsRequired();
-
-            modelBuilder.Entity<DashboardNote>()
-                .HasOne(d => d.Trip)
-                .WithMany(t => t.DashboardNotes)
-                .HasForeignKey(d => d.TripId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             // TripPlace composite key
             modelBuilder.Entity<TripPlace>().HasKey(tp => new { tp.TripId, tp.PlaceId });
 
@@ -379,6 +287,107 @@ namespace Backend.Data
                 .WithMany(u => u.Followers)
                 .HasForeignKey(f => f.FollowedID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // TripDate configuration
+            modelBuilder.Entity<TripDate>(entity =>
+            {
+                entity.ToTable("TripDate");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("TripDateId")
+                    .UseIdentityColumn();
+
+                entity.Property(e => e.TripId)
+                    .IsRequired();
+
+                entity.Property(e => e.PlaceId)
+                    .IsRequired();
+
+                entity.Property(e => e.StartDate)
+                    .IsRequired();
+
+                entity.Property(e => e.EndDate)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<TripDate>()
+                .HasOne(td => td.Trip)
+                .WithMany(t => t.TripDates)
+                .HasForeignKey(td => td.TripId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TripDate>()
+                .HasOne(td => td.Place)
+                .WithMany()
+                .HasForeignKey(td => td.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Additional TripDate configurations for better performance
+            modelBuilder.Entity<TripDate>()
+                .Property(td => td.StartDate)
+                .IsRequired();
+
+            modelBuilder.Entity<TripDate>()
+                .Property(td => td.EndDate)
+                .IsRequired();
+
+            // Add index for better query performance
+            modelBuilder.Entity<TripDate>()
+                .HasIndex(td => new { td.TripId, td.PlaceId })
+                .IsUnique();
+
+            modelBuilder.Entity<TripDate>()
+                .HasIndex(td => td.TripId);
+
+            modelBuilder.Entity<TripDate>()
+                .HasIndex(td => td.PlaceId);
+
+            // Trip entity configuration
+            modelBuilder.Entity<Trip>(entity =>
+            {
+                entity.ToTable("Trips");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("Id")
+                    .UseIdentityColumn();
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.StartDate)
+                    .IsRequired();
+
+                entity.Property(e => e.EndDate)
+                    .IsRequired();
+
+                entity.Property(e => e.TotalSpend)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.TripDistance)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.TripTime)
+                    .HasColumnType("decimal(18,2)")
+                    .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .IsRequired();
+
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("GETDATE()")
+                    .ValueGeneratedOnAddOrUpdate();
+            });
         }
     }
 }

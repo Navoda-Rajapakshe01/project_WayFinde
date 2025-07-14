@@ -28,6 +28,7 @@ namespace Backend.DTOs
         public string MainImageUrl { get; set; }
 
         public DistrictWithPlacesCountDTO  District { get; set; } 
-
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
     }
 }

@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Backend.Models;
 
 namespace Backend.Models
 {
+    [Table("TripPlaces")]
     public class TripPlace
     {
         public int TripId { get; set; }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
 {
+    [Table("UsersNew")]
     public class UserNew
     {
         public Guid Id { get; set; }

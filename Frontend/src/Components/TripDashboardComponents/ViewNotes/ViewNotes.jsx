@@ -118,7 +118,7 @@ const ViewNotes = ({ isOpen, onClose, tripId }) => {
       };
 
       const response = await fetch(`${API_BASE_URL}/${selectedNote.id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -215,8 +215,9 @@ const ViewNotes = ({ isOpen, onClose, tripId }) => {
         )}
         
         {successMessage && (
-          <div className="success-message">
-            {successMessage}
+          <div className="success-notification">
+            <div className="success-icon">✓</div>
+            <span>{successMessage}</span>
           </div>
         )}
         
