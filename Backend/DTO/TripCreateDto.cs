@@ -9,7 +9,7 @@ namespace Backend.DTOs
     public class TripCreateDto
     {
         [Required]
-        public string TripName { get; set; }
+        public required string TripName { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -18,10 +18,10 @@ namespace Backend.DTOs
         public DateTime EndDate { get; set; }
 
         [Required]
-        public string UserId { get; set; }
+        public required string UserId { get; set; }
 
         [Required]
-        public List<int> PlaceIds { get; set; }
+        public required List<int> PlaceIds { get; set; }
 
 
 

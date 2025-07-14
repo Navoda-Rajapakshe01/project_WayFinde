@@ -16,11 +16,7 @@ function DashboardSaves({ tripId }) {
       <div className="saves-section">
         <h2>Places to stay</h2>
         <div className="saves-card">
-          <img
-            src="https://www.andbeyond.com/wp-content/uploads/sites/5/Galle-Fort-Hotel-Galle-Guest-Pool.jpg"
-            alt="Hotel"
-            className="saves-card-img"
-          />
+          <img src="https://www.andbeyond.com/wp-content/uploads/sites/5/Galle-Fort-Hotel-Galle-Guest-Pool.jpg" alt="Hotel" className="saves-card-img" />
           <div className="hotel-details">
             <h3><b>Galle Fort Hotel</b></h3>
             <p>4.5-star hotel</p>
@@ -28,6 +24,8 @@ function DashboardSaves({ tripId }) {
               <span>★★★★☆</span>
               <span>84</span>
             </div>
+            
+            {/* Use the SavesComment component for hotel comments */}
             <SavesComment
               section="hotel"
               comments={hotelComments}
@@ -41,11 +39,7 @@ function DashboardSaves({ tripId }) {
       <div className="saves-section">
         <h2>Vehicle Rent</h2>
         <div className="saves-card">
-          <img
-            src="https://cdn.bajajauto.com/-/media/assets/bajajauto/360degreeimages/3-wheelers-and-qute/re/diesel/eco-green/webp-new/00.png"
-            alt="Vehicle"
-            className="saves-card-img"
-          />
+          <img src="https://cdn.bajajauto.com/-/media/assets/bajajauto/360degreeimages/3-wheelers-and-qute/re/diesel/eco-green/webp-new/00.png" alt="Vehicle" className="saves-card-img" />
           <div className="hotel-details">
             <h3><b>Bajaj RE Three Wheeler</b></h3>
             <p className="availability">Available</p>
@@ -53,6 +47,8 @@ function DashboardSaves({ tripId }) {
               <span>3 Seats</span>
               <span>2 Bags</span>
             </div>
+            
+            {/* Use the SavesComment component for vehicle comments */}
             <SavesComment
               section="vehicle"
               comments={vehicleComments}
@@ -66,18 +62,15 @@ function DashboardSaves({ tripId }) {
       <div className="saves-section">
         <h2>To-Do List</h2>
         <div className="to-do-card">
-          <div className="card-content-row">
-            <p>
-              Display the to-do list for the trip, outlining all tasks that need
-              to be completed before and during the journey.
-            </p>
+          <p>
+            Display the to-do list for the trip, outlining all tasks that need to be completed before and during the journey.
             <button
-              className="show-button"
+              className="arrow-button"
               onClick={() => setShowTodoPopup(true)}
             >
-              Show
+              &gt;
             </button>
-          </div>
+          </p>
         </div>
       </div>
 
@@ -85,18 +78,15 @@ function DashboardSaves({ tripId }) {
       <div className="saves-section">
         <h2>Travel Budget</h2>
         <div className="budget-card">
-          <div className="card-content-row">
-            <p>
-              Show the travel budget list, detailing all the expected expenses to
-              ensure proper financial planning for trip.
-            </p>
+          <p>
+            Show the travel budget list, detailing all the expected expenses to ensure proper financial planning for trip.
             <button
-              className="show-button"
+              className="arrow-button"
               onClick={() => setShowBudgetPopup(true)}
             >
-              Show
+              &gt;
             </button>
-          </div>
+          </p>
         </div>
       </div>
 

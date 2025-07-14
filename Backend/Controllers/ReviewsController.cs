@@ -41,7 +41,7 @@ namespace Backend.Controllers
                 {
                     r.Id,
                     r.PlaceId,
-                    PlaceName = r.Place.Name,
+                    PlaceName = r.Place != null ? r.Place.Name : null,
                     Name = r.Name,
                     r.Email,
                     r.Comment,

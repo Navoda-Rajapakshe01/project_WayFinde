@@ -1,39 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './VehicleRent.css'; // Import the CSS file
 
 const VehicleRent = () => {
-  const [vehicles, setVehicles] = useState([]); // State for vehicle data
+  // State for managing selected dates
   const [pickupDate, setPickupDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
-  const [savedVehicles, setSavedVehicles] = useState([]); // To manage saved vehicles
-
-  // Fetch vehicle details when the component mounts
-  useEffect(() => {
-    // API URL to fetch vehicle data
-    fetch('http://localhost:5030/api/TravelBudget') // Use your updated API URL
-      .then((response) => response.json()) // Convert the response into JSON
-      .then((data) => {
-        setVehicles(data); // Set the fetched vehicle data into state
-      })
-      .catch((error) => console.error('Error fetching vehicle data:', error));
-  }, []);
-
-  // Function to toggle saving vehicles
-  const toggleSave = (vehicleId, e) => {
-    e.stopPropagation();
-    if (savedVehicles.includes(vehicleId)) {
-      setSavedVehicles(savedVehicles.filter((id) => id !== vehicleId));
-    } else {
-      setSavedVehicles([...savedVehicles, vehicleId]);
-    }
-  };
-
-  // Show loading state while the data is being fetched
-  if (vehicles.length === 0) {
-    return <div>Loading...</div>; // Show loading text if no data is loaded yet
-  }
 
   return (
     <div className="vehicle-rent-container">
@@ -56,14 +29,45 @@ const VehicleRent = () => {
                 <span>+</span> Add
               </button>
             </div>
-
-            {/* Vehicle Information */}
-            <div className="vehicle-info">
-              <h3 className="vehicle-name">{vehicle.name}</h3>
-              <p className="vehicle-reviews">{vehicle.reviews} reviews</p>
-            </div>
+            <button className="book-now-button">Book Now</button>
+            <span className="availability-status available">Available</span>
           </div>
-        ))}
+        </div>
+
+        {/* Bajaj RE Three Wheeler */}
+        <div className="vehicle-card">
+          <img src="/path-to-your-bajaj-re.jpg" alt="Bajaj RE Three Wheeler" />
+          <div className="vehicle-info">
+            
+            <div className="vehicle-details">
+              <span>3 Seats</span>
+              <span>2 Bags</span>
+            </div>
+            <div className="vehicle-rating">
+              <span>⭐ 4.8 (124 reviews)</span>
+            </div>
+            <button className="book-now-button">Book Now</button>
+            <span className="availability-status available">Available</span>
+          </div>
+        </div>
+
+          {/* Honda */}
+          <div className="vehicle-card">
+          <img src="/path-to-your-honda.jpg" alt="Honda" />
+          <div className="vehicle-info">
+           
+            <div className="vehicle-details">
+              <span>4 Seats</span>
+              <span>2 Bags</span>
+            </div>
+            <div className="vehicle-rating">
+              <span>⭐ 4.8 (124 reviews)</span>
+            </div>
+            <button className="book-now-button">Book Now</button>
+            <span className="availability-status available">Available</span>
+          </div>
+        </div>
+        
       </div>
     </div>
   );

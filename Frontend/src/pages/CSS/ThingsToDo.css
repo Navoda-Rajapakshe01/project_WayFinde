@@ -1,24 +1,25 @@
 /* Page Container */
-.things-to-do-page-container {
+.page-container {
   min-height: 100vh;
   background-color: #f8f9fa;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
 }
 
 /* Content Section */
-.things-to-do-content-section {
+.ttd-content-section {
   max-width: 1400px;
   margin: 0 auto;
   padding: 60px 20px;
 }
 
 /* Section Header */
-.things-to-do-section-header {
+.ttd-section-header {
   text-align: center;
   margin-bottom: 40px;
 }
 
-.things-to-do-section-title {
+.ttd-section-title {
   font-size: 2.5rem;
   font-weight: 700;
   color: #2c3e50;
@@ -30,19 +31,19 @@
   display: inline-block;
 }
 
-.things-to-do-section-title::after {
+.ttd-section-title::after {
+  position: center;
   content: "";
-  position: absolute;
-  bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(200%);
+  bottom: 0;
   width: 80px;
   height: 4px;
-  background-color: var(--primary-color);
+  background-color: #19b9df;
   border-radius: 2px;
 }
 
-.things-to-do-section-subtitle {
+.ttd-section-subtitle {
   font-size: 1.1rem;
   color: #6c757d;
   max-width: 700px;
@@ -50,7 +51,7 @@
 }
 
 /* District Grid */
-.things-to-do-district-container {
+.district-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 25px;
@@ -58,7 +59,7 @@
 }
 
 /* Loading State */
-.things-to-do-loading-container {
+.ttd-loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -67,7 +68,7 @@
   width: 100%;
 }
 
-.things-to-do-loading-spinner {
+.ttd-loading-spinner {
   width: 50px;
   height: 50px;
   border: 5px solid rgba(25, 185, 223, 0.2);
@@ -83,13 +84,13 @@
   }
 }
 
-.things-to-do-loading-container p {
+.ttd-loading-container p {
   font-size: 1.1rem;
   color: #6c757d;
 }
 
 /* Error State */
-.things-to-do-error-container {
+.ttd-error-container {
   text-align: center;
   padding: 40px;
   background-color: #f8f9fa;
@@ -98,13 +99,13 @@
   margin: 30px 0;
 }
 
-.things-to-do-error-container p {
+.ttd-error-container p {
   font-size: 1.1rem;
   color: #6c757d;
   margin-bottom: 20px;
 }
 
-.things-to-do-retry-button {
+.ttd-retry-button {
   background-color: #19b9df;
   color: white;
   border: none;
@@ -116,14 +117,14 @@
   transition: all 0.3s ease;
 }
 
-.things-to-do-retry-button:hover {
+.ttd-retry-button:hover {
   background-color: #0e8a9e;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* No Districts */
-.things-to-do-no-districts {
+.no-districts {
   text-align: center;
   padding: 40px;
   background-color: #f8f9fa;
@@ -132,53 +133,53 @@
   grid-column: 1 / -1;
 }
 
-.things-to-do-no-districts p {
+.no-districts p {
   font-size: 1.1rem;
   color: #6c757d;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .things-to-do-district-container {
+  .district-container {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (max-width: 992px) {
-  .things-to-do-district-container {
+  .district-container {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .things-to-do-section-title {
+  .section-title {
     font-size: 2.2rem;
   }
 }
 
 @media (max-width: 768px) {
-  .things-to-do-district-container {
+  .district-container {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
 
-  .things-to-do-content-section {
+  .content-section {
     padding: 40px 15px;
   }
 
-  .things-to-do-section-title {
+  .section-title {
     font-size: 2rem;
   }
 
-  .things-to-do-section-subtitle {
+  .section-subtitle {
     font-size: 1rem;
   }
 }
 
 @media (max-width: 480px) {
-  .things-to-do-district-container {
+  .district-container {
     grid-template-columns: 1fr;
   }
 
-  .things-to-do-section-title {
+  .section-title {
     font-size: 1.8rem;
   }
 }

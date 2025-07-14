@@ -1,7 +1,7 @@
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
 
@@ -41,6 +41,31 @@ const Login = () => {
       if (!token) throw new Error("No token received from server");
 
       localStorage.setItem("token", token);
+
+      // Check for admin credentials
+      if (formData.username === "admin" && token) {
+        // Decode token to check role
+        const decodedToken = JSON.parse(atob(token.split(".")[1]));
+        const userRole =
+          decodedToken.role ||
+          decodedToken.Role ||
+          decodedToken[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+
+        if (userRole === "Admin") {
+          console.log("Admin login detected");
+          setUser({
+            ...decodedToken,
+            isAdmin: true,
+          });
+          localStorage.setItem("isAdmin", "true");
+          navigate("/admin");
+          return;
+        }
+      }
+
+      // Continue with normal user login flow
       await handleProfileFetch(token);
     } catch (error) {
       console.error("Login error:", error);
@@ -56,13 +81,12 @@ const Login = () => {
     }
   };
 
-  // Google login success handler
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     const googleToken = credentialResponse.credential;
 
     try {
       const response = await axios.post(
-        "http://localhost:5030/api/Auth/google", // Your backend endpoint
+        "http://localhost:5030/api/Auth/google",
         { token: googleToken },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -79,24 +103,78 @@ const Login = () => {
   const handleProfileFetch = async (token) => {
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
+
+
+      // Check if user is admin
+      const userRole =
+        decodedToken.role ||
+        decodedToken.Role ||
+        decodedToken[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+        ];
+
+      if (userRole === "Admin") {
+        setUser({
+          ...decodedToken,
+          isAdmin: true,
+        });
+        localStorage.setItem("isAdmin", "true");
+        navigate("/admin");
+        return;
+      }
+
+      // Continue with normal user profile fetch
+
+
+      // Auto-detect the role claim key
+      const roleClaimKey = Object.keys(decodedToken).find((k) =>
+        k.toLowerCase().includes("role")
+      );
+      const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
+
+
+
       const profileRes = await axios.get(
-        "http://localhost:5030/api/profile/me",
+        "http://localhost:5030/api/Auth/profile",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       const userProfile = {
         ...decodedToken,
         ...profileRes.data,
+        role: roleClaim,
       };
+
       setUser(userProfile);
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
-      window.location.href = "/";
+
+      if (roleClaim === "TransportProvider") {
+        window.location.href = "/vehicle/supplier";
+      } else if (roleClaim === "AccommodationProvider") {
+        window.location.href = "/accommodation/supplier";
+      } else {
+        window.location.href = "/";
+      }
     } catch (profileError) {
       console.error("Profile fetch error:", profileError);
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
-      setUser(decodedToken);
-      window.location.href = "/";
+
+      const roleClaimKey = Object.keys(decodedToken).find((k) =>
+        k.toLowerCase().includes("role")
+      );
+      const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
+
+      setUser({ ...decodedToken, role: roleClaim });
+
+      if (roleClaim === "TransportProvider") {
+        window.location.href = "/vehicle/supplier";
+      } else if (roleClaim === "AccommodationProvider") {
+        window.location.href = "/accommodation/supplier";
+      } else {
+        window.location.href = "/";
+      }
     }
   };
 
@@ -126,6 +204,12 @@ const Login = () => {
             onChange={handleChange}
             required
           />
+          {/* Add Forgot Password Link */}
+          <div className="forgot-password-container">
+            <Link to="/forgot-password" className="forgot-password-link">
+              Forgot Password?
+            </Link>
+          </div>
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>
@@ -137,7 +221,7 @@ const Login = () => {
             />
           </div>
 
-          <p className="CreateNew" onClick={() => setShowSignInModal(true)}>
+          <p className="CreateNew" onClick={() => handleSignInOption("user")}>
             Create a new Account
           </p>
           {error && <p className="error-message">{error}</p>}
@@ -147,28 +231,24 @@ const Login = () => {
       {showSignInModal && (
         <div
           className="signin-modal-overlay"
-          onClick={() => setShowSignInModal(false)}
-        >
+          onClick={() => setShowSignInModal(false)}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}
-              >
+                onClick={() => handleSignInOption("user")}>
                 Normal User
               </button>
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}
-              >
+                onClick={() => handleSignInOption("service")}>
                 Service Provider
               </button>
             </div>
             <button
               className="close-modal-btn"
-              onClick={() => setShowSignInModal(false)}
-            >
+              onClick={() => setShowSignInModal(false)}>
               Close
             </button>
           </div>

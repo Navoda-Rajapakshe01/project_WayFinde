@@ -1,9 +1,8 @@
 ﻿using Backend.Data;
-using Scalar.AspNetCore;
-using Microsoft.EntityFrameworkCore;
 using Backend.Services;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CloudinaryDotNet;
 
@@ -51,6 +50,14 @@ builder.Services.AddSingleton(new Cloudinary(new Account(
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+
+builder.Services.AddTransient<IEmailService, EmailService>();
+
+
+builder.Services.AddScoped<VehicleReservationService>();
+
 
 // Add CORS policies
 builder.Services.AddCors(options =>
@@ -103,6 +110,13 @@ else
     app.UseHttpsRedirection(); // Only use HTTPS redirection in production
 }
 
+// Enable CORS before auth
+// Apply CORS policy BEFORE Authentication middleware
+app.UseCors("AllowReactApp");
+
+// Use HTTPS redirection
+app.UseHttpsRedirection();
+// Enable Authentication and Authorization middlewares
 app.UseAuthentication();
 app.UseAuthorization();
 

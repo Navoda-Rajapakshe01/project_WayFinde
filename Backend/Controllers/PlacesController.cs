@@ -139,6 +139,8 @@ namespace Backend.Controllers
                 Category = category!,
                 PlaceImage = new List<PlaceImage>(), // Set to an empty list or as appropriate
                 TripPlaces = new List<TripPlace>() // Set TripPlaces to an empty list or as appropriate
+                PlaceImage = new List<PlaceImage>(), // Set to an empty list or as appropriate
+                TripPlaces = new List<TripPlace>() // Set TripPlaces to an empty list or as appropriate
             };
 
             _context.PlacesToVisit.Add(place);

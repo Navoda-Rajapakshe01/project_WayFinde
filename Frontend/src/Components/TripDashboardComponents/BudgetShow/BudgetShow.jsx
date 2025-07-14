@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { X } from 'lucide-react';
 import './BudgetShow.css';
 
@@ -25,8 +24,6 @@ const BudgetShow = ({ onClose, tripId }) => {
     if (expenses.length > 0) {
       const total = expenses.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
       setTotalBudget(total);
-    } else {
-      setTotalBudget(0);
     }
   }, [expenses]);
 
@@ -60,16 +57,12 @@ const BudgetShow = ({ onClose, tripId }) => {
                   <span>Description</span>
                   <span>Amount</span>
                 </div>
-                {expenses.length > 0 ? (
-                  expenses.map((item, index) => (
-                    <div key={index} className="budget-item">
-                      <span className="item-name">{item.description}</span>
-                      <span className="item-amount">Rs {item.amount}</span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="empty-message">No expenses found.</p>
-                )}
+                {expenses && expenses.map((item, index) => (
+                  <div key={index} className="budget-item">
+                    <span className="item-name">{item.description}</span>
+                    <span className="item-amount">Rs {item.amount}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
