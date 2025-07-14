@@ -88,20 +88,20 @@ namespace Backend.Controllers
         {
             // Check if a place with the same name already exists
             var existingPlace = await _context.PlacesToVisit
-            .FirstOrDefaultAsync(p => 
+            .FirstOrDefaultAsync(p =>
                 p.Name.ToLower() == dto.Name.ToLower().Trim() &&
                 p.DistrictId == dto.DistrictId);
 
-        if (existingPlace != null)
-        {
-            return Conflict("A place with the same name already exists in this district.");
-        }
+            if (existingPlace != null)
+            {
+                return Conflict("A place with the same name already exists in this district.");
+            }
 
             // Check related entities exist
             var district = await _context.Districts.FindAsync(dto.DistrictId);
             if (district == null) return BadRequest("District not found.");
 
-            var category = dto.CategoryId.HasValue 
+            var category = dto.CategoryId.HasValue
                 ? await _context.Categories.FindAsync(dto.CategoryId.Value)
                 : null;
 
@@ -241,6 +241,30 @@ namespace Backend.Controllers
             return Ok(images);
         }
 
+        // GET: api/places/top-rated
+        [HttpGet("top-rated")]
+        public async Task<IActionResult> GetTopRatedPlaces()
+        {
+            var topRatedPlaces = await _context.PlacesToVisit
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.MainImageUrl,
+                    p.Address,
+                    AverageRating = _context.Reviews
+                        .Where(r => r.PlaceId == p.Id)
+                        .Select(r => (double?)r.Rating)
+                        .Average() ?? 0
+                })
+                .OrderByDescending(p => p.AverageRating)
+                .Take(4)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(topRatedPlaces);
+        }
 
     }
 }
