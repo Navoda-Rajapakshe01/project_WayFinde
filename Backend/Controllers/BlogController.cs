@@ -142,13 +142,15 @@ namespace Backend.Controllers
                 using (var streamReader = new StreamReader(file.OpenReadStream()))
                 {
                     var content = await streamReader.ReadToEndAsync();
+                    var strippedContent = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
+
                     var words = content.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     var first100Words = words.Take(100);
                     description = string.Join(" ", first100Words);
 
                     // Add ellipsis if there are more than 100 words
                     if (words.Length > 100)
-                        description += "...";
+                        description += "... Read More ";
                 }
 
                 // Validate Azure Blob Storage configuration
@@ -378,7 +380,6 @@ namespace Backend.Controllers
             }
         }
 
-        //Delete a blog in the profile
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBlog(int id)
         {
@@ -388,10 +389,20 @@ namespace Backend.Controllers
                 return NotFound(new { message = "Blog not found." });
             }
 
+            // Store the user ID before removing the blog
+            var userId = blog.UserId;
+
             _context.Blogs.Remove(blog);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Blog deleted successfully." });
+            // Get the updated count of blogs for this user
+            var blogCount = await _context.Blogs.CountAsync(b => b.UserId == userId);
+
+            return Ok(new
+            {
+                message = "Blog deleted successfully.",
+                blogCount = blogCount
+            });
         }
 
         [HttpGet("proxy-blog-content")]
