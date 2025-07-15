@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { FaComment, FaThumbsUp } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import BlogCard from "../BlogCard/BlogCard";
 import "../ImageGrid/ImageGrid.css";
 
 const OtherBlogs = ({ excludeId }) => {
@@ -128,8 +128,8 @@ const OtherBlogs = ({ excludeId }) => {
             if (typeof str === "string" && /^[A-Za-z0-9+/=]+$/.test(str)) {
               return atob(str);
             }
-          } catch (e) {
-            // Not base64
+          } catch {
+            // Intentionally left empty to handle invalid base64 strings gracefully
           }
           return str;
         };
@@ -193,26 +193,10 @@ const OtherBlogs = ({ excludeId }) => {
               "/default-blog-image.jpg",
             topic: blog.title ?? blog.Title ?? "Untitled",
             briefDescription: description,
-            writerName:
-              blog.author ??
-              blog.Author ??
-              blog.user?.username ??
-              blog.User?.username ??
-              blog.user?.Username ??
-              blog.User?.Username ??
-              "Anonymous",
-
-            reactionCount:
-              blog.NumberOfReacts ??
-              blog.numberOfReacts ??
-              blog.reactionCount ??
-              blog.ReactionCount ??
-              blog.reactionsCount ??
-              blog.ReactionsCount ??
-              blog.likesCount ??
-              0,
-
-            commentCount: blog.numberOfComments ?? blog.numberOfComments ?? 0,
+            writerName: blog.author ?? "Anonymous",
+            reactionCount: blog.NumberOfReacts ?? blog.numberOfReacts ?? 0,
+            commentCount: blog.numberOfComments ?? blog.CommentCount ?? 0,
+            location: blog.location ?? blog.Location ?? "",
           };
         });
 
@@ -256,8 +240,8 @@ const OtherBlogs = ({ excludeId }) => {
     fetchBlogs();
   }, [excludeId]);
 
-  const handleNavigate = (blogId) => {
-    navigate(`/blog/${blogId}`); // Use actual blog ID
+  const handleBlogClick = (blogId) => {
+    navigate(`/blog/${blogId}`);
   };
 
   if (loading) {
@@ -289,47 +273,16 @@ const OtherBlogs = ({ excludeId }) => {
       <h2 className="TrendingBlogsHeading">Other Blogs</h2>
       <div className="other-blog-grid">
         {currentBlogs.map((blog) => (
-          <div
+          <BlogCard
             key={blog.id || `blog-${Math.random()}`}
-            className="blog-card"
-            onClick={() => handleNavigate(blog.id)}
-          >
-            <img
-              src={blog.img}
-              alt={blog.topic}
-              className="blog-image"
-              onError={(e) => {
-                e.target.src = "/default-blog-image.jpg"; // Fallback image
-              }}
-            />
-            <p className="paragraph-muted">
-              <Link
-                to={`/profile/${blog.writerName}`}
-                className="tprofile-link"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {blog.writerName}
-              </Link>
-            </p>
-            <h3 className="blog-title">{blog.topic}</h3>
-            <p className="blog-description">{blog.briefDescription}</p>
-            <p className="blog-meta">
-              <span className="meta-item">
-                <FaComment className="icon" />
-                <span>
-                  Comments{" "}
-                  {blog.commentCount > 0 ? `(${blog.commentCount})` : ""}
-                </span>
-              </span>
-              <span className="meta-item">
-                <FaThumbsUp className="icon" />
-                <span>
-                  Likes{" "}
-                  {blog.reactionCount > 0 ? `(${blog.reactionCount})` : ""}
-                </span>
-              </span>
-            </p>
-          </div>
+            blog={blog}
+            onClick={handleBlogClick}
+            showAuthor={true}
+            showMeta={true}
+            showLocation={false}
+            cardType="default"
+            customClass="other-blog-card"
+          />
         ))}
       </div>
 

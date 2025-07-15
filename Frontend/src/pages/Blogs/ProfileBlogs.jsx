@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FaCommentAlt, FaThumbsUp, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
+import BlogCard from "../../Components/BlogComponents/BlogCard/BlogCard";
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "../CSS/ProfileBlogs.css";
 
@@ -12,6 +14,7 @@ const ProfileBlogs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState(null); // Define successMessage
 
   useEffect(() => {
     const fetchProfileAndBlogs = async () => {
@@ -115,28 +118,59 @@ const ProfileBlogs = () => {
           return blogUserId === currentUserId;
         });
 
-        console.log(`Found ${userBlogs.length} blogs for current user`);
+        const stripHtmlTags = (html) => {
+          if (!html) return "";
+          return html.replace(/<[^>]*>/g, "");
+        };
 
-        // Step 4: Process blog data with comment and reaction counts (using same logic as OtherBlogs)
+        const tryDecodeBase64 = (str) => {
+          try {
+            if (typeof str === "string" && /^[A-Za-z0-9+/=]+$/.test(str)) {
+              return atob(str);
+            }
+          } catch {
+            // Intentionally left empty to handle invalid base64 strings gracefully
+          }
+          return str;
+        };
+
+        const limitWords = (text, wordLimit) => {
+          if (!text) return "";
+          const words = text.split(/\s+/);
+          return (
+            words.slice(0, wordLimit).join(" ") +
+            (words.length > wordLimit ? "..." : "")
+          );
+        };
+
         const processedBlogs = userBlogs.map((blog) => {
           // Ensure we have a valid ID by checking all possible property names
           const blogId = blog.id ?? blog.Id ?? blog.blogId ?? blog.BlogId;
 
-          // Log if ID might be missing
-          if (blogId === undefined) {
-            console.warn("Blog missing ID:", blog);
-          }
+          let description = (() => {
+            let desc = blog.description;
+            if (!desc && blog.blog) {
+              desc = blog.blog.description || blog.blog.Description;
+            }
+            if (desc && typeof desc === "string") {
+              desc = stripHtmlTags(tryDecodeBase64(desc));
+            }
+            desc = desc || "No description available";
+            return limitWords(desc, 50);
+          })();
 
           return {
             id: blogId,
-            title: blog.title ?? blog.Title ?? "Untitled",
-            author:
+            topic: blog.title ?? blog.Title ?? "Untitled",
+            writerName:
               blog.author ?? blog.Author ?? userData.username ?? "Anonymous",
+            briefDescription: description,
             location: blog.location ?? blog.Location ?? "",
-            coverImageUrl:
-              blog.coverImageUrl ?? blog.CoverImageUrl ?? blog.imageUrl ?? "",
-
-            // Extract comment count with more robust property checking (same as OtherBlogs)
+            img:
+              blog.coverImageUrl ??
+              blog.CoverImageUrl ??
+              blog.imageUrl ??
+              "/placeholder-image.jpg",
             commentCount:
               blog.numberOfComments ??
               blog.NumberOfComments ??
@@ -171,7 +205,7 @@ const ProfileBlogs = () => {
     fetchProfileAndBlogs();
   }, []);
 
-  const handleBlogDisplay = (blogId) => {
+  const handleBlogClick = (blogId) => {
     if (blogId) {
       navigate(`/blog/${blogId}`);
     } else {
@@ -179,11 +213,13 @@ const ProfileBlogs = () => {
     }
   };
 
-  const handleDeleteBlog = async (blogId) => {
-    if (!blogId) {
-      console.error("Blog ID is undefined");
-      return;
+  const handleDeleteBlog = async (blogId, event) => {
+    // Prevent the blog card click event from firing
+    if (event) {
+      event.stopPropagation();
     }
+
+    if (!blogId) return;
 
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this blog?"
@@ -213,6 +249,45 @@ const ProfileBlogs = () => {
 
   const writeBlog = () => {
     navigate("/profile/profileBlogs/blogEditor");
+  };
+
+  // Custom BlogCard component for profile blogs with delete functionality
+  const ProfileBlogCard = ({ blog }) => {
+    return (
+      <div className="profile-blog-card-wrapper">
+        <BlogCard
+          blog={blog}
+          onClick={handleBlogClick}
+          showAuthor={false} // Don't show author since it's the user's own blog
+          showMeta={true}
+          showLocation={true}
+          cardType="default"
+          customClass="profile-blog-card"
+        />
+        <div className="blog-actions-overlay">
+          <button
+            className="delete-blog-btn"
+            onClick={(e) => handleDeleteBlog(blog.id, e)}
+            title="Delete blog"
+          >
+            <FaTrash className="icon" />
+            Delete
+          </button>
+        </div>
+      </div>
+    );
+  };
+  ProfileBlogCard.propTypes = {
+    blog: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      topic: PropTypes.string,
+      writerName: PropTypes.string,
+      briefDescription: PropTypes.string,
+      location: PropTypes.string,
+      img: PropTypes.string,
+      commentCount: PropTypes.number,
+      reactionCount: PropTypes.number,
+    }).isRequired,
   };
 
   if (loading) {
@@ -245,61 +320,28 @@ const ProfileBlogs = () => {
     <div className="profile-blogs-container">
       <ProfileHeadSection user={user} />
 
+      {successMessage && (
+        <div className="success-message">
+          <p style={{ textAlign: "center", color: "green" }}>
+            {successMessage}
+          </p>
+        </div>
+      )}
+
       <div className="blog-container">
         {blogs.length === 0 ? (
           <p style={{ textAlign: "center", marginTop: "2rem" }}>
             No blogs uploaded yet.
           </p>
         ) : (
-          blogs.map((blog, index) => (
-            <div
-              onClick={() => handleBlogDisplay(blog.id)}
-              className="blog-card"
-              key={blog.id || index}
-            >
-              <img
-                src={blog.coverImageUrl}
-                alt="Blog"
-                className="blog-image"
-                onError={(e) => {
-                  e.target.src = "/placeholder-image.jpg";
-                }}
+          <div className="profile-blogs-grid">
+            {blogs.map((blog, index) => (
+              <ProfileBlogCard
+                key={blog.id || `blog-${index}`}
+                blog={blog}
               />
-
-              <div className="blog-content">
-                <p className="blog-name">{blog.title}</p>
-                <p className="blog-topic">
-                  <strong>
-                    {blog.location !== "undefined" && blog.location
-                      ? blog.location
-                      : "No location specified"}
-                  </strong>
-                </p>
-                
-                <div className="blog-actions">
-                  <span>
-                    <FaCommentAlt className="icon" />
-                    Comments{" "}
-                    {blog.commentCount > 0 ? `(${blog.commentCount})` : "(0)"}
-                  </span>
-                  <span>
-                    <FaThumbsUp className="icon" />
-                    Likes{" "}
-                    {blog.reactionCount > 0 ? `(${blog.reactionCount})` : "(0)"}
-                  </span>
-
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation(); // prevent triggering blog display
-                      handleDeleteBlog(blog.id);
-                    }}
-                  >
-                    <FaTrash className="icon" /> Delete
-                  </span>
-                </div>
-              </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
 

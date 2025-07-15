@@ -190,7 +190,7 @@ namespace Backend.Controllers
 
             // Don't reveal if user exists for security reasons
             if (user == null)
-                return Ok(new { message = "If your email exists in our system, you will receive a password reset link shortly." });
+                return Ok(new { message = "User doesn't exist in the system." });
 
             // Generate a secure reset token
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -217,12 +217,12 @@ namespace Backend.Controllers
             var tokenString = tokenHandler.WriteToken(token);
 
             // Create reset URL
-            var resetUrl = $"{Request.Scheme}://{Request.Host}/reset-password?token={WebUtility.UrlEncode(tokenString)}";
-
+            // Hard-coded frontend URL for development
+            var resetUrl = $"http://localhost:5173/reset-password?token={WebUtility.UrlEncode(tokenString)}&email={WebUtility.UrlEncode(model.Email)}";
             // Send email with reset link
             await _emailService.SendPasswordResetEmailAsync(model.Email, resetUrl);
 
-            return Ok(new { message = "If your email exists in our system, you will receive a password reset link shortly." });
+            return Ok(new { message = "We send a reset link to your email. Please check it." });
         }
 
         [HttpGet("validate-reset-token")]

@@ -2,10 +2,10 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import React, { useContext } from "react";
 import {
   BrowserRouter,
+  Navigate,
   Route,
   Routes,
   useLocation,
-  Navigate,
 } from "react-router-dom";
 
 import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
@@ -19,11 +19,9 @@ import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 
-
 import { AuthContext } from "./Components/Authentication/AuthContext/AuthContext";
 import ForgotPassword from "./Components/Authentication/ForgotPassword/ForgotPassword";
 import ResetPassword from "./Components/Authentication/ResetPassword/ResetPassword";
-
 
 import SignIn from "./Components/Authentication/SignIn/SignIn";
 import SignUp from "./Components/Authentication/SignUp/SignUp";
@@ -32,9 +30,10 @@ import MainNavbar from "./Components/MainNavbar/MainNavbar";
 import UploadNewBlog from "./Components/UserProfileComponents/ProfileBlogContext/UploadNewBlog";
 import { ProfileImageProvider } from "./Components/UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import Accommodation from "./pages/Accommodation/Accommodation";
-import AccommodationSupplier from "./pages/AccommodationSupplier/AccommodationSupplier";
 import AccommodationDetail from "./pages/Accommodation/AccommodationDetailPage";
+import AccommodationSupplier from "./pages/AccommodationSupplier/AccommodationSupplier";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AllTrips from "./pages/AllTrips/AllTrips";
 import Blog from "./pages/Blogs/Blog";
 import BlogEditor from "./pages/Blogs/BlogEditor";
 import PersonalBlog from "./pages/Blogs/PersonalBlog";
@@ -49,16 +48,15 @@ import UserProfileSettings from "./pages/Profile/Setting";
 import DistrictDetails from "./pages/Thingstodo/DistrictDetails";
 import PlaceDetails from "./pages/Thingstodo/PlaceDetails";
 import ThingsToDo from "./pages/Thingstodo/ThingsToDo";
-import AllTrips from "./pages/AllTrips/AllTrips";
 import TripDashboard from "./pages/TripDashboard";
 
 import ProfileBookingContent from "./Components/UserProfileComponents/ProfileBookingContent/ProfileBookingContent";
 
-
 import Vehicle from "./pages/Vehicle/Vehicle";
-import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
+import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 
+import BlogCard from "./Components/BlogComponents/BlogCard/BlogCard";
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
@@ -141,6 +139,7 @@ function AppRoutes() {
             element={<AccommodationManagement />}
           />
         </Route>
+        <Route path="/blogcard" element={<BlogCard />} />
       </Routes>
 
       {!isAdminRoute && <Footer />}
