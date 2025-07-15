@@ -1,16 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  FaChevronLeft,
-  FaChevronRight,
-  FaComment,
-  FaFeatherAlt,
-  FaThumbsUp,
-} from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import BlogCard from "../BlogCard/BlogCard"; // Import the reusable BlogCard component
 import "./ImageGrid.css";
 
 const ImageGrid = () => {
-  const navigate = useNavigate();
   const scrollContainerRefLatest = useRef(null);
   const scrollContainerRefTrending = useRef(null);
 
@@ -98,10 +91,12 @@ const ImageGrid = () => {
           };
         });
 
+        // Sort for latest blogs (by date)
         const sortedByDate = [...processedBlogs].sort(
           (a, b) => b.createdAt - a.createdAt
         );
 
+        // Sort for trending blogs (by engagement)
         const sortedByEngagement = [...processedBlogs].sort(
           (a, b) =>
             b.commentCount +
@@ -122,10 +117,20 @@ const ImageGrid = () => {
     fetchBlogs();
   }, []);
 
-  const handleNavigate = (blogId) => {
-    if (blogId) {
-      navigate(`/blog/${blogId}`);
-    }
+  // Custom click handler for latest blogs
+  const handleLatestBlogClick = (blogId) => {
+    console.log("Clicked on latest blog:", blogId);
+    // You can add custom logic here for latest blogs
+    // For example, analytics tracking, different navigation, etc.
+    window.location.href = `/blog/${blogId}`;
+  };
+
+  // Custom click handler for trending blogs
+  const handleTrendingBlogClick = (blogId) => {
+    console.log("Clicked on trending blog:", blogId);
+    // You can add custom logic here for trending blogs
+    // For example, different analytics tracking
+    window.location.href = `/blog/${blogId}`;
   };
 
   const handleScrollLeft = (ref) => {
@@ -148,52 +153,9 @@ const ImageGrid = () => {
     return <div className="error">Error: {error}</div>;
   }
 
-  const renderBlogCards = (blogs) =>
-    blogs.length > 0 ? (
-      blogs.map((blog) => (
-        <div
-          key={blog.id}
-          className="blog-card"
-          onClick={() => handleNavigate(blog.id)}
-        >
-          <img
-            src={blog.img}
-            alt={blog.topic}
-            className="blog-image"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/default-blog-image.jpg";
-            }}
-          />
-          <h3 className="blog-title">{blog.topic}</h3>
-          <p className="blog-description">{blog.briefDescription}</p>
-          <p className="blog-meta">
-            <span className="meta-item">
-              <FaComment className="icon" />
-              <span>
-                Comments {blog.commentCount > 0 ? `(${blog.commentCount})` : ""}
-              </span>
-            </span>
-            <span className="meta-item">
-              <FaThumbsUp className="icon" />
-              <span>
-                Likes {blog.reactionCount > 0 ? `(${blog.reactionCount})` : ""}
-              </span>
-            </span>
-          </p>
-          <p className="paragraph-muted author-line">
-            <FaFeatherAlt className="icon" />
-            written by {blog.writerName}
-          </p>
-        </div>
-      ))
-    ) : (
-      <p className="no-blogs">No blogs available</p>
-    );
-
   return (
     <div className="custom-container">
-      {/* Latest Blogs */}
+      {/* Latest Blogs Section */}
       <div>
         <h2 className="LatestBlogsHeading">Latest Blogs</h2>
         <div className="ScrollButtonsSection">
@@ -203,13 +165,30 @@ const ImageGrid = () => {
           >
             <FaChevronLeft />
           </button>
+          
           <div
             ref={scrollContainerRefLatest}
             className="scroll-container"
             style={{ scrollBehavior: "smooth" }}
           >
-            {renderBlogCards(latestBlogs)}
+            {latestBlogs.length > 0 ? (
+              latestBlogs.map((blog) => (
+                <BlogCard
+                  key={blog.id}
+                  blog={blog}
+                  onClick={handleLatestBlogClick}
+                  showAuthor={true}
+                  showMeta={true}
+                  showLocation={false}
+                  cardType="default"
+                  customClass="latest-blog-card"
+                />
+              ))
+            ) : (
+              <p className="no-blogs">No latest blogs available</p>
+            )}
           </div>
+          
           <button
             className="scroll-button-right"
             onClick={() => handleScrollRight(scrollContainerRefLatest)}
@@ -219,7 +198,7 @@ const ImageGrid = () => {
         </div>
       </div>
 
-      {/* Trending Blogs */}
+      {/* Trending Blogs Section */}
       <div className="TrendingBlogsSection">
         <h2 className="TrendingBlogsHeading">Trending Blogs</h2>
         <div className="ScrollButtonsSection">
@@ -229,13 +208,30 @@ const ImageGrid = () => {
           >
             <FaChevronLeft />
           </button>
+          
           <div
             ref={scrollContainerRefTrending}
             className="scroll-container"
             style={{ scrollBehavior: "smooth" }}
           >
-            {renderBlogCards(trendingBlogs)}
+            {trendingBlogs.length > 0 ? (
+              trendingBlogs.map((blog) => (
+                <BlogCard
+                  key={blog.id}
+                  blog={blog}
+                  onClick={handleTrendingBlogClick}
+                  showAuthor={true}
+                  showMeta={true}
+                  showLocation={true} // Show location for trending blogs
+                  cardType="default" // Use featured style for trending
+                  customClass="trending-blog-card"
+                />
+              ))
+            ) : (
+              <p className="no-blogs">No trending blogs available</p>
+            )}
           </div>
+          
           <button
             className="scroll-button-right"
             onClick={() => handleScrollRight(scrollContainerRefTrending)}

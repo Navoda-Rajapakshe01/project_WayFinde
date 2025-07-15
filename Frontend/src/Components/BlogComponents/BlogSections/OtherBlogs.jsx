@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { FaComment, FaFeatherAlt, FaThumbsUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import BlogCard from "../BlogCard/BlogCard";
 import "../ImageGrid/ImageGrid.css";
 
 const OtherBlogs = ({ excludeId }) => {
@@ -113,6 +113,7 @@ const OtherBlogs = ({ excludeId }) => {
             writerName: blog.author ?? "Anonymous",
             reactionCount: blog.NumberOfReacts ?? blog.numberOfReacts ?? 0,
             commentCount: blog.numberOfComments ?? blog.CommentCount ?? 0,
+            location: blog.location ?? blog.Location ?? "",
           };
         });
 
@@ -136,7 +137,7 @@ const OtherBlogs = ({ excludeId }) => {
     fetchBlogs();
   }, [excludeId]);
 
-  const handleNavigate = (blogId) => {
+  const handleBlogClick = (blogId) => {
     navigate(`/blog/${blogId}`);
   };
 
@@ -169,43 +170,16 @@ const OtherBlogs = ({ excludeId }) => {
       <h2 className="TrendingBlogsHeading">Other Blogs</h2>
       <div className="other-blog-grid">
         {currentBlogs.map((blog) => (
-          <div
+          <BlogCard
             key={blog.id || `blog-${Math.random()}`}
-            className="blog-card"
-            onClick={() => handleNavigate(blog.id)}
-          >
-            <img
-              src={blog.img}
-              alt={blog.topic}
-              className="blog-image"
-              onError={(e) => {
-                e.target.src = "/default-blog-image.jpg";
-              }}
-            />
-
-            <h3 className="blog-title">{blog.topic}</h3>
-            <p className="blog-description">{blog.briefDescription}</p>
-            <p className="blog-meta">
-              <span className="meta-item">
-                <FaComment className="icon" />
-                <span>
-                  Comments{" "}
-                  {blog.commentCount > 0 ? `(${blog.commentCount})` : ""}
-                </span>
-              </span>
-              <span className="meta-item">
-                <FaThumbsUp className="icon" />
-                <span>
-                  Likes{" "}
-                  {blog.reactionCount > 0 ? `(${blog.reactionCount})` : ""}
-                </span>
-              </span>
-            </p>
-            <p className="paragraph-muted author-line">
-              <FaFeatherAlt className="icon" />
-              written by {blog.writerName}
-            </p>
-          </div>
+            blog={blog}
+            onClick={handleBlogClick}
+            showAuthor={true}
+            showMeta={true}
+            showLocation={false}
+            cardType="default"
+            customClass="other-blog-card"
+          />
         ))}
       </div>
 
