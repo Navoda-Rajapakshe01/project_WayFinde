@@ -33,12 +33,13 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem("token");
-      
+      console.log("[AuthProvider] token from localStorage:", token);
+
       if (token && typeof token === "string" && token.trim() !== "") {
         try {
           if (token.split(".").length === 3) {
             const decodedToken = jwtDecode(token);
-            
+            console.log("[AuthProvider] Decoded token:", decodedToken);
 
             const currentTime = Date.now() / 1000;
             if (decodedToken.exp && decodedToken.exp < currentTime) {
@@ -47,7 +48,7 @@ const AuthProvider = ({ children }) => {
               setUser(null);
             } else {
               const userProfile = await fetchUserProfile(token);
-             
+              console.log("[AuthProvider] User profile from API:", userProfile);
 
               // 🟢 Map claims to cleaner properties
               const roleClaim =
@@ -66,7 +67,10 @@ const AuthProvider = ({ children }) => {
                 username: usernameClaim,
               };
 
-              
+              console.log(
+                "[AuthProvider] Normalized user object:",
+                normalizedUser
+              );
 
               setUser(normalizedUser);
             }

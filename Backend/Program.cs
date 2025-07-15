@@ -12,9 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
 
-//builder.Services.AddDbContext<UserDbContext>(options =>
- //   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
