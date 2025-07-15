@@ -157,6 +157,10 @@ namespace Backend.Data
                 // Add new places that are not yet linked
                 var toAdd = request.PlaceIds.Except(existingPlaceIds).ToList();
 
+                if (trip.TripPlaces == null)
+                {
+                    trip.TripPlaces = new List<TripPlace>();
+                }
                 foreach (var placeId in toAdd)
                 {
                     trip.TripPlaces.Add(new TripPlace
@@ -201,7 +205,8 @@ namespace Backend.Data
                     {
                         Id = tp.Place.Id,
                         Name = tp.Place.Name,
-                        GoogleMapLink = tp.Place.GoogleMapLink
+                        GoogleMapLink = tp.Place.GoogleMapLink!,
+                        MainImageUrl = tp.Place.MainImageUrl
                     }).ToList() ?? new List<PlaceDto>()
             };
 

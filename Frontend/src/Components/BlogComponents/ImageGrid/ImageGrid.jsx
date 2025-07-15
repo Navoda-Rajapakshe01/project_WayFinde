@@ -1,39 +1,163 @@
-import React, { useRef, useState } from "react";
-import { FaChevronLeft, FaChevronRight, FaComment } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import BlogCard from "../BlogCard/BlogCard"; // Import the reusable BlogCard component
 import "./ImageGrid.css";
-import PropTypes from "prop-types";
 
-const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
-  const navigate = useNavigate();
-  const scrollContainerRefLatest = useRef(null); // Create ref for scrolling container
-  const scrollContainerRefTrending = useRef(null); // Create ref for scrolling container
-  const [currentPage, setCurrentPage] = useState(1);
- //onst blogsPerPage = 6; // Number of blogs per page
+const ImageGrid = () => {
+  const scrollContainerRefLatest = useRef(null);
+  const scrollContainerRefTrending = useRef(null);
 
-  // Pagination logic for Other Blogs
-  // const indexOfLastBlog = currentPage * blogsPerPage;
-  // const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  // const currentBlogs = otherBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
-  // const totalPages = Math.ceil(otherBlogs.length / blogsPerPage);
+  // State for blogs
+  const [latestBlogs, setLatestBlogs] = useState([]);
+  const [trendingBlogs, setTrendingBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleNavigate = (index) => {
-    navigate(`/blog/${index + 1}`); // Navigate dynamically
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch("http://localhost:5030/api/blog/all", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data = await response.json();
+        console.log("Blog API response:", data);
+
+        // Handle different response formats
+        let blogsArray = [];
+        if (data.$values) {
+          blogsArray = data.$values;
+        } else if (Array.isArray(data)) {
+          blogsArray = data;
+        }
+
+        const stripHtmlTags = (html) => {
+          if (!html) return "";
+          return html.replace(/<[^>]*>/g, "");
+        };
+
+        const tryDecodeBase64 = (str) => {
+          try {
+            if (typeof str === "string" && /^[A-Za-z0-9+/=]+$/.test(str)) {
+              return atob(str);
+            }
+          } catch {
+            // Intentionally ignoring decoding errors
+          }
+          return str;
+        };
+
+        const limitWords = (text, wordLimit) => {
+          if (!text) return "";
+          const words = text.split(/\s+/);
+          if (words.length <= wordLimit) {
+            return text;
+          }
+          return words.slice(0, wordLimit).join(" ") + "...";
+        };
+
+        const processedBlogs = blogsArray.map((blog) => {
+          const blogId = blog.id ?? blog.Id ?? blog.blogId ?? blog.BlogId;
+
+          let desc = blog.description;
+          if (!desc && blog.blog) {
+            desc = blog.blog.description || blog.blog.Description;
+          }
+          if (desc && typeof desc === "string") {
+            desc = stripHtmlTags(tryDecodeBase64(desc));
+          }
+
+          const briefDescription = limitWords(
+            desc || "No description available",
+            50
+          );
+
+          return {
+            id: blogId,
+            topic: blog.title ?? blog.Title ?? "Untitled",
+            writerName: blog.author ?? blog.Author ?? "Anonymous",
+            img:
+              blog.coverImageUrl ??
+              blog.CoverImageUrl ??
+              "/default-blog-image.jpg",
+            briefDescription,
+            location: blog.location ?? blog.Location ?? "",
+            commentCount: blog.numberOfComments ?? blog.CommentCount ?? 0,
+            reactionCount: blog.numberOfReacts ?? blog.ReactionCount ?? 0,
+            createdAt: new Date(blog.createdAt ?? blog.CreatedAt ?? Date.now()),
+          };
+        });
+
+        // Sort for latest blogs (by date)
+        const sortedByDate = [...processedBlogs].sort(
+          (a, b) => b.createdAt - a.createdAt
+        );
+
+        // Sort for trending blogs (by engagement)
+        const sortedByEngagement = [...processedBlogs].sort(
+          (a, b) =>
+            b.commentCount +
+            b.reactionCount -
+            (a.commentCount + a.reactionCount)
+        );
+
+        // Take the top blogs (limit to 10 or however many you want to display)
+        setLatestBlogs(sortedByDate.slice(0, 10));
+        setTrendingBlogs(sortedByEngagement.slice(0, 10));
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  // Custom click handler for latest blogs
+  const handleLatestBlogClick = (blogId) => {
+    console.log("Clicked on latest blog:", blogId);
+    // You can add custom logic here for latest blogs
+    // For example, analytics tracking, different navigation, etc.
+    window.location.href = `/blog/${blogId}`;
   };
 
-  // 🔹 Scroll Left
-  const handleScrollLeft = (scrollContainerRef) => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -300, behavior: "smooth" });
+  // Custom click handler for trending blogs
+  const handleTrendingBlogClick = (blogId) => {
+    console.log("Clicked on trending blog:", blogId);
+    // You can add custom logic here for trending blogs
+    // For example, different analytics tracking
+    window.location.href = `/blog/${blogId}`;
+  };
+
+  const handleScrollLeft = (ref) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
 
-  // 🔹 Scroll Right
-  const handleScrollRight = (scrollContainerRef) => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 300, behavior: "smooth" });
+  const handleScrollRight = (ref) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
+
+  if (loading) {
+    return <div className="loading">Loading blogs...</div>;
+  }
+
+  if (error) {
+    return <div className="error">Error: {error}</div>;
+  }
 
   return (
     <div className="custom-container">
@@ -41,131 +165,89 @@ const ImageGrid = ({ latestBlogs, trendingBlogs }) => {
       <div>
         <h2 className="LatestBlogsHeading">Latest Blogs</h2>
         <div className="ScrollButtonsSection">
-          {/* 🔹 Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
             onClick={() => handleScrollLeft(scrollContainerRefLatest)}
           >
             <FaChevronLeft />
           </button>
-
-          {/* Blog Cards in Horizontal Scroll */}
+          
           <div
             ref={scrollContainerRefLatest}
             className="scroll-container"
             style={{ scrollBehavior: "smooth" }}
           >
-            {latestBlogs.map((blog, index) => (
-              <div
-                key={index}
-                className="blog-card"
-                onClick={() => handleNavigate(index)}
-              >
-                <img src={blog.img} alt={blog.topic} className="blog-image" />
-                <p className="paragraph-muted">
-                  <Link
-                    to={`/profile/${blog.writerName}`}
-                    className="profile-link"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {blog.writerName}
-                  </Link>
-                </p>
-                <h3 className="blog-title">{blog.topic}</h3>
-                <p className="blog-description">{blog.briefDescription}</p>
-                <p className="blog-meta">
-                  <span>Date</span>
-                  <span className="meta-item">
-                    <FaComment className="icon" />
-                    <span>Comments</span>
-                  </span>
-                  <span className="meta-item">
-                    <FaComment className="icon" />
-                    <span>Likes</span>
-                  </span>
-                </p>
-              </div>
-            ))}
+            {latestBlogs.length > 0 ? (
+              latestBlogs.map((blog) => (
+                <BlogCard
+                  key={blog.id}
+                  blog={blog}
+                  onClick={handleLatestBlogClick}
+                  showAuthor={true}
+                  showMeta={true}
+                  showLocation={false}
+                  cardType="default"
+                  customClass="latest-blog-card"
+                />
+              ))
+            ) : (
+              <p className="no-blogs">No latest blogs available</p>
+            )}
           </div>
-
-          {/* 🔹 Scroll Right Button */}
+          
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefLatest)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefLatest)}>
             <FaChevronRight />
           </button>
         </div>
       </div>
 
       {/* Trending Blogs Section */}
+      {/* Trending Blogs Section */}
       <div className="TrendingBlogsSection">
         <h2 className="TrendingBlogsHeading">Trending Blogs</h2>
         <div className="ScrollButtonsSection">
-          {/* 🔹 Scroll Left Button */}
+          {/* Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollLeft(scrollContainerRefTrending)}>
             <FaChevronLeft />
           </button>
-
-          {/* Blog Cards in Horizontal Scroll */}
+          
           <div
             ref={scrollContainerRefTrending}
             className="scroll-container"
+
             style={{ scrollBehavior: "smooth" }}
           >
-            {trendingBlogs.map((blog, index) => (
-              <div
-                key={index}
-                className="blog-card"
-                onClick={() => handleNavigate(index)}
-              >
-                <img src={blog.img} alt={blog.topic} className="blog-image" />
-                <p className="paragraph-muted">
-                  <Link
-                    to={`/profile/${blog.writerName}`}
-                    className="profile-link"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {blog.writerName}
-                  </Link>
-                </p>
-                <h3 className="blog-title">{blog.topic}</h3>
-                <p className="blog-description">{blog.briefDescription}</p>
-                <p className="blog-meta">
-                  <span className="meta-item">
-                    <FaComment className="icon" />
-                    <span>Comments</span>
-                  </span>
-                  <span className="meta-item">
-                    <FaComment className="icon" />
-                    <span>Likes</span>
-                  </span>
-                </p>
-              </div>
-            ))}
+            {trendingBlogs.length > 0 ? (
+              trendingBlogs.map((blog) => (
+                <BlogCard
+                  key={blog.id}
+                  blog={blog}
+                  onClick={handleTrendingBlogClick}
+                  showAuthor={true}
+                  showMeta={true}
+                  showLocation={true} // Show location for trending blogs
+                  cardType="default" // Use featured style for trending
+                  customClass="trending-blog-card"
+                />
+              ))
+            ) : (
+              <p className="no-blogs">No trending blogs available</p>
+            )}
           </div>
-
+          
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefTrending)}>
             <FaChevronRight />
           </button>
         </div>
       </div>
-
-      
     </div>
   );
 };
-ImageGrid.propTypes = {
-  latestBlogs: PropTypes.array.isRequired,
-  trendingBlogs: PropTypes.array.isRequired,
-  otherBlogs: PropTypes.array.isRequired,
-};
-
 
 export default ImageGrid;

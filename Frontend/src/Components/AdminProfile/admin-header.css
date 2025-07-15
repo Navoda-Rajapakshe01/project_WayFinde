@@ -1,4 +1,5 @@
-.admin-header .header-right {
+/* Header Container */
+.admin-header-container .admin-header-right {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -6,14 +7,14 @@
   padding: 0 24px;
 }
 
-.admin-header .notification-container,
-.admin-header .profile-container {
+.admin-header-container .admin-header-notification,
+.admin-header-container .admin-header-profile {
   position: relative;
   margin-left: 25px;
 }
 
-.admin-header .notification-button,
-.admin-header .profile-button {
+/* Icon Buttons */
+.admin-header-container .admin-header-icon-button {
   background: none;
   border: none;
   font-size: 1.3rem;
@@ -24,36 +25,13 @@
   align-items: center;
   justify-content: center;
 }
-.admin-header .notification-button:hover,
-.admin-header .profile-button:hover {
+
+.admin-header-container .admin-header-icon-button:hover {
   color: #2c3e50;
 }
 
-.admin-header .notification-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.admin-header .notification-heading h3 {
-  margin: 0;
-}
-
-.admin-header .notification-heading button {
-  background: none;
-  border: none;
-  color: var(--primary-color);
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 5px 15px 5px 5px;
-}
-.notification-heading button:hover {
-  text-decoration: underline;
-}
-
-.admin-header .notification-badge {
+/* Badge */
+.admin-header-container .admin-header-badge {
   position: absolute;
   top: -2px;
   right: -5px;
@@ -70,65 +48,14 @@
   line-height: 1;
 }
 
-.admin-header .notification-badge.show {
+.admin-header-container .admin-header-badge.show {
   background-color: #e74c3c;
   color: white;
   border: 1px solid white;
 }
 
-/* Notifications Modal */
-.admin-header .notifications-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 2000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.admin-header .notifications-modal {
-  background: #fff;
-  padding: 32px;
-  border-radius: 8px;
-  min-width: 320px;
-  max-width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
-  position: relative;
-}
-.admin-header .notifications-modal-close {
-  position: absolute;
-  top: 16px;
-  right: 18px;
-  background: none;
-  border: none;
-  font-size: 1.7rem;
-  color: #7f8c8d;
-  cursor: pointer;
-  padding: 0;
-  z-index: 10;
-  transition: color 0.2s;
-}
-
-.admin-header .profile-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: #ecf0f1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #7f8c8d;
-  overflow: hidden;
-  font-size: 1rem;
-  border: 1px solid #e0e0e0;
-}
-.admin-header .profile-button:hover .profile-avatar {
-  border-color: var(--primary-color);
-}
-
 /* Dropdown Menus */
-.admin-header .dropdown-menu {
+.admin-header-container .admin-header-dropdown {
   position: absolute;
   top: calc(100% + 10px);
   right: 0;
@@ -142,45 +69,70 @@
   visibility: visible;
 }
 
-.admin-header .dropdown-menu h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
+/* Notification Dropdown Header */
+.admin-header-container .admin-header-dropdown-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 15px 20px;
-  margin: 0;
-  color: #2c3e50;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.admin-header .notification-list {
+.admin-header-container .admin-header-dropdown-header h3 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.admin-header-container .admin-header-clear-all {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.admin-header-container .admin-header-clear-all:hover {
+  text-decoration: underline;
+}
+
+/* Notification List */
+.admin-header-container .admin-header-notification-list {
   list-style: none;
   padding: 0;
   margin: 0;
   max-height: 300px;
   overflow-y: auto;
 }
-.admin-header .notification-list li {
+
+.admin-header-container .admin-header-notification-list li {
   padding: 12px 20px;
   border-bottom: 1px solid #e0e0e0;
   cursor: pointer;
-  transition: background-color var(--transition);
+  transition: background-color 0.2s;
   padding-right: 32px;
   position: relative;
 }
-.admin-header .notification-list li:last-child {
+
+.admin-header-container .admin-header-notification-list li:last-child {
   border-bottom: none;
 }
-.admin-header .notification-list li:hover {
+
+.admin-header-container .admin-header-notification-list li:hover {
   background-color: #f8f9fa;
 }
-.admin-header .notification-list li.unread {
+
+.admin-header-container .admin-header-notification-list li.unread {
   background-color: #f1faff;
 }
 
-.admin-header .notification-item-content {
+.admin-header-container .admin-header-notification-content {
   display: flex;
   flex-direction: column;
 }
 
-.admin-header .notification-clear-btn {
+.admin-header-container .admin-header-clear-btn {
   position: absolute;
   top: 12px;
   right: 10px;
@@ -190,56 +142,87 @@
   font-size: 1.1rem;
   cursor: pointer;
   padding: 0 4px;
-  transition: color 0.2s;
 }
 
-.admin-header .notification-text {
-  font-size: 0.9rem;
-  margin-bottom: 4px;
-  color: #2c3e50;
-}
-.admin-header .notification-time {
-  font-size: 0.8rem;
-  color: #7f8c8d;
-}
-.admin-header .no-notifications {
+.admin-header-container .admin-header-no-notifications {
   padding: 20px;
   text-align: center;
   color: #7f8c8d;
   font-size: 0.9rem;
-  margin-bottom: 10px;
 }
-.admin-header .dropdown-footer {
+
+/* Dropdown Footer */
+.admin-header-container .admin-header-dropdown-footer {
   display: flex;
   justify-content: space-between;
   padding: 10px 20px;
   border-top: 1px solid #e0e0e0;
   background-color: #f8f9fa;
 }
-.admin-header .dropdown-footer button {
+
+.admin-header-container .admin-header-dropdown-footer button {
   background: none;
   border: none;
   color: var(--primary-color);
   font-size: 0.85rem;
   font-weight: 500;
   padding: 5px;
+  cursor: pointer;
 }
-.admin-header .dropdown-footer button:hover {
+
+.admin-header-container .admin-header-dropdown-footer button:hover {
   text-decoration: underline;
 }
 
-/* Profile Dropdown */
-.admin-header .profile-dropdown {
-  min-width: 240px;
-}
-.admin-header .profile-header {
+/* Modal */
+.admin-header-container .admin-header-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 2000;
   display: flex;
   align-items: center;
-  padding: 20px;
-  gap: 15px;
-  border-bottom: 1px solid #e0e0e0;
+  justify-content: center;
 }
-.admin-header .profile-avatar-large {
+
+.admin-header-container .admin-header-modal {
+  background: #fff;
+  padding: 32px;
+  border-radius: 8px;
+  min-width: 320px;
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.admin-header-container .admin-header-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Profile Section */
+.admin-header-container .admin-header-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ecf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #7f8c8d;
+  font-size: 1rem;
+  border: 1px solid #e0e0e0;
+}
+
+.admin-header-container .admin-header-avatar-large {
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -251,40 +234,58 @@
   color: #7f8c8d;
   flex-shrink: 0;
 }
-.admin-header .profile-info h4 {
+
+.admin-header-container .admin-header-dropdown-profile {
+  min-width: 240px;
+}
+
+.admin-header-container .admin-header-profile-info {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  gap: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.admin-header-container .admin-header-profile-info h4 {
   font-size: 1rem;
   font-weight: 600;
   margin: 0 0 3px 0;
   color: #2c3e50;
 }
-.admin-header .profile-info p {
+
+.admin-header-container .admin-header-profile-info p {
   font-size: 0.85rem;
   color: #7f8c8d;
   margin: 0;
-  word-break: break-all;
+  word-break: break-word;
 }
-.admin-header .profile-menu {
+
+.admin-header-container .admin-header-dropdown-profile ul {
   list-style: none;
   padding: 10px 0;
   margin: 0;
 }
-.admin-header .profile-menu li {
+
+.admin-header-container .admin-header-dropdown-profile li {
   padding: 10px 20px;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: background-color var(--transition);
+  transition: background-color 0.2s;
   color: #2c3e50;
 }
-.admin-header .profile-menu li:hover {
+
+.admin-header-container .admin-header-dropdown-profile li:hover {
   background-color: #f8f9fa;
 }
-.admin-header .profile-menu li.logout {
+
+.admin-header-container .admin-header-logout {
   border-top: 1px solid #e0e0e0;
   margin-top: 5px;
   padding-top: 10px;
-  color: #e74c3c;
+  color: #e74c3c !important;
   font-weight: 500;
 }
-.admin-header .profile-menu li.logout:hover {
+.admin-header-container .admin-header-logout:hover {
   background-color: #feebee;
 }

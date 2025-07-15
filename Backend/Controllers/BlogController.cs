@@ -1,22 +1,27 @@
-﻿using Backend.Models;
+
+﻿using Azure.Storage.Blobs;
+using Backend.Data;
+using Backend.DTO;
+
 using Backend.DTOs;
+using Backend.Models;
+using Backend.Models.User;
+using Backend.Services;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+
 using System.Security.Claims;
 using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using Backend.Services;
-using Microsoft.AspNetCore.Authorization;
-using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using Backend.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Net;
-using Microsoft.Extensions.Logging;
-using Backend.DTO;
-using Azure.Storage.Blobs;
+
 
 namespace Backend.Controllers
 {
@@ -42,8 +47,8 @@ namespace Backend.Controllers
              BlobService blobService,
              IHttpContextAccessor httpContextAccessor,
              ILogger<BlogController> logger,
-            AppDbContext dbContext,
-            IConfiguration config)
+             AppDbContext dbContext,
+             IConfiguration config)
         {
             _cloudinary = cloudinary;
             _context = context;
@@ -51,68 +56,60 @@ namespace Backend.Controllers
             _userService = userService;
             _logger = logger;
             _blobService = blobService;
+            _httpContextAccessor = httpContextAccessor;
             _dbContext = dbContext;
             _config = config;
         }
 
         [HttpPost("upload-blogs")]
-        [Authorize] // Add the Authorize attribute to ensure the user is authenticated
+        [Authorize]
         public async Task<IActionResult> UploadBlog([FromForm] UploadBlogDto uploadDto)
         {
-            try
+            if (uploadDto.Document == null || uploadDto.Image == null)
+                return BadRequest("Document and image are required.");
+
+            var docUploadParams = new RawUploadParams
             {
-                if (uploadDto.Document == null || uploadDto.Image == null)
-                    return BadRequest("Document and image are required.");
+                File = new FileDescription(uploadDto.Document.FileName, uploadDto.Document.OpenReadStream()),
+                Folder = "blog_documents"
+            };
+            var docResult = await _cloudinary.UploadAsync(docUploadParams);
+            if (docResult.StatusCode != HttpStatusCode.OK)
+                return StatusCode(500, "Document upload failed.");
 
-                // Upload document
-                var docUploadParams = new RawUploadParams
-                {
-                    File = new FileDescription(uploadDto.Document.FileName, uploadDto.Document.OpenReadStream()),
-                    Folder = "blog_documents"
-                };
-                var docResult = await _cloudinary.UploadAsync(docUploadParams);
-                if (docResult.StatusCode != HttpStatusCode.OK)
-                    return StatusCode(500, "Document upload failed.");
-
-                // Upload image
-                var imageUploadParams = new ImageUploadParams
-                {
-                    File = new FileDescription(uploadDto.Image.FileName, uploadDto.Image.OpenReadStream()),
-                    Folder = "blog_images"
-                };
-                var imageResult = await _cloudinary.UploadAsync(imageUploadParams);
-                if (imageResult.StatusCode != HttpStatusCode.OK)
-                    return StatusCode(500, "Image upload failed.");
-
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-                    return Unauthorized("Invalid or missing user ID.");
-
-                var blog = new Blog
-                {
-                    Title = uploadDto.Title,
-                    Author = uploadDto.Author,
-                    Location = uploadDto.Location,
-                    BlogUrl = docResult.SecureUrl.ToString(),
-                    CoverImageUrl = imageResult.SecureUrl.ToString(),
-                    UserId = userId,
-                    CreatedAt = DateTime.UtcNow
-                };
-
-                _context.Blogs.Add(blog);
-                await _context.SaveChangesAsync();
-
-                return Ok(new
-                {
-                    message = "Blog uploaded successfully",
-                    blogUrl = blog.BlogUrl,
-                    imageUrl = blog.CoverImageUrl
-                });
-            }
-            catch (Exception ex)
+            var imageUploadParams = new ImageUploadParams
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+                File = new FileDescription(uploadDto.Image.FileName, uploadDto.Image.OpenReadStream()),
+                Folder = "blog_images"
+            };
+            var imageResult = await _cloudinary.UploadAsync(imageUploadParams);
+            if (imageResult.StatusCode != HttpStatusCode.OK)
+                return StatusCode(500, "Image upload failed.");
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                return Unauthorized("Invalid or missing user ID.");
+
+            var blog = new Blog
+            {
+                Title = uploadDto.Title,
+                Author = uploadDto.Author,
+                Location = uploadDto.Location,
+                BlogUrl = docResult.SecureUrl.ToString(),
+                CoverImageUrl = imageResult.SecureUrl.ToString(),
+                UserId = userId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Blogs.Add(blog);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                message = "Blog uploaded successfully",
+                blogUrl = blog.BlogUrl,
+                imageUrl = blog.CoverImageUrl
+            });
         }
 
         [HttpPost("save-blogs")]
@@ -121,60 +118,57 @@ namespace Backend.Controllers
         {
             try
             {
-                // Input validation
                 if (file == null || file.Length == 0)
                     return BadRequest("No blog file uploaded.");
-
                 if (string.IsNullOrWhiteSpace(title))
                     return BadRequest("Blog title is required.");
 
-                // Get UserId from JWT token
                 var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("id") ?? User.FindFirst(ClaimTypes.NameIdentifier);
                 if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-                {
                     return BadRequest("Invalid user authentication. Please log in again.");
+
+                // Extract first 100 words from the file content
+                string description = "";
+                using (var streamReader = new StreamReader(file.OpenReadStream()))
+                {
+                    var content = await streamReader.ReadToEndAsync();
+                    var words = content.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    var first100Words = words.Take(100);
+                    description = string.Join(" ", first100Words);
+
+                    // Add ellipsis if there are more than 100 words
+                    if (words.Length > 100)
+                        description += "...";
                 }
 
-                // Validate Azure Blob Storage configuration
                 var connectionString = _config["AzureBlobStorage:ConnectionString"];
                 var containerName = _config["AzureBlobStorage:ContainerName"];
+                if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(containerName))
+                    return StatusCode(500, "Azure Blob Storage settings are not properly configured.");
 
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    return StatusCode(500, "Azure Blob Storage connection string is not configured.");
-                }
-
-                if (string.IsNullOrWhiteSpace(containerName))
-                {
-                    return StatusCode(500, "Azure Blob Storage container name is not configured.");
-                }
-
-                // Upload to Azure Blob Storage
                 var container = new BlobContainerClient(connectionString, containerName);
                 await container.CreateIfNotExistsAsync();
 
-                // Generate unique filename to avoid conflicts
                 var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
                 var blobClient = container.GetBlobClient(fileName);
 
                 using var stream = file.OpenReadStream();
+                stream.Position = 0;
                 await blobClient.UploadAsync(stream, overwrite: true);
                 var blobUrl = blobClient.Uri.ToString();
 
-                // Get author name from claims
                 var author = User.FindFirst("name")?.Value ??
-                            User.FindFirst("username")?.Value ??
-                            User.FindFirst(ClaimTypes.Name)?.Value ??
-                            User.Identity.Name ??
-                            "Unknown Author";
+                             User.FindFirst("username")?.Value ??
+                             User.FindFirst(ClaimTypes.Name)?.Value ??
+                             User.Identity?.Name ??
+                             "Unknown Author";
 
-                // Save blog metadata to DB
                 var blog = new Blog
                 {
                     Title = title.Trim(),
                     BlogUrl = blobUrl,
                     Author = author,
-                    UserId = userId, // This was missing!
+                    UserId = userId,
                     CreatedAt = DateTime.UtcNow,
                     Location = string.Empty,
                     Tags = new List<string>(),
@@ -182,7 +176,8 @@ namespace Backend.Controllers
                     NumberOfReads = 0,
                     NumberOfReacts = 0,
                     CoverImageUrl = coverImageUrl ?? string.Empty,
-                    ImageUrls = new List<string>()
+                    ImageUrls = new List<string>(),
+                    Description = description
                 };
 
                 _dbContext.Blogs.Add(blog);
@@ -274,7 +269,7 @@ namespace Backend.Controllers
 
                 return Ok(blog);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception here if you have logging configured
                 return StatusCode(500, "An error occurred while retrieving the blog");
@@ -303,45 +298,65 @@ namespace Backend.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
+            // Increment comment count
+            blog.NumberOfComments++;
+
             _context.Comments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return Ok(comment);
+            return Ok(new
+            {
+                comment,
+                blogCommentCount = blog.NumberOfComments  // Return updated count
+            });
         }
+
+
 
         // GET: api/blog/all
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<object>>> GetAllBlogs()
         {
-            var blogs = await _context.Blogs
-                .Include(b => b.User) // Include user data
-                .ToListAsync();
+            try
+            {
+                var blogs = await _context.Blogs
+                    .Include(b => b.User) // Include user data
+                    .ToListAsync();
 
-            // Create a simplified object without circular references
-            var simplifiedBlogs = blogs.Select(b => new {
-                Id = b.Id,
-                Title = b.Title,
-                BlogUrl = b.BlogUrl,
-                CreatedAt = b.CreatedAt,
-                Location = b.Location,
-                Tags = b.Tags,
-                NumberOfComments = b.NumberOfComments,
-                NumberOfReads = b.NumberOfReads,
-                NumberOfReacts = b.NumberOfReacts,
-                Author = b.Author,
-                CoverImageUrl = b.CoverImageUrl,
-                ImageUrls = b.ImageUrls,
-                User = new
+                // Create a simplified object without circular references
+                var simplifiedBlogs = blogs.Select(b => new
                 {
-                    Id = b.User.Id,
-                    Username = b.User.Username,
-                    ProfilePictureUrl = b.User.ProfilePictureUrl,
-                    Bio = b.User.Bio
-                    // Add other user properties you need
-                }
-            });
+                    Id = b.Id,
+                    Title = b.Title ?? string.Empty,
+                    BlogUrl = b.BlogUrl ?? string.Empty,
+                    CreatedAt = b.CreatedAt,
+                    Location = b.Location ?? string.Empty,
+                    Tags = b.Tags ?? new List<string>(), // Prevent null reference
+                    NumberOfComments = b.NumberOfComments,
+                    NumberOfReads = b.NumberOfReads,
+                    NumberOfReacts = b.NumberOfReacts,
+                    Author = b.Author ?? string.Empty,
+                    CoverImageUrl = b.CoverImageUrl ?? string.Empty,
+                    ImageUrls = b.ImageUrls ?? new List<string>(),
+                    Description = b.Description ?? string.Empty,
+                    User = b.User == null ? new { Id = Guid.Empty, Username = "Unknown", ProfilePictureUrl = (string?)null, Bio = (string?)null } : new
 
-            return Ok(simplifiedBlogs);
+                    {
+                        Id = b.User.Id,
+                        Username = b.User.Username ?? string.Empty,
+                        ProfilePictureUrl = b.User.ProfilePictureUrl,
+                        Bio = b.User.Bio
+                    }
+                }).ToList();
+
+
+                return Ok(simplifiedBlogs);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in GetAllBlogs: {Message}", ex.Message);
+                return StatusCode(500, new { message = ex.Message, stack = ex.StackTrace });
+            }
         }
 
 
@@ -448,7 +463,8 @@ namespace Backend.Controllers
                     .ToListAsync();
 
                 // Create simplified objects without circular references
-                var simplifiedComments = comments.Select(c => new {
+                var simplifiedComments = comments.Select(c => new
+                {
                     Id = c.Id,
                     Content = c.Content,
                     CreatedAt = c.CreatedAt,
@@ -470,7 +486,100 @@ namespace Backend.Controllers
             }
         }
 
+        // Controllers/BlogController.cs
 
+        // GET: api/Blog/{blogId}/reactions/count
+        // Duplicate method removed to resolve compile error.
 
+        // GET: api/Blog/{blogId}/reactions/status
+
+        // POST: api/Blog/{blogId}/react
+
+        [HttpGet("blogDescription")]
+        private async Task<string> GetFirst100WordsFromBlobAsync(string blobUrl)
+        {
+            try
+            {
+                // Parse the blob URL to get container and blob name
+                var uri = new Uri(blobUrl);
+                var blobClient = new BlobClient(uri);
+
+                // Download the blob content as text
+                var downloadInfo = await blobClient.DownloadAsync();
+                using var reader = new StreamReader(downloadInfo.Value.Content, Encoding.UTF8);
+                var content = await reader.ReadToEndAsync();
+
+                // Extract first 100 words
+                var words = content.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                return string.Join(" ", words.Take(100));
+            }
+            catch
+            {
+                return "No description available";
+            }
+
+        }
+        // Controllers/BlogController.cs
+
+        // GET: api/Blog/{blogId}/reactions/count
+        [HttpGet("{blogId}/reactions/count")]
+        public async Task<ActionResult<int>> GetBlogReactionsCount(int blogId)
+        {
+            var count = await _context.BlogReactions
+                .Where(r => r.BlogId == blogId)
+                .CountAsync();
+
+            return Ok(count);
+        }
+
+        [HttpGet("{blogId}/reactions/status")]
+        [Authorize]
+        public async Task<ActionResult<bool>> GetUserReactionStatus(int blogId)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                return Unauthorized();
+
+            var hasReacted = await _context.BlogReactions
+                .AnyAsync(r => r.BlogId == blogId && r.UserId == userId);
+
+            return Ok(hasReacted);
+        }
+
+        [HttpPost("{blogId}/react")]
+        [Authorize]
+        public async Task<IActionResult> ReactToBlog(int blogId)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                return Unauthorized();
+
+            var blog = await _context.Blogs.FindAsync(blogId);
+            if (blog == null)
+                return NotFound("Blog not found");
+
+            var existingReaction = await _context.BlogReactions
+                .FirstOrDefaultAsync(r => r.BlogId == blogId && r.UserId == userId);
+
+            if (existingReaction != null)
+            {
+                _context.BlogReactions.Remove(existingReaction);
+                blog.NumberOfReacts = Math.Max(0, blog.NumberOfReacts - 1);
+                await _context.SaveChangesAsync();
+                return Ok(new { reacted = false, count = blog.NumberOfReacts });
+            }
+
+            _context.BlogReactions.Add(new BlogReaction
+            {
+                BlogId = blogId,
+                UserId = userId,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            blog.NumberOfReacts++;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { reacted = true, count = blog.NumberOfReacts });
+        }
     }
-} 
+}

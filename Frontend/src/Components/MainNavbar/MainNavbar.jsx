@@ -39,10 +39,13 @@ const MainNavbar = () => {
   const profileImageFromContext =
     profileImageContext?.profileImage || "/defaultprofilepicture.png";
 
-  // Handle potential undefined context with default values
   const authContext = useContext(AuthContext);
   const user = authContext?.user || null;
+  console.log("MainNavbar user:", user);
+
   const loading = authContext?.loading || false;
+
+  // Logout handler
   const logout = useCallback(() => {
     if (authContext?.logout) {
       authContext.logout();
@@ -54,12 +57,12 @@ const MainNavbar = () => {
     }
   }, [authContext]);
 
-  // Set active tab based on location - Fixed dependency array
+  // Update active tab on location change
   useEffect(() => {
     setActiveTab(location.pathname);
   }, [location.pathname]);
 
-  // Close popup when clicking outside - Fixed event listener cleanup
+  // Close profile popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -79,11 +82,10 @@ const MainNavbar = () => {
     };
   }, [isOpen]);
 
-  // Fetch user profile data - Fixed dependency array and error handling
+  // Fetch user profile data when user or context image changes
   useEffect(() => {
     const fetchProfileData = async () => {
       if (!user) {
-        // Reset profile data when user is null
         setProfileData({
           profileImage: "/default-profile.png",
           username: "",
@@ -95,10 +97,7 @@ const MainNavbar = () => {
       setIsLoadingProfile(true);
       try {
         const token = localStorage.getItem("token");
-
-        if (!token) {
-          throw new Error("Authentication token not found");
-        }
+        if (!token) throw new Error("Authentication token not found");
 
         const response = await axios.get(
           "http://localhost:5030/api/profile/me",
@@ -120,8 +119,6 @@ const MainNavbar = () => {
         });
       } catch (err) {
         console.error("Error fetching profile data:", err);
-
-        // Fallback to context data if available
         setProfileData({
           profileImage: profileImageFromContext,
           username: user?.username || "User",
@@ -133,9 +130,9 @@ const MainNavbar = () => {
     };
 
     fetchProfileData();
-  }, [user, profileImageFromContext]); // Fixed: removed user.username and user.contactemail
+  }, [user, profileImageFromContext]);
 
-  // Memoized handlers to prevent unnecessary re-renders
+  // Navigation handlers
   const handleNavigation = useCallback(
     (path) => {
       navigate(path);
@@ -167,8 +164,16 @@ const MainNavbar = () => {
     [logout, handleNavigation]
   );
 
-  // Skip rendering during loading
-  if (loading) return null;
+  // Show loading indicator while auth loading
+  if (loading) {
+    return (
+      <nav className="navbar">
+        <div className="navbar-container">
+          <div className="navbar-loading">Loading authentication...</div>
+        </div>
+      </nav>
+    );
+  }
 
   const menuItems = [
     { name: "Home", icon: <FaHome />, path: "/" },
@@ -214,7 +219,7 @@ const MainNavbar = () => {
                 <li key={item.name} className="navbar-item dropdown-trip">
                   <div className="navbar-link dropdown-toggle">
                     <span className="navbar-icon">{item.icon}</span>
-                    <span className="navbar-text">Plan a Trip ▾</span>
+                    <span className="navbar-text">Plan a Trip</span>
                     <div className="dropdown-menu-trip">
                       {user ? (
                         <>
@@ -258,9 +263,20 @@ const MainNavbar = () => {
                 key={item.name}
                 className={`navbar-item${
                   activeTab === item.path ? " active" : ""
-                }`}
-              >
-                <Link to={item.path} className="navbar-link">
+                }`}>
+                <Link
+                  to={
+                    item.name === "Vehicle"
+                      ? user?.role === "TransportProvider"
+                        ? "/vehicle/supplier"
+                        : "/vehicle"
+                      : item.name === "Accommodation"
+                      ? user?.role === "AccommodationProvider"
+                        ? "/accommodation/supplier"
+                        : "/accommodation"
+                      : item.path
+                  }
+                  className="navbar-link">
                   <span className="navbar-icon">{item.icon}</span>
                   <span className="navbar-text">{item.name}</span>
                 </Link>
@@ -312,8 +328,7 @@ const MainNavbar = () => {
                       <div
                         key={item.name}
                         className="popup-item"
-                        onClick={() => handleProfileMenuClick(item)}
-                      >
+                        onClick={() => handleProfileMenuClick(item)}>
                         <span className="popup-icon">{item.icon}</span>
                         <span>{item.name}</span>
                       </div>

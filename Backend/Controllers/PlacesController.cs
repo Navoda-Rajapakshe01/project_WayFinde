@@ -20,7 +20,7 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        
+
 
         // GET: api/places
         [HttpGet]
@@ -29,8 +29,6 @@ namespace Backend.Controllers
             var places = await _context.PlacesToVisit.ToListAsync();
             return Ok(places);
         }
-        
-       
 
         // GET: api/places/2 - For getting details of a single place
         [HttpGet("{id:int}")]
@@ -49,7 +47,40 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
-        
+        // GET: api/places/by-district-name/nuwara-eliya
+        [HttpGet("by-district-name/{slug}")]
+        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
+        {
+            // Find the district by the slug
+            var district = await _context.Districts
+                .FirstOrDefaultAsync(d => d.Slug.ToLower() == slug.ToLower());
+
+            // If district not found, return a 404 Not Found
+            if (district == null)
+                return NotFound("District not found");
+
+            // Get places belonging to the found district
+            var places = await _context.PlacesToVisit
+                .Where(p => p.DistrictId == district.Id)
+                .ToListAsync();
+
+            return Ok(places);
+        }
+
+        // GET: api/places/categories
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new
+                {
+                    categoryId = c.CategoryId,
+                    categoryName = c.CategoryName
+                })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
 
 
         [HttpGet("by-category/{categoryId}")]
@@ -57,14 +88,14 @@ namespace Backend.Controllers
         {
             // Fetch places that belong to the given categoryId
             var places = await _context.PlacesToVisit
-            .Where(p => p.CategoryId == categoryId)  
+            .Where(p => p.CategoryId == categoryId)
             .ToListAsync();
 
             // If no places found, return a 404 Not Found
             if (places == null || places.Count == 0)
-            return NotFound("No places found for this category");
+                return NotFound("No places found for this category");
 
-             return Ok(places);  
+            return Ok(places);
         }
 
         [HttpGet("getAll")]
@@ -110,20 +141,20 @@ namespace Backend.Controllers
         {
             // Check if a place with the same name already exists
             var existingPlace = await _context.PlacesToVisit
-            .FirstOrDefaultAsync(p => 
+            .FirstOrDefaultAsync(p =>
                 p.Name.ToLower() == dto.Name.ToLower().Trim() &&
                 p.DistrictId == dto.DistrictId);
 
-        if (existingPlace != null)
-        {
-            return Conflict("A place with the same name already exists in this district.");
-        }
+            if (existingPlace != null)
+            {
+                return Conflict("A place with the same name already exists in this district.");
+            }
 
             // Check related entities exist
             var district = await _context.Districts.FindAsync(dto.DistrictId);
             if (district == null) return BadRequest("District not found.");
 
-            var category = dto.CategoryId.HasValue 
+            var category = dto.CategoryId.HasValue
                 ? await _context.Categories.FindAsync(dto.CategoryId.Value)
                 : null;
 
@@ -140,10 +171,12 @@ namespace Backend.Controllers
                 OpeningHours = dto.OpeningHours,
                 Address = dto.Address,
                 GoogleMapLink = dto.GoogleMapLink,
-                DistrictId = dto.DistrictId,
+                DistrictId = dto.DistrictId ?? throw new ArgumentNullException(nameof(dto.DistrictId), "DistrictId cannot be null"),
                 District = district,
-                CategoryId = dto.CategoryId,
-                Category = category!
+                CategoryId = dto.CategoryId ?? throw new ArgumentNullException(nameof(dto.CategoryId), "CategoryId cannot be null"),
+                Category = category!,
+                PlaceImage = new List<PlaceImage>(), // Set to an empty list or as appropriate
+                TripPlaces = new List<TripPlace>() // Set TripPlaces to an empty list or as appropriate
             };
 
             _context.PlacesToVisit.Add(place);
@@ -203,15 +236,15 @@ namespace Backend.Controllers
             place.MainImageUrl = dto.MainImageUrl;
             place.DistrictId = dto.DistrictId;
             place.District = district;
-            place.CategoryId = dto.CategoryId;
-            place.Category = category;
+            place.CategoryId = dto.CategoryId ?? place.CategoryId;
+            place.Category = category ?? place.Category;
 
             try
             {
                 // Save changes to the database
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "An error occurred while updating the place.");
             }
@@ -228,14 +261,14 @@ namespace Backend.Controllers
             var place = await _context.PlacesToVisit.FindAsync(id);
 
             if (place == null)
-        {
-            return NotFound("Place not found");
-        }
+            {
+                return NotFound("Place not found");
+            }
 
-        _context.PlacesToVisit.Remove(place);
-        await _context.SaveChangesAsync();
+            _context.PlacesToVisit.Remove(place);
+            await _context.SaveChangesAsync();
 
-        return Ok("Place deleted successfully");
+            return Ok("Place deleted successfully");
         }
 
         // GET: api/places/count
@@ -247,7 +280,7 @@ namespace Backend.Controllers
         }
 
         // GET: api/places/popular
-       
+
 
         // GET: api/11/images
         [HttpGet("{placeId}/images")]
@@ -261,6 +294,30 @@ namespace Backend.Controllers
             return Ok(images);
         }
 
+        // GET: api/places/top-rated
+        [HttpGet("top-rated")]
+        public async Task<IActionResult> GetTopRatedPlaces()
+        {
+            var topRatedPlaces = await _context.PlacesToVisit
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.MainImageUrl,
+                    p.Address,
+                    AverageRating = _context.Reviews
+                        .Where(r => r.PlaceId == p.Id)
+                        .Select(r => (double?)r.Rating)
+                        .Average() ?? 0
+                })
+                .OrderByDescending(p => p.AverageRating)
+                .Take(4)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(topRatedPlaces);
+        }
 
     }
 }

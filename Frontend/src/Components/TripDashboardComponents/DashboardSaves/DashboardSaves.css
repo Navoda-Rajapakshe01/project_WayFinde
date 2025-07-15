@@ -68,55 +68,39 @@ input[type='text'] {
   font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-top: 10px;
 }
 
-.to-do-card,
-.budget-card {
+.to-do-card, .budget-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px;
   font-size: 13px;
   background-color: #f8f9fa;
-  display: flex;
-  flex-direction: column;
+  position: relative;
 }
 
-/* New: Row layout for text + button side by side */
-.card-content-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-/* Text block stays full width inside card row */
-.card-content-row p {
-  flex: 1;
-  margin: 0;
-  font-size: 13px;
-}
-
-/* Updated Show button */
-.show-button {
+/* Style for arrow button */
+.arrow-button {
   background-color: #b6b9bd;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  line-height: 1;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-size: 14px;
-  white-space: nowrap; /* Keeps text in one line */
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
 }
 
-.show-button:hover {
+.arrow-button:hover {
   background-color: #0056b3;
-}
-
-/* Remove the old arrow-button styles if no longer needed */
-.arrow-button {
-  display: none;
 }
 
 button {
@@ -145,15 +129,8 @@ button:hover {
     width: 100%;
     height: auto;
   }
-
-  /* Stack text and button on small screens */
-  .card-content-row {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .show-button {
-    margin-top: 10px;
-    width: 100%;
+  
+  .to-do-card, .budget-card {
+    padding-bottom: 40px; /* Extra space for the button */
   }
 }

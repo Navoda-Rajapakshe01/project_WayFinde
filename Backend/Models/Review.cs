@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
@@ -12,7 +12,7 @@ namespace Backend.Models
         [ForeignKey("PlaceId")]
         public PlacesToVisit? Place { get; set; }
 
-        public string? Name { get; set; } 
+        public string? Name { get; set; }
 
         public string? Email { get; set; }
 

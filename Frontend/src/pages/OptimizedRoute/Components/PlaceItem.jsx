@@ -40,16 +40,7 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
 
   drag(drop(ref));
 
-  const {
-    id,
-    name,
-    avgTime,
-    avgSpend,
-    rating,
-    howManyRated,
-    mainImageUrl,
-    district,
-  } = place;
+  const { id, name, avgTime, avgSpend, rating, mainImageUrl, district } = place;
 
   const displayName = name || "Unnamed Place";
   const defaultImage = `/placeholder.svg?query=${displayName}`;
