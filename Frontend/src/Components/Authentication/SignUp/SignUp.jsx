@@ -33,28 +33,15 @@ const handleChange = (e) => {
   if (name === "contactEmail") {
     setEmailError("");
   }
+};
 
-  const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // Update form data
-    setFormData({ ...formData, [name]: value });
-
-    // Clear any previous error
-    if (name === "contactEmail") {
-      setEmailError("");
-    }
-  };
-
-  const handleEmailBlur = () => {
-    if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
-  };
+const handleEmailBlur = () => {
+  if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
+    setEmailError("Please enter a valid email address");
+  } else {
+    setEmailError("");
+  }
+};
 
 
 // Email validation function using regex
@@ -78,7 +65,6 @@ const handleSubmit = async (e) => {
     const apiData = { ...formData };
 
     // Prepare API data: if role is NOT one of the providers, clear serviceType
-    const apiData = { ...formData };
     if (
       ![
         "ServiceProvider",
