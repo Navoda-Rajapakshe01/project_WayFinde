@@ -20,9 +20,11 @@ const Register = () => {
     serviceType: "",
   });
 
+
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
+
 
 const handleChange = (e) => {
   const { name, value } = e.target;
@@ -33,7 +35,6 @@ const handleChange = (e) => {
   if (name === "contactEmail") {
     setEmailError("");
   }
-};
 
 const handleEmailBlur = () => {
   if (formData.contactEmail && !validateEmail(formData.contactEmail)) {

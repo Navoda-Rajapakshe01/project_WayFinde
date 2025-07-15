@@ -19,28 +19,31 @@
     cursor: pointer;
   }
   
-  .blog-container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns per row */
-    gap: 1rem;
+.carousel-container {
+    display: flex;
+    flex-wrap: wrap;            /* Allow items to wrap to the next line */
+    gap: 1rem;                  /* Space between cards */
+    overflow-y: auto;           /* Vertical scrolling */
+    max-height: 80vh;           /* Limit height to allow scrolling */
     padding: 1rem;
-    margin: 0 100px;
+    margin-left: 100px;
+    margin-right: 100px;
   }
   
-  
   .blog-card {
+    width: calc(25% - 0.75rem); /* 4 cards per row, adjust for gap */
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 1rem;
     box-sizing: border-box;
     transition: transform 0.3s ease;
+    margin-right: 20px;
   }
   
   .blog-card:hover {
     transform: translateY(-5px);
   }
-  
   
   .blog-image {
     width: 100%;

@@ -1,6 +1,8 @@
-using Azure.Storage.Blobs;
+
+﻿using Azure.Storage.Blobs;
 using Backend.Data;
 using Backend.DTO;
+
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Models.User;
@@ -16,8 +18,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+
 using System.Security.Claims;
 using System.Text;
+
 
 namespace Backend.Controllers
 {
@@ -126,15 +130,13 @@ namespace Backend.Controllers
                 using (var streamReader = new StreamReader(file.OpenReadStream()))
                 {
                     var content = await streamReader.ReadToEndAsync();
-                    var strippedContent = System.Text.RegularExpressions.Regex.Replace(content, "<.*?>", string.Empty);
-
                     var words = content.Split(new[] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     var first100Words = words.Take(100);
                     description = string.Join(" ", first100Words);
 
                     // Add ellipsis if there are more than 100 words
                     if (words.Length > 100)
-                        description += "... Read More ";
+                        description += "...";
                 }
 
             var connectionString = _config["AzureBlobStorage:ConnectionString"];
@@ -202,7 +204,6 @@ namespace Backend.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-
         [HttpPost("upload-cover-image")]
         [Authorize]
         public async Task<IActionResult> UploadCoverImage(IFormFile imageFile)
@@ -242,7 +243,6 @@ namespace Backend.Controllers
                 return StatusCode(500, new { message = "internal server error" });
             }
         }
-
         // GET: api/Blog/display/{id}
         [HttpGet("display/{id}")]
         public async Task<ActionResult<Blog>> GetBlogById(int id)
@@ -272,6 +272,7 @@ namespace Backend.Controllers
                 return StatusCode(500, "An error occurred while retrieving the blog");
             }
         }
+
 
         //Add a new comment to the blog
         [HttpPost("newComment")]
@@ -306,6 +307,8 @@ namespace Backend.Controllers
                 blogCommentCount = blog.NumberOfComments  // Return updated count
             });
         }
+
+
 
         // GET: api/blog/all
         [HttpGet("all")]
@@ -342,6 +345,7 @@ namespace Backend.Controllers
                     }
                 }).ToList();
 
+
                 return Ok(simplifiedBlogs);
             }
             catch (Exception ex)
@@ -351,6 +355,8 @@ namespace Backend.Controllers
             }
         }
 
+
+        //Delete a blog in the profile
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteBlog(int id)
         {
@@ -360,20 +366,10 @@ namespace Backend.Controllers
                 return NotFound(new { message = "Blog not found." });
             }
 
-            // Store the user ID before removing the blog
-            var userId = blog.UserId;
-
             _context.Blogs.Remove(blog);
             await _context.SaveChangesAsync();
 
-            // Get the updated count of blogs for this user
-            var blogCount = await _context.Blogs.CountAsync(b => b.UserId == userId);
-
-            return Ok(new
-            {
-                message = "Blog deleted successfully.",
-                blogCount = blogCount
-            });
+            return Ok(new { message = "Blog deleted successfully." });
         }
 
         [HttpGet("proxy-blog-content")]
@@ -436,7 +432,6 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Error fetching content: {ex.Message}");
             }
         }
-
         // GET: api/Blog/{blogId}/comments
         [HttpGet("{blogId}/comments")]
         public async Task<ActionResult<IEnumerable<object>>> GetBlogComments(int blogId)
@@ -479,12 +474,14 @@ namespace Backend.Controllers
 
                 return Ok(simplifiedComments);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
-                return StatusCode(500, "An error occurred while retrieving comments");
-            }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
+            return StatusCode(500, "An error occurred while retrieving comments");
         }
+    }
+
+    // Controllers/BlogController.cs
 
     // GET: api/Blog/{blogId}/reactions/count
     [HttpGet("{blogId}/reactions/count")]
@@ -585,6 +582,7 @@ namespace Backend.Controllers
             {
                 return "No description available";
             }
+
         }
         // Controllers/BlogController.cs
 
@@ -649,4 +647,3 @@ namespace Backend.Controllers
             return Ok(new { reacted = true, count = blog.NumberOfReacts });
         }
     }
-}
