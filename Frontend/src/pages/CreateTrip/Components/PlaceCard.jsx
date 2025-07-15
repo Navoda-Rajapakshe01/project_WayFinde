@@ -7,7 +7,6 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
     id,
     name,
     rating,
-    howManyRated,
     avgTime,
     avgSpend,
     googleMapLink,
@@ -54,7 +53,7 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
               </span>
             ))}
           </div>
-          <span className="rating-count">({howManyRated || 0})</span>
+          <span className="rating-count">count</span>
         </div>
         <div className="place-details">
           <div className="detail">

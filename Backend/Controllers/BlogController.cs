@@ -206,6 +206,7 @@ namespace Backend.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
         [HttpPost("upload-cover-image")]
         [Authorize]
         public async Task<IActionResult> UploadCoverImage(IFormFile imageFile)
@@ -323,7 +324,8 @@ namespace Backend.Controllers
                     .ToListAsync();
 
                 // Create a simplified object without circular references
-                var simplifiedBlogs = blogs.Select(b => new {
+                var simplifiedBlogs = blogs.Select(b => new
+                {
                     Id = b.Id,
                     Title = b.Title ?? string.Empty,
                     BlogUrl = b.BlogUrl ?? string.Empty,
@@ -461,7 +463,8 @@ namespace Backend.Controllers
                     .ToListAsync();
 
                 // Create simplified objects without circular references
-                var simplifiedComments = comments.Select(c => new {
+                var simplifiedComments = comments.Select(c => new
+                {
                     Id = c.Id,
                     Content = c.Content,
                     CreatedAt = c.CreatedAt,
@@ -476,17 +479,17 @@ namespace Backend.Controllers
 
                 return Ok(simplifiedComments);
             }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
-            return StatusCode(500, "An error occurred while retrieving comments");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error retrieving comments for blog {blogId}");
+                return StatusCode(500, "An error occurred while retrieving comments");
+            }
         }
-    }
 
-    // Controllers/BlogController.cs
+        // Controllers/BlogController.cs
 
-    // GET: api/Blog/{blogId}/reactions/count
-    // Duplicate method removed to resolve compile error.
+        // GET: api/Blog/{blogId}/reactions/count
+        // Duplicate method removed to resolve compile error.
 
         // GET: api/Blog/{blogId}/reactions/status
 
@@ -579,3 +582,4 @@ namespace Backend.Controllers
             return Ok(new { reacted = true, count = blog.NumberOfReacts });
         }
     }
+}

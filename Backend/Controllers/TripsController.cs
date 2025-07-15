@@ -85,7 +85,6 @@ namespace Backend.Data
                     GoogleMapLink = tp.Place.GoogleMapLink!,
                     AvgTime = tp.Place.AvgTime!,
                     AvgSpend = tp.Place.AvgSpend,
-                    HowManyRated = tp.Place.HowManyRated ?? 0,
                     MainImageUrl = tp.Place.MainImageUrl
                 }).ToList()
             };
@@ -211,7 +210,6 @@ namespace Backend.Data
                     GoogleMapLink = tp.Place.GoogleMapLink!,
                     AvgTime = tp.Place.AvgTime!,
                     AvgSpend = tp.Place.AvgSpend,
-                    HowManyRated = tp.Place.HowManyRated ?? 0,
                     MainImageUrl = tp.Place.MainImageUrl
                 }).ToList()
             });

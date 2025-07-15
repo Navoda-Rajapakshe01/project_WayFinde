@@ -203,7 +203,6 @@ namespace Backend.Migrations
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GoogleMapLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rating = table.Column<double>(type: "float", nullable: true),
-                    HowManyRated = table.Column<int>(type: "int", nullable: false),
                     AvgSpend = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AvgTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PlaceType = table.Column<string>(type: "nvarchar(max)", nullable: true),

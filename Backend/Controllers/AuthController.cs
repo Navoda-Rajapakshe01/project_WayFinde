@@ -194,7 +194,12 @@ namespace Backend.Controllers
 
             // Generate a secure reset token
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
+            var tokenValue = _configuration["AppSettings:Token"];
+            if (string.IsNullOrEmpty(tokenValue))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Token configuration is missing.");
+            }
+            var key = Encoding.ASCII.GetBytes(tokenValue);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -233,7 +238,12 @@ namespace Backend.Controllers
             {
                 // Validate the token
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
+                var tokenValue = _configuration["AppSettings:Token"];
+                if (string.IsNullOrEmpty(tokenValue))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Token configuration is missing.");
+                }
+                var key = Encoding.ASCII.GetBytes(tokenValue);
 
                 tokenHandler.ValidateToken(decodedToken, new TokenValidationParameters
                 {
@@ -258,7 +268,12 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
+            var tokenValue = _configuration["AppSettings:Token"];
+            if (string.IsNullOrEmpty(tokenValue))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Token configuration is missing.");
+            }
+            var key = Encoding.ASCII.GetBytes(tokenValue);
 
             try
             {
@@ -333,10 +348,10 @@ namespace Backend.Controllers
                 Username = model.Username,
                 ContactEmail = model.Email,
                 Role = "Admin",
-                PasswordHash = passwordHasher.HashPassword(null, model.Password),
                 RegisteredDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
                 LastLoginDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
             };
+            newAdmin.PasswordHash = passwordHasher.HashPassword(newAdmin, model.Password);
 
             // Add to database
             _context.UsersNew.Add(newAdmin);
