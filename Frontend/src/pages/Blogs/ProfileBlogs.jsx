@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
 import BlogCard from "../../Components/BlogComponents/BlogCard/BlogCard";
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
@@ -13,6 +14,7 @@ const ProfileBlogs = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [successMessage, setSuccessMessage] = useState(null); // Define successMessage
 
   useEffect(() => {
     const fetchProfileAndBlogs = async () => {
@@ -274,6 +276,18 @@ const ProfileBlogs = () => {
         </div>
       </div>
     );
+  };
+  ProfileBlogCard.propTypes = {
+    blog: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      topic: PropTypes.string,
+      writerName: PropTypes.string,
+      briefDescription: PropTypes.string,
+      location: PropTypes.string,
+      img: PropTypes.string,
+      commentCount: PropTypes.number,
+      reactionCount: PropTypes.number,
+    }).isRequired,
   };
 
   if (loading) {
