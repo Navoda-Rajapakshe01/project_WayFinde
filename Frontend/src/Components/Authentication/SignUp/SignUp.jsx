@@ -19,12 +19,21 @@ const Register = () => {
     role: initialRole,
     serviceType: "",
   });
+const [success, setSuccess] = useState("");
+const [error, setError] = useState("");
+const [emailError, setEmailError] = useState("");
 
-  const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-  const [emailError, setEmailError] = useState("");
-
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  // Update form data using functional update for better performance
+  setFormData((prev) => ({ ...prev, [name]: value }));
   
+  // Clear any previous error
+  if (name === "contactEmail") {
+    setEmailError("");
+  }
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,14 +74,10 @@ const Register = () => {
       return; // Prevent form submission
     }
 
-    
-    if (!validateEmail(formData.contactEmail)) {
-      setEmailError("Please enter a valid email address");
-      return;
-    }
+    // Create a copy of the form data for the API request
+    const apiData = { ...formData };
 
     // Prepare API data: if role is NOT one of the providers, clear serviceType
-    const apiData = { ...formData };
     if (
       ![
         "ServiceProvider",

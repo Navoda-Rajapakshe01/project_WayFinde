@@ -155,9 +155,12 @@
   display: flex;
   justify-content: center; /* aligns items horizontally at the center */
   margin-top: 1rem;
-  align-items: center;
 }
-
+.pagination-container {
+  display: flex; /* flex */
+  align-items: center; /* items-center */
+  gap: 0.5rem; /* space-x-2 */
+}
 
 .pagination-page {
   padding: 0.25rem 0.75rem; /* px-3 py-1 */
@@ -183,9 +186,4 @@
 .pagination-button:disabled {
   opacity: 0.5; /* disabled:opacity-50 */
   cursor: not-allowed;
-}
-.author-line {
-  display: flex;
-  align-items: center;
-  gap: 5px;
 }
