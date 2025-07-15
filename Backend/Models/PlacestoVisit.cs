@@ -22,16 +22,11 @@ namespace Backend.Models
         public string? Address { get; set; }
         public string? GoogleMapLink { get; set; }
 
-        // Rating and number of ratings
-        public double? Rating { get; set; }
-        public int HowManyRated { get; set; } = 0;
 
         // Average spend and time for the place
         public decimal? AvgSpend { get; set; }
         public string? AvgTime { get; set; }
 
-        // Type of the place (e.g., relax, do, stay)
-        public string PlaceType { get; set; }
 
         // Navigation properties for relationships
         public ICollection<TripPlace> TripPlaces { get; set; }

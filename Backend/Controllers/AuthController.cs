@@ -82,34 +82,41 @@ namespace Backend.Controller
         [HttpPost("Login")]
         public async Task<ActionResult<string>> Login([FromBody] UserDtoLogin request)
         {
-            // Validate input
             if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
             {
                 return BadRequest(new { message = "Username and password are required." });
             }
 
-            // Call the login service to authenticate the user and generate a token
             var token = await _authService.LoginAsync(request);
             if (token == null)
             {
                 return Unauthorized(new { message = "Invalid username or password." });
             }
-            // ✅ Set token in HttpOnly cookie
+
+            // Get user after login
+            var user = await _context.UsersNew.FirstOrDefaultAsync(u => u.Username == request.Username);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
             Response.Cookies.Append("jwt", token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,                // Use HTTPS in production
-                SameSite = SameSiteMode.Strict, // Helps prevent CSRF
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
                 Expires = DateTimeOffset.UtcNow.AddHours(1)
             });
 
-            // Return the token to the frontend
             return Ok(new
             {
                 message = "Login successful.",
-                token = token
+                token = token,
+                userId = user.Id,
+                username = user.Username
             });
         }
+
 
         [Authorize(Roles = "normaluser")]
         [HttpGet]

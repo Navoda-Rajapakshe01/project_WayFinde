@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -63,6 +63,8 @@ namespace Backend.Data
             var trip = await _context.Trips
                 .Include(t => t.TripPlaces)
                     .ThenInclude(tp => tp.Place)
+                        .ThenInclude(p => p.Reviews) // Include Reviews here
+                .Include(t => t.TripDates)
                 .FirstOrDefaultAsync(t => t.Id == request.TripId);
 
             if (trip == null)
@@ -78,28 +80,39 @@ namespace Backend.Data
                 TripTime = trip.TripTime,
                 TotalSpend = (decimal?)trip.TotalSpend,
 
-                Places = trip.TripPlaces.Select(tp => new PlaceDto
-                {
-                    Id = tp.Place.Id,
-                    Name = tp.Place.Name,
-                    GoogleMapLink = tp.Place.GoogleMapLink,
-                    AvgTime = tp.Place.AvgTime,
-                    AvgSpend = tp.Place.AvgSpend,
-                    Rating = tp.Place.Rating,
-                    HowManyRated = tp.Place.HowManyRated,
-                    MainImageUrl = tp.Place.MainImageUrl,
-                    District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
+                Places = trip.TripPlaces
+                    .OrderBy(tp => tp.Order)
+                    .Select(tp =>
                     {
-                        Id = tp.Place.District.Id,
-                        Name = tp.Place.District.Name,
-                        SubTitle = tp.Place.District.SubTitle,
-                        ImageUrl = tp.Place.District.ImageUrl
-                    } : null
-                }).ToList()
+                        var tripDateForPlace = trip.TripDates.FirstOrDefault(td => td.PlaceId == tp.PlaceId);
+                        var reviews = tp.Place.Reviews;
+
+                        return new PlaceDto
+                        {
+                            Id = tp.Place.Id,
+                            Name = tp.Place.Name,
+                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            AvgTime = tp.Place.AvgTime,
+                            AvgSpend = tp.Place.AvgSpend,
+                            Rating = reviews.Any() ? reviews.Average(r => r.Rating) : (double?)null,
+                            MainImageUrl = tp.Place.MainImageUrl,
+                            District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
+                            {
+                                Id = tp.Place.District.Id,
+                                Name = tp.Place.District.Name,
+                                SubTitle = tp.Place.District.SubTitle,
+                                ImageUrl = tp.Place.District.ImageUrl
+                            } : null,
+                            StartDate = tripDateForPlace?.StartDate,
+                            EndDate = tripDateForPlace?.EndDate
+                        };
+                    })
+                    .ToList()
             };
 
             return Ok(tripDto);
         }
+
 
         [HttpPut("update-trip")]
         public async Task<IActionResult> UpdateTrip([FromBody] UpdateTripRequest request)
@@ -116,6 +129,7 @@ namespace Backend.Data
             if (trip == null)
                 return NotFound(new { message = "Trip not found" });
 
+            // Update trip fields as you currently do
             trip.TripName = request.TripName ?? trip.TripName;
             trip.TripDistance = request.TripDistance ?? trip.TripDistance;
             trip.TripTime = request.TripTime ?? trip.TripTime;
@@ -126,6 +140,7 @@ namespace Backend.Data
 
             if (request.PlaceIds != null && request.PlaceIds.Any())
             {
+                // Remove places not in new list
                 var toRemove = trip.TripPlaces
                     .Where(tp => tp != null && !request.PlaceIds.Contains(tp.PlaceId))
                     .ToList();
@@ -133,11 +148,13 @@ namespace Backend.Data
                 foreach (var removeItem in toRemove)
                     trip.TripPlaces.Remove(removeItem);
 
+                // Existing places
                 var existingPlaceIds = trip.TripPlaces?
                     .Where(tp => tp != null)
                     .Select(tp => tp.PlaceId)
                     .ToList() ?? new List<int>();
 
+                // Add new places that are not yet linked
                 var toAdd = request.PlaceIds.Except(existingPlaceIds).ToList();
 
                 foreach (var placeId in toAdd)
@@ -145,8 +162,15 @@ namespace Backend.Data
                     trip.TripPlaces.Add(new TripPlace
                     {
                         TripId = trip.Id,
-                        PlaceId = placeId
+                        PlaceId = placeId,
+                        Order = request.PlaceIds.IndexOf(placeId)  // Set order on add
                     });
+                }
+
+                // Update the Order for all places to reflect the frontend order
+                foreach (var tp in trip.TripPlaces)
+                {
+                    tp.Order = request.PlaceIds.IndexOf(tp.PlaceId);
                 }
             }
 
@@ -172,6 +196,7 @@ namespace Backend.Data
 
                 Places = trip.TripPlaces?
                     .Where(tp => tp?.Place != null)
+                    .OrderBy(tp => tp.Order)  // Return places ordered by the saved order
                     .Select(tp => new PlaceDto
                     {
                         Id = tp.Place.Id,
@@ -183,17 +208,26 @@ namespace Backend.Data
             return Ok(new { message = "Trip updated successfully", trip = tripDto });
         }
 
+
         public class GetTripByIdRequest
         {
             public int TripId { get; set; }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllTrips()
+
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetTripsByUserId(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("UserId is required.");
+
             var trips = await _context.Trips
+                .Where(t => t.UserId == userId)
                 .Include(t => t.TripPlaces)
                     .ThenInclude(tp => tp.Place)
+                        .ThenInclude(p => p.Reviews)          // ← include reviews
+                .Include(t => t.TripDates)
                 .ToListAsync();
 
             var result = trips.Select(trip => new
@@ -204,38 +238,115 @@ namespace Backend.Data
                 endDate = trip.EndDate,
                 tripDistance = trip.TripDistance,
                 tripTime = trip.TripTime,
-                TotalSpend = (decimal?)trip.TotalSpend,
-
+                totalSpend = (decimal?)trip.TotalSpend,
                 userId = trip.UserId,
-                Places = trip.TripPlaces.Select(tp => new PlaceDto
-                {
-                    Id = tp.Place.Id,
-                    Name = tp.Place.Name,
-                    GoogleMapLink = tp.Place.GoogleMapLink,
-                    AvgTime = tp.Place.AvgTime,
-                    AvgSpend = tp.Place.AvgSpend,
-                    Rating = tp.Place.Rating,
-                    HowManyRated = tp.Place.HowManyRated,
-                    MainImageUrl = tp.Place.MainImageUrl,
-                    District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
+                places = trip.TripPlaces
+                    .OrderBy(tp => tp.Order)
+                    .Select(tp =>
                     {
-                        Id = tp.Place.District.Id,
-                        Name = tp.Place.District.Name,
-                        SubTitle = tp.Place.District.SubTitle,
-                        ImageUrl = tp.Place.District.ImageUrl
-                    } : null
-                }).ToList()
+                        var tripDateForPlace = trip.TripDates
+                            .FirstOrDefault(td => td.PlaceId == tp.PlaceId);
+
+                        var reviews = tp.Place.Reviews;
+                        var avgRating = reviews.Any()
+                            ? reviews.Average(r => r.Rating)
+                            : (double?)null;
+
+                        return new PlaceDto
+                        {
+                            Id = tp.Place.Id,
+                            Name = tp.Place.Name,
+                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            AvgTime = tp.Place.AvgTime,
+                            AvgSpend = tp.Place.AvgSpend,
+                            Rating = avgRating,               // ← dynamic average
+                            MainImageUrl = tp.Place.MainImageUrl,
+                            District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
+                            {
+                                Id = tp.Place.District.Id,
+                                Name = tp.Place.District.Name,
+                                SubTitle = tp.Place.District.SubTitle,
+                                ImageUrl = tp.Place.District.ImageUrl
+                            } : null,
+                            StartDate = tripDateForPlace?.StartDate,
+                            EndDate = tripDateForPlace?.EndDate
+                        };
+                    })
+                    .ToList()
             });
 
             return Ok(result);
         }
 
 
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetTripById(int id)
+        {
+            var trip = await _context.Trips
+                .Include(t => t.TripPlaces)
+                    .ThenInclude(tp => tp.Place)
+                        .ThenInclude(p => p.Reviews)   // include reviews
+                .Include(t => t.TripDates)
+                .FirstOrDefaultAsync(t => t.Id == id);
+
+            if (trip == null)
+                return NotFound(new { message = "Trip not found" });
+
+            var tripDto = new TripDetailsDto
+            {
+                Id = trip.Id,
+                TripName = trip.TripName,
+                StartDate = trip.StartDate,
+                EndDate = trip.EndDate,
+                TripDistance = trip.TripDistance,
+                TripTime = trip.TripTime,
+                TotalSpend = (decimal?)trip.TotalSpend,
+
+                Places = trip.TripPlaces
+                    .OrderBy(tp => tp.Order)
+                    .Select(tp =>
+                    {
+                        var tripDateForPlace = trip.TripDates
+                            .FirstOrDefault(td => td.PlaceId == tp.PlaceId);
+
+                        var reviews = tp.Place.Reviews;
+                        var avgRating = reviews.Any()
+                            ? reviews.Average(r => r.Rating)
+                            : (double?)null;
+
+                        return new PlaceDto
+                        {
+                            Id = tp.Place.Id,
+                            Name = tp.Place.Name,
+                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            AvgTime = tp.Place.AvgTime,
+                            AvgSpend = tp.Place.AvgSpend,
+                            Rating = avgRating,               // dynamic average
+                            MainImageUrl = tp.Place.MainImageUrl,
+                            District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
+                            {
+                                Id = tp.Place.District.Id,
+                                Name = tp.Place.District.Name,
+                                SubTitle = tp.Place.District.SubTitle,
+                                ImageUrl = tp.Place.District.ImageUrl
+                            } : null,
+                            StartDate = tripDateForPlace?.StartDate,
+                            EndDate = tripDateForPlace?.EndDate
+                        };
+                    })
+                    .ToList()
+            };
+
+            return Ok(tripDto);
+        }
+
+
+
 
         [HttpGet("search-users")]
         public async Task<ActionResult<IEnumerable<UserSearchDto>>> SearchUsers(string query)
         {
-            var users = await _context.UserNew  
+            var users = await _context.UsersNew  
                 .Where(u => u.Username.Contains(query))
                 .Select(u => new UserSearchDto
                 {
@@ -254,7 +365,7 @@ namespace Backend.Data
             var trip = await _context.Trips.FindAsync(tripId);
             if (trip == null) return NotFound("Trip not found.");
 
-            var user = await _context.UserNew.FindAsync(userId);
+            var user = await _context.UsersNew.FindAsync(userId);
             if (user == null) return NotFound("User not found.");
 
             var alreadyExists = await _context.TripCollaborator
@@ -288,6 +399,166 @@ namespace Backend.Data
 
             return Ok(collaborators);
         }
+        [HttpGet("collaborative")]
+        public async Task<IActionResult> GetCollaborativeTrips(Guid userId)
+        {
+            var tripCollaborations = await _context.TripCollaborator
+                .Include(tc => tc.Trip)
+                    .ThenInclude(t => t.TripPlaces)
+                        .ThenInclude(tp => tp.Place)
+                            .ThenInclude(p => p.Reviews)        // ← include reviews
+                .Include(tc => tc.Trip)
+                    .ThenInclude(t => t.TripDates)
+                .Where(tc => tc.UserId == userId && tc.IsAccepted == true)
+                .ToListAsync();
+
+            var result = tripCollaborations.Select(tc =>
+            {
+                var trip = tc.Trip;
+                return new
+                {
+                    id = trip.Id,
+                    tripName = trip.TripName,
+                    startDate = trip.StartDate,
+                    endDate = trip.EndDate,
+                    tripDistance = trip.TripDistance,
+                    tripTime = trip.TripTime,
+                    totalSpend = (decimal?)trip.TotalSpend,
+                    userId = trip.UserId,
+                    places = trip.TripPlaces
+                        .OrderBy(tp => tp.Order)
+                        .Select(tp =>
+                        {
+                            var tripDate = trip.TripDates
+                                .FirstOrDefault(td => td.PlaceId == tp.PlaceId);
+
+                            var reviews = tp.Place.Reviews;
+                            var avgRating = reviews.Any()
+                                ? reviews.Average(r => r.Rating)
+                                : (double?)null;
+
+                            return new
+                            {
+                                id = tp.Place.Id,
+                                name = tp.Place.Name,
+                                googleMapLink = tp.Place.GoogleMapLink,
+                                avgTime = tp.Place.AvgTime,
+                                avgSpend = tp.Place.AvgSpend,
+                                rating = avgRating,             // ← dynamic average
+                                mainImageUrl = tp.Place.MainImageUrl,
+                                district = tp.Place.District != null ? new
+                                {
+                                    id = tp.Place.District.Id,
+                                    name = tp.Place.District.Name,
+                                    subTitle = tp.Place.District.SubTitle,
+                                    imageUrl = tp.Place.District.ImageUrl
+                                } : null,
+                                startDate = tripDate?.StartDate,
+                                endDate = tripDate?.EndDate
+                            };
+                        })
+                        .ToList()
+                };
+            });
+
+            return Ok(result);
+        }
+
+
+
+        [HttpGet("invitations")]
+        public async Task<IActionResult> GetInvitations(Guid userId)
+        {
+            var invitations = await _context.TripCollaborator
+                .Include(tc => tc.Trip)
+                .Where(tc => tc.UserId == userId && tc.IsAccepted == false)
+                .Select(tc => new {
+                    TripId = tc.TripId,
+                    TripName = tc.Trip.TripName,
+                    StartDate = tc.Trip.StartDate,
+                    InvitedOn = tc.AddedAt
+                })
+                .ToListAsync();
+
+            return Ok(invitations);
+        }
+
+        [HttpPost("respond-invitation")]
+        public async Task<IActionResult> RespondToInvitation(int tripId, Guid userId, bool accept)
+        {
+            var record = await _context.TripCollaborator
+                .FirstOrDefaultAsync(tc => tc.TripId == tripId && tc.UserId == userId);
+
+            if (record == null)
+                return NotFound("Invitation not found.");
+
+            if (accept)
+                record.IsAccepted = true;
+            else
+                _context.TripCollaborator.Remove(record);
+
+            await _context.SaveChangesAsync();
+            return Ok("Response recorded.");
+        }
+
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTrip(int id)
+        {
+            var trip = await _context.Trips.FindAsync(id);
+            if (trip == null) return NotFound();
+
+            _context.Trips.Remove(trip);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("save-trip-dates")]
+        public async Task<IActionResult> SaveTripDates([FromBody] List<TripDateDto> tripDatesDto)
+        {
+            try
+            {
+                if (tripDatesDto == null || !tripDatesDto.Any())
+                    return BadRequest(new { message = "No trip dates provided" });
+
+                var tripId = tripDatesDto[0].TripId;
+                if (tripDatesDto.Any(td => td.TripId != tripId))
+                    return BadRequest(new { message = "All tripDates must belong to the same TripId" });
+
+                var existingTripDates = await _context.TripDate
+                    .Where(td => td.TripId == tripId)
+                    .ToListAsync();
+
+                _context.TripDate.RemoveRange(existingTripDates);
+
+                foreach (var tdDto in tripDatesDto)
+                {
+                    var tripDate = new TripDate
+                    {
+                        TripId = tdDto.TripId,
+                        PlaceId = tdDto.PlaceId,
+                        StartDate = tdDto.StartDate,
+                        EndDate = tdDto.EndDate
+                    };
+
+                    _context.TripDate.Add(tripDate);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Trip dates saved successfully" });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("SaveTripDates ERROR: " + ex.Message);
+                return StatusCode(500, new { message = "Something went wrong", detail = ex.Message });
+            }
+        }
+
+
+
 
 
 

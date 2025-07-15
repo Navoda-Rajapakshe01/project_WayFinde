@@ -1,7 +1,9 @@
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+
+import { useNavigate, useLocation } from "react-router-dom";
+
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
 
@@ -14,6 +16,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectPath = new URLSearchParams(location.search).get("redirect");
   const { setUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
@@ -38,9 +42,14 @@ const Login = () => {
       );
 
       const token = response.data.token;
-      if (!token) throw new Error("No token received from server");
+      const userId = response.data.userId;
 
+      if (!token || !userId) throw new Error("Login response incomplete");
+
+      // ✅ Save token and userId to localStorage
       localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
+
       await handleProfileFetch(token);
     } catch (error) {
       console.error("Login error:", error);
@@ -91,12 +100,12 @@ const Login = () => {
       };
       setUser(userProfile);
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
-      window.location.href = "/";
+      window.location.href = redirectPath || "/";
     } catch (profileError) {
       console.error("Profile fetch error:", profileError);
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       setUser(decodedToken);
-      window.location.href = "/";
+      window.location.href = redirectPath || "/";
     }
   };
 

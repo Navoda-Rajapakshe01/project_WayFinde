@@ -70,25 +70,30 @@ namespace Backend.Controllers
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
-            var places = await _context.PlacesToVisit  // Use PlacesToVisit instead of Places
-                .Include(p => p.District)  // Include the related District data
+            var places = await _context.PlacesToVisit
+                .Include(p => p.District)
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)            // load reviews for average
                 .Select(p => new
                 {
                     p.Id,
-                    p.Name,  // PlaceName in your schema is `Name` in PlacesToVisit
-                    p.GoogleMapLink,  // GoogleUrl in your schema is `GoogleMapLink`
-                    p.Rating,
-                    p.HowManyRated,
-                    p.AvgTime,
-                    p.AvgSpend,
-                    p.PlaceType,
-                    p.MainImageUrl,  // ImageUrl in your schema is `MainImageUrl`
+                    p.Name,
+                    p.GoogleMapLink,
+                    AvgTime = p.AvgTime,
+                    AvgSpend = p.AvgSpend,
+                    p.CategoryId,                           
+                    CategoryName = p.Category.CategoryName,
+                    MainImageUrl = p.MainImageUrl,
 
-                    // District data (ensure these fields exist in District model)
+                    // dynamic average rating
+                    Rating = p.Reviews.Any()
+                        ? p.Reviews.Average(r => r.Rating)
+                        : (double?)null,
+
                     District = new
                     {
                         p.District.Id,
-                        p.District.Name,  // DistrictName is `Name` in your District model
+                        p.District.Name,
                         p.District.SubTitle,
                         p.District.ImageUrl
                     }
@@ -97,6 +102,7 @@ namespace Backend.Controllers
 
             return Ok(places);
         }
+
 
 
         [HttpPost]
