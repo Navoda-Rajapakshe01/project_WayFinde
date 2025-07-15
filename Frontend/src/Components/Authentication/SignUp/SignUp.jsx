@@ -35,6 +35,7 @@ const handleChange = (e) => {
   if (name === "contactEmail") {
     setEmailError("");
   }
+};
 
 const handleEmailBlur = () => {
   if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
