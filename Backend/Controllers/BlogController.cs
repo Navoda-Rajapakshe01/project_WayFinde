@@ -112,14 +112,16 @@ namespace Backend.Controllers
         [Authorize]
         public async Task<IActionResult> SaveBlog([FromForm] IFormFile file, [FromForm] string title, [FromForm] string coverImageUrl)
         {
-            if (file == null || file.Length == 0)
-                return BadRequest("No blog file uploaded.");
-            if (string.IsNullOrWhiteSpace(title))
-                return BadRequest("Blog title is required.");
+            try
+            {
+                if (file == null || file.Length == 0)
+                    return BadRequest("No blog file uploaded.");
+                if (string.IsNullOrWhiteSpace(title))
+                    return BadRequest("Blog title is required.");
 
-            var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("id") ?? User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
-                return BadRequest("Invalid user authentication. Please log in again.");
+                var userIdClaim = User.FindFirst("sub") ?? User.FindFirst("id") ?? User.FindFirst(ClaimTypes.NameIdentifier);
+                if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
+                    return BadRequest("Invalid user authentication. Please log in again.");
 
                 // Extract first 100 words from the file content
                 string description = "";
@@ -137,47 +139,47 @@ namespace Backend.Controllers
                         description += "... Read More ";
                 }
 
-            var connectionString = _config["AzureBlobStorage:ConnectionString"];
-            var containerName = _config["AzureBlobStorage:ContainerName"];
-            if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(containerName))
-                return StatusCode(500, "Azure Blob Storage settings are not properly configured.");
+                var connectionString = _config["AzureBlobStorage:ConnectionString"];
+                var containerName = _config["AzureBlobStorage:ContainerName"];
+                if (string.IsNullOrWhiteSpace(connectionString) || string.IsNullOrWhiteSpace(containerName))
+                    return StatusCode(500, "Azure Blob Storage settings are not properly configured.");
 
-            var container = new BlobContainerClient(connectionString, containerName);
-            await container.CreateIfNotExistsAsync();
+                var container = new BlobContainerClient(connectionString, containerName);
+                await container.CreateIfNotExistsAsync();
 
-            var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
-            var blobClient = container.GetBlobClient(fileName);
+                var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
+                var blobClient = container.GetBlobClient(fileName);
 
-            using var stream = file.OpenReadStream();
-            stream.Position = 0;
-            await blobClient.UploadAsync(stream, overwrite: true);
-            var blobUrl = blobClient.Uri.ToString();
+                using var stream = file.OpenReadStream();
+                stream.Position = 0;
+                await blobClient.UploadAsync(stream, overwrite: true);
+                var blobUrl = blobClient.Uri.ToString();
 
-            var author = User.FindFirst("name")?.Value ??
-                         User.FindFirst("username")?.Value ??
-                         User.FindFirst(ClaimTypes.Name)?.Value ??
-                         User.Identity?.Name ??
-                         "Unknown Author";
+                var author = User.FindFirst("name")?.Value ??
+                             User.FindFirst("username")?.Value ??
+                             User.FindFirst(ClaimTypes.Name)?.Value ??
+                             User.Identity?.Name ??
+                             "Unknown Author";
 
-            var blog = new Blog
-            {
-                Title = title.Trim(),
-                BlogUrl = blobUrl,
-                Author = author,
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow,
-                Location = string.Empty,
-                Tags = new List<string>(),
-                NumberOfComments = 0,
-                NumberOfReads = 0,
-                NumberOfReacts = 0,
-                CoverImageUrl = coverImageUrl ?? string.Empty,
-                ImageUrls = new List<string>(),
-                Description = description
-            };
+                var blog = new Blog
+                {
+                    Title = title.Trim(),
+                    BlogUrl = blobUrl,
+                    Author = author,
+                    UserId = userId,
+                    CreatedAt = DateTime.UtcNow,
+                    Location = string.Empty,
+                    Tags = new List<string>(),
+                    NumberOfComments = 0,
+                    NumberOfReads = 0,
+                    NumberOfReacts = 0,
+                    CoverImageUrl = coverImageUrl ?? string.Empty,
+                    ImageUrls = new List<string>(),
+                    Description = description
+                };
 
-            _dbContext.Blogs.Add(blog);
-            await _dbContext.SaveChangesAsync();
+                _dbContext.Blogs.Add(blog);
+                await _dbContext.SaveChangesAsync();
 
                 return Ok(new
                 {
@@ -332,7 +334,7 @@ namespace Backend.Controllers
                     CoverImageUrl = b.CoverImageUrl ?? string.Empty,
                     ImageUrls = b.ImageUrls ?? new List<string>(),
                     Description = b.Description ?? string.Empty,
-                    User = b.User == null ? new { Id = Guid.Empty, Username = "Unknown", ProfilePictureUrl = (string)null, Bio = (string)null } : new
+                    User = b.User == null ? new { Id = Guid.Empty, Username = "Unknown", ProfilePictureUrl = (string?)null, Bio = (string?)null } : new
 
                     {
                         Id = b.User.Id,
@@ -487,81 +489,11 @@ namespace Backend.Controllers
         }
 
     // GET: api/Blog/{blogId}/reactions/count
-    [HttpGet("{blogId}/reactions/count")]
-    public async Task<ActionResult<int>> GetBlogReactionsCount(int blogId)
-    {
-        var count = await _context.BlogReactions
-            .Where(r => r.BlogId == blogId)
-            .CountAsync();
-
-        return Ok(count);
-    }
+    // Duplicate method removed to resolve compile error.
 
         // GET: api/Blog/{blogId}/reactions/status
-        [HttpGet("{blogId}/reactions/status")]
-        [Authorize]
-        public async Task<ActionResult<bool>> GetUserReactionStatus(int blogId)
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                return Unauthorized();
-
-            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
-                return BadRequest("Invalid user ID format");
-
-            bool hasReacted = await _context.BlogReactions
-                .AnyAsync(r => r.BlogId == blogId && r.UserId == userId);
-
-            return Ok(hasReacted);
-        }
 
         // POST: api/Blog/{blogId}/react
-        [HttpPost("{blogId}/react")]
-        [Authorize]
-        public async Task<IActionResult> ReactToBlog(int blogId)
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (userIdClaim == null)
-                return Unauthorized();
-
-            if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
-                return BadRequest("Invalid user ID format");
-
-            // Find the blog
-            var blog = await _context.Blogs.FindAsync(blogId);
-            if (blog == null)
-                return NotFound("Blog not found");
-
-            // Check if already reacted
-            var existingReaction = await _context.BlogReactions
-                .FirstOrDefaultAsync(r => r.BlogId == blogId && r.UserId == userId);
-
-            if (existingReaction != null)
-            {
-                // Remove reaction (toggle)
-                _context.BlogReactions.Remove(existingReaction);
-
-                // Decrease reaction count on the blog itself
-                blog.NumberOfReacts = Math.Max(0, blog.NumberOfReacts - 1);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { reacted = false, count = blog.NumberOfReacts });
-            }
-
-            // Add new reaction
-            _context.BlogReactions.Add(new BlogReaction
-            {
-                BlogId = blogId,
-                UserId = userId,
-                CreatedAt = DateTime.UtcNow
-            });
-
-            // Increase reaction count on the blog
-            blog.NumberOfReacts++;
-            await _context.SaveChangesAsync();
-
-            return Ok(new { reacted = true, count = blog.NumberOfReacts });
-        }
 
         [HttpGet("blogDescription")]
         private async Task<string> GetFirst100WordsFromBlobAsync(string blobUrl)
