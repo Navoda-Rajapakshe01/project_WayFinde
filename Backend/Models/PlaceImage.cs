@@ -6,8 +6,8 @@ namespace Backend.Models
     {
         public int Id { get; set; }
         public int PlaceId { get; set; }
-        public string ImageUrl { get; set; }
-        public PlacesToVisit PlacesToVisit { get; set; }
+        public required string ImageUrl { get; set; }
+        public required PlacesToVisit PlacesToVisit { get; set; }
     }
 
 }
