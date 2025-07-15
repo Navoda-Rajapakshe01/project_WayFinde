@@ -6,11 +6,10 @@ import { FaComment, FaThumbsUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "../CSS/PersonalBlog.css";
 
-const beachImage2 = "/Blogimages/beach2.jpg";
-const beachImage3 = "/Blogimages/beach3.jpg";
+
 
 const PersonalBlog = () => {
-  console.log("PersonalBlog component mounted");
+  
   const { id } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -230,10 +229,8 @@ const PersonalBlog = () => {
         },
       });
 
-      // Log response details
-      console.log("Comment API response status:", response.status);
-      console.log("Comment API response status text:", response.statusText);
-
+      
+      
       if (!response.ok) {
         if (response.status === 404) {
           console.log("No comments found for this blog.");

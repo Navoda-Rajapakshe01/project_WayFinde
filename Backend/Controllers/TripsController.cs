@@ -224,7 +224,7 @@ namespace Backend.Data
         [HttpGet("search-users")]
         public async Task<ActionResult<IEnumerable<UserSearchDto>>> SearchUsers(string query)
         {
-            var users = await _context.UserNew  
+            var users = await _context.UsersNew  
                 .Where(u => u.Username.Contains(query))
                 .Select(u => new UserSearchDto
                 {
@@ -243,7 +243,7 @@ namespace Backend.Data
             var trip = await _context.Trips.FindAsync(tripId);
             if (trip == null) return NotFound("Trip not found.");
 
-            var user = await _context.UserNew.FindAsync(userId);
+            var user = await _context.UsersNew.FindAsync(userId);
             if (user == null) return NotFound("User not found.");
 
             var alreadyExists = await _context.TripCollaborator

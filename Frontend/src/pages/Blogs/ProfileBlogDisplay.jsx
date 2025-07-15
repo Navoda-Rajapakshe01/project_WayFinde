@@ -33,9 +33,7 @@ const BlogDetails = () => {
     <div className="blog-details">
       <h2>{blog.title}</h2>
       <img src={blog.coverImageUrl} alt={blog.title} />
-      <p>
-        <strong>Location:</strong> {blog.location}
-      </p>
+
       <p>
         <strong>Author:</strong> {blog.author}
       </p>

@@ -3,18 +3,17 @@ import {
   FaChevronLeft,
   FaChevronRight,
   FaComment,
+  FaFeatherAlt,
   FaThumbsUp,
 } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./ImageGrid.css";
 
 const ImageGrid = () => {
   const navigate = useNavigate();
-
   const scrollContainerRefLatest = useRef(null);
   const scrollContainerRefTrending = useRef(null);
 
-  // State for blogs
   const [latestBlogs, setLatestBlogs] = useState([]);
   const [trendingBlogs, setTrendingBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,42 +35,73 @@ const ImageGrid = () => {
         }
 
         let data = await response.json();
-        console.log("Blog API response:", data);
-
-        // Handle different response formats
         let blogsArray = [];
+
         if (data.$values) {
           blogsArray = data.$values;
         } else if (Array.isArray(data)) {
           blogsArray = data;
-        } else {
-          console.warn("Unexpected blog data format", data);
-          blogsArray = [];
         }
 
-        // Process the blogs to standardize properties
-        const processedBlogs = blogsArray.map((blog) => ({
-          id: blog.id || blog.Id || blog.blogId || blog.BlogId,
-          topic: blog.title || blog.Title || "Untitled",
-          writerName: blog.author || blog.Author || "Anonymous",
-          img:
-            blog.coverImageUrl ||
-            blog.CoverImageUrl ||
-            "/default-blog-image.jpg",
-          briefDescription:
-            (blog.description || blog.Description || "").substring(0, 100) +
-            "...",
-          commentCount: blog.numberOfComments || blog.CommentCount || 0,
-          reactionCount: blog.numberOfReacts || blog.ReactionCount || 0,
-          createdAt: new Date(blog.createdAt || blog.CreatedAt || Date.now()),
-        }));
+        const stripHtmlTags = (html) => {
+          if (!html) return "";
+          return html.replace(/<[^>]*>/g, "");
+        };
 
-        // Sort for latest blogs (by date)
+        const tryDecodeBase64 = (str) => {
+          try {
+            if (typeof str === "string" && /^[A-Za-z0-9+/=]+$/.test(str)) {
+              return atob(str);
+            }
+          } catch (e) {}
+          return str;
+        };
+
+        const limitWords = (text, wordLimit) => {
+          if (!text) return "";
+          const words = text.split(/\s+/);
+          if (words.length <= wordLimit) {
+            return text;
+          }
+          return words.slice(0, wordLimit).join(" ") + "...";
+        };
+
+        const processedBlogs = blogsArray.map((blog) => {
+          const blogId = blog.id ?? blog.Id ?? blog.blogId ?? blog.BlogId;
+
+          let desc = blog.description;
+          if (!desc && blog.blog) {
+            desc = blog.blog.description || blog.blog.Description;
+          }
+          if (desc && typeof desc === "string") {
+            desc = stripHtmlTags(tryDecodeBase64(desc));
+          }
+
+          const briefDescription = limitWords(
+            desc || "No description available",
+            50
+          );
+
+          return {
+            id: blogId,
+            topic: blog.title ?? blog.Title ?? "Untitled",
+            writerName: blog.author ?? blog.Author ?? "Anonymous",
+            img:
+              blog.coverImageUrl ??
+              blog.CoverImageUrl ??
+              "/default-blog-image.jpg",
+            briefDescription,
+            location: blog.location ?? blog.Location ?? "",
+            commentCount: blog.numberOfComments ?? blog.CommentCount ?? 0,
+            reactionCount: blog.numberOfReacts ?? blog.ReactionCount ?? 0,
+            createdAt: new Date(blog.createdAt ?? blog.CreatedAt ?? Date.now()),
+          };
+        });
+
         const sortedByDate = [...processedBlogs].sort(
           (a, b) => b.createdAt - a.createdAt
         );
 
-        // Sort for trending blogs (by reactions + comments)
         const sortedByEngagement = [...processedBlogs].sort(
           (a, b) =>
             b.commentCount +
@@ -79,7 +109,6 @@ const ImageGrid = () => {
             (a.commentCount + a.reactionCount)
         );
 
-        // Take the top blogs (limit to 10 or however many you want to display)
         setLatestBlogs(sortedByDate.slice(0, 10));
         setTrendingBlogs(sortedByEngagement.slice(0, 10));
       } catch (error) {
@@ -96,23 +125,18 @@ const ImageGrid = () => {
   const handleNavigate = (blogId) => {
     if (blogId) {
       navigate(`/blog/${blogId}`);
-    } else {
-      console.error("Blog ID is undefined");
-    }
-
-  };
-
-  // Scroll Left
-  const handleScrollLeft = (scrollContainerRef) => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: -300, behavior: "smooth" });
     }
   };
 
-  // Scroll Right
-  const handleScrollRight = (scrollContainerRef) => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollBy({ left: 300, behavior: "smooth" });
+  const handleScrollLeft = (ref) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+
+  const handleScrollRight = (ref) => {
+    if (ref.current) {
+      ref.current.scrollBy({ left: 300, behavior: "smooth" });
     }
   };
 
@@ -124,163 +148,98 @@ const ImageGrid = () => {
     return <div className="error">Error: {error}</div>;
   }
 
+  const renderBlogCards = (blogs) =>
+    blogs.length > 0 ? (
+      blogs.map((blog) => (
+        <div
+          key={blog.id}
+          className="blog-card"
+          onClick={() => handleNavigate(blog.id)}
+        >
+          <img
+            src={blog.img}
+            alt={blog.topic}
+            className="blog-image"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/default-blog-image.jpg";
+            }}
+          />
+          <h3 className="blog-title">{blog.topic}</h3>
+          <p className="blog-description">{blog.briefDescription}</p>
+          <p className="blog-meta">
+            <span className="meta-item">
+              <FaComment className="icon" />
+              <span>
+                Comments {blog.commentCount > 0 ? `(${blog.commentCount})` : ""}
+              </span>
+            </span>
+            <span className="meta-item">
+              <FaThumbsUp className="icon" />
+              <span>
+                Likes {blog.reactionCount > 0 ? `(${blog.reactionCount})` : ""}
+              </span>
+            </span>
+          </p>
+          <p className="paragraph-muted author-line">
+            <FaFeatherAlt className="icon" />
+            written by {blog.writerName}
+          </p>
+        </div>
+      ))
+    ) : (
+      <p className="no-blogs">No blogs available</p>
+    );
+
   return (
     <div className="custom-container">
-      {/* Latest Blogs Section */}
+      {/* Latest Blogs */}
       <div>
         <h2 className="LatestBlogsHeading">Latest Blogs</h2>
         <div className="ScrollButtonsSection">
-          {/* Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefLatest)}>
+            onClick={() => handleScrollLeft(scrollContainerRefLatest)}
+          >
             <FaChevronLeft />
           </button>
-
-          {/* Blog Cards in Horizontal Scroll */}
           <div
             ref={scrollContainerRefLatest}
             className="scroll-container"
-
             style={{ scrollBehavior: "smooth" }}
           >
-            {latestBlogs.length > 0 ? (
-              latestBlogs.map((blog) => (
-                <div
-                  key={blog.id}
-                  className="blog-card"
-                  onClick={() => handleNavigate(blog.id)}
-                >
-                  <img
-                    src={blog.img}
-                    alt={blog.topic}
-                    className="blog-image"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/default-blog-image.jpg";
-                    }}
-                  />
-                  <p className="paragraph-muted">
-                    <Link
-                      to={`/profile/${blog.writerName}`}
-                      className="profile-link"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {blog.writerName}
-                    </Link>
-                  </p>
-                  <h3 className="blog-title">{blog.topic}</h3>
-                  <p className="blog-description">{blog.briefDescription}</p>
-                  <p className="blog-meta">
-                    <span className="meta-item">
-                      <FaComment className="icon" />
-                      <span>
-                        Comments{" "}
-                        {blog.commentCount > 0 ? `(${blog.commentCount})` : ""}
-                      </span>
-                    </span>
-                    <span className="meta-item">
-                      <FaThumbsUp className="icon" />
-                      <span>
-                        Likes{" "}
-                        {blog.reactionCount > 0
-                          ? `(${blog.reactionCount})`
-                          : ""}
-                      </span>
-                    </span>
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="no-blogs">No latest blogs available</p>
-            )}
-
+            {renderBlogCards(latestBlogs)}
           </div>
-
-          {/* Scroll Right Button */}
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefLatest)}>
+            onClick={() => handleScrollRight(scrollContainerRefLatest)}
+          >
             <FaChevronRight />
           </button>
         </div>
       </div>
 
-      {/* Trending Blogs Section */}
+      {/* Trending Blogs */}
       <div className="TrendingBlogsSection">
         <h2 className="TrendingBlogsHeading">Trending Blogs</h2>
         <div className="ScrollButtonsSection">
-          {/* Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefTrending)}>
+            onClick={() => handleScrollLeft(scrollContainerRefTrending)}
+          >
             <FaChevronLeft />
           </button>
-
-          {/* Blog Cards in Horizontal Scroll */}
           <div
             ref={scrollContainerRefTrending}
             className="scroll-container"
-
             style={{ scrollBehavior: "smooth" }}
           >
-            {trendingBlogs.length > 0 ? (
-              trendingBlogs.map((blog) => (
-                <div
-                  key={blog.id}
-                  className="blog-card"
-                  onClick={() => handleNavigate(blog.id)}
-                >
-                  <img
-                    src={blog.img}
-                    alt={blog.topic}
-                    className="blog-image"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/default-blog-image.jpg";
-                    }}
-                  />
-                  <p className="paragraph-muted">
-                    <Link
-                      to={`/profile/${blog.writerName}`}
-                      className="profile-link"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {blog.writerName}
-                    </Link>
-                  </p>
-                  <h3 className="blog-title">{blog.topic}</h3>
-                  <p className="blog-description">{blog.briefDescription}</p>
-                  <p className="blog-meta">
-                    <span>{blog.createdAt.toLocaleDateString()}</span>
-                    <span className="meta-item">
-                      <FaComment className="icon" />
-                      <span>
-                        Comments{" "}
-                        {blog.commentCount > 0 ? `(${blog.commentCount})` : ""}
-                      </span>
-                    </span>
-                    <span className="meta-item">
-                      <FaThumbsUp className="icon" />
-                      <span>
-                        Likes{" "}
-                        {blog.reactionCount > 0
-                          ? `(${blog.reactionCount})`
-                          : ""}
-                      </span>
-                    </span>
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="no-blogs">No trending blogs available</p>
-            )}
-
+            {renderBlogCards(trendingBlogs)}
           </div>
-
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefTrending)}>
+            onClick={() => handleScrollRight(scrollContainerRefTrending)}
+          >
             <FaChevronRight />
           </button>
         </div>

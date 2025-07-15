@@ -41,7 +41,7 @@ namespace Backend.Data
         public DbSet<Trip> Trips { get; set; }
         public DbSet<TripPlace> TripPlaces { get; set; }
         public DbSet<TripCollaborator> TripCollaborator { get; set; }
-        public DbSet<UserNew> UserNew { get; set; }
+       
 
 
 

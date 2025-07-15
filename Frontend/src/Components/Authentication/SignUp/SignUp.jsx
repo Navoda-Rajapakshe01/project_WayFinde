@@ -19,9 +19,10 @@ const Register = () => {
     role: initialRole,
     serviceType: "",
   });
-const [success, setSuccess] = useState("");
-const [error, setError] = useState("");
-const [emailError, setEmailError] = useState("");
+
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
 
 const handleChange = (e) => {
   const { name, value } = e.target;
@@ -32,15 +33,29 @@ const handleChange = (e) => {
   if (name === "contactEmail") {
     setEmailError("");
   }
-};
 
-const handleEmailBlur = () => {
-  if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
-    setEmailError("Please enter a valid email address");
-  } else {
-    setEmailError("");
-  }
-};
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    // Update form data
+    setFormData({ ...formData, [name]: value });
+
+    // Clear any previous error
+    if (name === "contactEmail") {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailBlur = () => {
+    if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
+      setEmailError("Please enter a valid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
 
 // Email validation function using regex
 const validateEmail = (email) => {
@@ -59,22 +74,23 @@ const handleSubmit = async (e) => {
     return; // Prevent form submission
   }
 
-  // Create a copy of the form data for the API request
-  const apiData = { ...formData };
+    // Create a copy of the form data for the API request
+    const apiData = { ...formData };
 
-  // Prepare API data: if role is NOT one of the providers, clear serviceType
-  if (
-    ![
-      "ServiceProvider",
-      "TransportProvider",
-      "AccommodationProvider",
-    ].includes(apiData.role)
-  ) {
-    apiData.serviceType = "";
-  }
+    // Prepare API data: if role is NOT one of the providers, clear serviceType
+    const apiData = { ...formData };
+    if (
+      ![
+        "ServiceProvider",
+        "TransportProvider",
+        "AccommodationProvider",
+      ].includes(apiData.role)
+    ) {
+      apiData.serviceType = "";
+    }
 
-  // You might want to normalize serviceType as well if needed
-  // But your backend should decide on allowed values anyway
+    // You might want to normalize serviceType as well if needed
+    // But your backend should decide on allowed values anyway
 
   try {
     console.log("Sending registration data:", apiData);

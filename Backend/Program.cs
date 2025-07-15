@@ -10,7 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add AppDbContext with NavodaConnection (only one context to avoid duplication)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
+
+//builder.Services.AddDbContext<UserDbContext>(options =>
+ //   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
