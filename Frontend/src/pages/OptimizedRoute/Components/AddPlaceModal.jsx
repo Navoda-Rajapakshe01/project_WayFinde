@@ -228,7 +228,7 @@ const PlaceCard = ({ place, onAddPlace }) => {
               ★
             </span>
           ))}
-          <span className="rating-count-adp">({place.howManyRated || 0})</span>
+          <span className="rating-count-adp">count</span>
         </div>
         <div className="place-details-adp">
           <div className="detail-adp">

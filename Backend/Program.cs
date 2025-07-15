@@ -10,10 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add AppDbContext with NavodaConnection (only one context to avoid duplication)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SachinthaConnection")));
-
-//builder.Services.AddDbContext<UserDbContext>(options =>
- //   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -93,16 +90,10 @@ builder.Services.AddHttpContextAccessor();
 // Build the app
 var app = builder.Build();
 
-// Enable Swagger in development
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-else
-{
-    app.UseCors("ProductionCorsPolicy");
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("AllowReactApp"); // or your relevant policy
 
 // Enable CORS before auth
 // Apply CORS policy BEFORE Authentication middleware

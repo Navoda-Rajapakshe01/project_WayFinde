@@ -46,7 +46,6 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
     avgTime,
     avgSpend,
     rating,
-    howManyRated,
     mainImageUrl,
     district,
   } = place;
@@ -111,7 +110,7 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
               </span>
             ))}
             <span className="rating-value">{rating}</span>
-            <span className="rating-count">({howManyRated})</span>
+            <span className="rating-count">count</span>
           </div>
         </div>
       </div>

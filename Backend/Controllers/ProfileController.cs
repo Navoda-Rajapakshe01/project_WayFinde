@@ -234,7 +234,10 @@ namespace Backend.Controllers
 
                 // Decrement counters
                 targetUser.FollowersCount = Math.Max(0, targetUser.FollowersCount - 1);
-                currentUser.FollowingCount = Math.Max(0, currentUser.FollowingCount - 1);
+                if (currentUser != null)
+                {
+                    currentUser.FollowingCount = Math.Max(0, currentUser.FollowingCount - 1);
+                }
 
                 await _context.SaveChangesAsync();
 
@@ -242,19 +245,27 @@ namespace Backend.Controllers
             }
 
             // Not following, so follow
+            var followerUser = await _context.UsersNew.FindAsync(currentUserId);
+            var followedUser = await _context.UsersNew.FindAsync(userId);
+
+            if (followerUser == null || followedUser == null)
+                return NotFound("One or both users not found.");
+
             _context.Follows.Add(new Follows
             {
                 FollowerID = currentUserId,
                 FollowedID = userId,
                 FollowDate = DateTime.UtcNow,
-                Follower = await _context.UsersNew.FindAsync(currentUserId),
-                Followed = await _context.UsersNew.FindAsync(userId)
-
+                Follower = followerUser,
+                Followed = followedUser
             });
 
             // Increment counters
             targetUser.FollowersCount++;
-            currentUser.FollowingCount++;
+            if (currentUser != null)
+            {
+                currentUser.FollowingCount++;
+            }
 
             await _context.SaveChangesAsync();
 

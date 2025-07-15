@@ -7,6 +7,7 @@ const ImageGrid = () => {
   const scrollContainerRefLatest = useRef(null);
   const scrollContainerRefTrending = useRef(null);
 
+  // State for blogs
   const [latestBlogs, setLatestBlogs] = useState([]);
   const [trendingBlogs, setTrendingBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,8 +29,10 @@ const ImageGrid = () => {
         }
 
         let data = await response.json();
-        let blogsArray = [];
+        console.log("Blog API response:", data);
 
+        // Handle different response formats
+        let blogsArray = [];
         if (data.$values) {
           blogsArray = data.$values;
         } else if (Array.isArray(data)) {
@@ -106,6 +109,7 @@ const ImageGrid = () => {
             (a.commentCount + a.reactionCount)
         );
 
+        // Take the top blogs (limit to 10 or however many you want to display)
         setLatestBlogs(sortedByDate.slice(0, 10));
         setTrendingBlogs(sortedByEngagement.slice(0, 10));
       } catch (error) {
@@ -193,27 +197,28 @@ const ImageGrid = () => {
           
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefLatest)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefLatest)}>
             <FaChevronRight />
           </button>
         </div>
       </div>
 
       {/* Trending Blogs Section */}
+      {/* Trending Blogs Section */}
       <div className="TrendingBlogsSection">
         <h2 className="TrendingBlogsHeading">Trending Blogs</h2>
         <div className="ScrollButtonsSection">
+          {/* Scroll Left Button */}
           <button
             className="ScrollButtonLeft"
-            onClick={() => handleScrollLeft(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollLeft(scrollContainerRefTrending)}>
             <FaChevronLeft />
           </button>
           
           <div
             ref={scrollContainerRefTrending}
             className="scroll-container"
+
             style={{ scrollBehavior: "smooth" }}
           >
             {trendingBlogs.length > 0 ? (
@@ -236,8 +241,7 @@ const ImageGrid = () => {
           
           <button
             className="scroll-button-right"
-            onClick={() => handleScrollRight(scrollContainerRefTrending)}
-          >
+            onClick={() => handleScrollRight(scrollContainerRefTrending)}>
             <FaChevronRight />
           </button>
         </div>

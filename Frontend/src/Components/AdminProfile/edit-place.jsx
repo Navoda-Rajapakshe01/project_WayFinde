@@ -135,7 +135,7 @@ const EditPlace = () => {
       <div className="admin-content" style={{ padding: "20px" }}>
         {" "}
         <div className="adminsection-loading">
-          <div className="loading-spinner"></div>
+          <div className="adminloading-spinner"></div>
           <p>Loading place details...</p>
         </div>
       </div>

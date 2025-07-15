@@ -9,7 +9,6 @@
 
 using Backend.Models;
 using Backend.Models.User;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using System.Text.Json;
@@ -42,7 +41,7 @@ namespace Backend.Data
         public DbSet<Trip> Trips { get; set; }
         public DbSet<TripPlace> TripPlaces { get; set; }
         public DbSet<TripCollaborator> TripCollaborator { get; set; }
-       
+        public DbSet<UserNew> UserNew { get; set; }
 
 
 
@@ -222,7 +221,7 @@ namespace Backend.Data
                     v => string.Join(',', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
                 .Metadata.SetValueComparer(new ValueComparer<List<string>>(
-                    (c1, c2) => c1.SequenceEqual(c2),
+                    (c1, c2) => (c1 ?? new List<string>()).SequenceEqual(c2 ?? new List<string>()),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
 

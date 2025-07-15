@@ -30,8 +30,6 @@ namespace Backend.Controllers
             return Ok(places);
         }
 
-
-
         // GET: api/places/2 - For getting details of a single place
         [HttpGet("{id:int}")]
         public async Task<ActionResult<PlacesToVisit>> GetPlaceDetails(int id)
@@ -49,7 +47,40 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
+        // GET: api/places/by-district-name/nuwara-eliya
+        [HttpGet("by-district-name/{slug}")]
+        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
+        {
+            // Find the district by the slug
+            var district = await _context.Districts
+                .FirstOrDefaultAsync(d => d.Slug.ToLower() == slug.ToLower());
 
+            // If district not found, return a 404 Not Found
+            if (district == null)
+                return NotFound("District not found");
+
+            // Get places belonging to the found district
+            var places = await _context.PlacesToVisit
+                .Where(p => p.DistrictId == district.Id)
+                .ToListAsync();
+
+            return Ok(places);
+        }
+
+        // GET: api/places/categories
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new
+                {
+                    categoryId = c.CategoryId,
+                    categoryName = c.CategoryName
+                })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
 
 
         [HttpGet("by-category/{categoryId}")]
@@ -72,20 +103,20 @@ namespace Backend.Controllers
         {
             // Check if a place with the same name already exists
             var existingPlace = await _context.PlacesToVisit
-            .FirstOrDefaultAsync(p => 
+            .FirstOrDefaultAsync(p =>
                 p.Name.ToLower() == dto.Name.ToLower().Trim() &&
                 p.DistrictId == dto.DistrictId);
 
-        if (existingPlace != null)
-        {
-            return Conflict("A place with the same name already exists in this district.");
-        }
+            if (existingPlace != null)
+            {
+                return Conflict("A place with the same name already exists in this district.");
+            }
 
             // Check related entities exist
             var district = await _context.Districts.FindAsync(dto.DistrictId);
             if (district == null) return BadRequest("District not found.");
 
-            var category = dto.CategoryId.HasValue 
+            var category = dto.CategoryId.HasValue
                 ? await _context.Categories.FindAsync(dto.CategoryId.Value)
                 : null;
 
@@ -225,6 +256,30 @@ namespace Backend.Controllers
             return Ok(images);
         }
 
+        // GET: api/places/top-rated
+        [HttpGet("top-rated")]
+        public async Task<IActionResult> GetTopRatedPlaces()
+        {
+            var topRatedPlaces = await _context.PlacesToVisit
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.Description,
+                    p.MainImageUrl,
+                    p.Address,
+                    AverageRating = _context.Reviews
+                        .Where(r => r.PlaceId == p.Id)
+                        .Select(r => (double?)r.Rating)
+                        .Average() ?? 0
+                })
+                .OrderByDescending(p => p.AverageRating)
+                .Take(4)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Ok(topRatedPlaces);
+        }
 
     }
 }

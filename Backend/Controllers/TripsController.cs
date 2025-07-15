@@ -85,8 +85,6 @@ namespace Backend.Data
                     GoogleMapLink = tp.Place.GoogleMapLink!,
                     AvgTime = tp.Place.AvgTime!,
                     AvgSpend = tp.Place.AvgSpend,
-                    Rating = tp.Place.Rating,
-                    HowManyRated = tp.Place.HowManyRated ?? 0,
                     MainImageUrl = tp.Place.MainImageUrl
                 }).ToList()
             };
@@ -212,8 +210,6 @@ namespace Backend.Data
                     GoogleMapLink = tp.Place.GoogleMapLink!,
                     AvgTime = tp.Place.AvgTime!,
                     AvgSpend = tp.Place.AvgSpend,
-                    Rating = tp.Place.Rating,
-                    HowManyRated = tp.Place.HowManyRated ?? 0,
                     MainImageUrl = tp.Place.MainImageUrl
                 }).ToList()
             });
@@ -226,7 +222,7 @@ namespace Backend.Data
         [HttpGet("search-users")]
         public async Task<ActionResult<IEnumerable<UserSearchDto>>> SearchUsers(string query)
         {
-            var users = await _context.UsersNew  
+            var users = await _context.UserNew  
                 .Where(u => u.Username.Contains(query))
                 .Select(u => new UserSearchDto
                 {
@@ -245,7 +241,7 @@ namespace Backend.Data
             var trip = await _context.Trips.FindAsync(tripId);
             if (trip == null) return NotFound("Trip not found.");
 
-            var user = await _context.UsersNew.FindAsync(userId);
+            var user = await _context.UserNew.FindAsync(userId);
             if (user == null) return NotFound("User not found.");
 
             var alreadyExists = await _context.TripCollaborator

@@ -24,7 +24,6 @@ namespace Backend.DTOs
         public string? AvgTime { get; set; }
         public decimal? AvgSpend { get; set; }
         public double? Rating { get; set; }
-        public int HowManyRated { get; set; }
         public required string MainImageUrl { get; set; }
 
         public DistrictWithPlacesCountDTO District { get; set; } = null!;

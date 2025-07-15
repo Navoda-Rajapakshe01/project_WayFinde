@@ -66,6 +66,7 @@ function AppRoutes() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
   const { user, loading } = useContext(AuthContext);
+  console.log("AppRoutes user:", user);
 
   return (
     <>

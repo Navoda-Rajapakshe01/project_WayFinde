@@ -20,59 +20,53 @@ const Register = () => {
     serviceType: "",
   });
 
+
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
 
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  // Update form data using functional update for better performance
+  setFormData((prev) => ({ ...prev, [name]: value }));
   
+  // Clear any previous error
+  if (name === "contactEmail") {
+    setEmailError("");
+  }
+};
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    // Update form data
-    setFormData({ ...formData, [name]: value });
-
-    // Clear any previous error
-    if (name === "contactEmail") {
-      setEmailError("");
-    }
-  };
-
-  const handleEmailBlur = () => {
-    if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
-  };
+const handleEmailBlur = () => {
+  if (formData.contactEmail && !validateEmail(formData.contactEmail)) {
+    setEmailError("Please enter a valid email address");
+  } else {
+    setEmailError("");
+  }
+};
 
 
-  // Email validation function using regex
-  const validateEmail = (email) => {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
-  };
+// Email validation function using regex
+const validateEmail = (email) => {
+  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return regex.test(email);
+};
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setSuccess("");
 
+  // Validate email before submission
+  if (!validateEmail(formData.contactEmail)) {
+    setEmailError("Please enter a valid email address");
+    return; // Prevent form submission
+  }
 
-    // Validate email before submission
-    if (!validateEmail(formData.contactEmail)) {
-      setEmailError("Please enter a valid email address");
-      return; // Prevent form submission
-    }
-
-    
-    if (!validateEmail(formData.contactEmail)) {
-      setEmailError("Please enter a valid email address");
-      return;
-    }
+    // Create a copy of the form data for the API request
+    const apiData = { ...formData };
 
     // Prepare API data: if role is NOT one of the providers, clear serviceType
-    const apiData = { ...formData };
     if (
       ![
         "ServiceProvider",
@@ -86,133 +80,122 @@ const Register = () => {
     // You might want to normalize serviceType as well if needed
     // But your backend should decide on allowed values anyway
 
-    try {
-      console.log("Sending registration data:", apiData);
-      const response = await axios.post(
-        "http://localhost:5030/api/Auth/register",
-
-
-        apiData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-
-      );
-      console.log("Registration response:", response.data);
-
-      setSuccess("Registration successful! Redirecting to sign in...");
-      setTimeout(() => {
-        navigate("/signin");
-      }, 1800);
-    } catch (error) {
-      console.error("Registration error:", error);
-      if (error.response) {
-
-        // The server responded with a status code outside the 2xx range
-        console.error("Error response data:", error.response.data);
-
-        const errorMessage =
-          typeof error.response.data === "string"
-            ? error.response.data
-            : error.response.data?.message ||
-              error.response.data?.title ||
-              "Registration failed. Please check your information and try again.";
-
-        setError(errorMessage);
-      } else if (error.request) {
-        setError(
-          "No response from server. Please check your connection and try again."
-        );
-      } else {
-        setError("Registration failed. Please try again later.");
+  try {
+    console.log("Sending registration data:", apiData);
+    const response = await axios.post(
+      "http://localhost:5030/api/Auth/register",
+      apiData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
+    );
+    console.log("Registration response:", response.data);
+
+    setSuccess("Registration successful! Redirecting to sign in...");
+    setTimeout(() => {
+      navigate("/signin");
+    }, 1800);
+  } catch (error) {
+    console.error("Registration error:", error);
+    if (error.response) {
+      // The server responded with a status code outside the 2xx range
+      console.error("Error response data:", error.response.data);
+
+      const errorMessage =
+        typeof error.response.data === "string"
+          ? error.response.data
+          : error.response.data?.message ||
+            error.response.data?.title ||
+            "Registration failed. Please check your information and try again.";
+
+      setError(errorMessage);
+    } else if (error.request) {
+      setError(
+        "No response from server. Please check your connection and try again."
+      );
+    } else {
+      setError("Registration failed. Please try again later.");
     }
-  };
+  }
+};
 
-  return (
-    <div className="signup-page-container">
-      <div className="signup-form-section">
-        <form onSubmit={handleSubmit} className="signup-form">
-          <h2>Register</h2>
+return (
+  <div className="signup-page-container">
+    <div className="signup-form-section">
+      <form onSubmit={handleSubmit} className="signup-form">
+        <h2>Register</h2>
 
-          <input
-            type="text"
-            name="username"
-            placeholder="Username"
-            value={formData.username}
-            onChange={handleChange}
-            required
-          />
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+        />
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
-          <input
-            type="email"
-            name="contactEmail"
-            placeholder="Email"
-            value={formData.contactEmail}
-            onChange={handleChange}
-            onBlur={handleEmailBlur}
-            className={emailError ? "input-error" : ""}
-            required
-          />
-          {emailError && <p className="field-error-message">{emailError}</p>}
+        <input
+          type="email"
+          name="contactEmail"
+          placeholder="Email"
+          value={formData.contactEmail}
+          onChange={handleChange}
+          onBlur={handleEmailBlur}
+          className={emailError ? "input-error" : ""}
+          required
+        />
+        {emailError && <p className="field-error-message">{emailError}</p>}
 
-          {/* Role selection */}
+        {/* Role selection */}
+        <select
+          name="role"
+          value={formData.role}
+          onChange={handleChange}
+          required
+        >
+          <option value="NormalUser">Normal User</option>
+          <option value="TransportProvider">Transport Provider</option>
+          <option value="AccommodationProvider">
+            Accommodation Provider
+          </option>
+          <option value="ServiceProvider">Service Provider</option>{" "}
+          {/* Added this option */}
+        </select>
+
+        {/* Only show serviceType dropdown if role is exactly "ServiceProvider" */}
+        {formData.role === "ServiceProvider" && (
           <select
-            name="role"
-            value={formData.role}
+            name="serviceType"
+            value={formData.serviceType}
             onChange={handleChange}
-
-            required
-          >
-
-            <option value="NormalUser">Normal User</option>
+            required>
+            <option value="">Select Service Type</option>
             <option value="TransportProvider">Transport Provider</option>
             <option value="AccommodationProvider">
               Accommodation Provider
             </option>
-
-
-
-            <option value="ServiceProvider">Service Provider</option>{" "}
-            {/* Added this option */}
-
-
           </select>
+        )}
 
-          {/* Only show serviceType dropdown if role is exactly "ServiceProvider" */}
-          {formData.role === "ServiceProvider" && (
-            <select
-              name="serviceType"
-              value={formData.serviceType}
-              onChange={handleChange}
-              required>
-              <option value="">Select Service Type</option>
-              <option value="TransportProvider">Transport Provider</option>
-              <option value="AccommodationProvider">
-                Accommodation Provider
-              </option>
-            </select>
-          )}
+        <button type="submit">Register</button>
 
-          <button type="submit">Register</button>
-
-          {success && <p className="success-message">{success}</p>}
-          {error && <p className="error-message">{error}</p>}
-        </form>
-      </div>
+        {success && <p className="success-message">{success}</p>}
+        {error && <p className="error-message">{error}</p>}
+      </form>
     </div>
+  </div>
   );
-};
+}
 
 export default Register;

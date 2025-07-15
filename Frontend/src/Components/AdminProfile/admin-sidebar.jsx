@@ -1,6 +1,5 @@
-"use client";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaMapMarkerAlt,
@@ -15,9 +14,10 @@ import {
 import "../AdminProfile/admin-sidebar.css";
 import "../../App.css";
 
-const AdminSidebar = ({ activeSection }) => {
+const AdminSidebar = () => {
   const [hoveredItem, setHoveredItem] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const menuItems = [
     { id: "overview", label: "Dashboard", icon: <FaHome />, path: "/admin" },
@@ -44,7 +44,7 @@ const AdminSidebar = ({ activeSection }) => {
       label: "Accommodation",
       icon: <FaHotel />,
       path: "/admin/accommodation-management",
-    }, 
+    },
     {
       id: "vehicles",
       label: "Vehicles",
@@ -66,25 +66,22 @@ const AdminSidebar = ({ activeSection }) => {
   ];
 
   const handleLogout = () => {
-    console.log("Logging out...");
-    // Add logout logic here
-  };
-
-  const handleNavigation = (path) => {
-    navigate(path);
+    localStorage.removeItem("userProfile");
+    localStorage.removeItem("token");
+    navigate("/signin");
   };
 
   return (
     <aside className="admin-sidebar">
-      <div className="sidebar-header"></div>
+      <div className="sidebar-header">Admin Panel</div>
 
       <nav className="sidebar-nav">
         <ul>
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={activeSection === item.id ? "active" : ""}
-              onClick={() => handleNavigation(item.path)}
+              className={location.pathname === item.path ? "active" : ""}
+              onClick={() => navigate(item.path)}
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}
             >
