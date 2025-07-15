@@ -451,6 +451,10 @@
   font-size: 0.9rem;
 }
 
+.star {
+  cursor: pointer;
+}
+
 /* Review Form */
 .review-form-container {
   background-color: white;

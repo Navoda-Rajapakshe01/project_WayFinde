@@ -1,35 +1,29 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import AdminSidebar from "../../Components/AdminProfile/admin-sidebar";
 import AdminHeader from "../../Components/AdminProfile/admin-header";
-import DashboardOverview from "../../Components/AdminProfile/dashboard-overview";
-import PlacesManagement from "../../Components/AdminProfile/places-management";
-import UsersManagement from "../../Components/AdminProfile/users-management";
-import UserAnalytics from "../../Components/AdminProfile/user-analytics";
-import AccommodationManagement from "../../Components/AdminProfile/accommodation-management";
-import VehicleManagement from "../../Components/AdminProfile/vehicle-management";
-import ReviewsManagement from "../../Components/AdminProfile/reviews-management";
-import BlogManagement from "../../Components/AdminProfile/blog-management";
-import SettingsPanel from "../../Components/AdminProfile/settings-panel";
 import "../CSS/AdminDashboard.css";
 import "../../App.css";
 
 const AdminDashboard = () => {
-  const [activeSection, setActiveSection] = useState("overview");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Check authentication status
+  // Simulate auth check
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulated delay
-        setIsAuthenticated(true);
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Simulated delay
+        const userData = localStorage.getItem("userProfile");
+        if (userData && JSON.parse(userData)?.role === "Admin") {
+          setIsAuthenticated(true);
+        }
         setIsLoading(false);
       } catch (error) {
-        console.error("Authentication error:", error);
+        console.error("Auth check failed", error);
         setIsAuthenticated(false);
         setIsLoading(false);
       }
@@ -39,10 +33,12 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
+    /*
     if (!isLoading && !isAuthenticated) {
-      // navigate("/admin/login");
-      console.log("User not authenticated, would redirect to login");
+      console.log("Not authenticated → redirecting...");
+      navigate("/signin");
     }
+      */
   }, [isLoading, isAuthenticated, navigate]);
 
   if (isLoading) {
@@ -56,24 +52,11 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-dashboard">
-      <AdminSidebar
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-      />
-
+      <AdminSidebar />
       <div className="admin-main">
         <AdminHeader />
-
         <div className="admin-content">
-          {activeSection === "overview" && <DashboardOverview />}
-          {activeSection === "places" && <PlacesManagement />}
-          {activeSection === "users" && <UsersManagement />}
-          {activeSection === "user-analytics" && <UserAnalytics />}
-          {activeSection === "accommodation" && <AccommodationManagement />}
-          {activeSection === "vehicles" && <VehicleManagement />}
-          {activeSection === "reviews" && <ReviewsManagement />}
-          {activeSection === "blog" && <BlogManagement />}
-          {activeSection === "settings" && <SettingsPanel />}
+          <Outlet /> {/* Dynamically loads nested routes here */}
         </div>
       </div>
     </div>
