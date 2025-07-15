@@ -67,6 +67,21 @@ namespace Backend.Controllers
             return Ok(places);
         }
 
+        // GET: api/places/categories
+        [HttpGet("categories")]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new
+                {
+                    categoryId = c.CategoryId,
+                    categoryName = c.CategoryName
+                })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
+
 
         [HttpGet("by-category/{categoryId}")]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByCategory(int categoryId)

@@ -190,8 +190,8 @@ const PlaceDetails = () => {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
+      <div className="ttd-loading-container">
+        <div className="ttd-loading-spinner"></div>
         <p>Loading place details...</p>
       </div>
     );
@@ -199,12 +199,12 @@ const PlaceDetails = () => {
 
   if (error) {
     return (
-      <div className="error-container">
+      <div className="ttd-error-container">
         <h2>Something went wrong</h2>
         <p>{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="retry-button">
+          className="ttd-retry-button">
           Try Again
         </button>
       </div>

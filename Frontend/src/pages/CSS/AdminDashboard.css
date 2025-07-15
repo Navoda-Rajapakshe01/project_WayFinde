@@ -95,162 +95,161 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.add-button,
-.save-button {
+.adminadd-button,
+.adminsave-button {
   background-color: var(--primary-color);
   color: #ffffff;
   border-radius: 10px;
 }
-.add-button:hover,
-.save-button:hover {
+.adminadd-button:hover,
+.adminsave-button:hover {
   background-color: var(--primary-dark);
 }
 
-.cancel-button,
-.reset-button {
+.admincancel-button,
+.adminreset-button {
   background-color: #f1f3f5; /* Light gray */
   color: #7f8c8d; /* Muted dark text */
   border: 1px solid #dee2e6; /* Light border */
+  border-radius: 10px;
 }
-.cancel-button:hover,
-.reset-button:hover {
+.admincancel-button:hover,
+.adminreset-button:hover {
   background-color: #e9ecef;
 }
 
-.edit-button {
-  /* No info color var, use secondary or primary */
-  background-color: var(--secondary-color); /* Same as primary */
+.adminedit-button {
+  background-color: var(--secondary-color); 
   color: #ffffff;
 }
-.edit-button:hover {
+.adminedit-button:hover {
   background-color: var(--primary-dark);
 }
 
-.delete-button,
-.reject-button {
+.admindelete-button,
+.adminreject-button {
   background-color: #e74c3c; /* Hardcoded Danger */
   color: #ffffff;
 }
-.delete-button:hover,
-.reject-button:hover {
+.admindelete-button:hover,
+.adminreject-button:hover {
   background-color: #c0392b;
 }
 
-.approve-button,
-.view-button {
+.adminapprove-button,
+.adminview-button {
   background-color: #2ecc71; /* Hardcoded Success */
   color: #ffffff;
 }
-.approve-button:hover,
-.view-button:hover {
+.adminapprove-button:hover,
+.adminview-button:hover {
   background-color: #27ae60;
 }
 
-.action-buttons {
+.adminaction-buttons {
   display: flex;
   gap: 8px;
 }
-.action-buttons button {
+.adminaction-buttons button {
   padding: 6px 8px;
   font-size: 0.9rem;
 }
 
 /* --- Filter Bar --- */
-.filter-bar {
+.adminfilter-bar {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  background-color: #ffffff; /* White background */
-  padding: 15px 20px;
-  border-radius: 6px; /* Hardcoded style */
-  margin-bottom: 25px;
-  box-shadow: var(--shadow);
+  margin-bottom: 24px;
   flex-wrap: wrap;
-  gap: 15px;
 }
 
-.search-box {
-  position: relative;
+.adminfilter-dropdown-group {
+  display: flex;
+  gap: 12px; 
+}
+
+.adminfilter-dropdown {
   display: flex;
   align-items: center;
-  min-width: 250px;
+  background: #f8f9fa;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  padding: 2px 8px;
+  min-width: 170px;
 }
 
-.search-box .search-icon {
-  position: absolute;
-  left: 12px;
-  color: #7f8c8d; /* Muted dark text */
-  font-size: 0.9rem;
-}
-
-.search-box input[type="text"] {
-  padding: 10px 12px 10px 35px;
-  border: 1px solid #e0e0e0; /* Light border */
-  border-radius: 6px; /* Hardcoded style */
-  width: 100%;
-  font-size: 0.95rem;
-  transition: var(--transition);
-}
-.search-box input[type="text"]:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(20, 185, 213, 0.2); /* Derived from primary */
-}
-
-.filters {
-  display: flex;
-  gap: 15px;
-  align-items: center;
-}
-
-.filter-dropdown {
+/* Style the search box */
+.adminsearch-box {
   display: flex;
   align-items: center;
-  position: relative;
+  background: #f8f9fa;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  padding: 4px 12px;
+  min-width: 260px;
+  margin-right: 10px;
 }
 
-.filter-dropdown .filter-icon {
+.adminsearch-icon {
   margin-right: 8px;
-  color: #7f8c8d; /* Muted dark text */
+  color: #888;
+  font-size: 1.1em;
+  
 }
 
-.filter-dropdown select {
-  padding: 10px 30px 10px 12px;
-  border: 1px solid #e0e0e0; /* Light border */
-  border-radius: 6px; /* Hardcoded style */
-  background-color: #ffffff;
-  font-size: 0.95rem;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%237f8c8d' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  cursor: pointer;
-  min-width: 150px;
-}
-.filter-dropdown select:focus {
+.adminsearch-box input[type="text"] {
+  border: none;
+  background: transparent;
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(20, 185, 213, 0.2); /* Derived from primary */
+  font-size: 1em;
+  width: 180px;
+}
+
+.adminfilter-icon {
+  margin-right: 8px;
+  color: #888;
+  font-size: 1.1em;
+}
+
+.adminfilter-dropdown select {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 1em;
+  width: 160px;
+}
+
+/* Responsive: stack vertically on small screens */
+@media (max-width: 600px) {
+  .adminfilter-bar {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .adminsearch-box,
+  .adminfilter-dropdown {
+    width: 100%;
+    min-width: 0;
+    margin-right: 0;
+  }
 }
 
 /* --- Tables --- */
-.table-container {
+.admin-table-container {
   background-color: #ffffff; /* White background */
   border-radius: 6px; /* Hardcoded style */
   box-shadow: var(--shadow);
   overflow-x: auto;
 }
 
-.data-table {
+.admin-data-table {
   width: 100%;
   border-collapse: collapse;
   color: #2c3e50; /* Dark text */
 }
 
-.data-table th,
-.data-table td {
+.admin-data-table th,
+.admin-data-table td {
   padding: 14px 18px;
   text-align: left;
   border-bottom: 1px solid #e0e0e0; /* Light border */
@@ -258,7 +257,7 @@ button:disabled {
   white-space: nowrap;
 }
 
-.data-table thead th {
+.admin-data-table thead th {
   background-color: #f8f9fa; /* Very light gray */
   font-weight: 600;
   font-size: 0.9rem;
@@ -269,11 +268,11 @@ button:disabled {
   z-index: 10;
 }
 
-.data-table tbody tr:hover {
+.admin-data-table tbody tr:hover {
   background-color: #f1f3f5; /* Light gray */
 }
 
-.data-table tbody tr:last-child td {
+.admin-data-table tbody tr:last-child td {
   border-bottom: none;
 }
 

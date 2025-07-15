@@ -148,6 +148,14 @@
   flex-wrap: wrap;
 }
 
+.user-analytics .analytics-filters {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: flex-end; 
+  width: 100%;
+}
+
 /* Signup Trend Specific Bar Colors */
 .signup-trend .chart-bar.travelers {
   background-color: var(--primary-color);
