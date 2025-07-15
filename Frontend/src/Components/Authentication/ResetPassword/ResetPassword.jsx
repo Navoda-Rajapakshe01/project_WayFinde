@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "./ResetPassword.css";
 
 const ResetPassword = () => {
@@ -13,6 +13,7 @@ const ResetPassword = () => {
   const [tokenChecked, setTokenChecked] = useState(false);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const email = searchParams.get("email");
   const navigate = useNavigate();
 
   // Validate token on component mount
@@ -27,7 +28,7 @@ const ResetPassword = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:5030/api/Auth/validate-reset-token?token=${token}`
+          `http://localhost:5030/api/Auth/validate-reset-token?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`
         );
         setIsTokenValid(true);
         setTokenChecked(true);

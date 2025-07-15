@@ -46,7 +46,9 @@ const ImageGrid = () => {
             if (typeof str === "string" && /^[A-Za-z0-9+/=]+$/.test(str)) {
               return atob(str);
             }
-          } catch (e) {}
+          } catch {
+            // Intentionally ignoring decoding errors
+          }
           return str;
         };
 

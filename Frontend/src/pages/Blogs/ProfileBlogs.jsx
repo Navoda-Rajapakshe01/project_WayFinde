@@ -91,7 +91,9 @@ const ProfileBlogs = () => {
             if (typeof str === "string" && /^[A-Za-z0-9+/=]+$/.test(str)) {
               return atob(str);
             }
-          } catch (e) {}
+          } catch {
+            // Intentionally left empty to handle invalid base64 strings gracefully
+          }
           return str;
         };
 
