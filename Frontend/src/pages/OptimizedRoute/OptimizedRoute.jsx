@@ -128,7 +128,7 @@ const OptimizedRoute = () => {
     return {
       days: diff,
       destinations: places.length,
-      distance: trip.tripDistance ?? 0,
+      distance: distanceKm || 0,
     };
   }, [trip, places.length]);
 

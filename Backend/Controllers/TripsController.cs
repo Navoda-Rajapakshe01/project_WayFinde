@@ -76,10 +76,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = trip.TripDistance,
-                TripTime = trip.TripTime,
-                TotalSpend = (decimal?)trip.TotalSpend,
-
+            
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
                     .Select(tp =>
@@ -131,9 +128,7 @@ namespace Backend.Data
 
             // Update trip fields as you currently do
             trip.TripName = request.TripName ?? trip.TripName;
-            trip.TripDistance = request.TripDistance ?? trip.TripDistance;
-            trip.TripTime = request.TripTime ?? trip.TripTime;
-            trip.TotalSpend = request.TotalSpend ?? trip.TotalSpend;
+          
             trip.StartDate = request.StartDate ?? trip.StartDate;
             trip.EndDate = request.EndDate ?? trip.EndDate;
             trip.UserId = request.UserId ?? trip.UserId;
@@ -194,9 +189,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = trip.TripDistance,
-                TripTime = trip.TripTime,
-                TotalSpend = (decimal?)trip.TotalSpend,
+              
 
                 Places = trip.TripPlaces?
                     .Where(tp => tp?.Place != null)
@@ -241,9 +234,7 @@ namespace Backend.Data
                 tripName = trip.TripName,
                 startDate = trip.StartDate,
                 endDate = trip.EndDate,
-                tripDistance = trip.TripDistance,
-                tripTime = trip.TripTime,
-                totalSpend = (decimal?)trip.TotalSpend,
+                
                 userId = trip.UserId,
                 places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -303,9 +294,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = trip.TripDistance,
-                TripTime = trip.TripTime,
-                TotalSpend = (decimal?)trip.TotalSpend,
+               
 
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -426,9 +415,7 @@ namespace Backend.Data
                     tripName = trip.TripName,
                     startDate = trip.StartDate,
                     endDate = trip.EndDate,
-                    tripDistance = trip.TripDistance,
-                    tripTime = trip.TripTime,
-                    totalSpend = (decimal?)trip.TotalSpend,
+                    
                     userId = trip.UserId,
                     places = trip.TripPlaces
                         .OrderBy(tp => tp.Order)
