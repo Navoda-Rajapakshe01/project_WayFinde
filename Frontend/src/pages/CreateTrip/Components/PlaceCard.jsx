@@ -1,22 +1,9 @@
 import React from "react";
-import { Plus } from "lucide-react";
 import "./PlaceCard.css";
+import PropTypes from "prop-types";
 
 const PlaceCard = ({ place, onAddPlace, isSelected }) => {
-  const {
-    id,
-    name,
-    rating,
-    avgTime,
-    avgSpend,
-    googleMapLink,
-    mainImageUrl,
-  } = place;
-
-  const handleAddClick = (e) => {
-    e.stopPropagation();
-    onAddPlace(place);
-  };
+  const { name, rating, avgTime, avgSpend, mainImageUrl } = place;
 
   return (
     <div className={`place-card ${isSelected ? "selected" : ""}`}>
@@ -47,14 +34,19 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
             {[1, 2, 3, 4, 5].map((star) => (
               <span
                 key={star}
-                className={`star ${star <= Math.round(rating) ? "filled" : ""}`}
+                className={`star ${
+                  star <= Math.round(rating || 0) ? "filled" : ""
+                }`}
               >
                 ★
               </span>
             ))}
+            <span className="rating-number">
+              {rating ? rating.toFixed(1) : "0.0"}
+            </span>
           </div>
-          <span className="rating-count">count</span>
         </div>
+
         <div className="place-details">
           <div className="detail">
             <span className="detail-label">Duration:</span>
@@ -70,6 +62,20 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
       </div>
     </div>
   );
+};
+
+PlaceCard.propTypes = {
+  place: PropTypes.shape({
+    id: PropTypes.string,
+    name: PropTypes.string,
+    rating: PropTypes.number,
+    avgTime: PropTypes.string,
+    avgSpend: PropTypes.number,
+    googleMapLink: PropTypes.string,
+    mainImageUrl: PropTypes.string,
+  }).isRequired,
+  onAddPlace: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool.isRequired,
 };
 
 export default PlaceCard;

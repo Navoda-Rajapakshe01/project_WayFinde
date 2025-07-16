@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { X, Search, Plus } from "lucide-react";
+import { X } from "lucide-react";
 import "./AddPlaceModal.css";
+import PlaceCard from "../../CreateTrip/Components/PlaceCard";
 
 const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
   const [districts, setDistricts] = useState([]);
@@ -58,17 +59,32 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
   const handleDistrictSelect = (district) => setSelectedDistrict(district);
   const handleSearchChange = (e) => setSearchQuery(e.target.value);
 
-  const doPlaces = filteredPlaces.filter((place) => place.placeType === "Do");
-  const relaxPlaces = filteredPlaces.filter(
-    (place) => place.placeType === "Relax"
-  );
-  const stayPlaces = filteredPlaces.filter(
-    (place) => place.placeType === "Stay"
-  );
-  const otherPlaces = filteredPlaces.filter(
-    (place) =>
-      !place.placeType || !["Do", "Relax", "Stay"].includes(place.placeType)
-  );
+  // 🌟 New logic: Map categoryId to label
+  const getLabelFromCategoryId = (id) => {
+    switch (id) {
+      case 4:
+        return "Do";
+      case 3:
+      case 1:
+        return "Relax";
+      case 2:
+        return "Stay";
+      default:
+        return "Other";
+    }
+  };
+
+  const categorizedPlaces = {
+    Do: [],
+    Relax: [],
+    Stay: [],
+    Other: [],
+  };
+
+  filteredPlaces.forEach((place) => {
+    const label = getLabelFromCategoryId(place.categoryId);
+    categorizedPlaces[label]?.push(place);
+  });
 
   return (
     <div className="modal-overlay-adp">
@@ -124,25 +140,26 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
           </div>
         ) : (
           <div className="places-container-adp">
-            {doPlaces.length > 0 && (
+            {categorizedPlaces.Do.length > 0 && (
               <div className="places-section-adp">
                 <h3 className="section-title-adp">Do</h3>
                 <div className="places-grid-adp">
-                  {doPlaces.map((place) => (
+                  {categorizedPlaces.Do.map((place) => (
                     <PlaceCard
                       key={place.id}
                       place={place}
+                      isSelected={existingPlaceIds.includes(place.id)}
                       onAddPlace={onAddPlace}
                     />
                   ))}
                 </div>
               </div>
             )}
-            {relaxPlaces.length > 0 && (
+            {categorizedPlaces.Relax.length > 0 && (
               <div className="places-section-adp">
                 <h3 className="section-title-adp">Relax</h3>
                 <div className="places-grid-adp">
-                  {relaxPlaces.map((place) => (
+                  {categorizedPlaces.Relax.map((place) => (
                     <PlaceCard
                       key={place.id}
                       place={place}
@@ -152,11 +169,11 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
                 </div>
               </div>
             )}
-            {stayPlaces.length > 0 && (
+            {categorizedPlaces.Stay.length > 0 && (
               <div className="places-section-adp">
                 <h3 className="section-title-adp">Stay</h3>
                 <div className="places-grid-adp">
-                  {stayPlaces.map((place) => (
+                  {categorizedPlaces.Stay.map((place) => (
                     <PlaceCard
                       key={place.id}
                       place={place}
@@ -166,14 +183,15 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
                 </div>
               </div>
             )}
-            {otherPlaces.length > 0 && (
+            {categorizedPlaces.Other.length > 0 && (
               <div className="places-section-adp">
                 <h3 className="section-title-adp">Other Places</h3>
                 <div className="places-grid-adp">
-                  {otherPlaces.map((place) => (
+                  {categorizedPlaces.Other.map((place) => (
                     <PlaceCard
                       key={place.id}
                       place={place}
+                      isSelected={existingPlaceIds.includes(place.id)}
                       onAddPlace={onAddPlace}
                     />
                   ))}
@@ -190,58 +208,6 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
             )}
           </div>
         )}
-      </div>
-    </div>
-  );
-};
-
-const PlaceCard = ({ place, onAddPlace }) => {
-  const displayName = place.name || place.name || "Unnamed Place";
-  const defaultImage = `/placeholder.svg?height=200&width=300&query=${displayName} Sri Lanka`;
-
-  return (
-    <div className="modal-place-card-adp">
-      <div className="place-image-container-adp">
-        <img
-          src={place.mainImageUrl || defaultImage}
-          alt={displayName}
-          className="place-image-adp"
-        />
-        <button
-          className="add-button-adp"
-          onClick={() => onAddPlace(place)}
-          aria-label={`Add ${displayName}`}
-        >
-          <Plus size={16} />
-        </button>
-      </div>
-      <div className="place-info-adp">
-        <h3 className="place-name-adp">{displayName}</h3>
-        <div className="place-rating-adp">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              className={`star-adp ${
-                star <= Math.round(place.rating || 4) ? "filled-adp" : ""
-              }`}
-            >
-              ★
-            </span>
-          ))}
-          <span className="rating-count-adp">count</span>
-        </div>
-        <div className="place-details-adp">
-          <div className="detail-adp">
-            <span className="detail-label-adp">Duration:</span>
-            <span className="detail-value-adp">{place.avgTime || "N/A"}</span>
-          </div>
-          <div className="detail-adp">
-            <span className="detail-label-adp">Avg. Spend:</span>
-            <span className="detail-value-adp">
-              {place.avgSpend ? `Rs. ${place.avgSpend}` : "N/A"}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

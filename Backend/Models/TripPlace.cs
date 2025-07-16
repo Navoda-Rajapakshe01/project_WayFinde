@@ -10,5 +10,6 @@ namespace Backend.Models
 
         public int PlaceId { get; set; }
         public PlacesToVisit Place { get; set; }
+        public int Order { get; set; }
     }
 }

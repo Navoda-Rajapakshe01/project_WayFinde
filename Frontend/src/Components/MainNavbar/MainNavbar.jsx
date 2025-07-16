@@ -221,12 +221,37 @@ const MainNavbar = () => {
                     <span className="navbar-icon">{item.icon}</span>
                     <span className="navbar-text">Plan a Trip</span>
                     <div className="dropdown-menu-trip">
-                      <Link to="/plantrip" className="dropdown-item">
-                        Create a New Trip
-                      </Link>
-                      <Link to="/alltrips" className="dropdown-item">
-                        My All Trips
-                      </Link>
+                      {user ? (
+                        <>
+                          <Link to="/plantrip" className="dropdown-item">
+                            Create a New Trip
+                          </Link>
+                          <Link to="/alltrips" className="dropdown-item">
+                            My All Trips
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <div
+                            className="dropdown-item"
+                            onClick={() =>
+                              navigate("/signin?redirect=/plantrip")
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            Create a New Trip
+                          </div>
+                          <div
+                            className="dropdown-item"
+                            onClick={() =>
+                              navigate("/signin?redirect=/alltrips")
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            My All Trips
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </li>

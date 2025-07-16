@@ -34,6 +34,9 @@ namespace Backend.Models
 
         public ICollection<TripCollaborator> Collaborators { get; set; } = new List<TripCollaborator>();
 
+        public ICollection<TripDate> TripDates { get; set; } = new List<TripDate>();
+
+
 
 
     }
