@@ -1,7 +1,7 @@
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
 
@@ -155,6 +155,12 @@ const Login = () => {
             onChange={handleChange}
             required
           />
+          {/* Add Forgot Password Link */}
+          <div className="forgot-password-container">
+            <Link to="/forgot-password" className="forgot-password-link">
+              Forgot Password?
+            </Link>
+          </div>
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>
@@ -166,7 +172,7 @@ const Login = () => {
             />
           </div>
 
-          <p className="CreateNew" onClick={() => setShowSignInModal(true)}>
+          <p className="CreateNew" onClick={() => handleSignInOption("user")}>
             Create a new Account
           </p>
           {error && <p className="error-message">{error}</p>}

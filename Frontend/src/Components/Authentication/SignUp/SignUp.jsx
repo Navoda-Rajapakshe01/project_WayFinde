@@ -45,6 +45,12 @@ const Register = () => {
     }
   };
 
+  // Email validation function using regex
+  const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -144,12 +150,12 @@ const Register = () => {
             name="role"
             value={formData.role}
             onChange={handleChange}
-            required>
             <option value="NormalUser">Normal User</option>
             <option value="TransportProvider">Transport Provider</option>
             <option value="AccommodationProvider">
               Accommodation Provider
             </option>
+
             <option value="ServiceProvider">Service Provider</option>{" "}
             {/* Added this option */}
           </select>
