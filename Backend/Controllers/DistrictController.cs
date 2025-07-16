@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Backend.DTOs;
+using Backend.DTO;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using Backend.Data;
-using Backend.Models;
 using System.Collections.Generic;
 
 namespace Backend.Controllers

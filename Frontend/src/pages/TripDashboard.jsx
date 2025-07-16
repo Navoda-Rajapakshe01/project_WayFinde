@@ -14,7 +14,6 @@ const TripDashboard = () => {
 
   return (
     <div className="dashboard-container">
-      <MainNavbar />
       <div className="navbar-spacing" />
       <div className="full-width-section">
         <DashboardText />

@@ -61,6 +61,7 @@ import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
 
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
+import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 
 import "./App.css";
 
@@ -130,7 +131,7 @@ function AppRoutes() {
         />
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
         <Route path="/plantrip" element={<CreateTrip />} />
-        <Route path="/optimizedroute/:id" element={<OptimizedRoute />} />
+        <Route path="/optimizedroute/:id" element={<OptimizedTripRoute />} />
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />

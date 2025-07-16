@@ -19,28 +19,15 @@ const Register = () => {
     role: initialRole,
     serviceType: "",
   });
-const [success, setSuccess] = useState("");
-const [error, setError] = useState("");
-const [emailError, setEmailError] = useState("");
-
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  // Update form data using functional update for better performance
-  setFormData((prev) => ({ ...prev, [name]: value }));
-  
-  // Clear any previous error
-  if (name === "contactEmail") {
-    setEmailError("");
-  }
-
-  const navigate = useNavigate();
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Update form data
-    setFormData({ ...formData, [name]: value });
-
+    // Update form data using functional update for better performance
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    
     // Clear any previous error
     if (name === "contactEmail") {
       setEmailError("");
@@ -55,7 +42,6 @@ const handleChange = (e) => {
     }
   };
 
-
   // Email validation function using regex
   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -66,7 +52,6 @@ const handleChange = (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
 
     // Validate email before submission
     if (!validateEmail(formData.contactEmail)) {
@@ -88,22 +73,16 @@ const handleChange = (e) => {
       apiData.serviceType = "";
     }
 
-    // You might want to normalize serviceType as well if needed
-    // But your backend should decide on allowed values anyway
-
     try {
       console.log("Sending registration data:", apiData);
       const response = await axios.post(
         "http://localhost:5030/api/Auth/register",
-
-
         apiData,
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
-
       );
       console.log("Registration response:", response.data);
 
@@ -114,7 +93,6 @@ const handleChange = (e) => {
     } catch (error) {
       console.error("Registration error:", error);
       if (error.response) {
-
         // The server responded with a status code outside the 2xx range
         console.error("Error response data:", error.response.data);
 
@@ -177,22 +155,14 @@ const handleChange = (e) => {
             name="role"
             value={formData.role}
             onChange={handleChange}
-
             required
           >
-
             <option value="NormalUser">Normal User</option>
             <option value="TransportProvider">Transport Provider</option>
             <option value="AccommodationProvider">
               Accommodation Provider
             </option>
-
-
-
-            <option value="ServiceProvider">Service Provider</option>{" "}
-            {/* Added this option */}
-
-
+            <option value="ServiceProvider">Service Provider</option>
           </select>
 
           {/* Only show serviceType dropdown if role is exactly "ServiceProvider" */}
@@ -201,7 +171,8 @@ const handleChange = (e) => {
               name="serviceType"
               value={formData.serviceType}
               onChange={handleChange}
-              required>
+              required
+            >
               <option value="">Select Service Type</option>
               <option value="TransportProvider">Transport Provider</option>
               <option value="AccommodationProvider">

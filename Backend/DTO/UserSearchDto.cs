@@ -1,9 +1,8 @@
 
 using System;
 using System.Collections.Generic;
-using Backend.DTOs;
 
-namespace Backend.DTOs
+namespace Backend.DTO
 {
     public class UserSearchDto
     {

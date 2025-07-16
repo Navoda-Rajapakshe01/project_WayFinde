@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './DashboardImage.css';
-import { FaCalendarAlt, FaMapMarkerAlt, FaCog, FaTimes, FaCalendar, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaCalendarAlt, FaCog, FaTimes, FaPlus, FaMinus, FaCheck } from 'react-icons/fa';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5030/api';
@@ -14,6 +14,9 @@ const DashboardImage = ({ tripId }) => {
   const [editTripName, setEditTripName] = useState('');
   const [editStartDate, setEditStartDate] = useState('');
   const [editEndDate, setEditEndDate] = useState('');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [warningMessage, setWarningMessage] = useState('');
 
   const handleSettingsClick = () => {
     setEditTripName(tripName);
@@ -24,6 +27,8 @@ const DashboardImage = ({ tripId }) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setShowSuccessMessage(false);
+    setIsLoading(false);
   };
 
   const incrementStartDate = () => {
@@ -32,18 +37,32 @@ const DashboardImage = ({ tripId }) => {
       currentDate.setDate(currentDate.getDate() + 1);
       setEditStartDate(currentDate.toLocaleDateString());
     } else {
-      // If no start date, set to today
       const today = new Date();
       setEditStartDate(today.toLocaleDateString());
     }
+    setWarningMessage('');
   };
 
   const decrementStartDate = () => {
     if (editStartDate) {
       const currentDate = new Date(editStartDate);
-      currentDate.setDate(currentDate.getDate() - 1);
-      setEditStartDate(currentDate.toLocaleDateString());
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      currentDate.setHours(0, 0, 0, 0);
+      
+      // Calculate what the new date would be after decreasing
+      const newDate = new Date(currentDate);
+      newDate.setDate(newDate.getDate() - 1);
+      
+      // Check if the new date would be less than today
+      if (newDate < today) {
+        setWarningMessage("Can't decrease days below today's date");
+        return;
+      }
+      
+      setEditStartDate(newDate.toLocaleDateString());
     }
+    setWarningMessage('');
   };
 
   const incrementEndDate = () => {
@@ -52,87 +71,89 @@ const DashboardImage = ({ tripId }) => {
       currentDate.setDate(currentDate.getDate() + 1);
       setEditEndDate(currentDate.toLocaleDateString());
     } else if (editStartDate) {
-      // If no end date but start date exists, set end date to start date + 1
       const startDateObj = new Date(editStartDate);
       startDateObj.setDate(startDateObj.getDate() + 1);
       setEditEndDate(startDateObj.toLocaleDateString());
     }
+    setWarningMessage('');
   };
 
   const decrementEndDate = () => {
     if (editEndDate && editStartDate) {
       const currentEndDate = new Date(editEndDate);
       const startDateObj = new Date(editStartDate);
-      
+
       if (currentEndDate > startDateObj) {
         currentEndDate.setDate(currentEndDate.getDate() - 1);
         setEditEndDate(currentEndDate.toLocaleDateString());
       }
     }
+    setWarningMessage('');
   };
 
   const handleSave = async () => {
+    setIsLoading(true);
     try {
-      // Update trip name and dates
-      await axios.put(`${API_URL}/trips/${tripId}`, {
+      // Convert dates to ISO format for API
+      const formatDateForAPI = (dateString) => {
+        const date = new Date(dateString);
+        return date.toISOString();
+      };
+
+      const updateData = {
         name: editTripName,
-        startDate: editStartDate,
-        endDate: editEndDate
-        // Add other fields as needed
-      });
-      
-      // Update local state
+        startDate: formatDateForAPI(editStartDate),
+        endDate: formatDateForAPI(editEndDate)
+      };
+
+      await axios.patch(`${API_URL}/Trips/${tripId}`, updateData);
+
+      // Update local state with new values
       setTripName(editTripName);
       setStartDate(editStartDate);
       setEndDate(editEndDate);
-      setIsModalOpen(false);
       
-      // You can add success notification here
+      // Show success message
+      setShowSuccessMessage(true);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
+      
       console.log('Trip updated successfully');
     } catch (error) {
       console.error('Error updating trip:', error);
-      // You can add error notification here
+      // You might want to show an error message to the user here
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (!tripId) return;
-    // 1. Get all places for this trip
+
     axios.get(`${API_URL}/TripPlaces?tripId=${tripId}`)
       .then(res => {
         const tripPlaces = res.data;
         if (tripPlaces && tripPlaces.length > 0) {
-          // 2. Get the first place's details
-          const firstPlaceId = tripPlaces[tripId-1].placeId || tripPlaces[tripId-1].PlaceId;
+          const firstPlaceId = tripPlaces[0].placeId || tripPlaces[0].PlaceId;
           if (firstPlaceId) {
             axios.get(`${API_URL}/Places/${firstPlaceId}`)
               .then(placeRes => {
                 setMainImageUrl(placeRes.data.mainImageUrl);
               })
               .catch(() => setMainImageUrl(null));
-          } else {
-            setMainImageUrl(null);
           }
-        } else {
-          setMainImageUrl(null);
         }
       })
       .catch(() => setMainImageUrl(null));
 
-    axios.get(`http://localhost:5030/api/trips/${tripId}`)
+    axios.get(`${API_URL}/Trips/${tripId}`)
       .then(res => {
-        setTripName(res.data.name); // Adjust if your property is different
-        // Format dates for display
-        if (res.data.startDate) {
-          setStartDate(new Date(res.data.startDate).toLocaleDateString());
-        } else {
-          setStartDate('');
-        }
-        if (res.data.endDate) {
-          setEndDate(new Date(res.data.endDate).toLocaleDateString());
-        } else {
-          setEndDate('');
-        }
+        setTripName(res.data.tripName || res.data.name || '');
+        setStartDate(res.data.startDate ? new Date(res.data.startDate).toLocaleDateString() : '');
+        setEndDate(res.data.endDate ? new Date(res.data.endDate).toLocaleDateString() : '');
       })
       .catch(() => {
         setTripName('');
@@ -141,24 +162,19 @@ const DashboardImage = ({ tripId }) => {
       });
   }, [tripId]);
 
-  if (!mainImageUrl) {
-    return null; // or a placeholder if you want
-  }
-
   return (
     <>
       <div className="dashboard-image-card">
-        <img 
-          src={mainImageUrl} 
-          alt={tripName} 
-          className="dashboard-image" 
-        />
-        
-        {/* Settings Icon */}
+        {mainImageUrl ? (
+          <img src={mainImageUrl} alt={tripName} className="dashboard-image" />
+        ) : (
+          <div className="dashboard-image-placeholder">No Image Available</div>
+        )}
+
         <div className="settings-icon" onClick={handleSettingsClick}>
           <FaCog className="settings-icon-svg" />
         </div>
-        
+
         <div className="overlay-info">
           <h2 className="trip-title">{tripName}</h2>
           <div className="info-item">
@@ -168,83 +184,86 @@ const DashboardImage = ({ tripId }) => {
         </div>
       </div>
 
-      {/* Settings Modal */}
       {isModalOpen && (
-        <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2 className="modal-title">Edit trip details</h2>
-              <button className="modal-close" onClick={handleCloseModal}>
+        <div className="trip-modal-overlay" onClick={handleCloseModal}>
+          <div className="trip-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="trip-modal-header">
+              <h2 className="trip-modal-title">Edit trip details</h2>
+              <button className="trip-modal-close" onClick={handleCloseModal}>
                 <FaTimes />
               </button>
             </div>
-            
-            <div className="modal-body">
-              <div className="form-group">
-                <label className="form-label">Trip name</label>
+
+            {showSuccessMessage && (
+              <div className="trip-success-message">
+                
+                <div className="success-content">
+                  <span className="success-title">Success!</span>
+                  <span className="success-subtitle">Trip details updated successfully</span>
+                </div>
+              </div>
+            )}
+
+            <div className="trip-modal-body">
+              <div className="trip-form-group">
+                <label className="trip-form-label">Trip name</label>
                 <input
                   type="text"
                   value={editTripName}
                   onChange={(e) => setEditTripName(e.target.value)}
-                  className="form-input"
+                  className="trip-form-input"
                   placeholder="Enter trip name"
                 />
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Start Date</label>
-                <div className="date-counter-wrapper">
-                  <div className="date-display">
-                    <span className="date-text">{editStartDate || 'Select start date'}</span>
+              <div className="trip-form-group">
+                <label className="trip-form-label">Start Date</label>
+                <div className="trip-date-counter-wrapper">
+                  <div className="trip-date-display">
+                    <span className="trip-date-text">{editStartDate || 'Select start date'}</span>
                   </div>
-                  <div className="date-controls">
-                    <button 
-                      type="button" 
-                      className="date-btn decrease-btn"
-                      onClick={decrementStartDate}
-                    >
+                  <div className="trip-date-controls">
+                    <button type="button" className="trip-date-btn trip-decrease-btn" onClick={decrementStartDate}>
                       <FaMinus />
                     </button>
-                    <button 
-                      type="button" 
-                      className="date-btn increase-btn"
-                      onClick={incrementStartDate}
-                    >
+                    <button type="button" className="trip-date-btn trip-increase-btn" onClick={incrementStartDate}>
                       <FaPlus />
                     </button>
                   </div>
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">End Date</label>
-                <div className="date-counter-wrapper">
-                  <div className="date-display">
-                    <span className="date-text">{editEndDate || 'Select end date'}</span>
+              <div className="trip-form-group">
+                <label className="trip-form-label">End Date</label>
+                <div className="trip-date-counter-wrapper">
+                  <div className="trip-date-display">
+                    <span className="trip-date-text">{editEndDate || 'Select end date'}</span>
                   </div>
-                  <div className="date-controls">
-                    <button 
-                      type="button" 
-                      className="date-btn decrease-btn"
-                      onClick={decrementEndDate}
-                    >
+                  <div className="trip-date-controls">
+                    <button type="button" className="trip-date-btn trip-decrease-btn" onClick={decrementEndDate}>
                       <FaMinus />
                     </button>
-                    <button 
-                      type="button" 
-                      className="date-btn increase-btn"
-                      onClick={incrementEndDate}
-                    >
+                    <button type="button" className="trip-date-btn trip-increase-btn" onClick={incrementEndDate}>
                       <FaPlus />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Save button moved inside modal body */}
-              <div className="saved-button-container">
-                <button className="saved-button" onClick={handleSave}>
-                  Save
+              <div className="trip-save-button-container">
+                <button 
+                  className={`trip-save-button ${isLoading ? 'loading' : ''}`} 
+                  onClick={handleSave}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <div className="spinner"></div>
+                      <span>Saving...</span>
+                    </>
+                  ) : (
+                    'Save'
+                  )}
                 </button>
               </div>
             </div>

@@ -15,28 +15,28 @@ const CustomButtons = ({ tripId }) => {
   };
 
   return (
-    <div className="custom-buttons-container">
-      <div className="buttons-row">
+    <div className="customs-buttons-container">
+      <div className="buttonss-row">
         <button 
-          className={`custom-button ${activeButton === 'places' ? 'active' : ''}`}
+          className={`customs-button ${activeButton === 'places' ? 'active' : ''}`}
           onClick={() => handleButtonClick('places')}
         >
           Places to stay
         </button>
         <button 
-          className={`custom-button ${activeButton === 'vehicle-rent' ? 'active' : ''}`}
+          className={`customs-button ${activeButton === 'vehicle-rent' ? 'active' : ''}`}
           onClick={() => handleButtonClick('vehicle-rent')}
         >
           Vehicle Rent
         </button>
         <button 
-          className={`custom-button ${activeButton === 'todo-list' ? 'active' : ''}`}
+          className={`customs-button ${activeButton === 'todo-list' ? 'active' : ''}`}
           onClick={() => handleButtonClick('todo-list')}
         >
           To - Do List
         </button>
         <button 
-          className={`custom-button ${activeButton === 'budget' ? 'active' : ''}`}
+          className={`customs-button ${activeButton === 'budget' ? 'active' : ''}`}
           onClick={() => handleButtonClick('budget')}
         >
           Travel Budget

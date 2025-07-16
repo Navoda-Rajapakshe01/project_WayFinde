@@ -6,7 +6,7 @@
     
   }
   
-  .gradient-box {
+  .gradients-box {
     
     background: linear-gradient(135deg, #d7d9dc, #f0f2f5);
     padding: 15px;
@@ -18,14 +18,14 @@
     width: 100%;
   }
   
-  .gradient-box h1 {
+  .gradients-box h1 {
     font-size: 1.2rem;
     margin-bottom: 20px;
     font-weight: bold; 
     font-family: 'Poppins', sans-serif; 
   }
   
-  .gradient-box p {
+  .gradients-box p {
     font-size: 1rem;
     margin-bottom: 2px;
     
@@ -45,15 +45,15 @@
   }
 
   @media (max-width: 600px) {
-  .gradient-box {
+  .gradients-box {
     padding: 15px;
   }
 
-  .gradient-box h1 {
+  .gradients-box h1 {
     font-size: 1.3rem;
   }
 
-  .gradient-box p,
+  .gradients-box p,
   .happy-travels {
     font-size: 0.95rem;
   }

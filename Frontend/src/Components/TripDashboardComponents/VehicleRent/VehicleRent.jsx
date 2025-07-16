@@ -7,6 +7,40 @@ const VehicleRent = () => {
   // State for managing selected dates
   const [pickupDate, setPickupDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
+  const [savedVehicles, setSavedVehicles] = useState([]);
+
+  // Sample vehicles data
+  const vehicles = [
+    {
+      id: 1,
+      name: "Bajaj RE Three Wheeler",
+      mainImageUrl: "/path-to-your-bajaj-re.jpg",
+      seats: 3,
+      bags: 2,
+      rating: 4.8,
+      reviews: 124
+    },
+    {
+      id: 2,
+      name: "Honda",
+      mainImageUrl: "/path-to-your-honda.jpg",
+      seats: 4,
+      bags: 2,
+      rating: 4.8,
+      reviews: 124
+    }
+  ];
+
+  // Toggle save function
+  const toggleSave = (vehicleId, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSavedVehicles(prev => 
+      prev.includes(vehicleId) 
+        ? prev.filter(id => id !== vehicleId)
+        : [...prev, vehicleId]
+    );
+  };
 
   return (
     <div className="vehicle-rent-container">
@@ -29,45 +63,19 @@ const VehicleRent = () => {
                 <span>+</span> Add
               </button>
             </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
+            <div className="vehicle-info">
+              <div className="vehicle-details">
+                <span>{vehicle.seats} Seats</span>
+                <span>{vehicle.bags} Bags</span>
+              </div>
+              <div className="vehicle-rating">
+                <span>⭐ {vehicle.rating} ({vehicle.reviews} reviews)</span>
+              </div>
+              <button className="book-now-button">Book Now</button>
+              <span className="availability-status available">Available</span>
+            </div>
           </div>
-        </div>
-
-        {/* Bajaj RE Three Wheeler */}
-        <div className="vehicle-card">
-          <img src="/path-to-your-bajaj-re.jpg" alt="Bajaj RE Three Wheeler" />
-          <div className="vehicle-info">
-            
-            <div className="vehicle-details">
-              <span>3 Seats</span>
-              <span>2 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
-          </div>
-        </div>
-
-          {/* Honda */}
-          <div className="vehicle-card">
-          <img src="/path-to-your-honda.jpg" alt="Honda" />
-          <div className="vehicle-info">
-           
-            <div className="vehicle-details">
-              <span>4 Seats</span>
-              <span>2 Bags</span>
-            </div>
-            <div className="vehicle-rating">
-              <span>⭐ 4.8 (124 reviews)</span>
-            </div>
-            <button className="book-now-button">Book Now</button>
-            <span className="availability-status available">Available</span>
-          </div>
-        </div>
-        
+        ))}
       </div>
     </div>
   );

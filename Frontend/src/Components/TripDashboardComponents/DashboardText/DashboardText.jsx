@@ -4,7 +4,7 @@ import './DashboardText.css';
 const DashboardText = () => {
   return (
     <div className="dashboard-text">
-      <div className="gradient-box">
+      <div className="gradients-box">
         <h1>Your Ultimate Travel Companion!</h1>
         <p>
           At <strong>WAYFIND</strong>, we make travel planning easy and fun.

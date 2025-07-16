@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Backend.DTOs;
 
-namespace Backend.DTOs
+namespace Backend.DTO
 {
     public class TripDetailsDto
     {
@@ -27,7 +26,7 @@ namespace Backend.DTOs
         public int HowManyRated { get; set; }
         public string MainImageUrl { get; set; }
 
-        public DistrictWithPlacesCountDTO  District { get; set; } 
+        public DistrictWithPlacesCountDTO? District { get; set; } 
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
     }

@@ -1,7 +1,7 @@
 
 
 
-﻿using Backend.DTOs;
+﻿using Backend.DTO;
 
 ﻿﻿using Microsoft.EntityFrameworkCore;
 

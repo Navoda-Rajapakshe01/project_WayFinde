@@ -1,3 +1,4 @@
+/* Dashboard Image Card Styles */
 .dashboard-image-card {
   width: 100%;
   border-radius: 16px;
@@ -12,6 +13,18 @@
   width: 100%;
   height: 300px;
   object-fit: cover;
+}
+
+.dashboard-image-placeholder {
+  width: 100%;
+  height: 300px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .overlay-info {
@@ -47,8 +60,8 @@
 
 .icon {
   font-size: 1.2rem;
+  color: white;
 }
-
 /* Settings Icon Styles */
 .settings-icon {
   position: absolute;
@@ -83,6 +96,399 @@
   transform: rotate(90deg);
 }
 
+/* Warning Message Styles */
+.warning-message {
+  background: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #c53030;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: warningFadeIn 0.3s ease-out;
+}
+
+@keyframes warningFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Trip Modal Styles - All prefixed with 'trip-' to avoid conflicts */
+.trip-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(0.1px);
+}
+
+.trip-modal-content {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35);
+  animation: tripModalSlideIn 0.3s ease-out;
+  position: relative;
+}
+
+@keyframes tripModalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.trip-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.trip-modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.trip-modal-close {
+  background: #f7fafc;
+  border: none;
+  font-size: 1.2rem;
+  color: #718096;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.trip-modal-close:hover {
+  background: #edf2f7;
+  color: #2d3748;
+  transform: scale(1.1);
+}
+
+.trip-modal-body {
+  padding: 28px;
+  background: #ffffff;
+  border-radius: 0 0 20px 20px;
+}
+
+.trip-form-group {
+  margin-bottom: 24px;
+}
+
+.trip-form-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.trip-form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  color: #2d3748;
+  transition: all 0.2s ease;
+  background: #f8f9fa;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.trip-form-input:focus {
+  outline: none;
+  border-color: #4299e1;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+.trip-date-counter-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f9fa;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  transition: all 0.2s ease;
+}
+
+.trip-date-counter-wrapper:hover {
+  border-color: #cbd5e0;
+}
+
+.trip-date-display {
+  flex: 1;
+  padding: 4px 0;
+}
+
+.trip-date-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.trip-date-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.trip-date-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.trip-increase-btn,
+.trip-decrease-btn {
+  background: #48bbbb;
+  color: white;
+  font-size: 1.2rem; /* ⬅️ Increased icon size */
+  width: 36px;        /* ⬅️ Optional: increase button size */
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.trip-increase-btn:hover,
+.trip-decrease-btn:hover {
+  background: #141414;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
+}
+
+.trip-save-button-container {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  justify-content: center;
+}
+
+.trip-save-button {
+  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+  letter-spacing: -0.01em;
+  width: 100%;
+  max-width: 120px;
+}
+
+.trip-save-button:hover {
+  background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
+}
+
+.trip-save-button:active {
+  transform: translateY(0);
+}
+.trip-success-message {
+  display: flex;
+  flex-direction: column;   /* Add this */
+  align-items: center;
+  justify-content: center;  /* Add this */
+  gap: 16px;
+  padding: 20px 24px;
+  margin: 0 24px 20px 24px;
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border: 1px solid #b3d4b8;
+  border-radius: 12px;
+  color: #155724;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.15);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.trip-success-message::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3a6abd, #4d69d5);
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;      /* centers horizontally */
+  justify-content: center;  /* centers vertically */
+  text-align: center;       /* optional: center text */
+}
+
+.success-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #155724;
+}
+
+.success-subtitle {
+  font-size: 14px;
+  color: #0f5132;
+  opacity: 0.9;
+}
+
+/* Enhanced save button styles */
+.trip-save-button {
+  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+  letter-spacing: -0.01em;
+  width: 100%;
+  max-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.trip-save-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(66, 153, 225, 0.4);
+}
+
+.trip-save-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.trip-save-button.loading {
+  background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(32, 156, 154, 0.3);
+}
+
+.trip-save-button:disabled {
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Spinner animation */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes fadeInSuccess {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes successIconPulse {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modal overlay enhancement when saving */
+.trip-modal-overlay.saving {
+  pointer-events: none;
+}
+
+.trip-modal-content.saving {
+  pointer-events: auto;
+}
+
+
 /* Responsive styles for screens smaller than 768px */
 @media (max-width: 768px) {
   .dashboard-image-card {
@@ -91,6 +497,10 @@
   }
 
   .dashboard-image {
+    height: 200px;
+  }
+
+  .dashboard-image-placeholder {
     height: 200px;
   }
 
@@ -118,236 +528,32 @@
   .settings-icon-svg {
     font-size: 1rem;
   }
-}
 
-/* Modal Styles - Updated z-index to appear above navbar */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999; /* Increased z-index to appear above navbar */
-  backdrop-filter: blur(8px);
-}
-
-.modal-content {
-  background: white;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 520px;
-  max-height: 85vh; /* Reduced height to ensure it stays within viewport */
-  overflow-y: auto;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-  animation: modalSlideIn 0.3s ease-out;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  position: relative;
-  z-index: 10000; /* Ensure content is above overlay */
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-30px) scale(0.9);
+  .trip-modal-content {
+    width: 95%;
+    max-height: 85vh;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+
+  .trip-modal-body {
+    padding: 20px;
+  }
+
+  .trip-form-group {
+    margin-bottom: 20px;
+  }
+
+  .trip-save-button-container {
+    margin-top: 24px;
+    padding-top: 16px;
   }
 }
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 28px 28px 20px;
-  border-bottom: 1px solid #f0f0f0;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-radius: 20px 20px 0 0;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-
-.modal-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
-.modal-close {
-  background: #f7fafc;
-  border: none;
-  font-size: 1.2rem;
-  color: #718096;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-}
-
-.modal-close:hover {
-  background: #edf2f7;
-  color: #2d3748;
-  transform: scale(1.05);
-}
-
-.modal-body {
-  padding: 28px;
-  background: #ffffff;
-  border-radius: 0 0 20px 20px;
-}
-
-.form-group {
-  margin-bottom: 28px;
-}
-
-.form-label {
-  display: block;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #2d3748;
-  margin-bottom: 12px;
-  letter-spacing: -0.01em;
-}
-
-.form-input {
-  width: 100%;
-  padding: 14px 18px;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  font-size: 1rem;
-  color: #2d3748;
-  transition: all 0.2s ease;
-  background: #f8f9fa;
-  font-weight: 500;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #4299e1;
-  background: white;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-  transform: translateY(-1px);
-}
-
-.date-counter-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: #f8f9fa;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 8px 16px;
-  transition: all 0.2s ease;
-}
-
-.date-counter-wrapper:hover {
-  border-color: #cbd5e0;
-}
-
-.date-display {
-  flex: 1;
-  padding: 8px 0;
-}
-
-.date-text {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #2d3748;
-}
-
-.date-controls {
-  display: flex;
-  gap: 10px;
-}
-
-.date-btn {
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.decrease-btn {
-  background: #e2e8f0;
-  color: #718096;
-}
-
-.decrease-btn:hover {
-  background: #cbd5e0;
-  color: #4a5568;
-  transform: scale(1.1);
-}
-
-.increase-btn {
-  background: #48bb78;
-  color: white;
-}
-
-.increase-btn:hover {
-  background: #38a169;
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-}
-
-/* Save button container - moved inside modal body */
-.save-button-container {
-  margin-top: 40px;
-  padding-top: 24px;
-  border-top: 1px solid #f0f0f0;
-  display: flex;
-  justify-content: center;
-}
-
-.save-button {
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-  color: white;
-  border: none;
-  padding: 14px 40px;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
-  letter-spacing: -0.01em;
-  width: 100%;
-  max-width: 200px;
-}
-
-.save-button:hover {
-  background: linear-gradient(135deg, #70d2f9 0%, #70d2f9 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(114, 194, 221, 0.4);
-}
-
-.save-button:active {
-  transform: translateY(0);
-}
-
-/* Removed modal-footer since save button is now in modal body */
 
 @media (max-width: 480px) {
   .dashboard-image {
+    height: 180px;
+  }
+
+  .dashboard-image-placeholder {
     height: 180px;
   }
 
@@ -379,21 +585,29 @@
     font-size: 0.9rem;
   }
 
-  .modal-content {
-    width: 95%;
+  .trip-modal-content {
+    width: 96%;
     max-height: 90vh;
   }
 
-  .modal-body {
+  .trip-modal-header {
     padding: 20px;
   }
 
-  .form-group {
-    margin-bottom: 20px;
+  .trip-modal-title {
+    font-size: 1.3rem;
   }
 
-  .saved-button-container {
-    margin-top: 30px;
-    padding-top: 20px;
+  .trip-modal-body {
+    padding: 16px;
+  }
+
+  .trip-form-group {
+    margin-bottom: 16px;
+  }
+
+  .trip-save-button-container {
+    margin-top: 20px;
+    padding-top: 12px;
   }
 }

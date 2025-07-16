@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Backend.DTOs;
 
-
-namespace Backend.DTOs
+namespace Backend.DTO
 {
     public class UpdateTripRequest
     {
@@ -15,8 +13,7 @@ namespace Backend.DTOs
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string? UserId { get; set; }
-
-        public required List<int> PlaceIds { get; set; }
+        public List<int>? PlaceIds { get; set; }
     }
 }
 
