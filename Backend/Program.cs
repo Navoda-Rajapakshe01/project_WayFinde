@@ -96,19 +96,10 @@ builder.Services.AddHttpContextAccessor();
 // Build the app
 var app = builder.Build();
 
-// Enable Swagger in development
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-    app.UseCors("AllowReactApp"); // Use dev CORS policy in development
-    // Skip HTTPS redirection in development
-}
-else
-{
-    app.UseCors("ProductionCorsPolicy"); // Use production CORS policy otherwise
-    app.UseHttpsRedirection(); // Only use HTTPS redirection in production
-}
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("AllowReactApp"); // or your relevant policy
 
 // Enable CORS before auth
 // Apply CORS policy BEFORE Authentication middleware

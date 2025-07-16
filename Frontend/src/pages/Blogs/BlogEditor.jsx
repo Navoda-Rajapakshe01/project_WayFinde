@@ -393,7 +393,7 @@ function BlogEditor() {
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || errorMessage;
           console.error("Server Error Response:", errorData);
-        } catch (jsonError) {
+        } catch {
           // If the response isn't JSON, log the raw text
           console.error("Non-JSON error response:", errorText);
         }

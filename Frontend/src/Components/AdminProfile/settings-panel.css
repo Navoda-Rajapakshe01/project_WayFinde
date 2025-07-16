@@ -1,0 +1,152 @@
+/* Remove .settings-panel and .settings-btn styles, use admin-card and shared admin button classes */
+.admin-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(44, 62, 80, 0.08);
+  padding: 32px 28px;
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+}
+.settings-section {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.settings-section:last-child {
+  border-bottom: none;
+}
+.settings-section h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #34495e;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 18px;
+}
+.settings-row label {
+  flex: 0 0 160px;
+  font-weight: 500;
+  color: #2c3e50;
+  white-space: nowrap;
+}
+.settings-row input[type="text"],
+.settings-row input[type="email"],
+.settings-row input[type="password"] {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #f8fafc;
+  transition: border 0.2s;
+}
+.settings-row input[type="text"]:focus,
+.settings-row input[type="email"]:focus,
+.settings-row input[type="password"]:focus {
+  border-color: #3498db;
+  outline: none;
+}
+.settings-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #3498db;
+}
+.settings-feedback {
+  background: #eafaf1;
+  color: #16a085;
+  border: 1px solid #b2f0df;
+  border-radius: 6px;
+  padding: 10px 16px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.settings-error {
+  background: #fdecea;
+  color: #e74c3c;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.settings-success {
+  background: #eafaf1;
+  color: #16a085;
+  border: 1px solid #b2f0df;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.settings-actions,
+.pro-actions-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 8px;
+  margin-top: 18px;
+}
+/* Make settings panel and cards wider */
+.settings-cards-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+  padding: 0 24px;
+}
+.admin-card,
+.pro-section-card {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+.pro-section-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  color: #2c3e50;
+  white-space: nowrap;
+  margin-bottom: 18px;
+}
+.pro-section-header span {
+  white-space: normal;
+}
+@media (max-width: 1000px) {
+  .settings-cards-wrapper {
+    max-width: 98vw;
+    padding: 0 8px;
+  }
+}
+@media (max-width: 700px) {
+  .admin-card {
+    padding: 18px 6px;
+    max-width: 98vw;
+  }
+  .settings-row label {
+    flex: 0 0 110px;
+    font-size: 0.95rem;
+  }
+  .settings-password-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

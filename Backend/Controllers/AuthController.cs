@@ -89,32 +89,38 @@ namespace Backend.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<string>> Login([FromBody] UserDtoLogin request)
         {
-            // Validate input
             if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
             {
                 return BadRequest(new { message = "Username and password are required." });
             }
 
-            // Call the login service to authenticate the user and generate a token
             var token = await _authService.LoginAsync(request);
             if (token == null)
             {
                 return Unauthorized(new { message = "Invalid username or password." });
             }
-            // ✅ Set token in HttpOnly cookie
+
+            // Get user after login
+            var user = await _context.UsersNew.FirstOrDefaultAsync(u => u.Username == request.Username);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
             Response.Cookies.Append("jwt", token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,                // Use HTTPS in production
-                SameSite = SameSiteMode.Strict, // Helps prevent CSRF
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
                 Expires = DateTimeOffset.UtcNow.AddHours(1)
             });
 
-            // Return the token to the frontend
             return Ok(new
             {
                 message = "Login successful.",
-                token = token
+                token = token,
+                userId = user.Id,
+                username = user.Username
             });
         }
 
@@ -190,11 +196,16 @@ namespace Backend.Controllers
 
             // Don't reveal if user exists for security reasons
             if (user == null)
-                return Ok(new { message = "If your email exists in our system, you will receive a password reset link shortly." });
+                return Ok(new { message = "User doesn't exist in the system." });
 
             // Generate a secure reset token
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
+            var tokenValue = _configuration["AppSettings:Token"];
+            if (string.IsNullOrEmpty(tokenValue))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Token configuration is missing.");
+            }
+            var key = Encoding.ASCII.GetBytes(tokenValue);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -212,12 +223,12 @@ namespace Backend.Controllers
             var tokenString = tokenHandler.WriteToken(token);
 
             // Create reset URL
-            var resetUrl = $"{Request.Scheme}://{Request.Host}/reset-password?token={WebUtility.UrlEncode(tokenString)}";
-
+            // Hard-coded frontend URL for development
+            var resetUrl = $"http://localhost:5173/reset-password?token={WebUtility.UrlEncode(tokenString)}&email={WebUtility.UrlEncode(model.Email)}";
             // Send email with reset link
             await _emailService.SendPasswordResetEmailAsync(model.Email, resetUrl);
 
-            return Ok(new { message = "If your email exists in our system, you will receive a password reset link shortly." });
+            return Ok(new { message = "We send a reset link to your email. Please check it." });
         }
 
         [HttpGet("validate-reset-token")]
@@ -233,7 +244,12 @@ namespace Backend.Controllers
             {
                 // Validate the token
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
+                var tokenValue = _configuration["AppSettings:Token"];
+                if (string.IsNullOrEmpty(tokenValue))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Token configuration is missing.");
+                }
+                var key = Encoding.ASCII.GetBytes(tokenValue);
 
                 tokenHandler.ValidateToken(decodedToken, new TokenValidationParameters
                 {
@@ -258,7 +274,12 @@ namespace Backend.Controllers
                 return BadRequest(ModelState);
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["AppSettings:Token"]);
+            var tokenValue = _configuration["AppSettings:Token"];
+            if (string.IsNullOrEmpty(tokenValue))
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Token configuration is missing.");
+            }
+            var key = Encoding.ASCII.GetBytes(tokenValue);
 
             try
             {
@@ -333,10 +354,10 @@ namespace Backend.Controllers
                 Username = model.Username,
                 ContactEmail = model.Email,
                 Role = "Admin",
-                PasswordHash = passwordHasher.HashPassword(null, model.Password),
                 RegisteredDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"),
                 LastLoginDate = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss")
             };
+            newAdmin.PasswordHash = passwordHasher.HashPassword(newAdmin, model.Password);
 
             // Add to database
             _context.UsersNew.Add(newAdmin);

@@ -508,9 +508,6 @@ namespace Backend.Migrations
                     b.Property<string>("History")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("HowManyRated")
-                        .HasColumnType("int");
-
                     b.Property<string>("MainImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

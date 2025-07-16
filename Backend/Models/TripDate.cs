@@ -4,30 +4,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
 {
-    [Table("TripDate")]
-    public class TripDate
-    {
-        [Key]
-        [Column("TripDateId")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+	public class TripDate
+	{
+		[Key]
+		public int TripDateId { get; set; }
 
-        [Required]
-        public int TripId { get; set; }
+		[Required]
+		public int TripId { get; set; }
+		[ForeignKey("TripId")]
+		public Trip Trip { get; set; }
 
-        [ForeignKey("TripId")]
-        public Trip Trip { get; set; }
+		[Required]
+		public int PlaceId { get; set; }
+		[ForeignKey("PlaceId")]
+		public PlacesToVisit Place { get; set; }
 
-        [Required]
-        public int PlaceId { get; set; }
+		[Required]
+		public DateTime? StartDate { get; set; }
 
-        [ForeignKey("PlaceId")]
-        public PlacesToVisit Place { get; set; }
-
-        [Required]
-        public DateTime StartDate { get; set; }
-
-        [Required]
-        public DateTime EndDate { get; set; }
-    }
-} 
+		[Required]
+		public DateTime? EndDate { get; set; }
+	}
+}

@@ -9,7 +9,6 @@
 
 using Backend.Models;
 using Backend.Models.User;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using System.Text.Json;
@@ -42,7 +41,10 @@ namespace Backend.Data
         // Trip and TripPlace
         public DbSet<TripPlace> TripPlaces { get; set; }
         public DbSet<TripCollaborator> TripCollaborator { get; set; }
-        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripDate> TripDate { get; set; }
+
+
+
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
@@ -103,6 +105,19 @@ namespace Backend.Data
                 .HasDefaultValueSql("GETDATE()");
             // DistrictWithPlacesCountDTO is a keyless DTO
             modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+
+            modelBuilder.Entity<TripCollaborator>()
+                .HasOne(tc => tc.Trip)
+                .WithMany(t => t.Collaborators)
+                .HasForeignKey(tc => tc.TripId)
+                .OnDelete(DeleteBehavior.Cascade);  // deleting a trip deletes collaborators
+
+            modelBuilder.Entity<TripCollaborator>()
+                .HasOne(tc => tc.User)
+                .WithMany() // assuming UserNew does not have a collection navigation property for collaborators
+                .HasForeignKey(tc => tc.UserId)
+                .OnDelete(DeleteBehavior.Restrict);  // prevent deleting users if they are collaborators
+
 
             // Precision for decimal properties
             modelBuilder.Entity<Vehicle>()
@@ -220,7 +235,7 @@ namespace Backend.Data
                     v => string.Join(',', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
                 .Metadata.SetValueComparer(new ValueComparer<List<string>>(
-                    (c1, c2) => c1.SequenceEqual(c2),
+                    (c1, c2) => (c1 ?? new List<string>()).SequenceEqual(c2 ?? new List<string>()),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
 

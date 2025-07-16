@@ -157,7 +157,7 @@ namespace Backend.Migrations
                     OpeningHours = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GoogleMapLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    HowManyRated = table.Column<int>(type: "int", nullable: true),
+                    Rating = table.Column<double>(type: "float", nullable: true),
                     AvgSpend = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AvgTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DistrictId = table.Column<int>(type: "int", nullable: false),
