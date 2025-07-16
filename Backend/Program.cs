@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add AppDbContext with NavodaConnection (only one context to avoid duplication)
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SajeewaConnecton")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SajeewaConnection")));
 
 //builder.Services.AddDbContext<UserDbContext>(options =>
  //   options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -38,9 +38,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Cloudinary Configuration
 builder.Services.AddSingleton(new Cloudinary(new Account(
-    "diccvuqqo",
-    "269366281956762",
-    "80wa84I1eT5EwO6CW3RIAtW56rc"
+    "dhbge2nsx",
+    "488872561461659",
+    "K5-bbTL--bc9OqYDM9Jz54KU9_w"
 )));
 
 // Register project services

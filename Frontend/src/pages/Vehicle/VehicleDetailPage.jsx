@@ -26,7 +26,6 @@ const VehicleDetailPage = () => {
   const [bookingError, setBookingError] = useState("");
   const [selectedVehicle, setSelectedVehicle] = useState(null);
 
-  // Fetch vehicle details based on ID
   useEffect(() => {
     const fetchVehicleDetails = async () => {
       try {
@@ -45,13 +44,11 @@ const VehicleDetailPage = () => {
     fetchVehicleDetails();
   }, [id]);
 
-  // Calculate totalAmount whenever dates or vehicle price changes
   useEffect(() => {
     if (bookingData.startDate && bookingData.endDate && vehicle?.pricePerDay) {
       const days = Math.ceil(
         (bookingData.endDate - bookingData.startDate) / (1000 * 60 * 60 * 24)
       );
-      // At least 1 day charge (prevent zero or negative days)
       const total = days > 0 ? days * vehicle.pricePerDay : vehicle.pricePerDay;
       setBookingData((prev) => ({ ...prev, totalAmount: total }));
     } else {
@@ -180,9 +177,20 @@ const VehicleDetailPage = () => {
 
           <button
             className="book-now-btn"
-            onClick={() => setShowBookingModal(true)}>
-            Book Now
+            onClick={() => setShowBookingModal(true)}
+            disabled={!vehicle?.isAvailable}
+            style={{
+              opacity: vehicle?.isAvailable ? 1 : 0.6,
+              cursor: vehicle?.isAvailable ? "pointer" : "not-allowed",
+            }}>
+            {vehicle?.isAvailable ? "Book Now" : "Unavailable"}
           </button>
+
+          {!vehicle?.isAvailable && (
+            <p style={{ color: "red", marginTop: "0.5rem" }}>
+              This vehicle is currently rented.
+            </p>
+          )}
         </div>
       </div>
 
@@ -357,7 +365,6 @@ const VehicleDetailPage = () => {
                   />
                 </Form.Group>
 
-                {/* Display total cost */}
                 {bookingData.totalAmount > 0 && (
                   <p className="mt-3">
                     <strong>Total Cost:</strong> Rs.{" "}

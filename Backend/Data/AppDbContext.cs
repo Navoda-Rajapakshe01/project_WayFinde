@@ -232,6 +232,12 @@ namespace Backend.Data
                 .WithMany(u => u.Followers)
                 .HasForeignKey(f => f.FollowedID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Vehicle>()
+                .HasOne(v => v.Supplier)
+                .WithMany()
+                .HasForeignKey(v => v.SupplierId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

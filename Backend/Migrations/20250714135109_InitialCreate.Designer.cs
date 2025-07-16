@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250712202431_InitialCreate")]
+    [Migration("20250714135109_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -852,9 +852,21 @@ namespace Backend.Migrations
                     b.Property<int>("NumberOfPassengers")
                         .HasColumnType("int");
 
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PlacesToVisitId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("PricePerDay")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SupplierUsername")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransmissionType")
                         .IsRequired()
@@ -867,6 +879,10 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DistrictId");
+
+                    b.HasIndex("PlacesToVisitId");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("Vehicles");
                 });
@@ -1211,7 +1227,19 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Backend.Models.PlacesToVisit", null)
+                        .WithMany("Vehicles")
+                        .HasForeignKey("PlacesToVisitId");
+
+                    b.HasOne("Backend.Models.UserNew", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("District");
+
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
@@ -1279,6 +1307,8 @@ namespace Backend.Migrations
                     b.Navigation("Reviews");
 
                     b.Navigation("TripPlaces");
+
+                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("Backend.Models.Post", b =>

@@ -114,7 +114,7 @@ const FeaturedListingsSection = () => {
                       name: item.brand + " " + item.model,
                       type: item.type,
                       image:
-                        item.imageUrl ||
+                        item.imageUrls ||
                         "https://via.placeholder.com/300x200?text=No+Image",
                       price: `Rs ${item.pricePerDay}/day`,
                       link: `/vehicle/${item.id}`,

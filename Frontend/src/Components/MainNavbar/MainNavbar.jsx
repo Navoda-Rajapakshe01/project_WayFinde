@@ -41,7 +41,6 @@ const MainNavbar = () => {
 
   const authContext = useContext(AuthContext);
   const user = authContext?.user || null;
-  console.log("MainNavbar user:", user);
 
   const loading = authContext?.loading || false;
 

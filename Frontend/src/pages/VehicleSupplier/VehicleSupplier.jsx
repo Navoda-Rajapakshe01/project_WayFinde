@@ -62,7 +62,6 @@ const VehicleSupplier = () => {
         "http://localhost:5030/api/VehicleReservations"
       );
 
-      // Map backend data to frontend format
       const bookingsData = res.data.map((b) => ({
         id: b.id,
         vehicleBrand: b.vehicle?.brand || "Unknown",
@@ -174,6 +173,37 @@ const VehicleSupplier = () => {
     }
   };
 
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      await axios.put(
+        `http://localhost:5030/api/VehicleReservations/${bookingId}/status`,
+        { status: newStatus }
+      );
+      setAlert(`Booking ${newStatus.toLowerCase()}.`);
+      fetchBookings();
+    } catch {
+      setAlert("Failed to update booking status.");
+    } finally {
+      setTimeout(() => setAlert(""), 3000);
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (window.confirm("Delete this rejected booking?")) {
+      try {
+        await axios.delete(
+          `http://localhost:5030/api/VehicleReservations/${bookingId}`
+        );
+        setAlert("Booking deleted.");
+        fetchBookings();
+      } catch {
+        setAlert("Failed to delete booking.");
+      } finally {
+        setTimeout(() => setAlert(""), 3000);
+      }
+    }
+  };
+
   useEffect(() => {
     fetchVehicles();
     fetchBookings();
@@ -256,11 +286,11 @@ const VehicleSupplier = () => {
               <div className="stat-card">
                 <h3>Monthly Revenue</h3>
                 <div className="stat-value">
-                  Rs{dashboardStats.monthlyRevenue.toFixed(2)}
+                  Rs {dashboardStats.monthlyRevenue.toFixed(2)}
                 </div>
                 <div className="stat-detail">
                   {dashboardStats.monthlyBookings > 0
-                    ? `Avg $ ${(
+                    ? `Avg Rs ${(
                         dashboardStats.monthlyRevenue /
                         dashboardStats.monthlyBookings
                       ).toFixed(2)} per booking`
@@ -350,11 +380,12 @@ const VehicleSupplier = () => {
                     <th>Dates</th>
                     <th>Status</th>
                     <th>Amount</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {bookings.map((b) => {
-                    const status = b.status ?? "Unknown";
+                    const status = b.status ?? "Pending";
                     const amount =
                       typeof b.totalAmount === "number" ? b.totalAmount : 0;
 
@@ -376,6 +407,36 @@ const VehicleSupplier = () => {
                           </span>
                         </td>
                         <td>Rs {amount.toFixed(2)}</td>
+                        <td>
+                          {status.toLowerCase() === "pending" && (
+                            <>
+                              <button
+                                className="btn-confirm"
+                                onClick={() =>
+                                  handleUpdateBookingStatus(b.id, "Confirmed")
+                                }>
+                                Confirm
+                              </button>
+                              <button
+                                className="btn-reject"
+                                onClick={() =>
+                                  handleUpdateBookingStatus(b.id, "Rejected")
+                                }>
+                                Reject
+                              </button>
+                            </>
+                          )}
+                          {status.toLowerCase() === "rejected" && (
+                            <button
+                              className="btn-delete"
+                              onClick={() => handleDeleteBooking(b.id)}>
+                              Delete
+                            </button>
+                          )}
+                          {["confirmed", "completed"].includes(
+                            status.toLowerCase()
+                          ) && <span className="action-none">—</span>}
+                        </td>
                       </tr>
                     );
                   })}

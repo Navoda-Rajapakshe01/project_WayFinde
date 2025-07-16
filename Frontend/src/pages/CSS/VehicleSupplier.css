@@ -769,3 +769,30 @@
     margin-bottom: 0.5rem;
   }
 }
+
+.btn-confirm {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+.btn-reject {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+.btn-delete {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.action-none {
+  color: #888;
+}

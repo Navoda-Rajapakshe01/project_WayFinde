@@ -1,9 +1,9 @@
-import { jwtDecode } from "jwt-decode";
+// src/AuthContext/AuthProvider.jsx
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 import { AuthContext } from "../AuthContext/AuthContext";
 import axios from "axios";
-import React from "react";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -11,7 +11,7 @@ const AuthProvider = ({ children }) => {
 
   const setupAuthenticatedAxios = (token) => {
     return axios.create({
-      baseURL: "https://localhost:7138",
+      baseURL: "http://localhost:5030",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -33,13 +33,11 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const initializeAuth = async () => {
       const token = localStorage.getItem("token");
-      console.log("[AuthProvider] token from localStorage:", token);
 
       if (token && typeof token === "string" && token.trim() !== "") {
         try {
           if (token.split(".").length === 3) {
             const decodedToken = jwtDecode(token);
-            console.log("[AuthProvider] Decoded token:", decodedToken);
 
             const currentTime = Date.now() / 1000;
             if (decodedToken.exp && decodedToken.exp < currentTime) {
@@ -48,9 +46,7 @@ const AuthProvider = ({ children }) => {
               setUser(null);
             } else {
               const userProfile = await fetchUserProfile(token);
-              console.log("[AuthProvider] User profile from API:", userProfile);
 
-              // 🟢 Map claims to cleaner properties
               const roleClaim =
                 decodedToken[
                   "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
@@ -62,15 +58,10 @@ const AuthProvider = ({ children }) => {
 
               const normalizedUser = {
                 ...decodedToken,
-                ...userProfile,
+                ...userProfile, // Contains .id
                 role: roleClaim,
                 username: usernameClaim,
               };
-
-              console.log(
-                "[AuthProvider] Normalized user object:",
-                normalizedUser
-              );
 
               setUser(normalizedUser);
             }
@@ -104,7 +95,6 @@ const AuthProvider = ({ children }) => {
       if (!token) return false;
 
       const api = setupAuthenticatedAxios(token);
-
       await api.put("/api/User/update", userData);
 
       setUser((prev) => ({ ...prev, ...userData }));
