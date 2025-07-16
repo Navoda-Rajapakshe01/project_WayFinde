@@ -17,6 +17,7 @@ import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import UserAnalytics from "./Components/AdminProfile/user-analytics";
 import UsersManagement from "./Components/AdminProfile/users-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
+import AdminProfile from "./Components/AdminProfile/admin-profile";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 
 import { AuthContext } from "./Components/Authentication/AuthContext/AuthContext";
@@ -134,6 +135,8 @@ function AppRoutes() {
           <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
+          {/* This is the correct route for the admin profile page: /admin/profile */}
+          <Route path="profile" element={<AdminProfile />} />
           <Route
             path="accommodation-management"
             element={<AccommodationManagement />}
