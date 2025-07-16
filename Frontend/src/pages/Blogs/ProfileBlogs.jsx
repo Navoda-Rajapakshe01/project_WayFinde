@@ -1,9 +1,9 @@
 import axios from "axios";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-
+import Swal from "sweetalert2";
 import BlogCard from "../../Components/BlogComponents/BlogCard/BlogCard";
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "../CSS/ProfileBlogs.css";
@@ -228,7 +228,7 @@ const ProfileBlogs = () => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:5030/api/blog/${blogId}`,
+        `http://localhost:5030/api/blog/delete/${blogId}`, // <-- Corrected URL
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -239,6 +239,20 @@ const ProfileBlogs = () => {
       if (response.status === 200) {
         // Remove the deleted blog from the state
         setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
+        // Dispatch a custom event to notify other components
+        const event = new CustomEvent("blogDeleted");
+        window.dispatchEvent(event);
+
+        // Show success message with SweetAlert2
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your blog has been deleted.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // No need for setTimeout or setSuccessMessage anymore
         console.log("Blog deleted successfully");
       }
     } catch (error) {
@@ -336,10 +350,7 @@ const ProfileBlogs = () => {
         ) : (
           <div className="profile-blogs-grid">
             {blogs.map((blog, index) => (
-              <ProfileBlogCard
-                key={blog.id || `blog-${index}`}
-                blog={blog}
-              />
+              <ProfileBlogCard key={blog.id || `blog-${index}`} blog={blog} />
             ))}
           </div>
         )}
