@@ -340,17 +340,22 @@ namespace Backend.Data
         [HttpGet("search-users")]
         public async Task<ActionResult<IEnumerable<UserSearchDto>>> SearchUsers(string query)
         {
-            var users = await _context.UsersNew  
-                .Where(u => u.Username.Contains(query))
+            var users = await _context.UsersNew
+                .Where(u =>
+                    u.Username.Contains(query) ||
+                    u.ContactEmail.Contains(query)) 
                 .Select(u => new UserSearchDto
                 {
                     Id = u.Id,
-                    Username = u.Username
+                    Username = u.Username,
+                    Email = u.ContactEmail,
+                    ProfilePictureUrl = u.ProfilePictureUrl
                 })
                 .ToListAsync();
 
             return Ok(users);
         }
+
 
 
         [HttpPost("add-collaborator")]
@@ -548,6 +553,58 @@ namespace Backend.Data
                 return StatusCode(500, new { message = "Something went wrong", detail = ex.Message });
             }
         }
+
+        [HttpGet("user-preview/{userId}")]
+        public async Task<IActionResult> GetTripPreviewsByUserId(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("UserId is required.");
+
+            var trips = await _context.Trips
+                .Where(t => t.UserId == userId)
+                .Include(t => t.TripPlaces)
+                    .ThenInclude(tp => tp.Place)
+                .Include(t => t.TripDates)
+                .ToListAsync();
+
+            var result = trips.Select(trip =>
+            {
+                var firstPlace = trip.TripPlaces
+                    .OrderBy(tp => tp.Order)
+                    .FirstOrDefault()?.Place;
+
+                decimal avgSpend = trip.TripPlaces
+                    .Where(tp => tp.Place != null && tp.Place.AvgSpend.HasValue)
+                    .Select(tp => tp.Place.AvgSpend ?? 0)
+                    .DefaultIfEmpty(0)
+                    .Average();
+
+                var places = trip.TripPlaces
+                    .OrderBy(tp => tp.Order)
+                    .Select(tp => new
+                    {
+                        id = tp.Place?.Id,
+                        name = tp.Place?.Name ?? "N/A",
+                        order = tp.Order
+                    })
+                    .ToList();
+
+                return new
+                {
+                    id = trip.Id,
+                    tripName = trip.TripName,
+                    startDate = trip.StartDate, // <-- use stored field like other APIs
+                    endDate = trip.EndDate,
+                    thumbnail = firstPlace?.MainImageUrl ?? "https://via.placeholder.com/120",
+                    startLocation = firstPlace?.Name ?? "N/A",
+                    avgSpend = avgSpend,
+                    places = places
+                };
+            });
+
+            return Ok(result);
+        }
+
 
 
 

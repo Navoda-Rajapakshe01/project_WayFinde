@@ -504,7 +504,7 @@ const CreateTrip = () => {
 
       {/* Success message */}
       {submitSuccess && (
-        <div className="success-message">
+        <div className="success-message-trip">
           <div className="success-content">
             <div className="success-icon">✓</div>
             <h3>Trip Created Successfully!</h3>

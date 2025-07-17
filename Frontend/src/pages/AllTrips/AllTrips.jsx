@@ -2,13 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./AllTrips.css";
 import TripDashboard from "../TripDashboard";
 import { calculateTripStats } from "./utils/tripStats"; // adjust path if needed
-
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
+import { Bell } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const AllTrips = () => {
   const [tripStats, setTripStats] = useState({});
@@ -34,12 +29,39 @@ const AllTrips = () => {
   const [tripPlaceDates, setTripPlaceDates] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
 
-  const refreshCollaborativeTrips = () => {
-    fetch(
-      `http://localhost:5030/api/trips/collaborative?userId=${currentUserId}`
-    )
-      .then((res) => res.json())
-      .then(setCollaborativeTrips);
+  const refreshCollaborativeTrips = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5030/api/trips/collaborative?userId=${currentUserId}`
+      );
+      const data = await res.json();
+
+      const mappedCollaborative = data.map((trip) => {
+        const { totalSpent, totalDistance } = calculateTripStats(
+          trip.places || []
+        );
+        return {
+          ...trip,
+          name: trip.tripName,
+          avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
+          startLocation: trip.places?.[0]?.name || "N/A",
+          totalDistance: `${totalDistance} km`,
+          destinations:
+            trip.places?.map((place) => ({
+              name: place.name || "N/A",
+              stay: place.avgTime || "24 hrs",
+              date: place.startDate
+                ? new Date(place.startDate).toLocaleDateString()
+                : new Date(trip.startDate).toLocaleDateString(),
+            })) || [],
+          thumbnail: trip.thumbnail || "https://via.placeholder.com/120",
+        };
+      });
+
+      setCollaborativeTrips(mappedCollaborative);
+    } catch (err) {
+      console.error("Error fetching collaborative trips:", err);
+    }
   };
 
   const refreshPendingInvites = () => {
@@ -81,107 +103,103 @@ const AllTrips = () => {
     return () => clearTimeout(delayDebounce);
   }, [searchQuery]);
 
+  const fetchTripPreviews = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5030/api/trips/user-preview/${currentUserId}`
+      );
+      const data = await res.json();
+
+      // Use only date part (YYYY-MM-DD) for comparison
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // normalize to midnight
+
+      const upcoming = data.filter((trip) => {
+        const tripStart = new Date(trip.startDate);
+        tripStart.setHours(0, 0, 0, 0); // normalize
+        return tripStart >= today;
+      });
+
+      const completed = data.filter((trip) => {
+        const tripEnd = new Date(trip.endDate);
+        tripEnd.setHours(0, 0, 0, 0);
+        return tripEnd < today;
+      });
+
+      setUpcomingTrips(upcoming);
+      setCompletedTrips(completed);
+
+      // Summary stats
+      const totalTrips = data.length;
+      const placesVisited = data
+        .filter((trip) => new Date(trip.endDate) < new Date()) // ✅ Only completed trips
+        .reduce((sum, trip) => sum + (trip.places?.length || 0), 0);
+
+      const nextTrip = upcoming.sort(
+        (a, b) => new Date(a.startDate) - new Date(b.startDate)
+      )[0];
+
+      setTripStats({
+        completedTrips: completed.length,
+        upcomingTrips: upcoming.length,
+        placesVisited,
+        nextTripDate: nextTrip?.startDate?.slice(0, 10) || "N/A",
+      });
+
+      // 🧠 Map destinations to show in right-side preview
+      const allTripsWithPreview = data.map((trip) => {
+        const { totalSpent, totalDistance } = calculateTripStats(
+          trip.places || []
+        );
+
+        return {
+          ...trip,
+          name: trip.tripName,
+          avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
+          startLocation: trip.places?.[0]?.name || "N/A",
+          totalDistance: `${totalDistance} km`,
+          destinations:
+            trip.places?.map((place) => ({
+              name: place.name || "N/A",
+              stay: place.avgTime || "24 hrs",
+              date: place.startDate
+                ? new Date(place.startDate).toLocaleDateString()
+                : new Date(trip.startDate).toLocaleDateString(),
+            })) || [],
+          thumbnail: trip.thumbnail || "https://via.placeholder.com/120",
+        };
+      });
+
+      // 🪄 Update preview trips with this mapped data
+      setUpcomingTrips(
+        allTripsWithPreview.filter((trip) => {
+          const tripStart = new Date(trip.startDate);
+          const today = new Date();
+          tripStart.setHours(0, 0, 0, 0);
+          today.setHours(0, 0, 0, 0);
+          return tripStart >= today;
+        })
+      );
+
+      setCompletedTrips(
+        allTripsWithPreview.filter((trip) => {
+          const tripEnd = new Date(trip.endDate);
+          const today = new Date();
+          tripEnd.setHours(0, 0, 0, 0);
+          today.setHours(0, 0, 0, 0);
+          return tripEnd < today;
+        })
+      );
+
+      // Set right side preview default selection
+      setSelectedTrip(allTripsWithPreview[0] || null);
+    } catch (err) {
+      console.error("Error fetching trip previews:", err);
+    }
+  };
+
   useEffect(() => {
-    const fetchTrips = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5030/api/trips/user/${currentUserId}`
-        );
-
-        const trips = await res.json();
-
-        const today = new Date();
-
-        // Filter upcoming and completed trips
-        const upcoming = trips.filter((t) => new Date(t.startDate) >= today);
-        const completed = trips.filter((t) => new Date(t.startDate) < today);
-
-        // Calculate total places visited from completed trips
-        const totalPlaces = completed.reduce(
-          (acc, trip) => acc + (trip.places?.length || 0),
-          0
-        );
-
-        const nextTripDate =
-          upcoming.length > 0
-            ? new Date(
-                Math.min(...upcoming.map((t) => new Date(t.startDate)))
-              ).toLocaleDateString()
-            : "N/A";
-
-        setTripStats({
-          completedTrips: completed.length,
-          upcomingTrips: upcoming.length,
-          placesVisited: totalPlaces,
-
-          nextTripDate,
-        });
-
-        // Map upcoming trips to include extra fields for display
-        const mappedUpcoming = upcoming.map((trip) => {
-          const { totalSpent, totalDistance } = calculateTripStats(
-            trip.places || []
-          );
-          return {
-            ...trip,
-            name: trip.tripName,
-            avgSpent: `LKR ${totalSpent.toLocaleString()}`,
-            startLocation: trip.places?.[0]?.name || "N/A",
-            totalDistance: `${totalDistance} km`,
-            destinations:
-              trip.places?.map((place) => ({
-                name: place.name || "N/A",
-                stay: place.avgTime || "24 hrs",
-                date: place.startDate
-                  ? new Date(place.startDate).toLocaleDateString()
-                  : new Date(trip.startDate).toLocaleDateString(),
-              })) || [],
-          };
-        });
-
-        // Map completed trips the same way
-        const mappedCompleted = completed.map((trip) => {
-          const { totalSpent, totalDistance } = calculateTripStats(
-            trip.places || []
-          );
-          return {
-            ...trip,
-            name: trip.tripName,
-            avgSpent: `LKR ${totalSpent.toLocaleString()}`,
-            startLocation: trip.places?.[0]?.name || "N/A",
-            totalDistance: `${totalDistance} km`,
-            destinations:
-              trip.places?.map((place) => ({
-                name: place.name || "N/A",
-                stay: place.avgTime || "24 hrs",
-                date: new Date(trip.startDate).toLocaleDateString(),
-              })) || [],
-          };
-        });
-
-        setUpcomingTrips(mappedUpcoming);
-        setCompletedTrips(mappedCompleted); // <-- use mappedCompleted here
-
-        // Default select first upcoming trip if exists
-        setSelectedTrip(mappedUpcoming[0] || null);
-      } catch (err) {
-        console.error("Failed to fetch trip data:", err);
-      }
-    };
-
-    fetchTrips();
-
-    const handleOutsideClick = (event) => {
-      if (
-        !event.target.closest(".menu-dropdown") &&
-        !event.target.closest(".menu-icon")
-      ) {
-        setMenuOpen(null);
-      }
-    };
-
-    document.addEventListener("click", handleOutsideClick);
-    return () => document.removeEventListener("click", handleOutsideClick);
+    fetchTripPreviews();
   }, []);
 
   // ──────────────────────────────────────────
@@ -203,7 +221,7 @@ const AllTrips = () => {
           return {
             ...trip,
             name: trip.tripName,
-            avgSpent: `LKR ${totalSpent.toLocaleString()}`,
+            avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
             startLocation: trip.places?.[0]?.name || "N/A",
             totalDistance: `${totalDistance} km`,
             destinations:
@@ -214,6 +232,7 @@ const AllTrips = () => {
                   ? new Date(place.startDate).toLocaleDateString()
                   : new Date(trip.startDate).toLocaleDateString(),
               })) || [],
+            thumbnail: trip.thumbnail || "https://via.placeholder.com/120",
           };
         });
 
@@ -267,6 +286,27 @@ const AllTrips = () => {
     setMenuOpen(menuOpen === tripId ? null : tripId);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdowns = document.querySelectorAll(".menu-dropdown.show");
+      const icons = document.querySelectorAll(".menu-icon");
+
+      const clickedInsideMenu = Array.from(dropdowns).some((menu) =>
+        menu.contains(event.target)
+      );
+      const clickedMenuIcon = Array.from(icons).some((icon) =>
+        icon.contains(event.target)
+      );
+
+      if (!clickedInsideMenu && !clickedMenuIcon) {
+        setMenuOpen(null);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, []);
+
   const deleteTrip = (tripId) => {
     setUpcomingTrips(upcomingTrips.filter((trip) => trip.id !== tripId));
   };
@@ -314,7 +354,9 @@ const AllTrips = () => {
             className="notification-bell"
             onClick={() => setShowNotifications(!showNotifications)}
           >
-            <span className="bell-icon">🔔</span>
+            <span className="bell-icon">
+              <Bell size={20} className="notification-bell-icon" />
+            </span>
             {pendingInvites.length > 0 && (
               <span className="notification-count">
                 {pendingInvites.length}
@@ -334,7 +376,9 @@ const AllTrips = () => {
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="notification-header">
-                  <h4 style={{ fontWeight: "bold" }}>Pending Invitations</h4>
+                  <h4 style={{ fontWeight: "bold", fontSize: "16px" }}>
+                    Pending Invitations
+                  </h4>
                   <button
                     className="notification1-close"
                     onClick={() => setShowNotifications(false)}
@@ -388,11 +432,20 @@ const AllTrips = () => {
                   }`}
                   onClick={() => setSelectedTrip(trip)}
                 >
-                  <h3 style={{ fontWeight: "bold" }}>{trip.name}</h3>
-                  <p>Start Date: {trip.startDate?.slice(0, 10)}</p>
-                  <p>Avg. Spent: {trip.avgSpent}</p>
-                  <p>Start Location: {trip.startLocation}</p>
-                  <p>Total Distance: {trip.totalDistance}</p>
+                  <div className="trip-card-header">
+                    <img
+                      src={trip.thumbnail}
+                      alt="Trip"
+                      className="trip-thumbnail"
+                    />
+                    <div className="trip-card-info">
+                      <h3 className="trip-name">{trip.name}</h3>
+                      <p>Start Date: {trip.startDate?.slice(0, 10)}</p>
+                      <p>Avg. Spent: {trip.avgSpent}</p>
+                      <p>Start Location: {trip.startLocation}</p>
+                    </div>
+                  </div>
+
                   <div
                     className="menu-icon"
                     onClick={(e) => {
@@ -430,9 +483,6 @@ const AllTrips = () => {
                       className="set-dates-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        console.log("Trip Data:", trip);
-                        console.log("TripPlaces:", trip.TripPlaces);
-                        // Pre-fill dates with null values
                         const placesWithDates =
                           trip.places?.map((place) => ({
                             placeId: place.id,
@@ -446,7 +496,9 @@ const AllTrips = () => {
                         setShowSetDatesPopup(true);
                       }}
                     >
-                      Set Dates
+                      {trip.places?.every((p) => p.startDate && p.endDate)
+                        ? "Update Dates"
+                        : "Set Dates"}
                     </button>
 
                     <button
@@ -471,7 +523,7 @@ const AllTrips = () => {
               <ul>
                 {selectedTrip.destinations?.map((dest, index) => (
                   <li key={index}>
-                    {index + 1}.&nbsp;{dest.name} - {dest.stay}
+                    {index + 1}.&nbsp;{dest.name}
                   </li>
                 ))}
               </ul>
@@ -498,7 +550,7 @@ const AllTrips = () => {
 
             <input
               type="text"
-              placeholder="Search by username..."
+              placeholder="Search by email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -507,21 +559,34 @@ const AllTrips = () => {
               {searchResults
                 .filter(
                   (user) =>
-                    user.id !== currentUserId && // ✅ Exclude self
-                    !existingCollaborators.some((c) => c.id === user.id) // ✅ Exclude already added
+                    user.id !== currentUserId &&
+                    !existingCollaborators.some((c) => c.id === user.id)
                 )
                 .map((user) => {
                   const alreadySelected = selectedUsers.some(
                     (u) => u.id === user.id
                   );
+                  const initial = user.username?.[0]?.toUpperCase() || "?";
 
                   return (
-                    <li key={user.id} className="search-item">
-                      <span>{user.username}</span>
+                    <li key={user.id} className="search-item-row">
+                      {user.profilePictureUrl ? (
+                        <img
+                          src={user.profilePictureUrl}
+                          alt="profile"
+                          className="profile-avatar"
+                        />
+                      ) : (
+                        <div className="profile-avatar initials-avatar">
+                          {initial}
+                        </div>
+                      )}
+                      <div className="user-info">
+                        <div className="user-name">{user.username}</div>
+                        <div className="user-email">{user.email}</div>
+                      </div>
                       {alreadySelected ? (
-                        <span style={{ marginLeft: "10px", color: "gray" }}>
-                          Selected
-                        </span>
+                        <span className="status-tag">Selected</span>
                       ) : (
                         <button
                           className="add-btn"
@@ -832,6 +897,21 @@ const AllTrips = () => {
                   );
 
                   if (res.ok) {
+                    await fetchTripPreviews();
+                    await refreshCollaborativeTrips();
+
+                    // ✅ Update selectedTrip manually with new place dates
+                    const updatedTrip = {
+                      ...selectedTrip,
+                      places: tripPlaceDates.map((item) => ({
+                        id: item.placeId,
+                        name: item.placeName,
+                        startDate: item.startDate,
+                        endDate: item.endDate,
+                      })),
+                    };
+                    setSelectedTrip(updatedTrip);
+
                     alert("Trip dates saved successfully!");
                     setShowSetDatesPopup(false);
                   } else {
