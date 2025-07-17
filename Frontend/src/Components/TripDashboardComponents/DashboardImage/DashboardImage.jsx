@@ -133,18 +133,23 @@ const DashboardImage = ({ tripId }) => {
   useEffect(() => {
     if (!tripId) return;
 
+    // Step 1: Get all trip places for this tripId
     axios.get(`${API_URL}/TripPlaces?tripId=${tripId}`)
       .then(res => {
         const tripPlaces = res.data;
-        if (tripPlaces && tripPlaces.length > 0) {
-          const firstPlaceId = tripPlaces[0].placeId || tripPlaces[0].PlaceId;
-          if (firstPlaceId) {
-            axios.get(`${API_URL}/Places/${firstPlaceId}`)
-              .then(placeRes => {
-                setMainImageUrl(placeRes.data.mainImageUrl);
-              })
-              .catch(() => setMainImageUrl(null));
-          }
+        // Step 1: Filter by tripId
+        const filteredTripPlaces = tripPlaces.filter(tp => tp.tripId === Number(tripId));
+        // Step 2: Find the place with order === 0
+        const firstPlace = filteredTripPlaces.find(tp => tp.order === 0);
+        if (firstPlace && firstPlace.placeId) {
+          // Step 3: Fetch the place details for that placeId
+          axios.get(`${API_URL}/Places/${firstPlace.placeId}`)
+            .then(placeRes => {
+              setMainImageUrl(placeRes.data.mainImageUrl);
+            })
+            .catch(() => setMainImageUrl(null));
+        } else {
+          setMainImageUrl(null);
         }
       })
       .catch(() => setMainImageUrl(null));

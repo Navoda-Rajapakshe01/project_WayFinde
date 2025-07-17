@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Backend.Data;
-using Backend.Models;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Linq;
 using System;
+using Backend.Data;
+using Backend.Models;
+using Backend.DTOs;
 using Backend.DTO;
 
-namespace Backend.Controllers
+namespace Backend.Data
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/trips")]
     public class TripsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -73,13 +74,10 @@ namespace Backend.Controllers
             var tripDto = new TripDetailsDto
             {
                 Id = trip.Id,
-                TripName = trip.Name,
+                TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = (double?)trip.TripDistance,
-                TripTime = trip.TripTime.ToString(),
-                TotalSpend = trip.TotalSpend,
-
+            
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
                     .Select(tp =>
@@ -113,57 +111,6 @@ namespace Backend.Controllers
             return Ok(tripDto);
         }
 
-        // PATCH: api/trips/{id} - New method for updating trip basic details
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchTrip(int id, [FromBody] PatchTripRequest request)
-        {
-            if (request == null)
-                return BadRequest(new { message = "Invalid request data" });
-
-            var trip = await _context.Trips.FindAsync(id);
-            if (trip == null)
-                return NotFound(new { message = "Trip not found" });
-
-            // Update only the provided fields
-            if (!string.IsNullOrEmpty(request.Name))
-            {
-                trip.Name = request.Name;
-            }
-
-            if (request.StartDate.HasValue)
-            {
-                trip.StartDate = request.StartDate.Value;
-            }
-
-            if (request.EndDate.HasValue)
-            {
-                trip.EndDate = request.EndDate.Value;
-            }
-
-            // Update the UpdatedAt timestamp
-            trip.UpdatedAt = DateTime.UtcNow;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                
-                return Ok(new { 
-                    message = "Trip updated successfully",
-                    trip = new {
-                        id = trip.Id,
-                        name = trip.Name,
-                        startDate = trip.StartDate,
-                        endDate = trip.EndDate,
-                        updatedAt = trip.UpdatedAt
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error updating trip: {ex.Message}");
-                return StatusCode(500, new { message = "Failed to update trip", detail = ex.Message });
-            }
-        }
 
         [HttpPut("update-trip")]
         public async Task<IActionResult> UpdateTrip([FromBody] UpdateTripRequest request)
@@ -182,12 +129,10 @@ namespace Backend.Controllers
 
             // Update trip fields as you currently do
             trip.TripName = request.TripName ?? trip.TripName;
-            trip.TripDistance = request.TripDistance ?? trip.TripDistance;
-            trip.TripTime = request.TripTime ?? trip.TripTime;
-            trip.TotalSpend = request.TotalSpend ?? trip.TotalSpend;
+          
             trip.StartDate = request.StartDate ?? trip.StartDate;
             trip.EndDate = request.EndDate ?? trip.EndDate;
-            trip.UserId = !string.IsNullOrEmpty(request.UserId) ? int.Parse(request.UserId) : trip.UserId;
+            trip.UserId = request.UserId ?? trip.UserId;
 
             if (request.PlaceIds != null && request.PlaceIds.Any())
             {
@@ -242,12 +187,10 @@ namespace Backend.Controllers
             var tripDto = new TripDetailsDto
             {
                 Id = trip.Id,
-                TripName = trip.Name,
+                TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = (double?)trip.TripDistance,
-                TripTime = trip.TripTime.ToString(),
-                TotalSpend = trip.TotalSpend,
+              
 
                 Places = trip.TripPlaces?
                     .Where(tp => tp?.Place != null)
@@ -270,17 +213,10 @@ namespace Backend.Controllers
             public int TripId { get; set; }
         }
 
-        // New DTO for PATCH request
-        public class PatchTripRequest
-        {
-            public string? Name { get; set; }
-            public DateTime? StartDate { get; set; }
-            public DateTime? EndDate { get; set; }
-        }
 
-        // ✅ FIXED: Unique route "all"
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllTrips()
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetTripsByUserId(string userId)
         {
             if (string.IsNullOrEmpty(userId))
                 return BadRequest("UserId is required.");
@@ -296,12 +232,10 @@ namespace Backend.Controllers
             var result = trips.Select(trip => new
             {
                 id = trip.Id,
-                tripName = trip.Name,
+                tripName = trip.TripName,
                 startDate = trip.StartDate,
                 endDate = trip.EndDate,
-                tripDistance = trip.TripDistance,
-                tripTime = trip.TripTime,
-                totalSpend = (decimal?)trip.TotalSpend,
+                
                 userId = trip.UserId,
                 places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -361,9 +295,7 @@ namespace Backend.Controllers
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-                TripDistance = trip.TripDistance,
-                TripTime = trip.TripTime,
-                TotalSpend = (decimal?)trip.TotalSpend,
+               
 
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -420,6 +352,7 @@ namespace Backend.Controllers
 
             return Ok(users);
         }
+
 
         [HttpPost("add-collaborator")]
         public async Task<IActionResult> AddCollaborator(int tripId, Guid userId)
@@ -483,9 +416,7 @@ namespace Backend.Controllers
                     tripName = trip.TripName,
                     startDate = trip.StartDate,
                     endDate = trip.EndDate,
-                    tripDistance = trip.TripDistance,
-                    tripTime = trip.TripTime,
-                    totalSpend = (decimal?)trip.TotalSpend,
+                    
                     userId = trip.UserId,
                     places = trip.TripPlaces
                         .OrderBy(tp => tp.Order)
@@ -575,6 +506,48 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+                // PATCH: api/trips/{id} - Update trip basic details (tripName, startDate, endDate)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchTrip(int id, [FromBody] PatchTripRequest request)
+        {
+            if (request == null)
+                return BadRequest(new { message = "Invalid request data" });
+
+            var trip = await _context.Trips.FindAsync(id);
+            if (trip == null)
+                return NotFound(new { message = "Trip not found" });
+
+            // Update only the provided fields
+            if (!string.IsNullOrEmpty(request.TripName))
+                trip.TripName = request.TripName;
+            if (request.StartDate.HasValue)
+                trip.StartDate = request.StartDate.Value;
+            if (request.EndDate.HasValue)
+                trip.EndDate = request.EndDate.Value;
+
+            trip.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new {
+                    message = "Trip updated successfully",
+                    trip = new {
+                        id = trip.Id,
+                        tripName = trip.TripName,
+                        startDate = trip.StartDate,
+                        endDate = trip.EndDate,
+                        updatedAt = trip.UpdatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating trip: {ex.Message}");
+                return StatusCode(500, new { message = "Failed to update trip", detail = ex.Message });
+            }
         }
 
         [HttpPost("save-trip-dates")]

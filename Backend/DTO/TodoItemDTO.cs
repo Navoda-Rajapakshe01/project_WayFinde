@@ -5,7 +5,7 @@ namespace Backend.DTO
 {
     public class TodoItemDTO
     {
-        public string? Id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(150)]
@@ -16,6 +16,6 @@ namespace Backend.DTO
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-        public string? TripId { get; set; }
+        public int TripId { get; set; }
     }
 }

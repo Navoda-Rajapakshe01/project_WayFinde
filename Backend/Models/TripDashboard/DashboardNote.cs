@@ -24,9 +24,7 @@ namespace Backend.Models
         public DateTime UpdatedAt { get; set; }
 
         [Required]
-        public int TripId { get; set; }
-
         [ForeignKey(nameof(TripId))]
-        public Trip Trip { get; set; } = null!;
+        public int TripId { get; set; }
     }
 }

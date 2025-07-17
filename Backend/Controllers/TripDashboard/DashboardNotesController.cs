@@ -52,22 +52,27 @@ namespace Backend.Controllers
         }
 
         // GET: api/DashboardNote/trip/{tripId}
-        // Retrieves all notes associated with a specific trip
-        [HttpGet("trip/{tripId}")]
+       [HttpGet("trip/{tripId}")]
         public async Task<ActionResult<IEnumerable<DashboardNote>>> GetNotesByTrip(int tripId)
         {
-            var trip = await _context.Trips.FindAsync(tripId);
-            if (trip == null)
-                return NotFound("Trip not found");
+            try
+            {
+                var trip = await _context.Trips.FindAsync(tripId);
+                if (trip == null)
+                    return NotFound("Trip not found");
 
-            var notes = await _context.DashboardNote
-                .Where(n => n.TripId == tripId)
-                .OrderByDescending(n => n.CreatedAt)
-                .ToListAsync();
+                var notes = await _context.DashboardNote
+                    .Where(n => n.TripId == tripId)
+                    .OrderByDescending(n => n.CreatedAt)
+                    .ToListAsync();
 
-            return Ok(notes);
+                return Ok(notes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal Server Error: {ex.Message}");
+            }
         }
-
         // POST: api/DashboardNote
         // Creates a new dashboard note for a trip
         [HttpPost]

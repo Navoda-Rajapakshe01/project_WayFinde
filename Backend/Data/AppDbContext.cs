@@ -73,8 +73,8 @@ namespace Backend.Data
         public DbSet<BlogReaction> BlogReactions { get; set; }
         public object? Amenities { get; internal set; }
 
-        // TripDate
-        public DbSet<TripDate> TripDate { get; set; }
+        public DbSet<Trip> Trips { get; set; }
+
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -104,7 +104,7 @@ namespace Backend.Data
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
             // DistrictWithPlacesCountDTO is a keyless DTO
-            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+            // modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
 
             modelBuilder.Entity<TripCollaborator>()
                 .HasOne(tc => tc.Trip)
@@ -210,11 +210,11 @@ namespace Backend.Data
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            modelBuilder.Entity<TravelBudget>()
-                .HasOne(t => t.Trip)
-                .WithMany(t => t.TravelBudgets)
-                .HasForeignKey(t => t.TripId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // Remove or comment out TravelBudgets navigation property for Trip
+            // modelBuilder.Entity<Trip>()
+            //     .WithMany(t => t.TravelBudgets)
+            //     .HasForeignKey(t => t.TripId)
+            //     .OnDelete(DeleteBehavior.Cascade);
 
             // TripPlace composite key
             modelBuilder.Entity<TripPlace>().HasKey(tp => new { tp.TripId, tp.PlaceId });
@@ -325,13 +325,12 @@ namespace Backend.Data
                     .HasColumnName("Id")
                     .UseIdentityColumn();
 
-                entity.Property(e => e.Name)
+                entity.Property(e => e.TripName)
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.Description)
-                    .IsRequired()
-                    .HasMaxLength(500);
+                // entity.Property(e => e.Description)
+                //     .IsRequired();
 
                 entity.Property(e => e.StartDate)
                     .IsRequired();
@@ -339,17 +338,18 @@ namespace Backend.Data
                 entity.Property(e => e.EndDate)
                     .IsRequired();
 
-                entity.Property(e => e.TotalSpend)
-                    .HasColumnType("decimal(18,2)")
-                    .IsRequired();
+                // entity.Property(e => e.TotalSpend)
+                //     .HasColumnType("decimal(18,2)")
+                //     .IsRequired();
 
-                entity.Property(e => e.TripDistance)
-                    .HasColumnType("decimal(18,2)")
-                    .IsRequired();
+                // Remove or comment out TripDistance property mapping for Trip
+                // modelBuilder.Entity<Trip>().Property(t => t.TripDistance)
+                //     .HasColumnType("decimal(18,2)")
+                //     .IsRequired();
 
-                entity.Property(e => e.TripTime)
-                    .HasColumnType("decimal(18,2)")
-                    .IsRequired();
+                // entity.Property(e => e.TripTime)
+                //     .HasColumnType("decimal(18,2)")
+                //     .IsRequired();
 
                 entity.Property(e => e.UserId)
                     .IsRequired();

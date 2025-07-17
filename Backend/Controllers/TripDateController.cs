@@ -21,7 +21,6 @@ namespace Backend.Controllers
             _context = context;
         }
 
-        // GET: api/tripdate
         [HttpGet]
         public async Task<IActionResult> GetAllTripDates()
         {
@@ -32,18 +31,17 @@ namespace Backend.Controllers
                 {
                     Id = td.Id,
                     TripId = td.TripId,
-                    TripName = td.Trip.Name,
+                    TripName = td.Trip.TripName,
                     PlaceId = td.PlaceId,
                     PlaceName = td.Place.Name,
-                    StartDate = td.StartDate,
-                    EndDate = td.EndDate
+                    StartDate = td.StartDate ?? DateTime.MinValue,
+                    EndDate = td.EndDate ?? DateTime.MinValue
                 })
                 .ToListAsync();
 
             return Ok(tripDates);
         }
 
-        // GET: api/tripdate/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTripDate(int id)
         {
@@ -59,17 +57,16 @@ namespace Backend.Controllers
             {
                 Id = tripDate.Id,
                 TripId = tripDate.TripId,
-                TripName = tripDate.Trip.Name,
+                TripName = tripDate.Trip.TripName,
                 PlaceId = tripDate.PlaceId,
                 PlaceName = tripDate.Place.Name,
-                StartDate = tripDate.StartDate,
-                EndDate = tripDate.EndDate
+                StartDate = tripDate.StartDate ?? DateTime.MinValue,
+                EndDate = tripDate.EndDate ?? DateTime.MinValue
             };
 
             return Ok(result);
         }
 
-        // GET: api/tripdate/trip/{tripId}
         [HttpGet("trip/{tripId}")]
         public async Task<IActionResult> GetTripDatesByTrip(int tripId)
         {
@@ -81,18 +78,17 @@ namespace Backend.Controllers
                 {
                     Id = td.Id,
                     TripId = td.TripId,
-                    TripName = td.Trip.Name,
+                    TripName = td.Trip.TripName,
                     PlaceId = td.PlaceId,
                     PlaceName = td.Place.Name,
-                    StartDate = td.StartDate,
-                    EndDate = td.EndDate
+                    StartDate = td.StartDate ?? DateTime.MinValue,
+                    EndDate = td.EndDate ?? DateTime.MinValue
                 })
                 .ToListAsync();
 
             return Ok(tripDates);
         }
 
-        // GET: api/tripdate/place/{placeId}
         [HttpGet("place/{placeId}")]
         public async Task<IActionResult> GetTripDatesByPlace(int placeId)
         {
@@ -104,18 +100,17 @@ namespace Backend.Controllers
                 {
                     Id = td.Id,
                     TripId = td.TripId,
-                    TripName = td.Trip.Name,
+                    TripName = td.Trip.TripName,
                     PlaceId = td.PlaceId,
                     PlaceName = td.Place.Name,
-                    StartDate = td.StartDate,
-                    EndDate = td.EndDate
+                    StartDate = td.StartDate ?? DateTime.MinValue,
+                    EndDate = td.EndDate ?? DateTime.MinValue
                 })
                 .ToListAsync();
 
             return Ok(tripDates);
         }
 
-        // POST: api/tripdate
         [HttpPost]
         public async Task<IActionResult> CreateTripDate([FromBody] TripDateCreateDto dto)
         {
@@ -131,17 +126,14 @@ namespace Backend.Controllers
             if (dto.StartDate >= dto.EndDate)
                 return BadRequest(new { message = "StartDate must be before EndDate" });
 
-            // Check if trip exists
             var trip = await _context.Trips.FindAsync(dto.TripId);
             if (trip == null)
                 return BadRequest(new { message = "Trip not found" });
 
-            // Check if place exists
             var place = await _context.PlacesToVisit.FindAsync(dto.PlaceId);
             if (place == null)
                 return BadRequest(new { message = "Place not found" });
 
-            // Check if trip date already exists for this trip and place
             var existingTripDate = await _context.TripDate
                 .FirstOrDefaultAsync(td => td.TripId == dto.TripId && td.PlaceId == dto.PlaceId);
 
@@ -162,7 +154,6 @@ namespace Backend.Controllers
             return CreatedAtAction(nameof(GetTripDate), new { id = tripDate.Id }, tripDate);
         }
 
-        // PUT: api/tripdate/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTripDate(int id, [FromBody] TripDateUpdateDto dto)
         {
@@ -173,14 +164,12 @@ namespace Backend.Controllers
             if (tripDate == null)
                 return NotFound(new { message = "TripDate not found" });
 
-            // Validate dates if provided
             if (dto.StartDate.HasValue && dto.EndDate.HasValue)
             {
                 if (dto.StartDate.Value >= dto.EndDate.Value)
                     return BadRequest(new { message = "StartDate must be before EndDate" });
             }
 
-            // Update properties
             if (dto.StartDate.HasValue)
                 tripDate.StartDate = dto.StartDate.Value;
             if (dto.EndDate.HasValue)
@@ -191,7 +180,6 @@ namespace Backend.Controllers
             return Ok(new { message = "TripDate updated successfully", tripDate });
         }
 
-        // DELETE: api/tripdate/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTripDate(int id)
         {
@@ -205,7 +193,6 @@ namespace Backend.Controllers
             return Ok(new { message = "TripDate deleted successfully" });
         }
 
-        // DELETE: api/tripdate/trip/{tripId}
         [HttpDelete("trip/{tripId}")]
         public async Task<IActionResult> DeleteTripDatesByTrip(int tripId)
         {
@@ -222,7 +209,6 @@ namespace Backend.Controllers
             return Ok(new { message = $"Deleted {tripDates.Count} TripDates for trip {tripId}" });
         }
 
-        // POST: api/tripdate/bulk
         [HttpPost("bulk")]
         public async Task<IActionResult> CreateBulkTripDates([FromBody] List<TripDateCreateDto> dtos)
         {
@@ -233,12 +219,10 @@ namespace Backend.Controllers
             if (dtos.Any(d => d.TripId != tripId))
                 return BadRequest(new { message = "All TripDates must belong to the same trip" });
 
-            // Check if trip exists
             var trip = await _context.Trips.FindAsync(tripId);
             if (trip == null)
                 return BadRequest(new { message = "Trip not found" });
 
-            // Validate all places exist
             var placeIds = dtos.Select(d => d.PlaceId).Distinct().ToList();
             var places = await _context.PlacesToVisit
                 .Where(p => placeIds.Contains(p.Id))
@@ -247,14 +231,12 @@ namespace Backend.Controllers
             if (places.Count != placeIds.Count)
                 return BadRequest(new { message = "One or more places not found" });
 
-            // Remove existing trip dates for this trip
             var existingTripDates = await _context.TripDate
                 .Where(td => td.TripId == tripId)
                 .ToListAsync();
 
             _context.TripDate.RemoveRange(existingTripDates);
 
-            // Add new trip dates
             var tripDates = dtos.Select(dto => new TripDate
             {
                 TripId = dto.TripId,
@@ -270,7 +252,6 @@ namespace Backend.Controllers
         }
     }
 
-    // DTOs for TripDate operations
     public class TripDateCreateDto
     {
         public int TripId { get; set; }
@@ -295,4 +276,4 @@ namespace Backend.Controllers
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
     }
-} 
+}

@@ -14,14 +14,16 @@ const TodoList = ({ tripId }) => {
   useEffect(() => {
     console.log('Fetching todos for tripId:', tripId);  // Debug log
     if (tripId) {
-      axios.get(`http://localhost:5030/api/todo/trip/${tripId}`)  // Use tripId in the API endpoint
+      axios.get('http://localhost:5030/api/Todo')  // Fetch all todos
         .then(res => {
           console.log('Received todos:', res.data);
-          const fetchedTodos = res.data.map(todo => ({
-            id: todo.id,
-            text: todo.taskName,
-            completed: todo.taskStatus === 'Completed'
-          }));
+          const fetchedTodos = res.data
+            .filter(todo => todo.tripId === Number(tripId))
+            .map(todo => ({
+              id: todo.id,
+              text: todo.taskName,
+              completed: todo.taskStatus === 'Completed'
+            }));
           setNotes(fetchedTodos);
         })
         .catch(err => console.error("GET error: ", err));
@@ -32,7 +34,7 @@ const TodoList = ({ tripId }) => {
   const handleTaskStatusChange = (id, currentStatus) => {
     const newStatus = currentStatus === "Active" ? "Completed" : "Active";
 
-    axios.put(`http://localhost:5030/api/todo/ToggleStatus/${id}`, { 
+    axios.put(`http://localhost:5030/api/Todo/ToggleStatus/${id}`, { 
       taskStatus: newStatus,
       tripId: parseInt(tripId)  // Include tripId in the update
     })
@@ -47,17 +49,17 @@ const TodoList = ({ tripId }) => {
 
   // Handle adding a new note
   const handleAddNewNote = (newNoteText) => {
-    console.log('Adding new todo with tripId:', tripId);
+    console.log('Adding new todo with tripId:', tripId);  // Debug log to check tripId
     const newTodo = {
       taskName: newNoteText,
       taskStatus: 'Active',
       createdAt: new Date(),
       updatedAt: new Date(),
-      tripId: tripId.toString()  // Convert tripId to string to match DTO
+      tripId: Number(tripId)
     };
     console.log('New todo object:', newTodo);
-
-    axios.post('http://localhost:5030/api/todo', newTodo)
+  
+    axios.post('http://localhost:5030/api/Todo', newTodo)
       .then(res => {
         console.log('Todo added successfully:', res.data);
         alert('Todo added successfully');
@@ -74,7 +76,7 @@ const TodoList = ({ tripId }) => {
         console.error("Error details:", err.response?.data);
       });
   };
-
+  
   // Handle search input change
   const handleSearchChange = (e) => setSearchText(e.target.value);
 

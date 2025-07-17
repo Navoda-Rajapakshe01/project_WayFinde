@@ -14,7 +14,7 @@ builder.Services.AddScoped<IWeatherService, WeatherService>();
 
 // Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("RandulaConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
 
 
 

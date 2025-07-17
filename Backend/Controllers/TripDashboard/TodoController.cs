@@ -5,6 +5,8 @@ using Backend.Models;
 using Backend.DTO;
 using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Backend.Controllers
 {
@@ -30,15 +32,15 @@ namespace Backend.Controllers
                 return NotFound("Trip not found");
 
             var todoItems = await _context.TodoItems
-                .Where(t => t.TripId == tripId)
+                .Where(t => t.TripId == tripId) // tripId is int here
                 .Select(t => new TodoItemDTO
                 {
-                    Id = t.Id.ToString(),
+                    Id = t.Id,
                     TaskName = t.TaskName,
                     TaskStatus = t.TaskStatus,
                     CreatedAt = t.CreatedAt,
                     UpdatedAt = t.UpdatedAt,
-                    TripId = t.TripId.ToString()
+                    TripId = t.TripId // Directly use the integer TripId
                 })
                 .ToListAsync();
 
@@ -53,12 +55,12 @@ namespace Backend.Controllers
             var todoItems = await _context.TodoItems
                 .Select(t => new TodoItemDTO
                 {
-                    Id = t.Id.ToString(),
+                    Id = t.Id,
                     TaskName = t.TaskName,
                     TaskStatus = t.TaskStatus,
                     CreatedAt = t.CreatedAt,
                     UpdatedAt = t.UpdatedAt,
-                    TripId = t.TripId.ToString()
+                    TripId = t.TripId // Directly use the integer TripId
                 })
                 .ToListAsync();
             return Ok(todoItems);
@@ -73,12 +75,12 @@ namespace Backend.Controllers
                 .Where(t => t.Id == id)
                 .Select(t => new TodoItemDTO
                 {
-                    Id = t.Id.ToString(),
+                    Id = t.Id,
                     TaskName = t.TaskName,
                     TaskStatus = t.TaskStatus,
                     CreatedAt = t.CreatedAt,
                     UpdatedAt = t.UpdatedAt,
-                    TripId = t.TripId.ToString()
+                    TripId = t.TripId // Directly use the integer TripId
                 })
                 .FirstOrDefaultAsync();
 
@@ -101,7 +103,7 @@ namespace Backend.Controllers
             }
 
             // Validate that the trip exists
-            var trip = await _context.Trips.FindAsync(int.Parse(todoItemDto.TripId));
+            var trip = await _context.Trips.FindAsync(todoItemDto.TripId); // Use integer TripId directly
             if (trip == null)
             {
                 return BadRequest("Invalid TripId");
@@ -110,8 +112,8 @@ namespace Backend.Controllers
             var todoItem = new TodoItem
             {
                 TaskName = todoItemDto.TaskName,
-                TaskStatus = "Active", // Set default status to "Active"
-                TripId = int.Parse(todoItemDto.TripId) // Use TripId from the DTO
+                TaskStatus = "Active", // Default status
+                TripId = todoItemDto.TripId // Use the integer TripId directly
             };
 
             _context.TodoItems.Add(todoItem);
@@ -119,12 +121,12 @@ namespace Backend.Controllers
 
             var createdItem = new TodoItemDTO
             {
-                Id = todoItem.Id.ToString(),
+                Id = todoItem.Id,
                 TaskName = todoItem.TaskName,
                 TaskStatus = todoItem.TaskStatus,
                 CreatedAt = todoItem.CreatedAt,
                 UpdatedAt = todoItem.UpdatedAt,
-                TripId = todoItem.TripId.ToString()
+                TripId = todoItem.TripId // Use the integer TripId directly
             };
 
             return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, createdItem);
@@ -154,12 +156,12 @@ namespace Backend.Controllers
 
             var updatedItem = new TodoItemDTO
             {
-                Id = todoItem.Id.ToString(),
+                Id = todoItem.Id,
                 TaskName = todoItem.TaskName,
                 TaskStatus = todoItem.TaskStatus,
                 CreatedAt = todoItem.CreatedAt,
                 UpdatedAt = todoItem.UpdatedAt,
-                TripId = todoItem.TripId.ToString()
+                TripId = todoItem.TripId // Use the integer TripId directly
             };
 
             return Ok(updatedItem);
@@ -183,12 +185,12 @@ namespace Backend.Controllers
 
             var updatedItem = new TodoItemDTO
             {
-                Id = todoItem.Id.ToString(),
+                Id = todoItem.Id,
                 TaskName = todoItem.TaskName,
                 TaskStatus = todoItem.TaskStatus,
                 CreatedAt = todoItem.CreatedAt,
                 UpdatedAt = todoItem.UpdatedAt,
-                TripId = todoItem.TripId.ToString()
+                TripId = todoItem.TripId // Use the integer TripId directly
             };
 
             return Ok(updatedItem);

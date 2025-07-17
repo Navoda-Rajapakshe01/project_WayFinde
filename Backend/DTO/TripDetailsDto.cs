@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Backend.DTOs;
 
-namespace Backend.DTO
+namespace Backend.DTOs
 {
     public class TripDetailsDto
     {
@@ -9,9 +10,6 @@ namespace Backend.DTO
         public required string TripName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public double? TripDistance { get; set; }
-        public string? TripTime { get; set; }
-        public decimal? TotalSpend { get; set; }
         public required List<PlaceDto> Places { get; set; }
     }
 
@@ -23,11 +21,14 @@ namespace Backend.DTO
         public string? AvgTime { get; set; }
         public decimal? AvgSpend { get; set; }
         public double? Rating { get; set; }
-        public required string MainImageUrl { get; set; }
+        
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+
+        public required string MainImageUrl { get; set; }
+
         public DistrictWithPlacesCountDTO District { get; set; } = null!;
- 
+
 
     }
 }

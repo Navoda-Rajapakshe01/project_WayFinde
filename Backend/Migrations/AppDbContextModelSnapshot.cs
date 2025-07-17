@@ -288,7 +288,7 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Dsitrict")
+                    b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -712,11 +712,6 @@ namespace Backend.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -726,6 +721,11 @@ namespace Backend.Migrations
                     b.Property<decimal>("TripDistance")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("TripName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<decimal>("TripTime")
                         .HasColumnType("decimal(18,2)");
 
@@ -734,8 +734,9 @@ namespace Backend.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -816,6 +817,9 @@ namespace Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
                         .HasColumnType("int");
 
                     b.HasKey("TripId", "PlaceId");
@@ -937,9 +941,18 @@ namespace Backend.Migrations
                     b.Property<int>("NumberOfPassengers")
                         .HasColumnType("int");
 
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("PricePerDay")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SupplierUsername")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransmissionType")
                         .IsRequired()
@@ -952,6 +965,8 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DistrictId");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("Vehicles");
                 });
@@ -1175,13 +1190,11 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.DashboardNote", b =>
                 {
-                    b.HasOne("Backend.Models.Trip", "Trip")
+                    b.HasOne("Backend.Models.Trip", null)
                         .WithMany("DashboardNotes")
                         .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("Backend.Models.Follows", b =>
@@ -1288,7 +1301,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.TripCollaborator", b =>
                 {
                     b.HasOne("Backend.Models.Trip", "Trip")
-                        .WithMany("TripCollaborators")
+                        .WithMany("Collaborators")
                         .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1296,7 +1309,7 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.UserNew", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Trip");
@@ -1369,7 +1382,15 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Backend.Models.UserNew", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("District");
+
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
@@ -1451,13 +1472,13 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
+                    b.Navigation("Collaborators");
+
                     b.Navigation("DashboardNotes");
 
                     b.Navigation("TodoItems");
 
                     b.Navigation("TravelBudgets");
-
-                    b.Navigation("TripCollaborators");
 
                     b.Navigation("TripDates");
 
