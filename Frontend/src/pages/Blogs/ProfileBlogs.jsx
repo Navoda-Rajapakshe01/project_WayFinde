@@ -221,10 +221,18 @@ const ProfileBlogs = () => {
 
     if (!blogId) return;
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this blog?"
-    );
-    if (!confirmDelete) return;
+    // Replace window.confirm with SweetAlert2 confirmation dialog
+    const result = await Swal.fire({
+      title: "Delete Blog?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const response = await axios.delete(
@@ -257,6 +265,12 @@ const ProfileBlogs = () => {
       }
     } catch (error) {
       console.error("Error deleting blog:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Deletion Failed",
+        text: "Unable to delete this blog. Please try again.",
+        footer: '<a href="#">Contact support if the problem persists</a>',
+      });
       setError("Failed to delete blog. Please try again.");
     }
   };
