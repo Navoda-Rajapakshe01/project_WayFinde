@@ -8,8 +8,8 @@ const ProfileHeadSection = () => {
   const [bio, setBio] = useState("");
   const [blogCount, setBlogCount] = useState(0);
   const [postCount, setPostCount] = useState(0);
-  const [FollowerCount, setFollowerCount] = useState(0);
-  const [FollowingCount, setFollowingCount] = useState(0);
+  const [followersCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -52,8 +52,8 @@ const ProfileHeadSection = () => {
           blogCount,
           postsCount,
           postCount,
-          FollowersCount,
-          FollowingCount,
+          followersCount,
+          followingCount,
         } = response.data;
 
         // Set user profile data
@@ -64,8 +64,8 @@ const ProfileHeadSection = () => {
         // Set counts with fallbacks for different property names
         setBlogCount(blogsCount || blogCount || 0);
         setPostCount(postsCount || postCount || 0);
-        setFollowerCount(FollowersCount || 0);
-        setFollowingCount(FollowingCount || 0);
+        setFollowerCount(followersCount || 0);
+        setFollowingCount(followingCount || 0);
       } catch (error) {
         console.error(
           "Failed to fetch profile:",
@@ -77,7 +77,22 @@ const ProfileHeadSection = () => {
       }
     };
 
+    // Function to handle blog deletion events
+    const handleBlogDeleted = () => {
+      console.log("Blog deleted event received, updating count");
+      setBlogCount((prevCount) => Math.max(0, prevCount - 1));
+    };
+
+    // Add event listener for blog deletion
+    window.addEventListener("blogDeleted", handleBlogDeleted);
+
+    // Fetch profile data on component mount
     fetchUserProfile();
+
+    // Clean up event listener when component unmounts
+    return () => {
+      window.removeEventListener("blogDeleted", handleBlogDeleted);
+    };
   }, []);
 
   return (
@@ -113,12 +128,12 @@ const ProfileHeadSection = () => {
               <div>
                 <strong>Followers</strong>
                 <br />
-                {FollowerCount}
+                {followersCount}
               </div>
               <div>
                 <strong>Following</strong>
                 <br />
-                {FollowingCount}
+                {followingCount}
               </div>
             </div>
             <p className="bio">{bio || "No bio available"}</p>
