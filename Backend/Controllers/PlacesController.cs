@@ -98,6 +98,8 @@ namespace Backend.Controllers
             return Ok(places);
         }
 
+       
+        
         [HttpGet("getAll")]
         public async Task<IActionResult> GetAll()
         {
@@ -112,7 +114,7 @@ namespace Backend.Controllers
                     p.GoogleMapLink,
                     AvgTime = p.AvgTime,
                     AvgSpend = p.AvgSpend,
-                    p.CategoryId,                           
+                    p.CategoryId,
                     CategoryName = p.Category.CategoryName,
                     MainImageUrl = p.MainImageUrl,
 
@@ -133,6 +135,7 @@ namespace Backend.Controllers
 
             return Ok(places);
         }
+
 
 
 
