@@ -9,6 +9,7 @@ import StartLocationModal from "../Components/Modals/StartLocationModal";
 import TravelDatesModal from "../Components/Modals/TravelDatesModal";
 import TripNameModal from "../Components/Modals/TripNameModal";
 import "./CreateTrip.css";
+import { useContext } from "react";
 
 const CreateTrip = () => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const CreateTrip = () => {
   const [tripDistance, setTripDistance] = useState(0);
   const [tripTime, setTripTime] = useState("");
   const [totalSpend, setTotalSpend] = useState(0);
+  const userId = localStorage.getItem("userId");
+  console.log("Logged-in userId from localStorage:", userId);
 
   // Modal states
   const [showStartLocationModal, setShowStartLocationModal] = useState(false);
@@ -122,14 +125,12 @@ const CreateTrip = () => {
       )
     : [];
 
-  // Group places by type
-  const doPlaces = filteredPlaces.filter((place) => place.placeType === "Do");
+  // Group places by categoryId mapping
+  const doPlaces = filteredPlaces.filter((place) => place.categoryId === 4);
   const relaxPlaces = filteredPlaces.filter(
-    (place) => place.placeType === "Relax"
+    (place) => place.categoryId === 3 || place.categoryId === 1
   );
-  const stayPlaces = filteredPlaces.filter(
-    (place) => place.placeType === "Stay"
-  );
+  const stayPlaces = filteredPlaces.filter((place) => place.categoryId === 2);
 
   // Handle district selection
   const handleDistrictSelect = (district) => {
@@ -281,12 +282,9 @@ const CreateTrip = () => {
       // Prepare the trip data
       const tripData = {
         tripName: name,
-        tripDistance,
-        tripTime,
-        totalSpend,
         startDate: startDate ? new Date(startDate).toISOString() : null,
         endDate: endDate ? new Date(endDate).toISOString() : null,
-        userId: "66492bce7d660de8701c9aa1",
+        userId: userId,
         PlaceIds: selectedPlaces.map((place) => place.id),
       };
 

@@ -12,15 +12,6 @@ namespace Backend.Models
         [Required]
         public string TripName { get; set; }
 
-        // Navigation property for many-to-many relation to Places
-        public ICollection<TripPlace> TripPlaces { get; set; } = new List<TripPlace>();
-
-        public double? TripDistance { get; set; }
-
-        public string? TripTime { get; set; }
-
-        public decimal? TotalSpend { get; set; }
-
         [Required]
         public DateTime StartDate { get; set; }
 
@@ -32,7 +23,13 @@ namespace Backend.Models
         public DateTime CreatedAt { get; set; }  // timestamps:true
         public DateTime UpdatedAt { get; set; }
 
+        // Navigation property for many-to-many relation to Places
+        public ICollection<TripPlace> TripPlaces { get; set; } = new List<TripPlace>();
+
         public ICollection<TripCollaborator> Collaborators { get; set; } = new List<TripCollaborator>();
+
+        public ICollection<TripDate> TripDates { get; set; } = new List<TripDate>();
+
 
 
 
