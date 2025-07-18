@@ -16,10 +16,15 @@ namespace Backend.Services
         {
             if (!Guid.TryParse(userId, out var parsedId))
             {
-                return null; // or throw an exception if appropriate
+                throw new ArgumentException("Invalid user ID format.", nameof(userId));
             }
 
-            return await _context.UsersNew.FirstOrDefaultAsync(u => u.Id == parsedId);
+            var user = await _context.UsersNew.FirstOrDefaultAsync(u => u.Id == parsedId);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User not found.");
+            }
+            return user;
         }
 
         public async Task<bool> UpdateUserAsync(Guid userId, string username, string email, string profilePicture)

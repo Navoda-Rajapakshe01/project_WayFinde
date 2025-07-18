@@ -1,0 +1,37 @@
+.calendar-view {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+}
+
+.calendar-dates {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.calendar-date {
+  background-color: #e0e0e0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.calendar-date.active {
+  background-color: #00bcd4;
+  color: white;
+}
+
+.calendar-places {
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+}
+
+.calendar-place {
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+}

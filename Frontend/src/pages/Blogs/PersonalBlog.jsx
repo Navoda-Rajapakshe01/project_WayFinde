@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import { FaComment, FaThumbsUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import "../CSS/PersonalBlog.css";
@@ -23,6 +24,14 @@ const PersonalBlog = () => {
   const [comments, setComments] = useState([]);
   const [commentSubmitting, setCommentSubmitting] = useState(false);
   const [commentError, setCommentError] = useState(null);
+  const [reactionCount, setReactionCount] = useState(0);
+  const [hasReacted, setHasReacted] = useState(false);
+  const [reactionLoading, setReactionLoading] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [followLoading, setFollowLoading] = useState(false);
+  const [isSameUser, setIsSameUser] = useState(false);
 
   PersonalBlog.propTypes = {
     UserId: PropTypes.string.isRequired,
@@ -154,8 +163,20 @@ const PersonalBlog = () => {
         throw new Error(errorData || "Failed to submit comment");
       }
 
-      const newComment = await response.json();
-      console.log("Comment submitted successfully:", newComment);
+      const responseData = await response.json();
+      console.log("Comment submitted successfully:", responseData);
+      const newComment = responseData.comment || responseData;
+
+      // Update the blog's comment count if returned from API
+      if (responseData.blogCommentCount !== undefined) {
+        // If we have blog reference, update it
+        if (blog) {
+          setBlog({
+            ...blog,
+            commentCount: responseData.blogCommentCount,
+          });
+        }
+      }
 
       // Add the new comment to the comments list
       setComments((prevComments) => {
@@ -188,7 +209,6 @@ const PersonalBlog = () => {
       setCommentSubmitting(false);
     }
   };
-
   //function to fetch comments for the current blog
   const fetchComments = async () => {
     if (!id) {
@@ -292,6 +312,167 @@ const PersonalBlog = () => {
       console.error("Error fetching comments:", error);
     }
   };
+  // Function to fetch reaction count
+  const fetchReactionCount = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5030/api/blog/${id}/reactions/count`
+      );
+
+      if (response.ok) {
+        const count = await response.json();
+        setReactionCount(count);
+      }
+    } catch (error) {
+      console.error("Error fetching reaction count:", error);
+    }
+  };
+
+  // Function to check if user has reacted
+  const checkUserReaction = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const response = await fetch(
+        `http://localhost:5030/api/blog/${id}/reactions/status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const hasReacted = await response.json();
+        setHasReacted(hasReacted);
+      }
+    } catch (error) {
+      console.error("Error checking user reaction:", error);
+    }
+  };
+
+  // Function to handle reaction toggle
+  const handleReaction = async () => {
+    try {
+      if (!currentUser) {
+        alert("You must be logged in to react to this blog");
+        return;
+      }
+
+      setReactionLoading(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:5030/api/blog/${id}/react`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setHasReacted(data.reacted);
+        setReactionCount(data.count);
+      }
+    } catch (error) {
+      console.error("Error toggling reaction:", error);
+    } finally {
+      setReactionLoading(false);
+    }
+  };
+
+  const fetchFollowerCounts = async (userId) => {
+    try {
+      // Fetch follower count
+      const followerResponse = await fetch(
+        `http://localhost:5030/api/profile/${userId}/followers/count`
+      );
+
+      if (followerResponse.ok) {
+        const count = await followerResponse.json();
+        setFollowerCount(count);
+      }
+
+      // Fetch following count
+      const followingResponse = await fetch(
+        `http://localhost:5030/api/profile/${userId}/following/count`
+      );
+
+      if (followingResponse.ok) {
+        const count = await followingResponse.json();
+        setFollowingCount(count);
+      }
+    } catch (error) {
+      console.error("Error fetching follower counts:", error);
+    }
+  };
+
+  const checkFollowingStatus = async (userId) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      // Check if current user is viewing their own blog
+      if (currentUser && currentUser.id === userId) {
+        setIsSameUser(true);
+        return;
+      }
+
+      const response = await fetch(
+        `http://localhost:5030/api/profile/${userId}/following/status`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const status = await response.json();
+        setIsFollowing(status);
+      }
+    } catch (error) {
+      console.error("Error checking following status:", error);
+    }
+  };
+
+  const handleFollow = async () => {
+    if (!currentUser) {
+      alert("You must be logged in to follow users");
+      return;
+    }
+
+    try {
+      setFollowLoading(true);
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:5030/api/profile/${blog.user.id}/follow`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setIsFollowing(data.following);
+        setFollowerCount(data.followerCount);
+      }
+    } catch (error) {
+      console.error("Error following user:", error);
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -350,11 +531,31 @@ const PersonalBlog = () => {
           setLoading(false);
         }
       };
-      await Promise.all([fetchBlog(), fetchCurrentUser(), fetchComments()]);
+      await Promise.all([
+        fetchBlog(),
+        fetchCurrentUser(),
+        fetchComments(),
+        fetchReactionCount(),
+        checkUserReaction(),
+      ]);
+
+      // After blog is fetched, check follow status and counts
+      if (blog && blog.user && blog.user.id) {
+        fetchFollowerCounts(blog.user.id);
+        checkFollowingStatus(blog.user.id);
+      }
     };
 
     fetchData();
   }, [id]);
+
+  // Add another useEffect to handle blog state changes
+  useEffect(() => {
+    if (blog && blog.user && blog.user.id) {
+      fetchFollowerCounts(blog.user.id);
+      checkFollowingStatus(blog.user.id);
+    }
+  }, [blog, currentUser]);
 
   const retryContentFetch = () => {
     if (blog && blog.blogUrl) {
@@ -411,13 +612,105 @@ const PersonalBlog = () => {
         )}
       </div>
 
-      {/* Comments Section */}
-      <div className="comments-section">
-        <h3>Comments</h3>
+      {blog.coverImageUrl && (
+        <div className="blogImages">
+          <img src={blog.coverImageUrl} alt="Blog cover" />
+        </div>
+      )}
 
-        {/* Add Comment Form */}
-        {currentUser && (
-          <div className="add-comment-form">
+      <div className="writerDetails space-x-4">
+        <div>
+          <img
+            src={blog.user.profilePictureUrl}
+            alt="User Profile"
+            className="profile-img"
+          />
+        </div>
+        <div className="name-container">
+          <div className="writerName">
+            Written by {blog.author || "Anonymous"}
+          </div>
+          <div className="numOfFollowersFollowing">
+            <div className="numOfFollowers">{followerCount} Followers</div>
+            <div className="numOfFollowers">{followingCount} Following</div>
+          </div>
+        </div>
+        <div className="follow-react-container">
+          {!isSameUser && (
+            <button
+              className={`follow_button ${isFollowing ? "following" : ""}`}
+              onClick={handleFollow}
+              disabled={followLoading || isSameUser}
+            >
+              {followLoading
+                ? "Processing..."
+                : isFollowing
+                ? "Following"
+                : "Follow"}
+            </button>
+          )}
+          <div className="reaction-button-container">
+            {/* Your existing reaction button */}
+          </div>
+        </div>
+        <Link>
+          {/* <div className="follow_button">Follow</div> */}
+          <div className="reaction-button-container">
+            <button
+              className={`reaction-button ${hasReacted ? "reacted" : ""}`}
+              onClick={handleReaction}
+              disabled={reactionLoading || !currentUser}
+            >
+              <FaThumbsUp
+                className={`reaction-icon ${hasReacted ? "active" : ""}`}
+              />
+              <span className="reaction-text">
+                {hasReacted ? "Liked" : "Like"}
+              </span>
+              <span className="reaction-count">
+                {reactionCount > 0 && `(${reactionCount})`}
+              </span>
+            </button>
+          </div>
+        </Link>
+      </div>
+
+      <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
+
+      <div>
+        {/* Comment Form */}
+        <div className="commentsArea">
+          <div className="numberOfComments">Comments ({comments.length})</div>
+          <div className="commentsAreaProfileDetails">
+            {userLoading ? (
+              <div className="loading-avatar">Loading...</div>
+            ) : currentUser ? (
+              <>
+                <img
+                  src={
+                    currentUser.profilePictureUrl ||
+                    "https://via.placeholder.com/40"
+                  }
+                  alt={`${currentUser.username}'s profile`}
+                  className="profile-img"
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/40";
+                  }}
+                />
+                {currentUser.username}
+              </>
+            ) : (
+              <>
+                <img
+                  src="https://via.placeholder.com/40"
+                  alt="User Profile"
+                  className="profile-img"
+                />
+                <span>Guest User</span>
+              </>
+            )}
+          </div>
+          <div className="commentAreaAddComments">
             <textarea
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
@@ -425,16 +718,29 @@ const PersonalBlog = () => {
               className="comment-textarea"
             />
             <button
-              onClick={handleSubmitComment}
-              disabled={commentSubmitting || !commentText.trim()}
-              className="submit-comment-btn">
-              {commentSubmitting ? "Submitting..." : "Submit Comment"}
+              className="cancelButton"
+              onClick={() => setCommentText("")}
+              disabled={commentSubmitting || !commentText.trim()}>
+              Cancel
             </button>
-            {commentError && (
-              <div className="comment-error">{commentError}</div>
-            )}
+            <button
+              className="submitButton"
+              onClick={handleSubmitComment}
+              disabled={
+                commentSubmitting || !commentText.trim() || !currentUser
+              }>
+              {commentSubmitting ? "Submitting..." : "Submit"}
+            </button>
           </div>
-        )}
+          {commentError && (
+            <div
+              className="error-message"
+              style={{ color: "red", marginTop: "5px" }}>
+              Error: {commentError}
+            </div>
+          )}
+          <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
+        </div>
 
         {/* Comments List */}
         <div className="comments-list">

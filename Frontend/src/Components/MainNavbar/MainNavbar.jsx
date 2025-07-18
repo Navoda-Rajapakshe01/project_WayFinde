@@ -1,4 +1,19 @@
-import React, { useState, useEffect, useCallback } from "react";
+import axios from "axios";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import {
+  FaBook,
+  FaBus,
+  FaCog,
+  FaComments,
+  FaHome,
+  FaHotel,
+  FaNewspaper,
+  FaPencilAlt,
+  FaPlaneDeparture,
+  FaSignOutAlt,
+  FaSuitcase,
+  FaUserCircle,
+} from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../Authentication/AuthContext/AuthContext";
 import { useProfileImage } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
@@ -6,11 +21,10 @@ import "./MainNavbar.css";
 
 const MainNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("/");
   const [profileData, setProfileData] = useState({
     profileImage: "/defaultprofilepicture.png",
-    username: "User",
-    contactEmail: "user@example.com",
+    username: "",
+    contactEmail: "",
   });
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
@@ -25,6 +39,13 @@ const MainNavbar = () => {
   const profileImageFromContext =
     profileImageContext?.profileImage || "/defaultprofilepicture.png";
 
+  const authContext = useContext(AuthContext);
+  const user = authContext?.user || null;
+  console.log("MainNavbar user:", user);
+
+  const loading = authContext?.loading || false;
+
+  // Logout handler
   const logout = useCallback(() => {
     if (authContext?.logout) {
       authContext.logout();
@@ -36,12 +57,12 @@ const MainNavbar = () => {
     }
   }, [authContext]);
 
-  // Set active tab based on location - Fixed dependency array
+  // Update active tab on location change
   useEffect(() => {
     setActiveTab(location.pathname);
-  }, [location]);
+  }, [location.pathname]);
 
-  // Close popup when clicking outside - Fixed event listener cleanup
+  // Close profile popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isOpen && !event.target.closest(".profile-popup")) {
@@ -55,77 +76,220 @@ const MainNavbar = () => {
     };
   }, [isOpen]);
 
+  // Fetch user profile data when user or context image changes
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (!user) {
+        setProfileData({
+          profileImage: "/default-profile.png",
+          username: "",
+          contactEmail: "",
+        });
+        return;
+      }
+
+      setIsLoadingProfile(true);
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Authentication token not found");
+
+        const response = await axios.get(
+          "http://localhost:5030/api/profile/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setProfileData({
+          profileImage:
+            response.data.profilePictureUrl || profileImageFromContext,
+          username: response.data.username || user?.username || "User",
+          contactEmail:
+            response.data.contactemail ||
+            user?.contactemail ||
+            "user@example.com",
+        });
+      } catch (err) {
+        console.error("Error fetching profile data:", err);
+        setProfileData({
+          profileImage: profileImageFromContext,
+          username: user?.username || "User",
+          contactEmail: user?.contactemail || "user@example.com",
+        });
+      } finally {
+        setIsLoadingProfile(false);
+      }
+    };
+
+    fetchProfileData();
+  }, [user, profileImageFromContext]);
+
+  // Navigation handlers
+  const handleNavigation = useCallback(
+    (path) => {
+      navigate(path);
+      setIsOpen(false);
+    },
+    [navigate]
+  );
+
+  const togglePopup = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
+
   const handleSignIn = useCallback(() => {
     navigate("/signin");
   }, [navigate]);
 
-  const handleProfileMenuClick = (item) => {
-    if (item.name === "Logout") {
-      logout();
-    } else {
-      navigate(item.path);
-    }
-    setIsOpen(false);
-  };
+  const handleProfileMenuClick = useCallback(
+    (item) => {
+      setIsOpen(false);
 
-  const profileMenuItems = [
-    {
-      name: "Profile",
-      path: "/profile",
-      icon: "👤",
+      setTimeout(() => {
+        if (item.name === "Logout") {
+          logout();
+        } else {
+          handleNavigation(item.path);
+        }
+      }, 10);
     },
-    {
-      name: "Settings",
-      path: "/settings",
-      icon: "⚙️",
-    },
-    {
-      name: "Logout",
-      path: "#",
-      icon: "🚪",
-    },
+    [logout, handleNavigation]
+  );
+
+  // Show loading indicator while auth loading
+  if (loading) {
+    return (
+      <nav className="navbar">
+        <div className="navbar-container">
+          <div className="navbar-loading">Loading authentication...</div>
+        </div>
+      </nav>
+    );
+  }
+
+  const menuItems = [
+    { name: "Home", icon: <FaHome />, path: "/" },
+    { name: "Plan a Trip", icon: <FaPlaneDeparture />, path: null },
+    { name: "Accommodation", icon: <FaHotel />, path: "/accommodation" },
+    { name: "Vehicle", icon: <FaBus />, path: "/vehicle" },
+    { name: "Blog", icon: <FaBook />, path: "/blog" },
+    { name: "Places to Visit", icon: <FaBook />, path: "/thingstodo" },
   ];
 
-  const navItems = [
-    { name: "Home", path: "/" },
-    { name: "Accommodation", path: "/accommodation" },
-    { name: "Vehicle", path: "/vehicle" },
-    { name: "Things to Do", path: "/thingstodo" },
-    { name: "Blog", path: "/blog" },
-    { name: "Trip Planner", path: "/plantrip" },
+  const profileMenuItems = [
+    { name: "Profile", icon: <FaUserCircle />, path: "/profile/profileBlogs" },
+    { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
+    { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
+    { name: "Chat", icon: <FaComments />, path: "/chat" },
+    { name: "Blogs", icon: <FaNewspaper />, path: "/profile/profileBlogs" },
+    { name: "Settings", icon: <FaCog />, path: "/settings" },
+    { name: "Logout", icon: <FaSignOutAlt />, path: null },
   ];
 
   return (
     <nav className="navbar">
-      <div className="nav-container">
-        <Link to="/" className="nav-logo">
-          <img src="/src/assets/Images/logo.png" alt="Logo" />
-        </Link>
-
-        <div className="nav-menu">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              className={`nav-link ${activeTab === item.path ? "active" : ""}`}>
-              {item.name}
-            </Link>
-          ))}
+      <div className="navbar-container">
+        {/* Logo Section */}
+        <div className="navbar-logo">
+          <Link to="/">
+            <img
+              src={logo || "/placeholder.svg"}
+              alt="WAYFIND"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/placeholder.svg";
+              }}
+            />
+          </Link>
         </div>
 
-        <div className="nav-auth">
-          {loading ? (
-            <div className="loading-spinner">Loading...</div>
-          ) : user ? (
-            <div className="profile-section">
-              <div
-                className="profile-trigger"
-                onClick={() => setIsOpen(!isOpen)}>
+        {/* Main Navigation Menu */}
+        <ul className="navbar-menu">
+          {menuItems.map((item) => {
+            if (item.name === "Plan a Trip") {
+              return (
+                <li key={item.name} className="navbar-item dropdown-trip">
+                  <div className="navbar-link dropdown-toggle">
+                    <span className="navbar-icon">{item.icon}</span>
+                    <span className="navbar-text">Plan a Trip</span>
+                    <div className="dropdown-menu-trip">
+                      {user ? (
+                        <>
+                          <Link to="/plantrip" className="dropdown-item">
+                            Create a New Trip
+                          </Link>
+                          <Link to="/alltrips" className="dropdown-item">
+                            My All Trips
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <div
+                            className="dropdown-item"
+                            onClick={() =>
+                              navigate("/signin?redirect=/plantrip")
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            Create a New Trip
+                          </div>
+                          <div
+                            className="dropdown-item"
+                            onClick={() =>
+                              navigate("/signin?redirect=/alltrips")
+                            }
+                            style={{ cursor: "pointer" }}
+                          >
+                            My All Trips
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              );
+            }
+
+            return (
+              <li
+                key={item.name}
+                className={`navbar-item${
+                  activeTab === item.path ? " active" : ""
+                }`}>
+                <Link
+                  to={
+                    item.name === "Vehicle"
+                      ? user?.role === "TransportProvider"
+                        ? "/vehicle/supplier"
+                        : "/vehicle"
+                      : item.name === "Accommodation"
+                      ? user?.role === "AccommodationProvider"
+                        ? "/accommodation/supplier"
+                        : "/accommodation"
+                      : item.path
+                  }
+                  className="navbar-link">
+                  <span className="navbar-icon">{item.icon}</span>
+                  <span className="navbar-text">{item.name}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Profile or Auth Buttons */}
+        <div className="navbar-auth-section">
+          {user ? (
+            <div className="navbar-profile" onClick={togglePopup}>
+              <div className="profile-wrapper">
                 <img
-                  src={profileData.profileImage || profileImageFromContext}
-                  alt="Profile"
-                  className="profile-image"
+                  src={profileData.profileImage || "/defaultprofilepicture.png"}
+                  alt="User Profile"
+                  className="profile-img"
                   onError={(e) => {
+                    e.target.onerror = null;
                     e.target.src = "/defaultprofilepicture.png";
                   }}
                 />
@@ -135,15 +299,36 @@ const MainNavbar = () => {
 
               {isOpen && (
                 <div className="profile-popup">
-                  {profileMenuItems.map((item) => (
-                    <button
-                      key={item.name}
-                      className="profile-menu-item"
-                      onClick={() => handleProfileMenuClick(item)}>
-                      <span className="menu-icon">{item.icon}</span>
-                      {item.name}
-                    </button>
-                  ))}
+                  <div className="popup-header">
+                    <img
+                      src={profileData.profileImage}
+                      alt="User Profile"
+                      className="profile-img"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/defaultprofilepicture.png";
+                      }}
+                    />
+                    <span className="profile-indicator"></span>
+                    <div className="popup-user-info">
+                      <h4>{profileData.username}</h4>
+                      <p>@{profileData.contactEmail}</p>
+                    </div>
+                  </div>
+
+                  <div className="popup-divider"></div>
+
+                  <div className="popup-menu">
+                    {profileMenuItems.map((item) => (
+                      <div
+                        key={item.name}
+                        className="popup-item"
+                        onClick={() => handleProfileMenuClick(item)}>
+                        <span className="popup-icon">{item.icon}</span>
+                        <span>{item.name}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

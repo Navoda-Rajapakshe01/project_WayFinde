@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch, FaFilter, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 
@@ -46,7 +45,9 @@ const ReviewsManagement = () => {
           }
         );
         if (res.ok) {
-          setReviews((prev) => prev.filter((review) => review.id !== reviewId));
+          setReviews((prev) =>
+            prev.filter((review) => review.id !== reviewId)
+          );
         } else {
           Swal.fire({
             icon: "error",
@@ -92,8 +93,8 @@ const ReviewsManagement = () => {
 
   if (isLoading) {
     return (
-      <div className="section-loading">
-        <div className="loading-spinner"></div>
+      <div className="admin-section-loading">
+        <div className="admin-loading-spinner"></div>
         <p>Loading reviews...</p>
       </div>
     );
@@ -105,6 +106,7 @@ const ReviewsManagement = () => {
         <h1 className="page-title">Reviews Management</h1>
       </div>
 
+      {/* ✅ Fixed Filter/Search Bar */}
       <div className="adminfilter-bar">
         <div className="adminsearch-box">
           <FaSearch className="adminsearch-icon" />
@@ -116,7 +118,7 @@ const ReviewsManagement = () => {
           />
         </div>
 
-        <div className="adminfilters">
+        <div className="adminfilter-dropdown-group">
           <div className="adminfilter-dropdown">
             <FaFilter className="adminfilter-icon" />
             <select
@@ -147,8 +149,8 @@ const ReviewsManagement = () => {
         </div>
       </div>
 
-      <div className="table-container">
-        <table className="data-table">
+      <div className="admin-table-container">
+        <table className="admin-data-table">
           <thead>
             <tr>
               <th>#</th>

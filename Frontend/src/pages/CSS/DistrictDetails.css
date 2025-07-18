@@ -1,5 +1,5 @@
 /* Container for the district places */
-.district-places-container {
+.ttd-district-places-container {
   padding: 40px 20px;
   max-width: 1400px;
   margin: 0 auto;
@@ -7,12 +7,12 @@
 }
 
 /* Header for the District */
-.district-header {
+.ttd-district-header {
   text-align: center;
   margin-bottom: 40px;
 }
 
-.district-title {
+.ttd-district-title {
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--text-color);
@@ -23,7 +23,7 @@
   margin-bottom: 10px;
 }
 
-.district-title::after {
+.ttd-district-title::after {
   content: "";
   position: absolute;
   bottom: 0;
@@ -35,19 +35,19 @@
   border-radius: 2px;
 }
 
-.district-subtitle {
+.ttd-district-subtitle {
   font-size: 1.2rem;
   color: var(--text-light);
   margin: 0;
 }
 
 /* Categories Wrapper */
-.categories-wrapper {
+.ttd-categories-wrapper {
   margin-bottom: 30px;
 }
 
 /* Grid for displaying place cards */
-.places-grid {
+.ttd-places-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 30px;
@@ -55,7 +55,7 @@
 }
 
 /* Individual place card styles */
-.place-card {
+.ttd-place-card {
   background-color: var(--background);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
@@ -68,30 +68,30 @@
   border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.place-card:hover {
+.ttd-place-card:hover {
   transform: translateY(-10px);
   box-shadow: var(--box-shadow-hover);
 }
 
-.place-image-container {
+.ttd-place-image-container {
   position: relative;
   width: 100%;
   height: 200px;
   overflow: hidden;
 }
 
-.place-image {
+.ttd-place-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
 
-.place-card:hover .place-image {
+.ttd-place-card:hover .place-image {
   transform: scale(1.1);
 }
 
-.place-category {
+.ttd-place-category {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -104,14 +104,14 @@
   text-transform: uppercase;
 }
 
-.place-info {
+.ttd-place-info {
   padding: 20px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
 
-.place-name {
+.ttd-place-name {
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 10px;
@@ -121,7 +121,7 @@
   white-space: nowrap;
 }
 
-.place-description {
+.ttd-place-description {
   color: var(--text-light);
   font-size: 0.95rem;
   line-height: 1.5;
@@ -134,7 +134,7 @@
   flex-grow: 1;
 }
 
-.view-details-btn {
+.ttd-view-details-btn {
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -149,14 +149,14 @@
   box-shadow: 0 4px 10px rgba(20, 185, 213, 0.3);
 }
 
-.view-details-btn:hover {
+.ttd-view-details-btn:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(20, 185, 213, 0.4);
 }
 
 /* No places available text */
-.no-places {
+.ttd-no-places {
   text-align: center;
   font-size: 1.2rem;
   color: var(--text-light);
@@ -167,7 +167,7 @@
 }
 
 /* Loading State */
-.loading-container {
+.ttd-loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -176,7 +176,7 @@
   width: 100%;
 }
 
-.loading-spinner {
+.ttd-loading-spinner {
   width: 50px;
   height: 50px;
   border: 5px solid rgba(20, 185, 213, 0.2);
@@ -192,13 +192,13 @@
   }
 }
 
-.loading-container p {
+.ttd-loading-container p {
   font-size: 1.1rem;
   color: var(--text-light);
 }
 
 /* Error State */
-.error-container {
+.ttd-error-container {
   text-align: center;
   padding: 40px;
   background-color: var(--background-alt);
@@ -206,13 +206,13 @@
   margin: 30px 0;
 }
 
-.error-container p {
+.ttd-error-container p {
   font-size: 1.1rem;
   color: var(--text-light);
   margin-bottom: 20px;
 }
 
-.retry-button {
+.ttd-retry-button {
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -224,52 +224,52 @@
   transition: var(--transition);
 }
 
-.retry-button:hover {
+.ttd-retry-button:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
 }
 
 /* Responsive adjustments */
 @media (max-width: 992px) {
-  .district-title {
+  .ttd-district-title {
     font-size: 2.2rem;
   }
 
-  .places-grid {
+  .ttd-places-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
   }
 }
 
 @media (max-width: 768px) {
-  .district-title {
+  .ttd-district-title {
     font-size: 2rem;
   }
 
-  .district-subtitle {
+  .ttd-district-subtitle {
     font-size: 1.1rem;
   }
 
-  .places-grid {
+  .ttd-places-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
   }
 }
 
 @media (max-width: 480px) {
-  .district-title {
+  .ttd-district-title {
     font-size: 1.8rem;
   }
 
-  .district-places-container {
+  .ttd-district-places-container {
     padding: 30px 15px;
   }
 
-  .place-image-container {
+  .ttd-place-image-container {
     height: 180px;
   }
 
-  .place-name {
+  .ttd-place-name {
     font-size: 1.2rem;
   }
 }

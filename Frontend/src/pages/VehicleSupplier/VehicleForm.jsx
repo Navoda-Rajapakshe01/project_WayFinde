@@ -14,25 +14,43 @@ const initialState = {
   transmissionType: "",
   amenities: [],
   supplierId: "",
-  districtId: "", // <-- new
+  districtId: "",
 };
 
 const AMENITY_OPTIONS = [
   "Air Conditioning",
-  "GPS",
-  "Bluetooth",
+  "GPS Navigation",
+  "Bluetooth Connectivity",
+  "USB Charging Ports",
   "Child Seat",
   "Sunroof",
   "Leather Seats",
-  "USB Charging",
   "Roof Rack",
+  "Reverse Camera",
+  "Parking Sensors",
+  "Dash Cam",
+  "First Aid Kit",
+  "Extra Luggage Space",
+  "Cool Box / Mini Fridge",
 ];
+
+// NEW: Vehicle type max capacities
+const VEHICLE_TYPE_MAX_CAPACITY = {
+  Motorcycle: 2,
+  TukTuk: 3,
+  Hatchback: 4,
+  Sedan: 5,
+  SUV: 7,
+  Van: 10,
+  Commuter: 15,
+};
 
 const VehicleForm = ({ onClose, onSuccess, onFail }) => {
   const [form, setForm] = useState(initialState);
   const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [districts, setDistricts] = useState([]); // <-- new
+  const [districts, setDistricts] = useState([]);
+  const [maxSeats, setMaxSeats] = useState(20); // NEW: default max seats
 
   useEffect(() => {
     const savedSupplierId = localStorage.getItem("supplierId");
@@ -44,7 +62,6 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
         supplierId: "123e4567-e89b-12d3-a456-426614174000",
       }));
     }
-    // Load district list
     axios.get("http://localhost:5030/api/district").then((res) => {
       setDistricts(res.data);
     });
@@ -52,7 +69,24 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+
+    if (name === "type") {
+      const max = VEHICLE_TYPE_MAX_CAPACITY[value] || 20;
+      setMaxSeats(max);
+      setForm((prev) => ({
+        ...prev,
+        type: value,
+        NumberOfPassengers:
+          prev.NumberOfPassengers > max
+            ? max.toString()
+            : prev.NumberOfPassengers,
+      }));
+    } else if (name === "NumberOfPassengers") {
+      const clampedValue = Math.min(Number(value), maxSeats);
+      setForm({ ...form, [name]: clampedValue.toString() });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
   const handleImageChange = (e) => {
@@ -117,7 +151,7 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
     formData.append("FuelType", form.FuelType);
     formData.append("transmissionType", form.transmissionType);
     formData.append("SupplierId", form.supplierId);
-    formData.append("DistrictId", form.districtId); // <-- add DistrictId
+    formData.append("DistrictId", form.districtId);
 
     form.amenities.forEach((a) => formData.append("Amenities", a));
     form.images.forEach((img) => formData.append("Images", img));
@@ -128,6 +162,7 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
       });
       alert("Vehicle posted successfully!");
       setForm(initialState);
+      setMaxSeats(20); // NEW: reset maxSeats
       onSuccess();
     } catch (error) {
       console.error("Submission error:", error.response || error.message);
@@ -209,12 +244,13 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
               <label>Vehicle Type*</label>
               <select name="type" value={form.type} onChange={handleChange}>
                 <option value="">Select Type</option>
-                <option value="SUV">SUV</option>
-                <option value="Sedan">Sedan</option>
-                <option value="Van">Van</option>
+                <option value="Motorcycle">Motorcycle</option>
+                <option value="TukTuk">Tuk Tuk</option>
                 <option value="Hatchback">Hatchback</option>
-                <option value="Luxury">Luxury</option>
-                <option value="Minibus">Minibus</option>
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Van">Van</option>
+                <option value="Commuter">Commuter</option>
               </select>
             </div>
             <div className="form-group">
@@ -224,9 +260,9 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
                 type="number"
                 value={form.NumberOfPassengers}
                 onChange={handleChange}
-                placeholder="e.g. 5"
+                placeholder={`1 - ${maxSeats}`} // NEW
                 min="1"
-                max="20"
+                max={maxSeats} // NEW
               />
             </div>
           </div>

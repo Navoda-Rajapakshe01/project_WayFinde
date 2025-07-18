@@ -59,6 +59,7 @@ namespace Backend.Services
             {
                 Username = request.Username,
                 PasswordHash = new PasswordHasher<UserNew>().HashPassword(null, request.Password),
+                ContactEmail = request.ContactEmail,
                 Role = request.Role // Assign the role from the request
             };
 

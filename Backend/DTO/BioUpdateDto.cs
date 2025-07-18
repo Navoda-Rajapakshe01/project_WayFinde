@@ -2,6 +2,6 @@
 {
     public class BioUpdateDto
     {
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
     }
 }

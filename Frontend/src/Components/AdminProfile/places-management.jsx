@@ -238,8 +238,8 @@ const PlacesManagement = () => {
           <p>No places found matching your criteria.</p>
         </div>
       ) : (
-        <div className="table-container">
-          <table className="data-table">
+        <div className="admin-table-container">
+          <table className="admin-data-table">
             <thead>
               <tr>
                 <th>#</th>
@@ -293,14 +293,14 @@ const PlacesManagement = () => {
       )}
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2 className="modal-title">Add New Place</h2>
+        <div className="admin-modal-overlay">
+          <div className="admin-modal-content">
+            <h2 className="admin-modal-title">Add New Place</h2>
 
             <form onSubmit={handleAddPlace}>
-              <div className="form-group">
+              <div className="admin-form-group">
                 <select
-                  className="form-select"
+                  className="admin-form-select"
                   value={selectedDistrict}
                   onChange={(e) => setSelectedDistrict(e.target.value)}
                   required
@@ -408,7 +408,7 @@ const PlacesManagement = () => {
                   )}
                 </label>
 
-                <div className="modal-buttons">
+                <div className="admin-modal-buttons">
                   <button
                     type="button"
                     onClick={() => setShowModal(false)}

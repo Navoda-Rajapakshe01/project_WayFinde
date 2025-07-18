@@ -90,6 +90,13 @@
   margin-bottom: 0.75rem;
 }
 
+.rating-number {
+  margin-left: 6px;
+  font-weight: 500;
+  color: #555;
+  font-size: 14px;
+}
+
 .stars {
   display: flex;
 }

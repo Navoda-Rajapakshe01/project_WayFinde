@@ -33,8 +33,8 @@ const VehicleManagement = () => {
         </div>
       </div>
 
-      <div className="table-container">
-        <table className="data-table">
+      <div className="admin-table-container">
+        <table className="admin-data-table">
           <thead>
             <tr>
               <th>ID</th>

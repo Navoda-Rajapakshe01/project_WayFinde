@@ -1,9 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+
+
+
+﻿using Backend.DTOs;
+
+﻿﻿using Microsoft.EntityFrameworkCore;
+
+
+
 using Backend.Models;
-using Backend.DTOs;
-using System.Text.Json;
-using Newtonsoft.Json;
+using Backend.Models.User;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Backend.Data
 {
@@ -26,7 +34,17 @@ namespace Backend.Data
         public DbSet<District> Districts { get; set; }
         public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Review> Reviews { get; set; }
         public DbSet<PlaceImage> PlaceImages { get; set; }
+
+        // Trip and TripPlace
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripPlace> TripPlaces { get; set; }
+        public DbSet<TripCollaborator> TripCollaborator { get; set; }
+        public DbSet<TripDate> TripDate { get; set; }
+
+
+
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
@@ -38,7 +56,7 @@ namespace Backend.Data
         // Travel Budget
         public DbSet<TravelBudget> TravelBudgets { get; set; }
 
-        // Dashboard Notes (NEW)
+        // Dashboard Notes
         public DbSet<DashboardNote> DashboardNote { get; set; }
 
         // Accommodations
@@ -46,7 +64,14 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
+
+
         public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
+
+
+
+        public DbSet<BlogReaction> BlogReactions { get; set; }
+        public object? Amenities { get; internal set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
@@ -57,23 +82,35 @@ namespace Backend.Data
             // DistrictWithPlacesCountDTO is a keyless DTO
             modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
 
-            // Configure relationship between Blog and UserNew if needed
-            // modelBuilder.Entity<Blog>()
-            //     .HasOne<UserNew>()
-            //     .WithMany()
-            //     .HasForeignKey(b => b.UserId);
+            modelBuilder.Entity<TripCollaborator>()
+                .HasOne(tc => tc.Trip)
+                .WithMany(t => t.Collaborators)
+                .HasForeignKey(tc => tc.TripId)
+                .OnDelete(DeleteBehavior.Cascade);  // deleting a trip deletes collaborators
 
-            // Precision for PricePerDay (Vehicles)
+            modelBuilder.Entity<TripCollaborator>()
+                .HasOne(tc => tc.User)
+                .WithMany() // assuming UserNew does not have a collection navigation property for collaborators
+                .HasForeignKey(tc => tc.UserId)
+                .OnDelete(DeleteBehavior.Restrict);  // prevent deleting users if they are collaborators
+
+
+            // Precision for decimal properties
             modelBuilder.Entity<Vehicle>()
                 .Property(v => v.PricePerDay)
                 .HasPrecision(18, 2);
 
-            // Precision for PricePerNight (Accommodations)
-            modelBuilder.Entity<Accommodation>()
-                .Property(a => a.PricePerNight)
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
+
+            // Fix for TravelBudget.Amount precision
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.Amount)
                 .HasPrecision(18, 2);
 
-            // District
+            // Districts Configuration
+            // District configuration
             modelBuilder.Entity<District>()
                 .Property(d => d.Name)
                 .IsRequired()
@@ -97,7 +134,16 @@ namespace Backend.Data
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
 
-            // TodoItem
+            // Review Configuration
+            // Review configuration
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Place)
+                .WithMany(p => p.Reviews)
+                .HasForeignKey(r => r.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // TodoItem Configuration
+            // TodoItem configuration
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
                 .IsRequired()
@@ -129,7 +175,7 @@ namespace Backend.Data
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // DashboardNote rules
+            // DashboardNote configuration
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.NoteTitle)
                 .IsRequired()
@@ -167,7 +213,7 @@ namespace Backend.Data
                     v => string.Join(',', v),
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList())
                 .Metadata.SetValueComparer(new ValueComparer<List<string>>(
-                    (c1, c2) => c1.SequenceEqual(c2),
+                    (c1, c2) => (c1 ?? new List<string>()).SequenceEqual(c2 ?? new List<string>()),
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
 
@@ -193,6 +239,11 @@ namespace Backend.Data
                 .WithMany(u => u.Followers)
                 .HasForeignKey(f => f.FollowedID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Add unique constraint to prevent multiple reactions from same user
+            modelBuilder.Entity<BlogReaction>()
+                .HasIndex(r => new { r.BlogId, r.UserId })
+                .IsUnique();
         }
     }
 }

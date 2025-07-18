@@ -16,9 +16,6 @@ namespace Backend.Models
         [Required]
         public string Role { get; set; } = "NormalUser";
         [Required]
-
-
-
         public string? ServiceType { get; set; } = string.Empty;
         public string? ProfilePictureUrl { get; set; } = string.Empty;
 
@@ -26,6 +23,8 @@ namespace Backend.Models
         public string? LastLoginDate { get; set; } = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
         public string? Bio { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; } = string.Empty;
+        public int FollowersCount { get; set; } = 0;
+        public int FollowingCount { get; set; } = 0;
 
         public ICollection<Blog> Blogs { get; set; } = new List<Blog>();
         // Navigation properties

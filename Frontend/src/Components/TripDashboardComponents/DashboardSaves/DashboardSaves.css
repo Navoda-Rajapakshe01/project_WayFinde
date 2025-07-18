@@ -68,7 +68,6 @@ input[type='text'] {
   font-size: 14px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  margin-top: 10px;
 }
 
 .to-do-card, .budget-card {

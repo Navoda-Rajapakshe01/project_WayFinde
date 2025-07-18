@@ -40,16 +40,7 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
 
   drag(drop(ref));
 
-  const {
-    id,
-    name,
-    avgTime,
-    avgSpend,
-    rating,
-    howManyRated,
-    mainImageUrl,
-    district,
-  } = place;
+  const { id, name, avgTime, avgSpend, rating, mainImageUrl, district } = place;
 
   const displayName = name || "Unnamed Place";
   const defaultImage = `/placeholder.svg?query=${displayName}`;
@@ -110,16 +101,19 @@ const PlaceItem = ({ place, index, order, movePlace, removePlace }) => {
                 ★
               </span>
             ))}
-            <span className="rating-value">{rating}</span>
-            <span className="rating-count">({howManyRated})</span>
+            <span className="rating-value">
+              {typeof rating === "number"
+                ? `${rating.toFixed(1)} / 5`
+                : "No Rating"}
+            </span>
           </div>
         </div>
       </div>
 
       <button
+        className="remove-place-button"
         onClick={() => removePlace(id)}
         aria-label="Remove place"
-        className="p-2 rounded-full bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
       >
         <FiTrash2 size={18} />
       </button>
