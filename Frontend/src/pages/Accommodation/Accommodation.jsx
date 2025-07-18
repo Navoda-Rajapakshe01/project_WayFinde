@@ -164,7 +164,7 @@ const Accommodation = ({ isSignedIn = true }) => {
           )}
         </section>
 
-        {/* Popular Locations */}
+        {/* Popular Locations 
         <PopularLocations
           locations={[
             "Colombo",
@@ -174,7 +174,7 @@ const Accommodation = ({ isSignedIn = true }) => {
             "Ella",
             "Bentota",
           ]}
-        />
+        /> */}
       </div>
     </>
   );

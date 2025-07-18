@@ -15,12 +15,13 @@ const FilterSection = ({ onFilterChange }) => {
 
   // Vehicle types
   const vehicleTypes = [
+    "Motorcycle",
+    "TukTuk",
+    "Hatchback",
     "Sedan",
     "SUV",
-    "Hatchback",
     "Van",
-    "Luxury",
-    "Minibus",
+    "Commuter",
   ];
 
   // Locations

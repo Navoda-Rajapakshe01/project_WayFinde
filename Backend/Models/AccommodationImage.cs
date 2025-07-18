@@ -6,8 +6,6 @@ using Backend.Models;
     public string ImageUrl { get; set; } = string.Empty;
 
     public int AccommodationId { get; set; }
-
-    [JsonIgnore]
     public Accommodation? Accommodation { get; set; }
 
 }

@@ -1,11 +1,7 @@
-
-﻿using Backend.DTOs;
-
-﻿﻿using Microsoft.EntityFrameworkCore;
-
+using Backend.DTOs;
+using Microsoft.EntityFrameworkCore;
 using Backend.Models;
 using Backend.Models.User;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using System.Text.Json;
@@ -29,7 +25,7 @@ namespace Backend.Data
 
         // Places & Districts
         public DbSet<District> Districts { get; set; }
-        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }  // Corrected to your model name 'PlacesToVisit'
+        public DbSet<PlacesToVisit> PlacesToVisit { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<PlaceImage> PlaceImages { get; set; }
@@ -39,8 +35,6 @@ namespace Backend.Data
         public DbSet<TripPlace> TripPlaces { get; set; }
         public DbSet<TripCollaborator> TripCollaborator { get; set; }
         public DbSet<UserNew> UserNew { get; set; }
-
-
 
         // Todo
         public DbSet<TodoItem> TodoItems { get; set; }
@@ -73,44 +67,39 @@ namespace Backend.Data
 
             // Composite Key for TripPlace
             modelBuilder.Entity<TripPlace>()
-                .HasKey(tp => new { tp.TripId, tp.PlaceId });  // Composite key for TripPlace
+                .HasKey(tp => new { tp.TripId, tp.PlaceId });
 
-            // Relationships between Trip and TripPlace
             modelBuilder.Entity<TripPlace>()
                 .HasOne(tp => tp.Trip)
                 .WithMany(t => t.TripPlaces)
                 .HasForeignKey(tp => tp.TripId)
-                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Trip
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TripPlace>()
                 .HasOne(tp => tp.Place)
                 .WithMany(p => p.TripPlaces)
                 .HasForeignKey(tp => tp.PlaceId)
-                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Place
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Default Timestamps for Trip
+            // Trip timestamps
             modelBuilder.Entity<Trip>()
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
-            // DistrictWithPlacesCountDTO is a keyless DTO
-            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
-
-            // Precision for decimal properties
-            modelBuilder.Entity<Vehicle>()
-                .Property(v => v.PricePerDay)
-                .HasPrecision(18, 2);
 
             modelBuilder.Entity<Trip>()
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // Fix for TravelBudget.Amount precision
+            // Decimal precision
+            modelBuilder.Entity<Vehicle>()
+                .Property(v => v.PricePerDay)
+                .HasPrecision(18, 2);
+
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Amount)
                 .HasPrecision(18, 2);
 
-            // Districts Configuration
-            // District configuration
+            // District & Places config
             modelBuilder.Entity<District>()
                 .Property(d => d.Name)
                 .IsRequired()
@@ -120,8 +109,6 @@ namespace Backend.Data
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
-            // PlacesToVisit Configuration
-            // PlacesToVisit configuration
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
@@ -135,16 +122,14 @@ namespace Backend.Data
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
 
-            // Review Configuration
-            // Review configuration
+            // Review config
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Place)
                 .WithMany(p => p.Reviews)
                 .HasForeignKey(r => r.PlaceId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // TodoItem Configuration
-            // TodoItem configuration
+            // Todo config
             modelBuilder.Entity<TodoItem>()
                 .Property(t => t.TaskName)
                 .IsRequired()
@@ -162,7 +147,7 @@ namespace Backend.Data
                 .Property(t => t.UpdatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // TravelBudget configuration
+            // TravelBudget config
             modelBuilder.Entity<TravelBudget>()
                 .Property(t => t.Description)
                 .IsRequired()
@@ -176,7 +161,7 @@ namespace Backend.Data
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // DashboardNote configuration
+            // DashboardNote config
             modelBuilder.Entity<DashboardNote>()
                 .Property(d => d.NoteTitle)
                 .IsRequired()
@@ -198,7 +183,7 @@ namespace Backend.Data
                 .Property(d => d.UserId)
                 .IsRequired();
 
-            // Blog configuration
+            // Blog config
             modelBuilder.Entity<Blog>()
                 .HasKey(b => b.Id);
 
@@ -207,7 +192,6 @@ namespace Backend.Data
                 .WithMany(u => u.Blogs)
                 .HasForeignKey(b => b.UserId);
 
-            // Configure Blog ImageUrls with value comparer
             modelBuilder.Entity<Blog>()
                 .Property(b => b.ImageUrls)
                 .HasConversion(
@@ -218,14 +202,14 @@ namespace Backend.Data
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList()));
 
-            // Comment configuration
+            // Comment config
             modelBuilder.Entity<Comment>()
                 .HasOne(c => c.User)
                 .WithMany()
                 .HasForeignKey(c => c.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Follows configuration (many-to-many relationship)
+            // Follows config
             modelBuilder.Entity<Follows>()
                 .HasKey(f => new { f.FollowerID, f.FollowedID });
 
@@ -241,16 +225,57 @@ namespace Backend.Data
                 .HasForeignKey(f => f.FollowedID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // Vehicle Supplier relation
             modelBuilder.Entity<Vehicle>()
                 .HasOne(v => v.Supplier)
                 .WithMany()
                 .HasForeignKey(v => v.SupplierId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Add unique constraint to prevent multiple reactions from same user
+            // BlogReaction config – Fix for multiple cascade paths
+            modelBuilder.Entity<BlogReaction>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<BlogReaction>()
+                .HasOne(r => r.Blog)
+                .WithMany()
+                .HasForeignKey(r => r.BlogId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<BlogReaction>()
                 .HasIndex(r => new { r.BlogId, r.UserId })
                 .IsUnique();
+
+            // Accommodation relationships
+            modelBuilder.Entity<Accommodation>()
+                .HasMany(a => a.Images)
+                .WithOne(i => i.Accommodation)
+                .HasForeignKey(i => i.AccommodationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Accommodation>()
+                .HasMany(a => a.Reviews)
+                .WithOne(r => r.Accommodation)
+                .HasForeignKey(r => r.AccommodationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Accommodation>()
+                .HasMany(a => a.Amenities)
+                .WithOne(am => am.Accommodation)
+                .HasForeignKey(am => am.AccommodationId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Accommodation>()
+                .HasOne(a => a.Supplier)
+                .WithMany()
+                .HasForeignKey(a => a.SupplierId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // DTO without key
+            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
         }
     }
 }

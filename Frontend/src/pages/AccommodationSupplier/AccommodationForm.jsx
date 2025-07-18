@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+// src/components/AccommodationForm.jsx
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import "../CSS/AccommodationSupplier.css";
+import { AuthContext } from "../../Components/Authentication/AuthContext/AuthContext";
+import "../CSS/VehicleSupplier.css"; // ✅ Using same styles for consistency
 
 const initialState = {
   name: "",
@@ -14,128 +16,138 @@ const initialState = {
   amenities: [],
   images: [],
   districtId: "",
+  placeId: "",
+  supplierId: "",
+  supplierName: "",
 };
+
+const AMENITIES = [
+  "Wi-Fi",
+  "Air Conditioning",
+  "Kitchen",
+  "TV",
+  "Washing Machine",
+  "Free Parking",
+  "Pool",
+  "Hot Tub",
+  "Gym",
+  "Breakfast",
+  "Beach Access",
+  "Mountain View",
+  "Pets Allowed",
+  "Balcony",
+  "Garden",
+];
 
 const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
   const [form, setForm] = useState(initialState);
   const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [districts, setDistricts] = useState([]);
+  const [places, setPlaces] = useState([]);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5030/api/district")
-      .then((res) => setDistricts(res.data))
-      .catch((err) => console.error("Failed to load districts", err));
-  }, []);
+    const fetchMetadata = async () => {
+      try {
+        const [districtRes, placeRes] = await Promise.all([
+          axios.get("http://localhost:5030/api/district"),
+          axios.get("http://localhost:5030/api/places"),
+        ]);
+        setDistricts(districtRes.data);
+        setPlaces(placeRes.data);
+      } catch (err) {
+        console.error("Failed to load metadata", err);
+      }
+    };
+
+    fetchMetadata();
+
+    if (user?.id && user?.username) {
+      setForm((prev) => ({
+        ...prev,
+        supplierId: user.id,
+        supplierName: user.username,
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 5) {
-      alert("You can upload up to 5 images only.");
+      alert("Max 5 images allowed.");
       return;
     }
     setForm({ ...form, images: files });
   };
 
-  const handleAmenityToggle = (value, isChecked) => {
+  const handleAmenityToggle = (value, checked) => {
     setForm((prev) => ({
       ...prev,
-      amenities: isChecked
+      amenities: checked
         ? [...prev.amenities, value]
         : prev.amenities.filter((a) => a !== value),
     }));
   };
 
   const validate = () => {
-    if (!form.name) return "Name is required";
-    if (!form.type) return "Accommodation type is required";
-    if (!form.location) return "Location is required";
-    if (!form.pricePerNight) return "Price per night is required";
-    if (!form.bedrooms) return "Number of bedrooms is required";
-    if (!form.bathrooms) return "Number of bathrooms is required";
-    if (!form.maxGuests) return "Maximum number of guests is required";
-    if (!form.districtId) return "District is required";
+    const f = form;
+    if (!f.name) return "Name is required";
+    if (!f.type) return "Accommodation type is required";
+    if (!f.location) return "Location is required";
+    if (!f.pricePerNight) return "Price per night is required";
+    if (!f.bedrooms) return "Bedrooms required";
+    if (!f.bathrooms) return "Bathrooms required";
+    if (!f.maxGuests) return "Max guests required";
+    if (!f.districtId) return "District is required";
+    if (!f.placeId) return "Service area is required";
     return null;
   };
 
   const handleSubmit = async () => {
     const error = validate();
-    if (error) {
-      alert(error);
-      return;
-    }
+    if (error) return alert(error);
 
-    setLoading(true);
-    const formData = new FormData();
-
-    formData.append("Name", form.name);
-    formData.append("Type", form.type);
-    formData.append("Location", form.location);
-    formData.append("PricePerNight", parseFloat(form.pricePerNight));
-    formData.append("Bedrooms", parseInt(form.bedrooms));
-    formData.append("Bathrooms", parseFloat(form.bathrooms));
-    formData.append("MaxGuests", parseInt(form.maxGuests));
-    formData.append("Description", form.description);
-    formData.append("DistrictId", form.districtId);
-
-    form.amenities.forEach((a) => formData.append("Amenities", a));
-    form.images.forEach((img) => formData.append("Images", img));
+    const data = new FormData();
+    data.append("Name", form.name);
+    data.append("Type", form.type);
+    data.append("Location", form.location);
+    data.append("PricePerNight", form.pricePerNight);
+    data.append("Bedrooms", form.bedrooms);
+    data.append("Bathrooms", form.bathrooms);
+    data.append("MaxGuests", form.maxGuests);
+    data.append("Description", form.description);
+    data.append("DistrictId", form.districtId);
+    data.append("PlaceId", form.placeId);
+    data.append("SupplierId", form.supplierId);
+    data.append("SupplierName", form.supplierName);
+    form.amenities.forEach((a) => data.append("Amenities", a));
+    form.images.forEach((img) => data.append("Images", img));
 
     try {
-      await axios.post("http://localhost:5030/api/accommodation", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      setLoading(true);
+      await axios.post("http://localhost:5030/api/accommodation", data);
+      alert("Accommodation posted successfully!");
       setForm(initialState);
-      setLoading(false);
-      setPreview(false);
       onSuccess();
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
+    } catch (err) {
+      console.error("Submission failed:", err.response?.data || err.message);
+      alert("Submission failed.");
       onFail();
+    } finally {
+      setLoading(false);
     }
   };
 
-  const accommodationTypes = [
-    "Hotel",
-    "Apartment",
-    "Villa",
-    "Cottage",
-    "Homestay",
-    "Cabin",
-    "Bungalow",
-    "Resort",
-  ];
-
-  const availableAmenities = [
-    "Wi-Fi",
-    "Air Conditioning",
-    "Kitchen",
-    "TV",
-    "Washing Machine",
-    "Free Parking",
-    "Pool",
-    "Hot Tub",
-    "Gym",
-    "Breakfast",
-    "Beach Access",
-    "Mountain View",
-    "Pets Allowed",
-    "Balcony",
-    "Garden",
-  ];
-
   return (
-    <div className="accommodation-form">
+    <div className="vehicle-form">
       <h2>Post New Accommodation</h2>
 
-      {/* Preview toggle buttons */}
       <div className="form-toggle-buttons">
         <button
           className={`toggle-btn ${!preview ? "active" : ""}`}
@@ -151,95 +163,120 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
       </div>
 
       {!preview ? (
-        // Form View
         <div className="form-fields">
-          <div className="form-group">
-            <label>Name*</label>
-            <input
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={handleChange}
-            />
+          {/* Row 1: Name + Type */}
+          <div className="form-row">
+            <div className="form-group">
+              <label>Name*</label>
+              <input name="name" value={form.name} onChange={handleChange} />
+            </div>
+            <div className="form-group">
+              <label>Type*</label>
+              <select name="type" value={form.type} onChange={handleChange}>
+                <option value="">Select Type</option>
+                {[
+                  "Hotel",
+                  "Apartment",
+                  "Villa",
+                  "Cottage",
+                  "Homestay",
+                  "Cabin",
+                  "Bungalow",
+                  "Resort",
+                ].map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Type*</label>
-            <select name="type" value={form.type} onChange={handleChange}>
-              <option value="">Select Type</option>
-              {accommodationTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+          {/* Row 2: District + Place */}
+          <div className="form-row">
+            <div className="form-group">
+              <label>District*</label>
+              <select
+                name="districtId"
+                value={form.districtId}
+                onChange={handleChange}>
+                <option value="">Select District</option>
+                {districts.map((d) => (
+                  <option key={d.id} value={d.id}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Service Area*</label>
+              <select
+                name="placeId"
+                value={form.placeId}
+                onChange={handleChange}>
+                <option value="">Select Area</option>
+                {places.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>District*</label>
-            <select
-              name="districtId"
-              value={form.districtId}
-              onChange={handleChange}>
-              <option value="">Select District</option>
-              {districts.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {d.id} - {d.name}
-                </option>
-              ))}
-            </select>
+          {/* Row 3: Location + Price */}
+          <div className="form-row">
+            <div className="form-group">
+              <label>Location*</label>
+              <input
+                name="location"
+                value={form.location}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Price Per Night*</label>
+              <input
+                name="pricePerNight"
+                type="number"
+                value={form.pricePerNight}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Address*</label>
-            <input
-              name="location"
-              type="text"
-              value={form.location}
-              onChange={handleChange}
-            />
+          {/* Row 4: Bedrooms + Bathrooms + MaxGuests */}
+          <div className="form-row">
+            <div className="form-group">
+              <label>Bedrooms*</label>
+              <input
+                name="bedrooms"
+                type="number"
+                value={form.bedrooms}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Bathrooms*</label>
+              <input
+                name="bathrooms"
+                type="number"
+                value={form.bathrooms}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label>Max Guests*</label>
+              <input
+                name="maxGuests"
+                type="number"
+                value={form.maxGuests}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label>Price Per Night*</label>
-            <input
-              name="pricePerNight"
-              type="number"
-              value={form.pricePerNight}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Bedrooms*</label>
-            <input
-              name="bedrooms"
-              type="number"
-              value={form.bedrooms}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Bathrooms*</label>
-            <input
-              name="bathrooms"
-              type="number"
-              value={form.bathrooms}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Max Guests*</label>
-            <input
-              name="maxGuests"
-              type="number"
-              value={form.maxGuests}
-              onChange={handleChange}
-            />
-          </div>
-
+          {/* Description */}
           <div className="form-group">
             <label>Description</label>
             <textarea
@@ -249,32 +286,32 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
             />
           </div>
 
+          {/* Images */}
           <div className="form-group">
-            <label>Images</label>
+            <label>Accommodation Images</label>
             <input
               type="file"
               multiple
               accept="image/*"
               onChange={handleImageChange}
             />
-            {form.images.length > 0 && (
-              <div className="image-preview-container">
-                {form.images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(img)}
-                    alt={`Preview ${index}`}
-                    className="image-preview"
-                  />
-                ))}
-              </div>
-            )}
+            <div className="image-preview-container">
+              {form.images.map((img, i) => (
+                <img
+                  key={i}
+                  src={URL.createObjectURL(img)}
+                  alt={`Preview ${i}`}
+                  className="image-preview"
+                />
+              ))}
+            </div>
           </div>
 
+          {/* Amenities */}
           <div className="form-group">
             <label>Amenities</label>
             <div className="checkbox-group">
-              {availableAmenities.map((a) => (
+              {AMENITIES.map((a) => (
                 <label key={a} className="checkbox-label">
                   <input
                     type="checkbox"
@@ -288,48 +325,43 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
             </div>
           </div>
 
+          {/* Actions */}
           <div className="form-actions">
-            <button onClick={onClose}>Cancel</button>
-            <button onClick={handleSubmit} disabled={loading}>
+            <button className="cancel-btn" onClick={onClose}>
+              Cancel
+            </button>
+            <button
+              className="submit-btn"
+              onClick={handleSubmit}
+              disabled={loading}>
               {loading ? "Submitting..." : "Submit"}
             </button>
           </div>
         </div>
       ) : (
-        // Preview View
         <div className="preview-card">
           <h3>Preview</h3>
           <div className="preview-content">
             <div className="preview-image">
               {form.images.length > 0 ? (
-                <img
-                  src={URL.createObjectURL(form.images[0])}
-                  alt="Accommodation Preview"
-                />
+                <img src={URL.createObjectURL(form.images[0])} alt="Preview" />
               ) : (
                 <div className="no-image">No Image</div>
               )}
             </div>
             <div className="preview-details">
               <h4>{form.name}</h4>
-              <p className="preview-type-location">
-                <span className="preview-type">{form.type}</span> in{" "}
-                <span className="preview-location">
-                  {districts.find((d) => d.id === parseInt(form.districtId))
-                    ?.name || "District"}
-                </span>
+              <p>
+                {form.type} in{" "}
+                {districts.find((d) => d.id == form.districtId)?.name}
               </p>
-              <p className="preview-location">{form.location}</p>
-              <p className="preview-price">${form.pricePerNight}/night</p>
-              <p className="preview-specs">
-                {form.bedrooms} {form.bedrooms === 1 ? "bedroom" : "bedrooms"} •{" "}
-                {form.bathrooms}{" "}
-                {form.bathrooms === 1 ? "bathroom" : "bathrooms"} • Max{" "}
-                {form.maxGuests} {form.maxGuests === 1 ? "guest" : "guests"}
+              <p>{form.location}</p>
+              <p>Rs {form.pricePerNight}/night</p>
+              <p>
+                {form.bedrooms} bedrooms • {form.bathrooms} bathrooms • Max{" "}
+                {form.maxGuests} guests
               </p>
-              {form.description && (
-                <p className="preview-description">{form.description}</p>
-              )}
+              {form.description && <p>{form.description}</p>}
               <div className="preview-amenities">
                 {form.amenities.map((a, i) => (
                   <span key={i} className="amenity-tag">
@@ -340,8 +372,13 @@ const AccommodationForm = ({ onClose, onSuccess, onFail }) => {
             </div>
           </div>
           <div className="form-actions">
-            <button onClick={onClose}>Cancel</button>
-            <button onClick={handleSubmit} disabled={loading}>
+            <button className="cancel-btn" onClick={onClose}>
+              Cancel
+            </button>
+            <button
+              className="submit-btn"
+              onClick={handleSubmit}
+              disabled={loading}>
               {loading ? "Submitting..." : "Submit"}
             </button>
           </div>

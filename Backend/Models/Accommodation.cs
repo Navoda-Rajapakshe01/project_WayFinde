@@ -36,10 +36,26 @@ namespace Backend.Models
 
         [Required]
         public int DistrictId { get; set; }
+
         public District? District { get; set; }
 
+        [Required]
+        public int PlaceId { get; set; }
+        public PlacesToVisit? PlacesToVisit { get; set; }
+
+        // 🔑 Add supplier foreign key
+        [Required]
+        public Guid SupplierId { get; set; }
+
+        public UserNew? Supplier { get; set; }
+
+        // (Optional) Redundant field if you want to store the username too
+        public string? SupplierUsername { get; set; }
+
         public List<AccommodationImage>? Images { get; set; }
+
         public List<AccommodationReview>? Reviews { get; set; }
+
         public List<AccommodationAmenity>? Amenities { get; set; }
     }
 }

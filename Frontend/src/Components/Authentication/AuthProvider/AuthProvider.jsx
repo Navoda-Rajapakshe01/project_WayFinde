@@ -9,23 +9,22 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const setupAuthenticatedAxios = (token) => {
-    return axios.create({
-      baseURL: "http://localhost:5030",
+  const setupAuthenticatedAxios = (token) =>
+    axios.create({
+      baseURL: "http://localhost:5030", // Update if different
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
-  };
 
   const fetchUserProfile = async (token) => {
     try {
       const api = setupAuthenticatedAxios(token);
-      const response = await api.get("/api/Auth/profile");
-      return response.data;
+      const res = await api.get("/api/Auth/profile");
+      return res.data;
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      console.error("[AuthProvider] Failed to fetch profile:", error);
       return null;
     }
   };
@@ -34,47 +33,61 @@ const AuthProvider = ({ children }) => {
     const initializeAuth = async () => {
       const token = localStorage.getItem("token");
 
-      if (token && typeof token === "string" && token.trim() !== "") {
-        try {
-          if (token.split(".").length === 3) {
-            const decodedToken = jwtDecode(token);
+      if (!token || token.trim() === "") {
+        console.warn("[AuthProvider] No valid token found");
+        setLoading(false);
+        return;
+      }
 
-            const currentTime = Date.now() / 1000;
-            if (decodedToken.exp && decodedToken.exp < currentTime) {
-              console.warn("[AuthProvider] Token expired");
-              localStorage.removeItem("token");
-              setUser(null);
-            } else {
-              const userProfile = await fetchUserProfile(token);
+      if (token.split(".").length !== 3) {
+        console.warn("[AuthProvider] Invalid token format");
+        localStorage.removeItem("token");
+        setLoading(false);
+        return;
+      }
 
-              const roleClaim =
-                decodedToken[
-                  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-                ];
-              const usernameClaim =
-                decodedToken[
-                  "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
-                ];
+      try {
+        const decoded = jwtDecode(token);
+        console.log("[AuthProvider] Decoded token:", decoded);
+        const now = Date.now() / 1000;
 
-              const normalizedUser = {
-                ...decodedToken,
-                ...userProfile, // Contains .id
-                role: roleClaim,
-                username: usernameClaim,
-              };
-
-              setUser(normalizedUser);
-            }
-          } else {
-            console.warn("[AuthProvider] Invalid token format");
-            localStorage.removeItem("token");
-          }
-        } catch (error) {
-          console.error("[AuthProvider] Error processing token:", error);
+        if (decoded.exp && decoded.exp < now) {
+          console.warn("[AuthProvider] Token expired");
           localStorage.removeItem("token");
+          setUser(null);
+        } else {
+          const roleClaimKey = Object.keys(decoded).find((k) =>
+            k.toLowerCase().includes("role")
+          );
+          const role = roleClaimKey ? decoded[roleClaimKey] : "Guest";
+
+          const username =
+            decoded[
+              "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"
+            ] ||
+            decoded.username ||
+            decoded.sub ||
+            "Unknown";
+
+          const profile = await fetchUserProfile(token);
+
+          if (profile) {
+            const mergedUser = {
+              ...profile,
+              token,
+              role,
+              username,
+            };
+            setUser(mergedUser);
+          } else {
+            localStorage.removeItem("token");
+            setUser(null);
+          }
         }
-      } else {
-        console.log("[AuthProvider] No token found");
+      } catch (error) {
+        console.error("[AuthProvider] Error decoding or fetching:", error);
+        localStorage.removeItem("token");
+        setUser(null);
       }
 
       setLoading(false);
@@ -89,18 +102,17 @@ const AuthProvider = ({ children }) => {
     window.location.href = "/";
   };
 
-  const updateUser = async (userData) => {
+  const updateUser = async (updatedData) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return false;
 
       const api = setupAuthenticatedAxios(token);
-      await api.put("/api/User/update", userData);
-
-      setUser((prev) => ({ ...prev, ...userData }));
+      await api.put("/api/User/update", updatedData);
+      setUser((prev) => ({ ...prev, ...updatedData }));
       return true;
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error("[AuthProvider] Error updating user:", error);
       return false;
     }
   };
@@ -114,8 +126,8 @@ const AuthProvider = ({ children }) => {
       value={{
         user,
         setUser,
-        updateUser,
         logout,
+        updateUser,
         isAuthenticated: !!user,
       }}>
       {children}

@@ -29,6 +29,12 @@ namespace Backend.DTOs
 
         public List<string> Amenities { get; set; } = new List<string>();
 
-        public int DistrictId { get; set; } // ✅ Add this
+        public int DistrictId { get; set; }
+
+        public int PlaceId { get; set; } // ⭐ NEW
+
+        public Guid? SupplierId { get; set; } // ⭐ NEW
+
+        public string? SupplierUsername { get; set; } // ⭐ NEW
     }
 }

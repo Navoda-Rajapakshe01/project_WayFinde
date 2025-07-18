@@ -106,5 +106,53 @@ namespace Backend.Controllers
 
             return Ok(reservations);
         }
+
+        // PUT api/AccommodationReservation/{id}/status
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateReservationStatus(int id, [FromBody] AccommodationUpdateStatusDto dto)
+        {
+            var reservation = await _context.AccommodationReservations.FindAsync(id);
+
+            if (reservation == null)
+                return NotFound("Reservation not found.");
+
+            if (string.IsNullOrWhiteSpace(dto.Status))
+                return BadRequest("Status cannot be empty.");
+
+            reservation.Status = dto.Status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(reservation);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error updating reservation status: {ex.Message}");
+            }
+        }
+
+
+        // DELETE api/AccommodationReservation/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteReservation(int id)
+        {
+            var reservation = await _context.AccommodationReservations.FindAsync(id);
+
+            if (reservation == null)
+                return NotFound("Reservation not found.");
+
+            _context.AccommodationReservations.Remove(reservation);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok($"Reservation with ID {id} has been deleted.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error deleting reservation: {ex.Message}");
+            }
+        }
     }
 }

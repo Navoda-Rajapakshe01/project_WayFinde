@@ -28,79 +28,22 @@ const AccommodationSupplier = () => {
       const res = await axios.get("http://localhost:5030/api/accommodation");
       setAccommodations(res.data);
 
-      // Calculate dashboard stats
+      // Calculate dashboard stats for accommodations
       const totalAccommodations = res.data.length;
       const activeAccommodations = res.data.filter(
         (a) => a.status === "Available"
       ).length;
 
-      // Set dashboard stats
       setDashboardStats((prev) => ({
         ...prev,
         totalAccommodations,
         activeAccommodations,
-        totalBookings: bookings.length, // This will be updated after fetching bookings
-        monthlyBookings: dashboardStats.monthlyBookings, // Will be updated after fetchBookings
-        monthlyRevenue: dashboardStats.monthlyRevenue, // Will be updated after fetchBookings
+        totalBookings: bookings.length, // Updated after bookings fetch
       }));
 
       setLoading(false);
     } catch (error) {
       console.error("Failed to fetch accommodations", error);
-
-      // Sample accommodations data for development
-      const sampleAccommodations = [
-        {
-          id: 1,
-          name: "Luxury Beachfront Villa",
-          type: "Villa",
-          location: "Bentota",
-          pricePerNight: 250,
-          imagePaths: ["https://via.placeholder.com/400x250?text=Luxury+Villa"],
-          bedrooms: 4,
-          bathrooms: 3,
-          maxGuests: 8,
-          amenities: [
-            "Wi-Fi",
-            "Pool",
-            "Air Conditioning",
-            "Kitchen",
-            "Beach Access",
-          ],
-          description:
-            "Beautiful beachfront villa with private pool and direct beach access.",
-          status: "Available",
-        },
-        {
-          id: 2,
-          name: "Modern City Apartment",
-          type: "Apartment",
-          location: "Colombo",
-          pricePerNight: 120,
-          imagePaths: [
-            "https://via.placeholder.com/400x250?text=Modern+Apartment",
-          ],
-          bedrooms: 2,
-          bathrooms: 1,
-          maxGuests: 4,
-          amenities: ["Wi-Fi", "Air Conditioning", "Kitchen", "Gym Access"],
-          description:
-            "Stylish apartment in the heart of Colombo with city views.",
-          status: "Booked",
-        },
-      ];
-
-      setAccommodations(sampleAccommodations);
-      setDashboardStats({
-        totalAccommodations: sampleAccommodations.length,
-        activeAccommodations: sampleAccommodations.filter(
-          (a) => a.status === "Available"
-        ).length,
-        totalBookings: 7,
-        monthlyBookings: 3,
-        monthlyRevenue: 750,
-      });
-
       setLoading(false);
     }
   };
@@ -113,7 +56,6 @@ const AccommodationSupplier = () => {
       );
       setBookings(res.data);
 
-      // Update dashboard stats with booking info
       const totalBookings = res.data.length;
 
       // Calculate monthly bookings and revenue
@@ -134,7 +76,6 @@ const AccommodationSupplier = () => {
         0
       );
 
-      // Update dashboard stats
       setDashboardStats((prev) => ({
         ...prev,
         totalBookings,
@@ -143,95 +84,48 @@ const AccommodationSupplier = () => {
       }));
     } catch (error) {
       console.error("Failed to fetch bookings", error);
-
-      // Sample bookings data for development
-      const sampleBookings = [
-        {
-          id: 101,
-          accommodationId: 1,
-          accommodationName: "Luxury Beachfront Villa",
-          customerName: "John Smith",
-          checkInDate: "2025-05-20",
-          checkOutDate: "2025-05-23",
-          guests: 4,
-          totalAmount: 750,
-          status: "Confirmed",
-          bookingDate: "2025-05-15",
-          specialRequests: "Late check-in around 10pm",
-        },
-        {
-          id: 102,
-          accommodationId: 2,
-          accommodationName: "Modern City Apartment",
-          customerName: "Emma Johnson",
-          checkInDate: "2025-05-25",
-          checkOutDate: "2025-05-28",
-          guests: 2,
-          totalAmount: 360,
-          status: "Pending",
-          bookingDate: "2025-05-16",
-          specialRequests: "High floor preferred",
-        },
-      ];
-
-      setBookings(sampleBookings);
-
-      // Update dashboard stats with sample booking data
-      setDashboardStats((prev) => ({
-        ...prev,
-        totalBookings: sampleBookings.length,
-        monthlyBookings: sampleBookings.length,
-        monthlyRevenue: sampleBookings.reduce(
-          (total, booking) => total + booking.totalAmount,
-          0
-        ),
-      }));
     }
   };
 
-  // Toggle accommodation status
+  // Toggle accommodation availability status
   const handleToggleStatus = async (id, currentStatus) => {
     try {
       const updatedStatus =
         currentStatus === "Available" ? "Unavailable" : "Available";
-      await axios.put(`http://localhost:5030/api/accommodation/${id}/status`, {
+      await axios.put(`http://localhost:5030/api/Accommodation/${id}/status`, {
         status: updatedStatus,
       });
-      fetchAccommodations();
+      await fetchAccommodations();
       setAlert("Accommodation status updated.");
-
-      // Auto-dismiss alert after 3 seconds
-      setTimeout(() => setAlert(""), 3000);
     } catch (error) {
       setAlert("Failed to update status.");
+    } finally {
       setTimeout(() => setAlert(""), 3000);
     }
   };
 
-  // Delete accommodation
+  // Delete accommodation by id
   const handleDeleteAccommodation = async (id) => {
     if (window.confirm("Are you sure you want to delete this accommodation?")) {
       try {
         await axios.delete(`http://localhost:5030/api/accommodation/${id}`);
-        fetchAccommodations();
+        await fetchAccommodations();
         setAlert("Accommodation deleted successfully.");
-        setTimeout(() => setAlert(""), 3000);
       } catch (error) {
         setAlert("Failed to delete accommodation.");
+      } finally {
         setTimeout(() => setAlert(""), 3000);
       }
     }
   };
 
-  // Edit accommodation
+  // Edit accommodation placeholder
   const handleEditAccommodation = (accommodation) => {
-    // You can implement the edit functionality here
-    // For now, we'll just show an alert
     setAlert("Edit functionality will be implemented soon.");
     setTimeout(() => setAlert(""), 3000);
   };
 
-  // View accommodation bookings
+  // Fetch bookings for specific accommodation and switch tab
   const handleViewBookings = async (accommodationId) => {
     try {
       const res = await axios.get(
@@ -240,27 +134,57 @@ const AccommodationSupplier = () => {
       setBookings(res.data);
       setActiveTab("bookings");
     } catch (error) {
-      console.error("Failed to fetch accommodation bookings", error);
       setAlert("Failed to fetch bookings for this accommodation.");
       setTimeout(() => setAlert(""), 3000);
     }
   };
 
-  // Initial data fetch
+  // Update booking status (Confirm, Reject, etc.)
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      await axios.put(
+        `http://localhost:5030/api/AccommodationReservation/${bookingId}/status`,
+        { status: newStatus }
+      );
+      console.log("Booking status updated:", newStatus);
+      setAlert(`Booking ${newStatus.toLowerCase()}.`);
+      await fetchBookings();
+    } catch (error) {
+      setAlert("Failed to update booking status.");
+    } finally {
+      setTimeout(() => setAlert(""), 3000);
+    }
+  };
+
+  // Delete booking (only for rejected bookings)
+  const handleDeleteBooking = async (bookingId) => {
+    if (window.confirm("Delete this rejected booking?")) {
+      try {
+        await axios.delete(
+          `http://localhost:5030/api/AccommodationReservation/${bookingId}`
+        );
+        setAlert("Booking deleted.");
+        await fetchBookings();
+      } catch (error) {
+        setAlert("Failed to delete booking.");
+      } finally {
+        setTimeout(() => setAlert(""), 3000);
+      }
+    }
+  };
+
+  // Initial data fetch on mount
   useEffect(() => {
     fetchAccommodations();
     fetchBookings();
   }, []);
 
-  // Loading state
   if (loading) {
     return (
-      <>
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading your accommodations...</p>
-        </div>
-      </>
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading your accommodations...</p>
+      </div>
     );
   }
 
@@ -305,6 +229,7 @@ const AccommodationSupplier = () => {
           activeKey={activeTab}
           onSelect={(k) => setActiveTab(k)}
           className="supplier-tabs mb-4">
+          {/* Dashboard Tab */}
           <Tab eventKey="dashboard" title="Dashboard">
             <div className="dashboard-stats">
               <div className="stat-card">
@@ -316,7 +241,7 @@ const AccommodationSupplier = () => {
                   <span className="active-stat">
                     {dashboardStats.activeAccommodations} available
                   </span>{" "}
-                  /
+                  /{" "}
                   <span className="inactive-stat">
                     {dashboardStats.totalAccommodations -
                       dashboardStats.activeAccommodations}{" "}
@@ -337,7 +262,7 @@ const AccommodationSupplier = () => {
                 <h3>Monthly Revenue</h3>
                 <div className="stat-value">
                   Rs {dashboardStats.monthlyRevenue.toFixed(2)}
-                </div>{" "}
+                </div>
                 <div className="stat-detail">
                   {dashboardStats.monthlyBookings > 0
                     ? `Avg Rs ${(
@@ -368,11 +293,9 @@ const AccommodationSupplier = () => {
                       {bookings.slice(0, 5).map((booking) => (
                         <tr key={booking.id}>
                           <td>#{booking.id}</td>
-                          {/* Find accommodation by matching ID */}
                           <td>
                             {accommodations.find(
-                              (accommodation) =>
-                                accommodation.id === booking.accommodationId
+                              (a) => a.id === booking.accommodationId
                             )?.name || "Unknown Accommodation"}
                           </td>
                           <td>{booking.customerName}</td>
@@ -399,6 +322,7 @@ const AccommodationSupplier = () => {
             )}
           </Tab>
 
+          {/* Listings Tab */}
           <Tab eventKey="listings" title="Your Accommodations">
             <div className="accommodation-grid">
               {accommodations.length === 0 ? (
@@ -409,7 +333,7 @@ const AccommodationSupplier = () => {
                   </p>
                 </div>
               ) : (
-                accommodations.map((accommodation, index) => (
+                accommodations.map((accommodation) => (
                   <AccommodationCard
                     key={accommodation.id}
                     accommodation={accommodation}
@@ -423,6 +347,7 @@ const AccommodationSupplier = () => {
             </div>
           </Tab>
 
+          {/* Bookings Tab */}
           <Tab eventKey="bookings" title="Bookings">
             <div className="bookings-table">
               {bookings.length === 0 ? (
@@ -437,33 +362,79 @@ const AccommodationSupplier = () => {
                       <th>Dates</th>
                       <th>Status</th>
                       <th>Amount</th>
+                      <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.slice(0, 5).map((booking) => (
-                      <tr key={booking.id}>
-                        <td>#{booking.id}</td>
-                        {/* Find accommodation by matching ID */}
-                        <td>
-                          {accommodations.find(
-                            (accommodation) =>
-                              accommodation.id === booking.accommodationId
-                          )?.name || "Unknown Accommodation"}
-                        </td>
-                        <td>{booking.customerName}</td>
-                        <td>
-                          {new Date(booking.checkInDate).toLocaleDateString()} -{" "}
-                          {new Date(booking.checkOutDate).toLocaleDateString()}
-                        </td>
-                        <td>
-                          <span
-                            className={`status-badge status-${booking.status.toLowerCase()}`}>
-                            {booking.status}
-                          </span>
-                        </td>
-                        <td>Rs {booking.totalAmount.toFixed(2)}</td>
-                      </tr>
-                    ))}
+                    {bookings.map((booking) => {
+                      const status = booking.status ?? "Pending";
+                      const amount =
+                        typeof booking.totalAmount === "number"
+                          ? booking.totalAmount
+                          : 0;
+
+                      return (
+                        <tr key={booking.id}>
+                          <td>#{booking.id}</td>
+                          <td>
+                            {accommodations.find(
+                              (a) => a.id === booking.accommodationId
+                            )?.name || "Unknown"}
+                          </td>
+                          <td>{booking.customerName}</td>
+                          <td>
+                            {new Date(booking.checkInDate).toLocaleDateString()}{" "}
+                            –{" "}
+                            {new Date(
+                              booking.checkOutDate
+                            ).toLocaleDateString()}
+                          </td>
+                          <td>
+                            <span
+                              className={`status-badge status-${status.toLowerCase()}`}>
+                              {status}
+                            </span>
+                          </td>
+                          <td>Rs {amount.toFixed(2)}</td>
+                          <td>
+                            {status.toLowerCase() === "pending" && (
+                              <>
+                                <button
+                                  className="btn-confirm"
+                                  onClick={() =>
+                                    handleUpdateBookingStatus(
+                                      booking.id,
+                                      "Confirmed"
+                                    )
+                                  }>
+                                  Confirm
+                                </button>
+                                <button
+                                  className="btn-reject"
+                                  onClick={() =>
+                                    handleUpdateBookingStatus(
+                                      booking.id,
+                                      "Rejected"
+                                    )
+                                  }>
+                                  Reject
+                                </button>
+                              </>
+                            )}
+                            {status.toLowerCase() === "rejected" && (
+                              <button
+                                className="btn-delete"
+                                onClick={() => handleDeleteBooking(booking.id)}>
+                                Delete
+                              </button>
+                            )}
+                            {["confirmed", "completed"].includes(
+                              status.toLowerCase()
+                            ) && <span className="action-none">—</span>}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               )}
