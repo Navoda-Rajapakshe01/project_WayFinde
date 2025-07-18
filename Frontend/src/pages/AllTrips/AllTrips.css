@@ -298,27 +298,16 @@
   border-radius: 6px;
 }
 
-/* Popup Styling */
-.popup-overlay-3 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
 .popup-container-3 {
-  background: #f5f5f7;
-  padding: 20px;
+  background-color: white;
+  padding: 30px;
   border-radius: 12px;
-  width: 400px;
-  text-align: center;
+  width: 90%;
+  max-width: 400px;
   position: relative;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+  text-align: center;
 }
 
 .popup-close-3 {
@@ -332,6 +321,7 @@
   font-size: 18px;
   cursor: pointer;
 }
+
 .popup-close-3:hover {
   background: white;
 }
@@ -375,14 +365,6 @@
   margin-top: 5px;
 }
 
-.existing-collaborators {
-  margin-top: 20px;
-  background-color: #f2f2f2;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
 .existing-collaborators h3 {
   margin-top: 0;
   font-size: 12px;
@@ -400,23 +382,14 @@
   overflow-y: auto;
 }
 
-.existing-collaborators li {
-  background-color: white;
-  border: 1px solid #ccc;
-  padding: 8px 12px;
-  margin-bottom: 8px;
-  border-radius: 5px;
-  font-size: 14px;
-  text-align: left;
-  color: #444;
-}
-
 .popup-overlay-3 {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
@@ -424,31 +397,10 @@
   z-index: 9999;
 }
 
-.popup-container-3 {
-  background-color: white;
-  padding: 30px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 400px;
-  position: relative;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.3s ease-in-out;
-  text-align: center;
-}
-
-.popup-close-3 {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  font-size: 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
 .popup-title {
   margin: 0;
   font-size: 22px;
+  margin-bottom: 10px;
   font-weight: bold;
 }
 
@@ -494,19 +446,6 @@
 .cancel-btn-trip:hover {
   background-color: rgb(38, 82, 241);
 }
-.place-date-row {
-  margin-bottom: 15px;
-}
-
-.date-inputs {
-  display: flex;
-  gap: 10px;
-  margin-top: 5px;
-}
-
-.popup-title {
-  margin-bottom: 10px;
-}
 
 /* Overlay for Set Dates Popup */
 .popup-overlay-dates {
@@ -532,23 +471,6 @@
   position: relative;
   overflow-y: auto;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-}
-
-/* Close button in top-right */
-.popup-close-3 {
-  position: absolute;
-  top: 12px;
-  right: 20px;
-  font-size: 22px;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-/* Title styling */
-.popup-title {
-  font-size: 22px;
-  margin-bottom: 12px;
 }
 
 /* Individual row for each place + date inputs */
@@ -596,6 +518,13 @@
   margin-right: 20px;
 }
 
+.invitation-message {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+  margin-bottom: 12px;
+}
+
 .bell-icon {
   font-size: 24px;
   color: #333;
@@ -619,42 +548,13 @@
   top: 100%;
   right: 0;
   position: absolute;
-
-  width: 300px;
+  width: 420px;
   background: white;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   padding: 15px;
+  overflow-y: auto;
   z-index: 1000;
-}
-
-.notification-item {
-  border-bottom: 1px solid #eee;
-  padding: 10px 0;
-}
-
-.notification-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-
-.notification-buttons button {
-  padding: 5px 10px;
-  font-size: 13px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-}
-
-.notification-buttons button:first-child {
-  background-color: rgb(38, 82, 241);
-  color: white;
-}
-
-.notification-buttons button:last-child {
-  background-color: #dc3545;
-  color: white;
 }
 
 .notification-header {
@@ -690,16 +590,6 @@
   background-color: rgba(15, 23, 42, 0.3); /* #0f172a with opacity */
   z-index: 10;
   backdrop-filter: blur(2px);
-}
-
-.notification-panel {
-  z-index: 20;
-  position: absolute;
-  top: 60px;
-  right: 10px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .search-results {
@@ -790,4 +680,226 @@
   font-weight: 500;
   margin-left: 10px;
   margin-top: 4px;
+}
+
+/* Beautiful Success Message Popup */
+.alltrip-success-message {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.alltrip-success-content {
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.alltrip-success-icon {
+  width: 60px;
+  height: 60px;
+  background-color: #10b981;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 1rem;
+}
+
+.collaborator-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.existing-collaborators .profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 13px;
+}
+.collaborator-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.owner-label {
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
+}
+
+.existing-collaborators {
+  margin-top: 15px;
+  padding: 0;
+  background: none;
+}
+
+.existing-collaborators li {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  padding: 3px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+}
+
+.existing-collaborators .profile-avatar,
+.existing-collaborators .initials-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #007bff;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.collaborator-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  line-height: 1;
+}
+
+.selected-collaborators {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  gap: 6px;
+}
+
+.selected-collaborator {
+  display: inline-flex;
+  align-items: center;
+  background-color: #f0f4ff;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.selected-collaborator .remove-btn {
+  background: none;
+  border: none;
+  color: #777;
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.selected-collaborator .remove-btn:hover {
+  color: #d11a2a;
+}
+
+.invitation-card {
+  background: #fdfefe;
+  border: 1px solid #e0e7ff;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s;
+}
+
+.invitation-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.invitation-text {
+  font-size: 15px;
+  color: #333;
+  line-height: 1.4;
+}
+
+.inviter-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.trip-name {
+  font-weight: 600;
+  color: #3b82f6;
+}
+
+.invitation-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-invite {
+  flex: unset;
+  padding: 6px 16px; /* Smaller vertical padding */
+  font-size: 13px; /* Smaller font */
+  font-weight: 500;
+  border-radius: 20px; /* More rounded */
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 90px;
+}
+
+/* ✅ Outline style like LinkedIn */
+.btn-invite.accept {
+  background-color: white;
+  color: #10b981;
+  border: 1.5px solid #10b981;
+}
+
+.btn-invite.accept:hover {
+  background-color: #10b981;
+  color: white;
+}
+
+.btn-invite.reject {
+  background-color: white;
+  color: #ef4444;
+  border: 1.5px solid #ef4444;
+}
+
+.btn-invite.reject:hover {
+  background-color: #ef4444;
+  color: white;
+}
+.invitation-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
 }

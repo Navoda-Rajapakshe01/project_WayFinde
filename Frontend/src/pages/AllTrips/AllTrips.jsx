@@ -28,6 +28,7 @@ const AllTrips = () => {
   const [showSetDatesPopup, setShowSetDatesPopup] = useState(false);
   const [tripPlaceDates, setTripPlaceDates] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const refreshCollaborativeTrips = async () => {
     try {
@@ -157,6 +158,7 @@ const AllTrips = () => {
           name: trip.tripName,
           avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
           startLocation: trip.places?.[0]?.name || "N/A",
+          userId: trip.userId,
           totalDistance: `${totalDistance} km`,
           destinations:
             trip.places?.map((place) => ({
@@ -223,6 +225,7 @@ const AllTrips = () => {
             name: trip.tripName,
             avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
             startLocation: trip.places?.[0]?.name || "N/A",
+            userId: trip.userId,
             totalDistance: `${totalDistance} km`,
             destinations:
               trip.places?.map((place) => ({
@@ -392,15 +395,22 @@ const AllTrips = () => {
                   <p>No new invitations</p>
                 ) : (
                   pendingInvites.map((invite) => (
-                    <div key={invite.tripId} className="notification-item">
-                      <strong>{invite.tripName}</strong>
-                      <div className="notification-buttons">
+                    <div key={invite.tripId} className="invitation-card">
+                      <div className="invitation-text">
+                        <span className="inviter-name">{invite.ownerName}</span>{" "}
+                        invited you to join
+                        <span className="trip-name"> “{invite.tripName}”</span>.
+                      </div>
+
+                      <div className="invitation-actions">
                         <button
+                          className="btn-invite accept"
                           onClick={() => respondToInvite(invite.tripId, true)}
                         >
                           Accept
                         </button>
                         <button
+                          className="btn-invite reject"
                           onClick={() => respondToInvite(invite.tripId, false)}
                         >
                           Reject
@@ -479,27 +489,29 @@ const AllTrips = () => {
                     </div>
                   )}
                   <div className="trip-card-actions">
-                    <button
-                      className="set-dates-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const placesWithDates =
-                          trip.places?.map((place) => ({
-                            placeId: place.id,
-                            placeName: place.name,
-                            startDate: place.startDate || "",
-                            endDate: place.endDate || "",
-                          })) || [];
+                    {activeTab !== "completed" && (
+                      <button
+                        className="set-dates-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const placesWithDates =
+                            trip.places?.map((place) => ({
+                              placeId: place.id,
+                              placeName: place.name,
+                              startDate: place.startDate || "",
+                              endDate: place.endDate || "",
+                            })) || [];
 
-                        setTripPlaceDates(placesWithDates);
-                        setSelectedTrip(trip);
-                        setShowSetDatesPopup(true);
-                      }}
-                    >
-                      {trip.places?.every((p) => p.startDate && p.endDate)
-                        ? "Update Dates"
-                        : "Set Dates"}
-                    </button>
+                          setTripPlaceDates(placesWithDates);
+                          setSelectedTrip(trip);
+                          setShowSetDatesPopup(true);
+                        }}
+                      >
+                        {trip.places?.every((p) => p.startDate && p.endDate)
+                          ? "Update Dates"
+                          : "Set Dates"}
+                      </button>
+                    )}
 
                     <button
                       className="view-btn"
@@ -602,10 +614,18 @@ const AllTrips = () => {
                 })}
             </ul>
 
-            {existingCollaborators.length > 0 && (
+            {searchQuery.trim() === "" && existingCollaborators.length > 0 && (
               <div className="existing-collaborators">
                 <h3>Collaborators</h3>
-                <ul>
+                <ul className="collaborator-list">
+                  {
+                    // 🧪 Debug Logs (inserted here)
+                    (console.log("selectedTrip.userId:", selectedTrip?.userId),
+                    existingCollaborators.forEach((u) =>
+                      console.log("collaborator id:", u.id)
+                    ))
+                  }
+
                   {existingCollaborators
                     .sort((a, b) =>
                       String(a.id) === String(currentUserId)
@@ -615,11 +635,27 @@ const AllTrips = () => {
                         : 0
                     )
                     .map((user) => (
-                      <li key={user.id}>
-                        {user.username}{" "}
-                        {String(user.id) === String(currentUserId) && (
-                          <em style={{ color: "gray" }}>(Owner)</em>
+                      <li key={user.id} className="collaborator-item">
+                        {user.profilePictureUrl ? (
+                          <img
+                            src={user.profilePictureUrl}
+                            alt="profile"
+                            className="profile-avatar"
+                          />
+                        ) : (
+                          <div className="profile-avatar initials-avatar">
+                            {user.username?.[0]?.toUpperCase() || "?"}
+                          </div>
                         )}
+                        <div className="collaborator-details">
+                          <span className="collaborator-name">
+                            {user.username}
+                            {String(user.id).toLowerCase() ===
+                              String(selectedTrip?.userId).toLowerCase() && (
+                              <em className="owner-label"> (Owner)</em>
+                            )}
+                          </span>
+                        </div>
                       </li>
                     ))}
                 </ul>
@@ -639,9 +675,9 @@ const AllTrips = () => {
 
             {selectedUsers.length > 0 && (
               <>
-                <div className="selected-users">
+                <div className="selected-collaborators">
                   {selectedUsers.map((user) => (
-                    <div className="selected-user" key={user.id}>
+                    <div className="selected-collaborator" key={user.id}>
                       {user.username}
                       <button
                         className="remove-btn"
@@ -650,8 +686,9 @@ const AllTrips = () => {
                             selectedUsers.filter((u) => u.id !== user.id)
                           )
                         }
+                        aria-label={`Remove ${user.username}`}
                       >
-                        ❌
+                        &times;
                       </button>
                     </div>
                   ))}
@@ -671,7 +708,8 @@ const AllTrips = () => {
                         )
                       );
 
-                      alert("Collaborators saved!");
+                      setSuccessMessage("Collaborators saved successfully!");
+                      setTimeout(() => setSuccessMessage(""), 3000);
 
                       // Clear selected users and inputs
                       setSelectedUsers([]);
@@ -768,7 +806,8 @@ const AllTrips = () => {
                         prev.filter((trip) => trip.id !== confirmDeleteTrip)
                       );
                       setConfirmDeleteTrip(null);
-                      alert("Trip deleted successfully.");
+                      setSuccessMessage("Trip deleted successfully.");
+                      setTimeout(() => setSuccessMessage(""), 3000);
                     } else {
                       alert("Failed to delete trip.");
                     }
@@ -912,7 +951,9 @@ const AllTrips = () => {
                     };
                     setSelectedTrip(updatedTrip);
 
-                    alert("Trip dates saved successfully!");
+                    setSuccessMessage("Trip dates saved successfully!");
+                    setTimeout(() => setSuccessMessage(""), 3000);
+
                     setShowSetDatesPopup(false);
                   } else {
                     alert("Failed to save trip dates.");
@@ -925,6 +966,18 @@ const AllTrips = () => {
             >
               Save Dates
             </button>
+          </div>
+        </div>
+      )}
+
+      {successMessage && (
+        <div
+          className="alltrip-success-message"
+          onClick={() => setSuccessMessage("")}
+        >
+          <div className="alltrip-success-content">
+            <span className="alltrip-success-icon">✓</span>
+            <h3>{successMessage}</h3>
           </div>
         </div>
       )}

@@ -29,9 +29,8 @@ const CreateTrip = () => {
   const [tripDistance, setTripDistance] = useState(0);
   const [tripTime, setTripTime] = useState("");
   const [totalSpend, setTotalSpend] = useState(0);
-  const userId = localStorage.getItem("userId");
-  console.log("Logged-in userId from localStorage:", userId);
 
+  const userId = localStorage.getItem("userId");
   // Modal states
   const [showStartLocationModal, setShowStartLocationModal] = useState(false);
   const [showTravelDatesModal, setShowTravelDatesModal] = useState(false);
