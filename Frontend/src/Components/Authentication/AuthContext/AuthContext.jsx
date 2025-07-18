@@ -1,38 +1,65 @@
-// AuthContext.js
 import React, { createContext, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
-export const AuthContext = createContext();
+// Create the context with default values
+export const AuthContext = createContext({
+  user: null,
+  setUser: () => {},
+  logout: () => {},
+  loading: true,
+});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user on app start
+  // Fetch user profile from backend on app load
   useEffect(() => {
-    const storedUser = localStorage.getItem("userProfile");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("http://localhost:5030/api/auth/profile", {
+          credentials: "include", // Important: send cookies with request
+        });
+
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+      } catch (err) {
+        console.error("Error fetching user profile:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
-  // Use this after login to store user and update context
-  const login = (userData) => {
-    localStorage.setItem("userProfile", JSON.stringify(userData));
-    localStorage.setItem("token", userData.token); // Optional: if you use auth token
-    setUser(userData);
-  };
+  // Logout function: clear user and optionally call backend logout API
+  const logout = async () => {
+    try {
+      // Optional: call backend logout to clear cookie server-side
+      await fetch("http://localhost:5030/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Error during logout:", err);
+    }
 
-  const logout = () => {
-    localStorage.removeItem("userProfile");
-    localStorage.removeItem("token");
     setUser(null);
-    window.location.href = "/"; // Or use navigate if you prefer SPA behavior
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };

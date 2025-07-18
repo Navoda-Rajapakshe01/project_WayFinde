@@ -41,7 +41,8 @@ namespace Backend.Data
         public DbSet<Trip> Trips { get; set; }
         public DbSet<TripPlace> TripPlaces { get; set; }
         public DbSet<TripCollaborator> TripCollaborator { get; set; }
-        
+        public DbSet<TripDate> TripDate { get; set; }
+
 
 
 
@@ -101,6 +102,19 @@ namespace Backend.Data
                 .HasDefaultValueSql("GETDATE()");
             // DistrictWithPlacesCountDTO is a keyless DTO
             modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+
+            modelBuilder.Entity<TripCollaborator>()
+                .HasOne(tc => tc.Trip)
+                .WithMany(t => t.Collaborators)
+                .HasForeignKey(tc => tc.TripId)
+                .OnDelete(DeleteBehavior.Cascade);  // deleting a trip deletes collaborators
+
+            modelBuilder.Entity<TripCollaborator>()
+                .HasOne(tc => tc.User)
+                .WithMany() // assuming UserNew does not have a collection navigation property for collaborators
+                .HasForeignKey(tc => tc.UserId)
+                .OnDelete(DeleteBehavior.Restrict);  // prevent deleting users if they are collaborators
+
 
             // Precision for decimal properties
             modelBuilder.Entity<Vehicle>()

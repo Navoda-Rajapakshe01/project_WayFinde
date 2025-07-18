@@ -1,7 +1,9 @@
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React, { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+
+import { Link, useNavigate, useLocation } from "react-router-dom";
+
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
 
@@ -14,6 +16,8 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSignInModal, setShowSignInModal] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectPath = new URLSearchParams(location.search).get("redirect");
   const { setUser } = useContext(AuthContext);
 
   const handleChange = (e) => {
@@ -38,9 +42,13 @@ const Login = () => {
       );
 
       const token = response.data.token;
-      if (!token) throw new Error("No token received from server");
+      const userId = response.data.userId;
 
+      if (!token || !userId) throw new Error("Login response incomplete");
+
+      // ✅ Save token and userId to localStorage
       localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
 
       // Check for admin credentials
       if (formData.username === "admin" && token) {
@@ -104,7 +112,6 @@ const Login = () => {
     try {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
 
-
       // Check if user is admin
       const userRole =
         decodedToken.role ||
@@ -125,14 +132,11 @@ const Login = () => {
 
       // Continue with normal user profile fetch
 
-
       // Auto-detect the role claim key
       const roleClaimKey = Object.keys(decodedToken).find((k) =>
         k.toLowerCase().includes("role")
       );
       const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
-
-
 
       const profileRes = await axios.get(
         "http://localhost:5030/api/Auth/profile",
@@ -155,7 +159,7 @@ const Login = () => {
       } else if (roleClaim === "AccommodationProvider") {
         window.location.href = "/accommodation/supplier";
       } else {
-        window.location.href = "/";
+        window.location.href = redirectPath || "/";
       }
     } catch (profileError) {
       console.error("Profile fetch error:", profileError);
@@ -173,7 +177,7 @@ const Login = () => {
       } else if (roleClaim === "AccommodationProvider") {
         window.location.href = "/accommodation/supplier";
       } else {
-        window.location.href = "/";
+        window.location.href = redirectPath || "/";
       }
     }
   };
@@ -231,24 +235,28 @@ const Login = () => {
       {showSignInModal && (
         <div
           className="signin-modal-overlay"
-          onClick={() => setShowSignInModal(false)}>
+          onClick={() => setShowSignInModal(false)}
+        >
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}>
+                onClick={() => handleSignInOption("user")}
+              >
                 Normal User
               </button>
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}>
+                onClick={() => handleSignInOption("service")}
+              >
                 Service Provider
               </button>
             </div>
             <button
               className="close-modal-btn"
-              onClick={() => setShowSignInModal(false)}>
+              onClick={() => setShowSignInModal(false)}
+            >
               Close
             </button>
           </div>

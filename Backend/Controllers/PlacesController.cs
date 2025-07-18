@@ -98,6 +98,47 @@ namespace Backend.Controllers
             return Ok(places);
         }
 
+       
+        
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var places = await _context.PlacesToVisit
+                .Include(p => p.District)
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)            // load reviews for average
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.GoogleMapLink,
+                    AvgTime = p.AvgTime,
+                    AvgSpend = p.AvgSpend,
+                    p.CategoryId,
+                    CategoryName = p.Category.CategoryName,
+                    MainImageUrl = p.MainImageUrl,
+
+                    // dynamic average rating
+                    Rating = p.Reviews.Any()
+                        ? p.Reviews.Average(r => r.Rating)
+                        : (double?)null,
+
+                    District = new
+                    {
+                        p.District.Id,
+                        p.District.Name,
+                        p.District.SubTitle,
+                        p.District.ImageUrl
+                    }
+                })
+                .ToListAsync();
+
+            return Ok(places);
+        }
+
+
+
+
         [HttpPost]
         public async Task<IActionResult> AddPlace([FromBody] AddPlaceDTO dto)
         {
