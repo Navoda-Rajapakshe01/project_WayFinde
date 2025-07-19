@@ -14,6 +14,8 @@ namespace Backend.DTOs
         public string FuelType { get; set; } = string.Empty;
         public string TransmissionType { get; set; } = string.Empty;
         public int DistrictId { get; set; }
+        public Guid SupplierId { get; set; }
+        public int PlaceId { get; set; }
         public List<string>? Amenities { get; set; }
         public IFormFileCollection? Images { get; set; }
     }

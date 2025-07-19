@@ -100,3 +100,25 @@ export const reserveAccommodation = async (id, reservation) => {
     throw error;
   }
 };
+
+// Fetch all images for a given TripId
+export const getTripImages = async (tripId) => {
+  try {
+    const response = await api.get(`/TripPlaces/trip/${tripId}/images`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching images for trip ${tripId}:`, error);
+    throw error;
+  }
+};
+
+// Fetch trip details by tripId
+export const getTripDetails = async (tripId) => {
+  try {
+    const response = await api.get(`/trips/${tripId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching trip details for trip ${tripId}:`, error);
+    throw error;
+  }
+};

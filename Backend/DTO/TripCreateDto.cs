@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Backend.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs
-
 {
     public class TripCreateDto
     {
@@ -22,8 +20,5 @@ namespace Backend.DTOs
 
         [Required]
         public required List<int> PlaceIds { get; set; }
-
-
-
     }
 }
