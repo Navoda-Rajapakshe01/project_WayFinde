@@ -14,8 +14,6 @@ const DashViewPlaces = ({ isOpen, tripId, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [weatherLoading, setWeatherLoading] = useState(false);
 
-  const WEATHER_API_KEY = '8bfbf09eafdd4cbbb64131601251105';
-
   useEffect(() => {
     if (isOpen) {
       fetchPlaces();
@@ -35,7 +33,7 @@ const DashViewPlaces = ({ isOpen, tripId, onClose }) => {
           try {
             const placeRes = await fetch(`http://localhost:5030/api/Places/${tp.placeId}`);
             const placeData = await placeRes.json();
-            return { ...tp, name: placeData.name, mainImageUrl: placeData.mainImageUrl, openingHours: placeData.openingHours, googleMapLink: placeData.googleMapLink };
+            return { ...tp, name: placeData.name, mainImageUrl: placeData.mainImageUrl, openingHours: placeData.openingHours };
           } catch {
             return { ...tp, name: 'Unknown Place' };
           }
@@ -56,68 +54,25 @@ const DashViewPlaces = ({ isOpen, tripId, onClose }) => {
     }
   };
 
-  const extractLocationFromGoogleMap = (googleMapLink) => {
-    try {
-      const urlObj = new URL(googleMapLink);
-      const searchParams = urlObj.searchParams;
-      let lat, lng;
-
-      if (searchParams.has('ll')) {
-        const coords = searchParams.get('ll').split(',');
-        lat = parseFloat(coords[0]);
-        lng = parseFloat(coords[1]);
-      }
-
-      if (!lat || !lng) {
-        const pathMatch = googleMapLink.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-        if (pathMatch) {
-          lat = parseFloat(pathMatch[1]);
-          lng = parseFloat(pathMatch[2]);
-        }
-      }
-
-      if (!lat || !lng) {
-        const queryMatch = googleMapLink.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
-        if (queryMatch) {
-          lat = parseFloat(queryMatch[1]);
-          lng = parseFloat(queryMatch[2]);
-        }
-      }
-
-      return { lat, lng };
-    } catch (error) {
-      console.error('Error extracting location from Google Maps link:', error);
-      return null;
-    }
-  };
-
   const fetchWeatherData = async (place) => {
-    // Always use the GoogleMapLink from the place details (fetched from /api/Places)
-    if (!place?.googleMapLink) {
+    if (!place?.name) {
       setWeatherData(null);
       return;
     }
     setWeatherLoading(true);
 
     try {
-      const location = extractLocationFromGoogleMap(place.googleMapLink);
-
-      if (!location || !location.lat || !location.lng) {
-        console.error('Could not extract coordinates from Google Maps link');
-        setWeatherData(null);
-        return;
-      }
-
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lng}&appid=${WEATHER_API_KEY}&units=metric`
+      // Use your backend API instead of calling external APIs directly
+      const weatherResponse = await fetch(
+        `http://localhost:5030/api/Weather/${encodeURIComponent(place.name)}`
       );
 
-      if (!response.ok) {
+      if (!weatherResponse.ok) {
         throw new Error('Weather API request failed');
       }
 
-      const data = await response.json();
-      setWeatherData(data);
+      const weatherData = await weatherResponse.json();
+      setWeatherData(weatherData);
     } catch (error) {
       console.error('Error fetching weather data:', error);
       setWeatherData(null);
@@ -203,8 +158,6 @@ const DashViewPlaces = ({ isOpen, tripId, onClose }) => {
                             <FaClock className="dash-view-place-hours-icon" />
                             <span>{selectedPlace.openingHours || 'Hours not available'}</span>
                           </div>
-
-                
                         </div>
                       </div>
                     </div>
@@ -222,36 +175,36 @@ const DashViewPlaces = ({ isOpen, tripId, onClose }) => {
                           <div className="dash-view-weather-main">
                             <div className="dash-view-weather-icon">
                               <img
-                                src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
-                                alt={weatherData.weather[0].description}
+                                src={`https:${weatherData.icon}`}
+                                alt={weatherData.description}
                               />
                             </div>
                             <div className="dash-view-weather-temp">
-                              {Math.round(weatherData.main.temp)}°C
+                              {Math.round(weatherData.temperature)}°C
                             </div>
                           </div>
 
                           <div className="dash-view-weather-description">
-                            {weatherData.weather[0].description}
+                            {weatherData.description}
                           </div>
 
                           <div className="dash-view-weather-details">
                             <div className="dash-view-weather-detail">
                               <span className="dash-view-weather-label">Feels like</span>
                               <span className="dash-view-weather-value">
-                                {Math.round(weatherData.main.feels_like)}°C
+                                {Math.round(weatherData.feelsLike)}°C
                               </span>
                             </div>
                             <div className="dash-view-weather-detail">
                               <span className="dash-view-weather-label">Humidity</span>
                               <span className="dash-view-weather-value">
-                                {weatherData.main.humidity}%
+                                {weatherData.humidity}%
                               </span>
                             </div>
                             <div className="dash-view-weather-detail">
                               <span className="dash-view-weather-label">Wind Speed</span>
                               <span className="dash-view-weather-value">
-                                {weatherData.wind.speed} m/s
+                                {weatherData.windSpeed} km/h
                               </span>
                             </div>
                           </div>
