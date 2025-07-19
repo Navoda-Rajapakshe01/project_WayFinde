@@ -46,7 +46,7 @@ const CustomButtons = ({ tripId }) => {
       {/* Make sure TodoList component exists and is properly exported */}
       {activeButton === 'todo-list' && <TodoList tripId={tripId} />}
       {activeButton === 'budget' && <TravelBudget tripId={tripId} />}
-      {activeButton === 'vehicle-rent' && <VehicleRent />}
+      {activeButton === 'vehicle-rent' && <VehicleRent tripId={tripId} />}
       {activeButton === 'places' && <PlacesToStay />}
 
     </div>
