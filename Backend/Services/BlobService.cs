@@ -6,8 +6,8 @@ namespace Backend.Services
 {
     public class BlobService
     {
-        private readonly string _connectionString;
-        private readonly string _containerName;
+        private readonly string? _connectionString;
+        private readonly string? _containerName;
 
         public BlobService(IConfiguration configuration)
         {
@@ -17,6 +17,11 @@ namespace Backend.Services
 
         public async Task<string> UploadFileAsync(IFormFile file)
         {
+            if (_connectionString == null || _containerName == null)
+            {
+                throw new InvalidOperationException("Azure Blob Storage configuration is missing");
+            }
+            
             var blobClient = new BlobContainerClient(_connectionString, _containerName);
             await blobClient.CreateIfNotExistsAsync();
 

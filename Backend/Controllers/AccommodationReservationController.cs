@@ -54,7 +54,7 @@ namespace Backend.Controllers
                 TotalAmount = totalAmount,
                 Status = "Pending",
                 BookingDate = DateTime.UtcNow,
-                TripId = string.IsNullOrEmpty(bookingDto.TripId) ? (int?)null : int.Parse(bookingDto.TripId),
+                TripId = bookingDto.TripId,
             };
 
             try

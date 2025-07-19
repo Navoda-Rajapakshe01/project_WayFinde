@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import './AddNotes.css';
 
-const AddNotes = ({ isOpen, onClose, onSave }) => {
+const AddNotes = ({ isOpen, onClose, onSave, tripId }) => {
   const [title, setTitle] = useState('');
   const [note, setNote] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  // Replace this with your actual logged-in user ID
-  const userId = '3fa85f64-5717-9962-b3fc-2c963f66afa6';
 
   // Function to call backend API
   const createNote = async (title, note) => {
@@ -19,10 +16,9 @@ const AddNotes = ({ isOpen, onClose, onSave }) => {
         'Accept': 'text/plain',
       },
       body: JSON.stringify({
-        id: 0,
         noteTitle: title,
         noteDescription: note,
-        userId: userId,
+        tripId: parseInt(tripId), // Use tripId from props
         // Do not send createdDate or createdTime; backend will auto-fill
       }),
     });
@@ -30,12 +26,10 @@ const AddNotes = ({ isOpen, onClose, onSave }) => {
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(errorText || 'Failed to create note');
-    }else{
+    } else {
       alert('Successfully added.');
     }
 
-    // If backend returns JSON, parse it. If plain text, use response.text()
-    // Change this based on your backend implementation
     return response.json();
   };
 

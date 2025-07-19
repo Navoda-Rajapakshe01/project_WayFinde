@@ -16,4 +16,3 @@ namespace Backend.DTOs
         public required List<int> PlaceIds { get; set; }
     }
 }
-

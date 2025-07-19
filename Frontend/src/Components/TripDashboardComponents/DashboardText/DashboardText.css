@@ -6,7 +6,7 @@
     
   }
   
-  .gradient-box {
+  .gradients-box {
     
     background: linear-gradient(135deg, #d7d9dc, #f0f2f5);
     padding: 15px;
@@ -18,14 +18,14 @@
     width: 100%;
   }
   
-  .gradient-box h1 {
+  .gradients-box h1 {
     font-size: 1.2rem;
     margin-bottom: 20px;
     font-weight: bold; 
     font-family: 'Poppins', sans-serif; 
   }
   
-  .gradient-box p {
+  .gradients-box p {
     font-size: 1rem;
     margin-bottom: 2px;
     
@@ -41,5 +41,25 @@
   }
   
   .navbar-spacing {
-    height: 80px; /* Adjust this value for more or less space */
+    height: 80px; 
   }
+
+  @media (max-width: 600px) {
+  .gradients-box {
+    padding: 15px;
+  }
+
+  .gradients-box h1 {
+    font-size: 1.3rem;
+  }
+
+  .gradients-box p,
+  .happy-travels {
+    font-size: 0.95rem;
+  }
+
+  .dashboard-text {
+    margin-top: -20px;
+    flex-direction: column;
+  }
+}

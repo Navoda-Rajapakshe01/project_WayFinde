@@ -1,17 +1,17 @@
-.custom-buttons-container {
+.customs-buttons-container {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
 
-.buttons-row {
+.buttonss-row {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
-.custom-button {
+.customs-button {
   background-color: #d6d0d0;
   border: 1px solid #e0e0e0;
   border-radius: 20px;
@@ -23,15 +23,15 @@
   transition: all 0.2s ease;
 }
 
-.custom-button.active {
+.customs-button.active {
   background-color: #333;
   color: white;
 }
 
-.custom-button:hover {
+.customs-button:hover {
   background-color: #e0e0e0;
 }
 
-.custom-button.active:hover {
+.customs-button.active:hover {
   background-color: #444;
 }

@@ -1,0 +1,454 @@
+/* DashViewPlaces.css */
+
+.dash-view-places-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(1.5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+  }
+
+  .dash-view-places-modal {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 10001;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-50px) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  
+  /* Header */
+  .dash-view-places-header {
+    background: linear-gradient(135deg, #50b8e4 0%, #eff4f6 100%);
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .dash-view-places-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dash-view-places-close {
+    background: rgba(150, 147, 147, 0.2);
+    border: none;
+    color: rgb(10, 8, 8);
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .dash-view-places-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+  }
+  .dash-view-places-close-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  /* Content */
+  .dash-view-places-content {
+    padding: 30px;
+    height: calc(90vh - 100px);
+    overflow-y: auto;
+  }
+  
+  /* Loading */
+  .dash-view-places-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #666;
+  }
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+  
+  .loading-spinner.small {
+    width: 20px;
+    height: 20px;
+    border-width: 2px;
+    margin-bottom: 10px;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+ /* Places Navigation */
+.dash-view-places-nav {
+    display: flex;
+    justify-content: center; /* Center items horizontally */
+    align-items: center;      /* Optional: Center items vertically */
+    gap: 15px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    text-align: center;       /* Optional: Center text inside items */
+  }
+  
+  .dash-view-place-nav-button {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border: 2px solid transparent;
+    color: #333;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dash-view-place-nav-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .dash-view-place-nav-button.active {
+    background: linear-gradient(135deg, #acd5e3 0%, #0d9eeb 100%);
+    color: white;
+    border-color: #01040f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  }
+  
+  /* Main Content */
+  .dash-view-places-main {
+    display: flex;
+    gap: 30px;
+    height: 100%;
+  }
+  
+  /* Place Card */
+  .dash-view-place-card {
+    background-color: #f9f9f9;
+    margin-bottom: 16px;
+    padding: 16px;
+    height: 100%;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dash-view-place-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .dash-view-place-image {
+    height: 250px;
+    background: linear-gradient(135deg, #a1bbd5 0%, #82b9e3 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .dash-view-place-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .dash-view-place-image:hover img {
+    transform: scale(1.05);
+  }
+  .dash-view-places-modal h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  
+  .dash-view-place-image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .dash-view-place-image-placeholder svg {
+    font-size: 48px;
+    margin-bottom: 10px;
+  }
+  
+  .dash-view-place-info {
+    padding: 25px;
+  }
+  
+  .dash-view-place-name {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 15px;
+  }
+  
+  .dash-view-place-description {
+    color: #718096;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .dash-view-place-hours,
+  .dash-view-place-address {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: #4a5568;
+  }
+  
+  .dash-view-place-hours-icon,
+  .dash-view-place-address-icon {
+    color: #100c30;
+    font-size: 16px;
+  }
+  
+  .dash-view-place-address-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.3s ease;
+  }
+  
+  .dash-view-place-address-link:hover {
+    color: #5bb4cb;
+  }
+  
+  .dash-view-external-link-icon {
+    font-size: 12px;
+  }
+  
+  /* Weather Card */
+  .dash-view-weather-card {
+    flex: 0 0 350px;
+    background: linear-gradient(135deg, #66beea 0%, #234869 100%);
+    border-radius: 16px;
+    padding: 25px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    height: fit-content;
+  }
+  
+  .dash-view-weather-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dash-view-weather-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .dash-view-weather-content {
+    text-align: center;
+  }
+  
+  .dash-view-weather-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .dash-view-weather-icon img {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  }
+  
+  .dash-view-weather-temp {
+    font-size: 48px;
+    font-weight: 700;
+    margin-top: 10px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dash-view-weather-description {
+    font-size: 18px;
+    margin-bottom: 25px;
+    text-transform: capitalize;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  .dash-view-weather-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .dash-view-weather-detail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .dash-view-weather-detail:last-child {
+    border-bottom: none;
+  }
+  
+  .dash-view-weather-label {
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .dash-view-weather-value {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  
+  .dash-view-weather-error {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 40px 20px;
+  }
+  
+  /* Empty State */
+  .dash-view-places-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: #a0aec0;
+    font-size: 18px;
+  }
+  
+  .dash-view-places-empty svg {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .dash-view-places-modal {
+      width: 95%;
+      max-height: 95vh;
+    }
+    
+    .dash-view-places-header {
+      padding: 15px 20px;
+    }
+    
+    .dash-view-places-title {
+      font-size: 24px;
+    }
+    
+    .dash-view-places-content {
+      padding: 20px;
+    }
+    
+    .dash-view-places-main {
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .dash-view-weather-card {
+      flex: none;
+    }
+    
+    .dash-view-places-nav {
+      gap: 10px;
+    }
+    
+    .dash-view-place-nav-button {
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .dash-view-places-modal {
+      width: 100%;
+      height: 100vh;
+      border-radius: 0;
+      max-height: none;
+    }
+    
+    .dash-view-places-content {
+      padding: 15px;
+      height: calc(100vh - 80px);
+    }
+    
+    .dash-view-place-image {
+      height: 200px;
+    }
+    
+    .dash-view-place-info {
+      padding: 20px;
+    }
+    
+    .dash-view-weather-card {
+      padding: 20px;
+    }
+    
+    .dash-view-weather-temp {
+      font-size: 40px;
+    }
+  }
+

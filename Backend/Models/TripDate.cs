@@ -7,7 +7,7 @@ namespace Backend.Models
 	public class TripDate
 	{
 		[Key]
-		public int TripDateId { get; set; }
+		public int Id { get; set; }
 
 		[Required]
 		public int TripId { get; set; }
@@ -24,5 +24,6 @@ namespace Backend.Models
 
 		[Required]
 		public DateTime? EndDate { get; set; }
+
 	}
 }
