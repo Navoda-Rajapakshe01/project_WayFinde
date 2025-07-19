@@ -64,14 +64,6 @@
   justify-content: center;
 }
 
-.trip-name {
-  font-size: 1rem; /* smaller font size */
-  font-weight: bold;
-  margin: 0 0 4px 0;
-  line-height: 1.2;
-  margin-bottom: 30px;
-}
-
 .remove-btn {
   background: none;
   border: none;
@@ -122,6 +114,16 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+.trip-name1 {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 2px;
+  color: #3b82f6;
+  margin-bottom: 20px;
+}
+.trip-name {
+  color: #3b82f6;
 }
 
 .trip-tabs button {
@@ -182,12 +184,11 @@
   flex-direction: column;
   justify-content: space-between;
 
-  /* This is the important part for gray marginal frame */
   border: 1.5px solid #ccc; /* Gray marginal border */
   box-shadow: none; /* No shadow */
 }
 .trip-card:hover {
-  border-color: #999; /* slightly darker on hover */
+  border-color: #47d2f1; /* slightly darker on hover */
 }
 
 .trip-card.selected {
@@ -196,6 +197,15 @@
 }
 
 /* Three Dots Menu */
+.menu-option {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* ensures space between icon and text */
+  padding: 10px 15px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .menu-icon {
   position: absolute;
   top: 10px;
@@ -795,7 +805,7 @@
   gap: 6px;
 }
 
-.selected-collaborator {
+.selected-collaborator1 {
   display: inline-flex;
   align-items: center;
   background-color: #f0f4ff;
@@ -807,7 +817,7 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.selected-collaborator .remove-btn {
+.selected-collaborator1 .remove-btn {
   background: none;
   border: none;
   color: #777;
@@ -820,8 +830,8 @@
   transition: color 0.2s ease;
 }
 
-.selected-collaborator .remove-btn:hover {
-  color: #d11a2a;
+.selected-collaborator1 .remove-btn:hover {
+  color: #f36a75;
 }
 
 .invitation-card {
@@ -853,11 +863,6 @@
   color: #1f2937;
 }
 
-.trip-name {
-  font-weight: 600;
-  color: #3b82f6;
-}
-
 .invitation-actions {
   display: flex;
   gap: 10px;
@@ -883,14 +888,14 @@
 }
 
 .btn-invite.accept:hover {
-  background-color: #10b981;
+  background-color: #46e3ae;
   color: white;
 }
 
 .btn-invite.reject {
   background-color: white;
   color: #ef4444;
-  border: 1.5px solid #ef4444;
+  border: 1.5px solid #f17171;
 }
 
 .btn-invite.reject:hover {

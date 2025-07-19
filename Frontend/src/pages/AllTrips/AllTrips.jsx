@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./AllTrips.css";
 import TripDashboard from "../TripDashboard";
 import { calculateTripStats } from "./utils/tripStats"; // adjust path if needed
-import { Bell } from "lucide-react";
+import { Bell, Users, Share2, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const AllTrips = () => {
@@ -449,7 +449,7 @@ const AllTrips = () => {
                       className="trip-thumbnail"
                     />
                     <div className="trip-card-info">
-                      <h3 className="trip-name">{trip.name}</h3>
+                      <h3 className="trip-name1">{trip.name}</h3>
                       <p>Start Date: {trip.startDate?.slice(0, 10)}</p>
                       <p>Avg. Spent: {trip.avgSpent}</p>
                       <p>Start Location: {trip.startLocation}</p>
@@ -471,19 +471,21 @@ const AllTrips = () => {
                         className="menu-option"
                         onClick={() => setShowPopup("invite")}
                       >
+                        <Users size={16} style={{ marginRight: "8px" }} />
                         Collaborators
                       </div>
                       <div
                         className="menu-option"
                         onClick={() => setShowPopup("share")}
                       >
+                        <Share2 size={16} style={{ marginRight: "8px" }} />
                         Share Trip
                       </div>
-
                       <div
                         className="menu-option delete"
                         onClick={() => setConfirmDeleteTrip(trip.id)}
                       >
+                        <Trash2 size={16} style={{ marginRight: "8px" }} />
                         Delete
                       </div>
                     </div>
@@ -677,7 +679,7 @@ const AllTrips = () => {
               <>
                 <div className="selected-collaborators">
                   {selectedUsers.map((user) => (
-                    <div className="selected-collaborator" key={user.id}>
+                    <div className="selected-collaborator1" key={user.id}>
                       {user.username}
                       <button
                         className="remove-btn"
@@ -798,13 +800,11 @@ const AllTrips = () => {
                         method: "DELETE",
                       }
                     );
+
                     if (res.ok) {
-                      setUpcomingTrips((prev) =>
-                        prev.filter((trip) => trip.id !== confirmDeleteTrip)
-                      );
-                      setCompletedTrips((prev) =>
-                        prev.filter((trip) => trip.id !== confirmDeleteTrip)
-                      );
+                      await fetchTripPreviews();
+                      await refreshCollaborativeTrips();
+
                       setConfirmDeleteTrip(null);
                       setSuccessMessage("Trip deleted successfully.");
                       setTimeout(() => setSuccessMessage(""), 3000);
