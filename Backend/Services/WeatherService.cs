@@ -19,20 +19,34 @@ namespace Backend.Services
         public WeatherService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _apiKey = "8bfbf09eafdd4cbbb64131601251105"; // Your API key
+            // Get a valid API key from https://www.weatherapi.com/
+            _apiKey = "8d0063bf13b1431591565611251907"; // Replace with your valid WeatherAPI.com key
         }
 
         public async Task<Weather> GetWeatherAsync(string location)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{BaseUrl}/current.json?key={_apiKey}&q={location}");
-                response.EnsureSuccessStatusCode();
+                // Handle Sri Lankan place names better by appending "Sri Lanka" if not present
+                string searchLocation = location;
+                if (!location.ToLower().Contains("sri lanka"))
+                {
+                    searchLocation = $"{location}, Sri Lanka";
+                }
+
+                var response = await _httpClient.GetAsync($"{BaseUrl}/current.json?key={_apiKey}&q={Uri.EscapeDataString(searchLocation)}&aqi=no");
+                
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Weather API error: {response.StatusCode} - {errorContent}");
+                }
                 
                 var jsonResponse = await response.Content.ReadAsStringAsync();
                 var weatherData = JsonSerializer.Deserialize<JsonElement>(jsonResponse);
                 
                 var current = weatherData.GetProperty("current");
+                var locationData = weatherData.GetProperty("location");
                 
                 return new Weather
                 {
@@ -43,13 +57,21 @@ namespace Backend.Services
                     Icon = current.GetProperty("condition").GetProperty("icon").GetString() ?? "",
                     WindSpeed = current.GetProperty("wind_kph").GetDouble(),
                     LastUpdated = DateTime.Parse(current.GetProperty("last_updated").GetString() ?? DateTime.UtcNow.ToString()),
-                    Location = location
+                    Location = locationData.GetProperty("name").GetString() ?? location
                 };
+            }
+            catch (JsonException ex)
+            {
+                throw new Exception($"Error parsing weather data: {ex.Message}");
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new Exception($"Error connecting to weather service: {ex.Message}");
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error fetching weather data: {ex.Message}");
+                throw new Exception($"Error fetching weather data for {location}: {ex.Message}");
             }
         }
     }
-} 
+}
