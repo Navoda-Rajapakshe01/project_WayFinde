@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Backend.Models;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models
@@ -18,7 +19,11 @@ namespace Backend.Models
         [Required]
         public DateTime EndDate { get; set; }
 
-        public string UserId { get; set; }
+        public Guid UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public UserNew User { get; set; }
+
 
         public DateTime CreatedAt { get; set; }  // timestamps:true
         public DateTime UpdatedAt { get; set; }

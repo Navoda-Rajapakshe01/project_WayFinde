@@ -8,12 +8,16 @@ using CloudinaryDotNet;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Register HttpClient and WeatherService
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+
 
 // Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
+
+
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
