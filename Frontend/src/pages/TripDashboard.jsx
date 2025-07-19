@@ -26,7 +26,7 @@ const TripDashboard = () => {
         </div>
         <div className="side-content">
           <DashboardMap />
-          <WeatherWidget location="Galle, Sri Lanka" />
+         
         </div>
       </div>
     </div>

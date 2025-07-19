@@ -13,8 +13,8 @@ const TodoPopup = ({ onClose, onSave }) => {
   };
 
   return (
-    <div className="popup-overlay">
-      <div className="popup-content">
+    <div className="popups-overlay">
+      <div className="popups-content">
         <h5>Add New Task</h5>
         <input
           type="text"

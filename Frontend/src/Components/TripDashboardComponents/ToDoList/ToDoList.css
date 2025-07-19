@@ -5,6 +5,7 @@
     width: 80%;
     padding: 60px;
     margin-left: 45px;
+   
   
   }
   
@@ -60,7 +61,7 @@
     padding: 8px 12px;
     border: 1px solid #fcfcfc;
     border-radius: 4px;
-    background-color: #057c54;
+    background-color: #379dba;
     color: rgb(17, 5, 5);
     font-size: 15px;
     cursor: pointer;
@@ -104,7 +105,7 @@
   }
   
   .checkbox-container input:checked ~ .custom-checkbox {
-    background-color: #10b981;
+    background-color: #45b1c9;
     border-color: #10b981;
   }
   
@@ -151,7 +152,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #10b981;
+    background-color: #19b3c7;
     color: white;
     border: none;
     display: flex;

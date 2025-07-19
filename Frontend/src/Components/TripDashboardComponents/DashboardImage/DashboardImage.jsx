@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './DashboardImage.css';
-import { FaCalendarAlt, FaCog, FaTimes, FaPlus, FaMinus, FaCheck } from 'react-icons/fa';
+import { FaCalendarAlt, FaCog, FaTimes, FaPlus, FaMinus, FaCheck, FaMapMarkerAlt } from 'react-icons/fa';
 import axios from 'axios';
+import DashViewPlaces from '../DashViewPlaces/DashViewPlaces';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5030/api';
 
@@ -17,6 +18,7 @@ const DashboardImage = ({ tripId }) => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [warningMessage, setWarningMessage] = useState('');
+  const [isViewAllPlacesOpen, setIsViewAllPlacesOpen] = useState(false);
 
   const handleSettingsClick = () => {
     setEditTripName(tripName);
@@ -29,6 +31,14 @@ const DashboardImage = ({ tripId }) => {
     setIsModalOpen(false);
     setShowSuccessMessage(false);
     setIsLoading(false);
+  };
+
+  const handleViewAllPlaces = () => {
+    setIsViewAllPlacesOpen(true);
+  };
+
+  const handleCloseViewAllPlaces = () => {
+    setIsViewAllPlacesOpen(false);
   };
 
   const incrementStartDate = () => {
@@ -180,6 +190,11 @@ const DashboardImage = ({ tripId }) => {
           <FaCog className="settings-icon-svg" />
         </div>
 
+        <div className="view-all-places-button" onClick={handleViewAllPlaces}>
+          <FaMapMarkerAlt className="view-all-places-icon" />
+          <span className="view-all-places-text">View All Places</span>
+        </div>
+
         <div className="overlay-info">
           <h2 className="trip-title">{tripName}</h2>
           <div className="info-item">
@@ -274,6 +289,14 @@ const DashboardImage = ({ tripId }) => {
             </div>
           </div>
         </div>
+      )}
+
+      {isViewAllPlacesOpen && (
+        <DashViewPlaces 
+          isOpen={isViewAllPlacesOpen}
+          tripId={tripId} 
+          onClose={handleCloseViewAllPlaces}
+        />
       )}
     </>
   );
