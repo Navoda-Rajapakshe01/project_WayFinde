@@ -691,7 +691,6 @@ namespace Backend.Migrations
                 });
 
             modelBuilder.Entity("Backend.Models.Trip", b =>
-            modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -901,7 +900,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("SupplierId");
 
-                   b.ToTable("Vehicles", (string)null);
+                    b.ToTable("Vehicles", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
