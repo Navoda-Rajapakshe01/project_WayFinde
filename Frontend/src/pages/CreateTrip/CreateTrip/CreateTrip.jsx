@@ -282,9 +282,6 @@ const CreateTrip = () => {
       // Prepare the trip data
       const tripData = {
         tripName: name,
-        tripDistance,
-        tripTime,
-        totalSpend,
         startDate: startDate ? new Date(startDate).toISOString() : null,
         endDate: endDate ? new Date(endDate).toISOString() : null,
         userId: userId,

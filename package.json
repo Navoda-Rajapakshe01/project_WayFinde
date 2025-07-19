@@ -20,7 +20,8 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.55.0",
-    "react-quill": "^2.0.0"
+    "react-quill": "^2.0.0",
+    "sweetalert2": "^11.22.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.27.1"
