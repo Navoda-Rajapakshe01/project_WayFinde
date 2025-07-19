@@ -66,7 +66,7 @@ namespace Backend.Migrations
                     b.ToTable("AccommodationImages", (string)null);
                 });
 
-            modelBuilder.Entity("Backend.DTOs.DistrictWithPlacesCountDTO", b =>
+            modelBuilder.Entity("Backend.DTO.DistrictWithPlacesCountDTO", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
@@ -83,11 +83,9 @@ namespace Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Slug")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SubTitle")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("DistrictWithPlacesCountDTO", (string)null);
@@ -290,7 +288,7 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Dsitrict")
+                    b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -375,11 +373,9 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("CreatedTime")
-                        .HasColumnType("time");
 
                     b.Property<string>("NoteDescription")
                         .IsRequired()
@@ -390,10 +386,16 @@ namespace Backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TripId");
 
                     b.ToTable("DashboardNote", (string)null);
                 });
@@ -487,7 +489,7 @@ namespace Backend.Migrations
                     b.Property<string>("AvgTime")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -513,12 +515,6 @@ namespace Backend.Migrations
 
                     b.Property<string>("OpeningHours")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PlaceType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Rating")
-                        .HasColumnType("float");
 
                     b.HasKey("Id");
 
@@ -642,12 +638,17 @@ namespace Backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TripId");
 
                     b.ToTable("TodoItems", (string)null);
                 });
@@ -674,16 +675,27 @@ namespace Backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
                     b.HasKey("Id");
 
-                    b.ToTable("TravelBudgets", (string)null);
+                    b.HasIndex("TripId");
+
+                    b.ToTable("TravelBudgets");
                 });
 
             modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -692,27 +704,33 @@ namespace Backend.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("TotalSpend")
+                    b.Property<decimal>("TotalSpend")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<double?>("TripDistance")
-                        .HasColumnType("float");
+                    b.Property<decimal>("TripDistance")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TripName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("TripTime")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("TripTime")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
@@ -735,6 +753,15 @@ namespace Backend.Migrations
 
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
 
                     b.Property<int>("TripId")
                         .HasColumnType("int");
@@ -846,9 +873,18 @@ namespace Backend.Migrations
                     b.Property<int>("NumberOfPassengers")
                         .HasColumnType("int");
 
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("PricePerDay")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SupplierUsername")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TransmissionType")
                         .IsRequired()
@@ -861,6 +897,8 @@ namespace Backend.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DistrictId");
+
+                    b.HasIndex("SupplierId");
 
                     b.ToTable("Vehicles", (string)null);
                 });
@@ -1082,6 +1120,15 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
+                {
+                    b.HasOne("Backend.Models.Trip", null)
+                        .WithMany("DashboardNotes")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Backend.Models.Follows", b =>
                 {
                     b.HasOne("Backend.Models.UserNew", "Followed")
@@ -1116,10 +1163,12 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Backend.Models.District", "District")
-                        .WithMany()
+                        .WithMany("PlacesToVisit")
                         .HasForeignKey("DistrictId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1159,6 +1208,28 @@ namespace Backend.Migrations
                     b.Navigation("Place");
                 });
 
+            modelBuilder.Entity("Backend.Models.TodoItem", b =>
+                {
+                    b.HasOne("Backend.Models.Trip", "Trip")
+                        .WithMany("TodoItems")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Backend.Models.TravelBudget", b =>
+                {
+                    b.HasOne("Backend.Models.Trip", "Trip")
+                        .WithMany("TravelBudgets")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
             modelBuilder.Entity("Backend.Models.TripCollaborator", b =>
                 {
                     b.HasOne("Backend.Models.Trip", "Trip")
@@ -1170,12 +1241,31 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.UserNew", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Trip");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.TripDate", b =>
+                {
+                    b.HasOne("Backend.Models.PlacesToVisit", "Place")
+                        .WithMany()
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Trip", "Trip")
+                        .WithMany("TripDates")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
+
+                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("Backend.Models.TripPlace", b =>
@@ -1197,6 +1287,25 @@ namespace Backend.Migrations
                     b.Navigation("Trip");
                 });
 
+            modelBuilder.Entity("Backend.Models.User.BlogReaction", b =>
+                {
+                    b.HasOne("Backend.Models.Blog", "Blog")
+                        .WithMany()
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.UserNew", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Backend.Models.Vehicle", b =>
                 {
                     b.HasOne("Backend.Models.District", "District")
@@ -1205,7 +1314,15 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Backend.Models.UserNew", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("District");
+
+                    b.Navigation("Supplier");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
@@ -1266,6 +1383,11 @@ namespace Backend.Migrations
                     b.Navigation("Comments");
                 });
 
+            modelBuilder.Entity("Backend.Models.District", b =>
+                {
+                    b.Navigation("PlacesToVisit");
+                });
+
             modelBuilder.Entity("Backend.Models.PlacesToVisit", b =>
                 {
                     b.Navigation("PlaceImage");
@@ -1283,6 +1405,14 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
                     b.Navigation("Collaborators");
+
+                    b.Navigation("DashboardNotes");
+
+                    b.Navigation("TodoItems");
+
+                    b.Navigation("TravelBudgets");
+
+                    b.Navigation("TripDates");
 
                     b.Navigation("TripPlaces");
                 });

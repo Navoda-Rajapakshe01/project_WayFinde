@@ -1,10 +1,10 @@
 .travel-budget-container {
   display: flex;
   flex-direction: column;
-  width: 40%;
-  padding-bottom: 60px;
-  margin: 30px;
-  margin-left: 5%;
+  width: 80%;
+  padding: 60px;
+  margin-left: 45px;
+  
 }
 
 .budget-plan-title {
@@ -76,7 +76,7 @@
 
 /* Add Button */
 .add-expense-button {
-  background-color: #10b981;
+  background-color: #36b8c9;
   color: white;
   border: none;
   padding: 0 16px;
@@ -150,7 +150,7 @@
   border-radius: 12px; 
   text-align: center; 
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-  border: 2px solid #a5d6a7; 
+  border: 2px solid #93c3e5; 
   transition: transform 0.2s ease;
 }
 
@@ -159,7 +159,7 @@
 }
 
 .total-label {
-  color: #2e7d32;
+  color: #19706a;
   margin-right: 8px;
 }
 

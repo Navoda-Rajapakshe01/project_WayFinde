@@ -58,7 +58,8 @@ import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 
 import BlogCard from "./Components/BlogComponents/BlogCard/BlogCard";
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
-import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
+import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
+import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 
 import "./App.css";
 
@@ -74,6 +75,9 @@ function AppRoutes() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/plantrip" element={<CreateTrip />} />
+        <Route path="/trip-planner" element={<PlanTrip />} />
+        <Route path="/upcomingtrips" element={<AllTrips />} />
         <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
@@ -101,8 +105,8 @@ function AppRoutes() {
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
         <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />} />
+        <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/tripdashboard/:tripId" element={<TripDashboard />} />
-
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
         <Route path="/chat" element={<Chat />} />
@@ -125,7 +129,7 @@ function AppRoutes() {
         />
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
         <Route path="/plantrip" element={<CreateTrip />} />
-        <Route path="/optimizedroute/:id" element={<OptimizedRoute />} />
+        <Route path="/optimizedroute/:id" element={<OptimizedTripRoute />} />
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />

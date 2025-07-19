@@ -5,16 +5,16 @@ function DashboardMap() {
   return (
     <div className="dashboard-map-container">
       <div className="dashboard-map">
-        {/* Placeholder for map - would use Google Maps or another map library in real app */}
-        <div className="dashboard-map-controls">
-          <button className="center-btn">
-            <i className="fas fa-location-arrow"></i>
-          </button>
-          <div className="zoom-control-panel">
-            <button className="zoom-in-btn">+</button>
-            <button className="zoom-out-btn">−</button>
-          </div>
-        </div>
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=79.8164,6.9271,79.8612,6.9271&layer=mapnik"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Location Map"
+        ></iframe>
       </div>
     </div>
   );

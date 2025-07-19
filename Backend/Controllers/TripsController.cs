@@ -7,6 +7,7 @@ using System;
 using Backend.Data;
 using Backend.Models;
 using Backend.DTOs;
+using Backend.DTO;
 
 namespace Backend.Data
 {
@@ -562,6 +563,48 @@ namespace Backend.Data
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+                // PATCH: api/trips/{id} - Update trip basic details (tripName, startDate, endDate)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchTrip(int id, [FromBody] PatchTripRequest request)
+        {
+            if (request == null)
+                return BadRequest(new { message = "Invalid request data" });
+
+            var trip = await _context.Trips.FindAsync(id);
+            if (trip == null)
+                return NotFound(new { message = "Trip not found" });
+
+            // Update only the provided fields
+            if (!string.IsNullOrEmpty(request.TripName))
+                trip.TripName = request.TripName;
+            if (request.StartDate.HasValue)
+                trip.StartDate = request.StartDate.Value;
+            if (request.EndDate.HasValue)
+                trip.EndDate = request.EndDate.Value;
+
+            trip.UpdatedAt = DateTime.UtcNow;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new {
+                    message = "Trip updated successfully",
+                    trip = new {
+                        id = trip.Id,
+                        tripName = trip.TripName,
+                        startDate = trip.StartDate,
+                        endDate = trip.EndDate,
+                        updatedAt = trip.UpdatedAt
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating trip: {ex.Message}");
+                return StatusCode(500, new { message = "Failed to update trip", detail = ex.Message });
+            }
         }
 
         [HttpPost("save-trip-dates")]
