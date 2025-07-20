@@ -345,5 +345,73 @@ namespace Backend.Controllers
             return Ok(count);
         }
 
+        // GET: api/profile/admin/users
+        [HttpGet("admin/users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await _context.UsersNew
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        FullName = u.Username,
+                        Email = u.ContactEmail,
+                        Role = u.Role,
+                        Status = "active", 
+                        DateJoined = u.RegisteredDate,
+                        LastLogin = u.LastLoginDate,
+                        ProfilePicture = u.ProfilePictureUrl,
+                        Phone = u.PhoneNumber,
+                        Bio = u.Bio,
+                        FollowersCount = u.FollowersCount,
+                        FollowingCount = u.FollowingCount
+                    })
+                    .ToListAsync();
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Failed to fetch users", error = ex.Message });
+            }
+        }
+
+        // GET: api/profile/admin/users/{userId}
+        [HttpGet("admin/users/{userId}")]
+        public async Task<IActionResult> GetUserById(Guid userId)
+        {
+            try
+            {
+                var user = await _context.UsersNew
+                    .Where(u => u.Id == userId)
+                    .Select(u => new
+                    {
+                        Id = u.Id,
+                        FullName = u.Username,
+                        Email = u.ContactEmail,
+                        Role = u.Role,
+                        Status = "active", 
+                        DateJoined = u.RegisteredDate,
+                        LastLogin = u.LastLoginDate,
+                        ProfilePicture = u.ProfilePictureUrl,
+                        Phone = u.PhoneNumber,
+                        Bio = u.Bio,
+                        FollowersCount = u.FollowersCount,
+                        FollowingCount = u.FollowingCount
+                    })
+                    .FirstOrDefaultAsync();
+
+                if (user == null)
+                    return NotFound("User not found");
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Failed to fetch user", error = ex.Message });
+            }
+        }
+
     }
 }
