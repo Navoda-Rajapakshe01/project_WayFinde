@@ -198,5 +198,12 @@ namespace Backend.Controllers
 
             return Ok(MapToDto(vehicle));
         }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetVehicleCount()
+        {
+            var count = await _context.Vehicles.CountAsync();
+            return Ok(count);
+        }
     }
 }

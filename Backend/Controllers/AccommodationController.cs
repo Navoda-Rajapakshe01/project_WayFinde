@@ -172,6 +172,13 @@ namespace Backend.Controllers
             return Ok(MapToDto(accommodation));
         }
 
+        [HttpGet("count")]
+        public async Task<IActionResult> GetAccommodationCount()
+        {
+            var count = await _context.Accommodations.CountAsync();
+            return Ok(count);
+        }
+
         private AccommodationDto MapToDto(Accommodation accommodation)
         {
             return new AccommodationDto

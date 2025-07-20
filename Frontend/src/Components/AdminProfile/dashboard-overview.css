@@ -238,3 +238,236 @@
 .recent-users .data-table td:nth-child(2) {
   word-break: break-all;
 }
+
+/* --- Popular Places Table --- */
+.popular-places-card {
+  width: 100%;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+.popular-places-header {
+  background: #f5f7fa;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid #e5e9f2;
+}
+.popular-places-header h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #2d3748;
+}
+.popular-places-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 1rem;
+}
+.popular-places-table th {
+  background: #f5f7fa;
+  padding: 1rem;
+  font-weight: 600;
+  color: #374151;
+  border-top: none;
+}
+.popular-places-table th:first-child {
+  border-top-left-radius: 12px;
+}
+.popular-places-table th:last-child {
+  border-top-right-radius: 12px;
+}
+.popular-place-row {
+  transition: background 0.2s, font-weight 0.2s;
+}
+.popular-place-row:nth-child(even) {
+  background: #fafbfc;
+}
+.popular-place-row:nth-child(odd) {
+  background: #fff;
+}
+.popular-place-row.top-place {
+  background: #e6f7ff;
+  font-weight: 700;
+}
+.popular-place-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: none;
+  display: block;
+}
+.popular-place-img.top-img {
+  box-shadow: 0 0 0 2px #3182ce;
+}
+.popular-place-img.placeholder {
+  background: #e2e8f0;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: block;
+}
+.popular-place-name {
+  color: #2d3748;
+  font-weight: 500;
+}
+.popular-place-row.top-place .popular-place-name {
+  color: #2b6cb0;
+}
+.popular-place-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.popular-place-rating .adminrating-stars {
+  color: #f6ad55;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+.popular-place-rating .adminrating-value {
+  color: #2d3748;
+  font-weight: 500;
+  margin-left: 4px;
+}
+.popular-place-review-count {
+  color: #718096;
+  font-size: 0.95rem;
+  margin-left: 2px;
+}
+
+/* --- Popular Places Average Rating Summary --- */
+.popular-places-rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #f5f7fa;
+  border-radius: 12px;
+  padding: 1rem 2rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.15rem;
+  font-weight: 500;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+}
+.rating-summary-label {
+  color: #2d3748;
+  font-weight: 600;
+  font-size: 1.08rem;
+}
+.rating-summary-value {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.rating-summary-stars {
+  color: #f6ad55;
+  font-size: 1.35rem;
+  letter-spacing: 1px;
+  margin-right: 0.3rem;
+}
+.rating-summary-number {
+  color: #2b6cb0;
+  font-size: 1.18rem;
+  font-weight: 700;
+}
+
+/* --- Activity Overview Card --- */
+.activity-overview-card {
+  width: 100%;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+.activity-overview-header {
+  background: #f5f7fa;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid #e5e9f2;
+}
+.activity-overview-header h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #2d3748;
+}
+
+/* --- Section Headings (Elegant, On-Brand) --- */
+.card-header h2,
+.popular-places-header h2,
+.activity-overview-header h2 {
+  font-size: 1.8rem;
+  color: var(--primary-dark, #0e8a9e);
+  letter-spacing: 0.02em;
+  margin: 0;
+  padding: 0.8em;
+  line-height: 1.18;
+  background: linear-gradient(90deg, var(--primary-light, #5ed6e5) 0%, var(--primary-color, #14b9d5) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+}
+
+.card-header,
+.popular-places-header,
+.activity-overview-header {
+  padding-top: 2.2rem;
+  padding-bottom: 1.4rem;
+  margin-bottom: 0.2rem;
+  background: #fafdff;
+  border-bottom: 2px solid var(--primary-light, #5ed6e5);
+  box-shadow: 0 2px 8px rgba(20,185,213,0.04);
+}
+
+.dashboard-card {
+  margin-bottom: 2.5rem;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(20,185,213,0.07);
+}
+
+/* Add more vertical space between summary and table */
+.popular-places-rating-summary {
+  margin-bottom: 2.2rem;
+}
+
+/* Responsive tweaks for the grid */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .popular-places-card,
+  .activity-overview-card {
+    border-radius: 12px;
+  }
+}
+
+.activity-overview-header.activity-overview-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 1.5rem;
+}
+.activity-overview-header.activity-overview-flex h2 {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  min-width: 0;
+  margin-right: 1.5rem;
+  font-size: 2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.activity-overview-filter {
+  min-width: 160px;
+  max-width: 220px;
+  margin-left: auto;
+  margin-right: 25px;
+  font-size: 1rem;
+  padding: 0.8em;
+  border-radius: 8px;
+  border: 1px solid var(--primary-light, #5ed6e5);
+  background: #fff;
+  color: var(--primary-dark, #0e8a9e);
+  box-shadow: 0 1px 4px rgba(20,185,213,0.04);
+}
