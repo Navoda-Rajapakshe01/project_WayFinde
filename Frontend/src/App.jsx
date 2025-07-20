@@ -15,8 +15,10 @@ import PlacesManagement from "./Components/AdminProfile/places-management";
 import ReviewsManagement from "./Components/AdminProfile/reviews-management";
 import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import UserAnalytics from "./Components/AdminProfile/user-analytics";
-import UsersManagement from "./Components/AdminProfile/users-management";
+import UsersManagement from "./Components/AdminProfile/user-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
+import AdminProfile from "./Components/AdminProfile/admin-profile";
+import UserProfileDetail from "./pages/Admin/UserProfileDetail";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 
 import { AuthContext } from "./Components/Authentication/AuthContext/AuthContext";
@@ -61,6 +63,8 @@ import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
 import "./App.css";
+import UserTrips from "./pages/Admin/UserTrips";
+import UserBlogs from "./pages/Admin/UserBlogs";
 
 function AppRoutes() {
   const location = useLocation();
@@ -142,6 +146,11 @@ function AppRoutes() {
           <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
+          {/* This is the correct route for the admin profile page: /admin/profile */}
+          <Route path="profile" element={<AdminProfile />} />
+          <Route path="user-profile/:userId" element={<UserProfileDetail />} />
+          <Route path="user-trips/:userId" element={<UserTrips />} />
+          <Route path="user-blogs/:userId" element={<UserBlogs />} />
           <Route
             path="accommodation-management"
             element={<AccommodationManagement />}

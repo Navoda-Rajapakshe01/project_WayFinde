@@ -120,7 +120,6 @@ const ReviewsManagement = () => {
 
         <div className="adminfilter-dropdown-group">
           <div className="adminfilter-dropdown">
-            <FaFilter className="adminfilter-icon" />
             <select
               value={selectedRating}
               onChange={(e) => setSelectedRating(e.target.value)}
@@ -135,7 +134,6 @@ const ReviewsManagement = () => {
           </div>
 
           <div className="adminfilter-dropdown">
-            <FaFilter className="adminfilter-icon" />
             <select
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}

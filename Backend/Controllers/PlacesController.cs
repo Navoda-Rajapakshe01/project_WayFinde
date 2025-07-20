@@ -283,7 +283,41 @@ namespace Backend.Controllers
         }
 
         // GET: api/places/popular
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularPlaces()
+        {
+            // Get top 8 places by average rating, then by number of reviews
+            var popularPlaces = await _context.PlacesToVisit
+                .Include(p => p.District)
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.MainImageUrl,
+                    p.Address,
+                    District = new
+                    {
+                        p.District.Id,
+                        p.District.Name
+                    },
+                    Category = new
+                    {
+                        p.Category.CategoryId,
+                        p.Category.CategoryName
+                    },
+                    AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+                    ReviewCount = p.Reviews.Count
+                })
+                .OrderByDescending(p => p.AverageRating)
+                .ThenByDescending(p => p.ReviewCount)
+                .Take(8)
+                .AsNoTracking()
+                .ToListAsync();
 
+            return Ok(popularPlaces);
+        }
 
         // GET: api/11/images
         [HttpGet("{placeId}/images")]
