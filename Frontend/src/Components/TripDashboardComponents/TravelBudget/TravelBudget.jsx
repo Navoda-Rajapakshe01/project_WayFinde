@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import './TravelBudget.css';
-import axios from 'axios';  // Importing Axios for API calls
+import React, { useState, useEffect } from "react";
+import "./TravelBudget.css";
+import axios from "axios"; // Importing Axios for API calls
 
-const TravelBudget = ({ tripId }) => {
-  
-  console.log('TravelBudget received tripId:', tripId);  // Debug log
+const TravelBudget = ({ tripId, sharedMode = false }) => {
+  console.log("TravelBudget received tripId:", tripId); // Debug log
   const [expenses, setExpenses] = useState([]);
-  const [newExpense, setNewExpense] = useState({ description: '', amount: '' });
+  const [newExpense, setNewExpense] = useState({ description: "", amount: "" });
 
   // Fetch expenses data from the backend
   useEffect(() => {
-    console.log('Fetching budgets for tripId:', tripId);  // Debug log
+    console.log("Fetching budgets for tripId:", tripId); // Debug log
     if (tripId) {
-      axios.get(`http://localhost:5030/api/TravelBudget/trip/${tripId}`)  // Use tripId in the API endpoint
+      axios
+        .get(`http://localhost:5030/api/TravelBudget/trip/${tripId}`) // Use tripId in the API endpoint
         .then((res) => {
-          console.log('Received budgets:', res.data);  // Debug log
+          console.log("Received budgets:", res.data); // Debug log
           setExpenses(res.data);
         })
         .catch((err) => {
@@ -29,26 +29,28 @@ const TravelBudget = ({ tripId }) => {
       const expenseData = {
         description: newExpense.description,
         amount: parseFloat(newExpense.amount),
-        tripId: parseInt(tripId)  // Use tripId from props
+        tripId: parseInt(tripId), // Use tripId from props
       };
-      console.log('Adding new budget:', expenseData);  // Debug log
+      console.log("Adding new budget:", expenseData); // Debug log
 
-      axios.post('http://localhost:5030/api/TravelBudget', expenseData)
+      axios
+        .post("http://localhost:5030/api/TravelBudget", expenseData)
         .then((res) => {
-          console.log('Budget added successfully:', res.data);  // Debug log
+          console.log("Budget added successfully:", res.data); // Debug log
           setExpenses([...expenses, res.data]);
-          setNewExpense({ description: '', amount: '' });
+          setNewExpense({ description: "", amount: "" });
         })
         .catch((err) => {
           console.error("POST error: ", err);
-          console.error("Error details:", err.response?.data);  // More error details
+          console.error("Error details:", err.response?.data); // More error details
         });
     }
   };
 
   // Delete an expense from the backend
   const handleDeleteExpense = (id) => {
-    axios.delete(`http://localhost:5030/api/TravelBudget/${id}`)
+    axios
+      .delete(`http://localhost:5030/api/TravelBudget/${id}`)
       .then(() => {
         setExpenses(expenses.filter((expense) => expense.id !== id));
       })
@@ -72,17 +74,29 @@ const TravelBudget = ({ tripId }) => {
           type="text"
           placeholder="Expense description"
           value={newExpense.description}
-          onChange={(e) => setNewExpense({ ...newExpense, description: e.target.value })}
+          onChange={(e) =>
+            setNewExpense({ ...newExpense, description: e.target.value })
+          }
           className="description-input"
+          disabled={sharedMode}
         />
         <input
           type="number"
           placeholder="Amount"
           value={newExpense.amount}
-          onChange={(e) => setNewExpense({ ...newExpense, amount: e.target.value })}
+          onChange={(e) =>
+            setNewExpense({ ...newExpense, amount: e.target.value })
+          }
           className="amount-input"
+          disabled={sharedMode}
         />
-        <button onClick={handleAddExpense} className="add-expense-button">Add</button>
+        <button
+          onClick={handleAddExpense}
+          className="add-expense-button"
+          disabled={sharedMode}
+        >
+          Add
+        </button>
       </div>
 
       {/* Expense List */}
@@ -91,15 +105,27 @@ const TravelBudget = ({ tripId }) => {
           <li key={expense.id} className="expense-item">
             <span className="expense-description">{expense.description}</span>
             <span className="expense-amount">Rs : {expense.amount}</span>
-            <button onClick={() => handleDeleteExpense(expense.id)} className="delete-expense-button">X</button>
+            <button
+              onClick={() => handleDeleteExpense(expense.id)}
+              className="delete-expense-button"
+              disabled={sharedMode}
+            >
+              X
+            </button>
           </li>
         ))}
       </ul>
 
       {/* Total Budget */}
       <div className="total-amount">
-        <span className="total-label">Total Budget:</span> 
-        <span className="total-value">Rs {expenses.reduce((acc, expense) => acc + parseFloat(expense.amount || 0), 0)}</span>
+        <span className="total-label">Total Budget:</span>
+        <span className="total-value">
+          Rs{" "}
+          {expenses.reduce(
+            (acc, expense) => acc + parseFloat(expense.amount || 0),
+            0
+          )}
+        </span>
       </div>
     </div>
   );

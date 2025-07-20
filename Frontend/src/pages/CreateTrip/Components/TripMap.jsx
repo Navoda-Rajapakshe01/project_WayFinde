@@ -11,10 +11,12 @@ const TripMap = ({ markers = [] }) => {
   useEffect(() => {
     const initializeMap = () => {
       if (!window.google || !mapRef.current) return;
+
       const map = new window.google.maps.Map(mapRef.current, {
-        center: { lat: 7.8731, lng: 80.7718 },
+        center: { lat: 7.8731, lng: 80.7718 }, // fallback center
         zoom: 8,
       });
+
       mapInstanceRef.current = map;
       setMapReady(true);
     };
@@ -88,6 +90,7 @@ const TripMap = ({ markers = [] }) => {
       bounds.extend(m.position);
     });
 
+    // ✅ Recenter map based on markers
     if (markers.length > 1) {
       mapInstanceRef.current.fitBounds(bounds);
     } else {

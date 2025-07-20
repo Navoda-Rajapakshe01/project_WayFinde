@@ -852,13 +852,31 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.invitation-text {
+.invitation-text-flex {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.inviter-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.owner-profile-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.invitation-message {
+  margin-top: 6px;
   font-size: 15px;
-  color: #333;
   line-height: 1.4;
 }
 
 .inviter-name {
+  margin-top: 6px;
   font-weight: 600;
   color: #1f2937;
 }
@@ -875,6 +893,7 @@
   font-weight: 500;
   border-radius: 20px; /* More rounded */
   border: 1px solid transparent;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   min-width: 90px;
@@ -888,7 +907,7 @@
 }
 
 .btn-invite.accept:hover {
-  background-color: #46e3ae;
+  background-color: #10b981;
   color: white;
 }
 

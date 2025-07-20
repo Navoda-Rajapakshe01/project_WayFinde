@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./CalendarView.css";
 
-const CalendarView = ({ tripId, setSelectedDate }) => {
+const CalendarView = ({ tripId, setSelectedDate, sharedMode = false }) => {
   const [tripPlaces, setTripPlaces] = useState([]);
   const [activeDate, setActiveDate] = useState(null);
 
@@ -30,18 +30,24 @@ const CalendarView = ({ tripId, setSelectedDate }) => {
   return (
     <div className="calendar-view">
       <div className="calendar-dates">
-        {uniqueDates.map((date, idx) => (
-          <div
-            key={idx}
-            className={`calendar-date ${activeDate === date ? "active" : ""}`}
-            onClick={() => {
-              setSelectedDate(date);
-              setActiveDate(date);
-            }}
-          >
-            {date}
-          </div>
-        ))}
+        {uniqueDates.map((date, idx) => {
+          const formatted = sharedMode
+            ? `${new Date(date).getFullYear()}-XX-XX`
+            : new Date(date).toLocaleDateString();
+
+          return (
+            <div
+              key={idx}
+              className={`calendar-date ${activeDate === date ? "active" : ""}`}
+              onClick={() => {
+                setSelectedDate(date);
+                setActiveDate(date);
+              }}
+            >
+              {formatted}
+            </div>
+          );
+        })}
       </div>
 
       <div className="calendar-places">

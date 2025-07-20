@@ -526,7 +526,11 @@ namespace Backend.Data
                     TripName = tc.Trip.TripName,
                     StartDate = tc.Trip.StartDate,
                     InvitedOn = tc.AddedAt,
-                    OwnerName = tc.Trip.User.Username
+                    OwnerName = tc.Trip.User.Username,
+                    OwnerProfileImageUrl = string.IsNullOrEmpty(tc.Trip.User.ProfilePictureUrl)
+    ? $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(tc.Trip.User.Username)}&background=6C63FF&color=ffffff&size=128&rounded=true"
+    : tc.Trip.User.ProfilePictureUrl
+
                 })
                 .ToListAsync();
 
