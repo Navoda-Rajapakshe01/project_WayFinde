@@ -285,24 +285,6 @@ const DashboardOverview = () => {
           </div>
         </div>
       </div>
-
-      <div className="dashboard-card recent-users">
-        <div className="card-header">
-          <h2>Recent User Signups</h2>
-          <button className="view-all-btn">View All</button>
-        </div>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Date</th>
-              <th>User Type</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
     </div>
   );
 };
