@@ -195,6 +195,7 @@ namespace Backend.Controllers
         {
             var count = await _context.Vehicles.CountAsync();
             return Ok(count);
+        }
 
         private VehicleDto MapToDto(Vehicle vehicle)
         {
