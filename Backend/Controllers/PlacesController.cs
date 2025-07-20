@@ -174,12 +174,12 @@ namespace Backend.Controllers
                 OpeningHours = dto.OpeningHours,
                 Address = dto.Address,
                 GoogleMapLink = dto.GoogleMapLink,
-                DistrictId = dto.DistrictId ?? throw new ArgumentNullException(nameof(dto.DistrictId), "DistrictId cannot be null"),
+                DistrictId = (int)dto.DistrictId,
                 District = district,
-                CategoryId = dto.CategoryId ?? throw new ArgumentNullException(nameof(dto.CategoryId), "CategoryId cannot be null"),
+                CategoryId = (int)dto.CategoryId,
                 Category = category!,
                 PlaceImage = new List<PlaceImage>(), // Set to an empty list or as appropriate
-                TripPlaces = new List<TripPlace>() // Set TripPlaces to an empty list or as appropriate
+                TripPlaces = new List<TripPlace>(), // Set TripPlaces to an empty list or as appropriate
             };
 
             _context.PlacesToVisit.Add(place);
@@ -354,7 +354,7 @@ namespace Backend.Controllers
                 .ToListAsync();
 
             return Ok(topRatedPlaces);
-        }
+  }
 
-    }
+}
 }

@@ -5,12 +5,15 @@ import DashboardSaves from '../DashboardSaves/DashboardSaves';
 import AddNotes from '../AddNotes/AddNotes';
 import ViewNotes from '../ViewNotes/ViewNotes';
 
-const TabNavigation = () => {
+
+const TabNavigation = ({ tripId }) => {
+  console.log('TabNavigation received tripId:', tripId);  // Debug log
   const [activeTab, setActiveTab] = useState('for-you');
   const [isAddNotesOpen, setIsAddNotesOpen] = useState(false);
   const [isViewNotesOpen, setIsViewNotesOpen] = useState(false);
 
   const handleTabClick = (tab) => {
+    console.log('Tab clicked:', tab);  // Debug log
     setActiveTab(tab);
   };
 
@@ -31,24 +34,6 @@ const TabNavigation = () => {
   };
 
   const handleSaveNote = (noteData) => {
-    // Here you would typically save the note to your backend
-    // Example API call:
-    // 
-    // fetch('your-api-endpoint/notes', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify(noteData),
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   console.log('Note saved successfully:', data);
-    //   // Potentially update state or perform other actions on success
-    // })
-    // .catch(error => {
-    //   console.error('Error saving note:', error);
-    // });
 
     console.log('Note saved:', noteData);
     
@@ -96,18 +81,20 @@ const TabNavigation = () => {
         </div>
       </div>
 
-      {activeTab === 'for-you' && <CustomButtons />}
-      {activeTab === 'saves' && <DashboardSaves />}
+      {activeTab === 'for-you' && <CustomButtons tripId={tripId} />}
+      {activeTab === 'saves' && <DashboardSaves tripId={tripId} />}
       
       <AddNotes 
         isOpen={isAddNotesOpen} 
         onClose={handleCloseAddNotes} 
         onSave={handleSaveNote} 
+        tripId={tripId}
       />
       
       <ViewNotes
         isOpen={isViewNotesOpen}
         onClose={handleCloseViewNotes}
+        tripId={tripId}
       />
     </div>
   );

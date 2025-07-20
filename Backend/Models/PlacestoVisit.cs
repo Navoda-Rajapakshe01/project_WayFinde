@@ -40,6 +40,6 @@ namespace Backend.Models
 
         // Reviews and images related to this place
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
-        public ICollection<PlaceImage>? PlaceImage { get; set; }
-    }
+        public ICollection<PlaceImage>? PlaceImage { get;set;}
+}
 }

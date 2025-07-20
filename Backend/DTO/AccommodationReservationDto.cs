@@ -8,6 +8,6 @@
         public int Guests { get; set; }
         public string CustomerName { get; set; } = string.Empty;
         public string SpecialRequests { get; set; } = string.Empty;
-        public string? TripId { get; set; }
+        public int? TripId { get; set; }
     }
 }
