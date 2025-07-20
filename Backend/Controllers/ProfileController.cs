@@ -15,8 +15,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Controllers
 { 
-    [Route("api/[controller]")]
+    
     [ApiController] 
+    [Route("api/[controller]")]
     public class ProfileController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -335,6 +336,13 @@ namespace Backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Follow counts synchronized successfully" });
+        }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetUserCount()
+        {
+            var count = await _context.UsersNew.CountAsync();
+            return Ok(count);
         }
 
     }
