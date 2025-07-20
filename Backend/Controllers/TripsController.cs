@@ -78,7 +78,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-            
+
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
                     .Select(tp =>
@@ -130,7 +130,7 @@ namespace Backend.Data
 
             // Update trip fields as you currently do
             trip.TripName = request.TripName ?? trip.TripName;
-          
+
             trip.StartDate = request.StartDate ?? trip.StartDate;
             trip.EndDate = request.EndDate ?? trip.EndDate;
             trip.UserId = request.UserId ?? trip.UserId;
@@ -191,7 +191,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-              
+
 
                 Places = trip.TripPlaces?
                     .Where(tp => tp?.Place != null)
@@ -237,7 +237,7 @@ namespace Backend.Data
                 tripName = trip.TripName,
                 startDate = trip.StartDate,
                 endDate = trip.EndDate,
-                
+
                 userId = trip.UserId,
                 places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -297,7 +297,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-               
+
 
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -518,14 +518,15 @@ namespace Backend.Data
         {
             var invitations = await _context.TripCollaborator
                 .Include(tc => tc.Trip)
-                    .ThenInclude(t => t.User) 
+                    .ThenInclude(t => t.User)
                 .Where(tc => tc.UserId == userId && tc.IsAccepted == false)
-                .Select(tc => new {
+                .Select(tc => new
+                {
                     TripId = tc.TripId,
                     TripName = tc.Trip.TripName,
                     StartDate = tc.Trip.StartDate,
                     InvitedOn = tc.AddedAt,
-                    OwnerName = tc.Trip.User.Username 
+                    OwnerName = tc.Trip.User.Username
                 })
                 .ToListAsync();
 
@@ -565,7 +566,7 @@ namespace Backend.Data
             return Ok();
         }
 
-                // PATCH: api/trips/{id} - Update trip basic details (tripName, startDate, endDate)
+        // PATCH: api/trips/{id} - Update trip basic details (tripName, startDate, endDate)
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchTrip(int id, [FromBody] PatchTripRequest request)
         {
@@ -589,9 +590,11 @@ namespace Backend.Data
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(new {
+                return Ok(new
+                {
                     message = "Trip updated successfully",
-                    trip = new {
+                    trip = new
+                    {
                         id = trip.Id,
                         tripName = trip.TripName,
                         startDate = trip.StartDate,
@@ -648,6 +651,34 @@ namespace Backend.Data
                 return StatusCode(500, new { message = "Something went wrong", detail = ex.Message });
             }
         }
+
+        [HttpGet("lightweight-map/{tripId}")]
+        public async Task<IActionResult> GetTripPlacesForMap(int tripId)
+        {
+            var trip = await _context.Trips
+                .Include(t => t.TripPlaces)
+                    .ThenInclude(tp => tp.Place)
+                .Include(t => t.TripDates)
+                .FirstOrDefaultAsync(t => t.Id == tripId);
+
+            if (trip == null)
+                return NotFound("Trip not found");
+
+            var markers = trip.TripPlaces.Select(tp =>
+            {
+                var date = trip.TripDates.FirstOrDefault(d => d.PlaceId == tp.PlaceId);
+                return new
+                {
+                    placeId = tp.PlaceId,
+                    name = tp.Place.Name,
+                    googleMapLink = tp.Place.GoogleMapLink,
+                    startDate = date?.StartDate?.ToString("yyyy-MM-dd")
+                };
+            });
+
+            return Ok(markers);
+        }
+
 
         [HttpGet("user-preview/{userId}")]
         public async Task<IActionResult> GetTripPreviewsByUserId(Guid userId)
@@ -712,6 +743,36 @@ namespace Backend.Data
 
             return Ok(result);
         }
+
+        [HttpGet("ordered-route/{tripId}")]
+        public async Task<IActionResult> GetOrderedRouteForTrip(int tripId)
+        {
+            var trip = await _context.Trips
+                .Include(t => t.TripPlaces)
+                    .ThenInclude(tp => tp.Place)
+                .Include(t => t.TripDates)
+                .FirstOrDefaultAsync(t => t.Id == tripId);
+
+            if (trip == null)
+                return NotFound("Trip not found");
+
+            var orderedPlaces = trip.TripPlaces
+                .OrderBy(tp => tp.Order)
+                .Select(tp =>
+                {
+                    var tripDate = trip.TripDates.FirstOrDefault(td => td.PlaceId == tp.PlaceId);
+                    return new
+                    {
+                        name = tp.Place.Name,
+                        googleMapLink = tp.Place.GoogleMapLink,
+                        startDate = tripDate?.StartDate?.ToString("yyyy-MM-dd")
+                    };
+                })
+                .ToList();
+
+            return Ok(orderedPlaces);
+        }
+
 
 
 
