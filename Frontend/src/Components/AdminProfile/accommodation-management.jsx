@@ -24,9 +24,11 @@ const AccommodationManagement = () => {
       setError(null);
       try {
         const res = await axios.get("http://localhost:5030/api/accommodation");
-        setAccommodations(res.data);
+        console.log('API /accommodation response:', res.data);
+        setAccommodations(Array.isArray(res.data?.$values) ? res.data.$values : []);
       } catch (err) {
         setError("Failed to load accommodations");
+        setAccommodations([]); // Always set to array on error
       } finally {
         setIsLoading(false);
       }
@@ -35,7 +37,7 @@ const AccommodationManagement = () => {
   }, []);
 
   // Filtered accommodations
-  const filtered = accommodations.filter((a) => {
+  const filtered = Array.isArray(accommodations) ? accommodations.filter((a) => {
     const matchesSearch = a.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus =
       selectedStatus === "all" ||
@@ -43,7 +45,8 @@ const AccommodationManagement = () => {
       (selectedStatus === "pending" && !a.isAvailable) ||
       (selectedStatus === "rejected" && false); // No rejected logic yet
     return matchesSearch && matchesStatus;
-  });
+  }) : [];
+  console.log('Filtered accommodations:', filtered);
 
   return (
     <div className="accommodation-management">

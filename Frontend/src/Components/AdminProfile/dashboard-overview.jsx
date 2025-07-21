@@ -115,9 +115,11 @@ const DashboardOverview = () => {
   const fetchPopularPlaces = async () => {
     try {
       const res = await axios.get("http://localhost:5030/api/places/popular");
-      setPopularPlaces(res.data);
+      console.log('API /places/popular response:', res.data);
+      setPopularPlaces(Array.isArray(res.data?.$values) ? res.data.$values : []);
     } catch (err) {
       console.error("Failed to fetch popular places:", err);
+      setPopularPlaces([]); // Always set to array on error
     }
   };
 
@@ -228,38 +230,44 @@ const DashboardOverview = () => {
               </tr>
             </thead>
             <tbody>
-              {popularPlaces.map((place, idx) => {
-                const rating = Number(place.averageRating) || 0;
-                const reviewCount = place.reviewCount || 0;
-                const isTop = idx === 0;
-                return (
-                  <tr key={place.id} className={`popular-place-row${isTop ? ' top-place' : ''}`}>
-                    <td>{idx + 1}</td>
-                    <td>
-                      {place.mainImageUrl ? (
-                        <img src={place.mainImageUrl} alt={place.name} className={`popular-place-img${isTop ? ' top-img' : ''}`} />
-                      ) : (
-                        <div className="popular-place-img placeholder" />
-                      )}
-                    </td>
-                    <td className="popular-place-name">{place.name || 'Unnamed'}</td>
-                    <td>{place.district?.name || 'Unknown'}</td>
-                    <td>{place.category?.categoryName || 'N/A'}</td>
-                    <td>
-                      <div className="adminrating popular-place-rating">
-                        <span className="adminrating-stars">
-                          {'★'.repeat(Math.round(rating))}
-                          {'☆'.repeat(5 - Math.round(rating))}
-                        </span>
-                        <span className="adminrating-value">
-                          {rating.toFixed(1)}
-                        </span>
-                        <span className="popular-place-review-count">({reviewCount})</span>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
+              {Array.isArray(popularPlaces) && popularPlaces.length > 0 ? (
+                popularPlaces.map((place, idx) => {
+                  const rating = Number(place.averageRating) || 0;
+                  const reviewCount = place.reviewCount || 0;
+                  const isTop = idx === 0;
+                  return (
+                    <tr key={place.id} className={`popular-place-row${isTop ? ' top-place' : ''}`}>
+                      <td>{idx + 1}</td>
+                      <td>
+                        {place.mainImageUrl ? (
+                          <img src={place.mainImageUrl} alt={place.name} className={`popular-place-img${isTop ? ' top-img' : ''}`} />
+                        ) : (
+                          <div className="popular-place-img placeholder" />
+                        )}
+                      </td>
+                      <td className="popular-place-name">{place.name || 'Unnamed'}</td>
+                      <td>{place.district?.name || 'Unknown'}</td>
+                      <td>{place.category?.categoryName || 'N/A'}</td>
+                      <td>
+                        <div className="adminrating popular-place-rating">
+                          <span className="adminrating-stars">
+                            {'★'.repeat(Math.round(rating))}
+                            {'☆'.repeat(5 - Math.round(rating))}
+                          </span>
+                          <span className="adminrating-value">
+                            {rating.toFixed(1)}
+                          </span>
+                          <span className="popular-place-review-count">({reviewCount})</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center' }}>No popular places found.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
