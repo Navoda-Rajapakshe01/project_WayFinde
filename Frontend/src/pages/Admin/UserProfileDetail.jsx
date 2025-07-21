@@ -37,7 +37,7 @@ const UserProfileDetail = () => {
           // Blogs
           const blogsRes = await axios.get("http://localhost:5030/api/Blog/all");
           const userBlogs = blogsRes.data.filter(
-            (b) => b.user && String(b.user.id) === String(userId)
+            (b) => b.User && (b.User.Id === userId || b.User.id === userId)
           );
           setBlogCount(userBlogs.length);
           // Trips

@@ -14,31 +14,31 @@ const UserTrips = () => {
       .finally(() => setLoading(false));
   }, [userId]);
 
-  if (loading) return <div className="user-trips-loading">Loading trips...</div>;
+  if (loading) return <div className="admin-user-trips-loading">Loading trips...</div>;
 
   return (
-    <div className="user-trips-container">
+    <div className="admin-user-trips-container">
       <h2 className="page-title">User's Trips</h2>
       {trips.length === 0 ? (
-        <p className="user-trips-empty">No trips found.</p>
+        <p className="admin-user-trips-empty">No trips found.</p>
       ) : (
-        <div className="user-trips-grid">
+        <div className="admin-user-trips-grid">
           {trips.map(trip => (
-            <div className="trip-card" key={trip.id || trip.Id}>
-              <div className="trip-card-header">
+            <div className="admin-trip-card" key={trip.id || trip.Id}>
+              <div className="admin-trip-card-header">
                 {trip.tripName || trip.TripName}
-                <span className="trip-card-badge">{trip.places ? trip.places.length : 0} Places</span>
+                <span className="admin-trip-card-badge">{trip.places ? trip.places.length : 0} Places</span>
               </div>
-              <div className="trip-card-content">
-                <div className="trip-card-dates">
+              <div className="admin-trip-card-content">
+                <div className="admin-trip-card-dates">
                   <span>Start: {trip.startDate ? new Date(trip.startDate).toLocaleDateString() : "-"}</span>
                   <span>End: {trip.endDate ? new Date(trip.endDate).toLocaleDateString() : "-"}</span>
                 </div>
-                <div className="trip-card-places">
+                <div className="admin-trip-card-places">
                   <strong>Places:</strong> {trip.places ? trip.places.length : 0}
                 </div>
                 {trip.places && trip.places.length > 0 && (
-                  <div className="trip-card-destinations">
+                  <div className="admin-trip-card-destinations">
                     <strong>Destinations:</strong>
                     <ul>
                       {trip.places.map((place, idx) => (

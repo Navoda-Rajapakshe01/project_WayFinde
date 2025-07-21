@@ -34,12 +34,6 @@ const AdminSidebar = () => {
       path: "/admin/users-management",
     },
     {
-      id: "user-analytics",
-      label: "User Analytics",
-      icon: <FaChartLine />,
-      path: "/admin/user-analytics",
-    },
-    {
       id: "accommodation",
       label: "Accommodation",
       icon: <FaHotel />,

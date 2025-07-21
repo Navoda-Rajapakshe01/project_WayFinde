@@ -19,19 +19,34 @@ const UserBlogs = () => {
       .finally(() => setLoading(false));
   }, [userId]);
 
-  if (loading) return <div>Loading blogs...</div>;
+  if (loading) return <div className="admin-user-blogs-loading">Loading blogs...</div>;
 
   return (
-    <div style={{maxWidth: 800, margin: '0 auto', padding: 32}}>
-      <h2>User's Blogs</h2>
+    <div className="admin-user-blogs-container">
+      <h2 className="admin-user-blogs-title">User's Blogs</h2>
       {blogs.length === 0 ? (
-        <p>No blogs found.</p>
+        <p className="admin-user-blogs-empty">No blogs found.</p>
       ) : (
-        <ul>
+        <div className="admin-user-blogs-grid">
           {blogs.map(blog => (
-            <li key={blog.Id || blog.id}>{blog.Title || blog.title}</li>
+            <div className="admin-blog-card" key={blog.Id || blog.id}>
+              <div className="admin-blog-card-header">
+                {blog.Title || blog.title}
+                {blog.status && (
+                  <span className="admin-blog-card-badge">{blog.status}</span>
+                )}
+              </div>
+              <div className="admin-blog-card-content">
+                <div className="admin-blog-card-meta">
+                  Author: {blog.User?.Username || blog.User?.username || "Unknown"}
+                </div>
+                <div className="admin-blog-card-description">
+                  {blog.Description || blog.description || "No description."}
+                </div>
+              </div>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

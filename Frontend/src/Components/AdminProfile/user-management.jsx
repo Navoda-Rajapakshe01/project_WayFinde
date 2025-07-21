@@ -77,6 +77,9 @@ const UserManagement = () => {
   const filterAndSortUsers = () => {
     let filtered = [...users];
 
+    // Remove admin users
+    filtered = filtered.filter(user => user.role !== "Admin");
+
     // Search filter
     if (searchTerm) {
       filtered = filtered.filter(user =>
@@ -147,8 +150,6 @@ const UserManagement = () => {
 
   const getRoleDisplayName = (role) => {
     switch (role) {
-      case "Admin":
-        return "Admin";
       case "AccommodationProvider":
         return "Accommodation Provider";
       case "TransportProvider":
@@ -222,11 +223,13 @@ const UserManagement = () => {
           <div className="adminfilter-dropdown">
             <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
               <option value="all">All Roles</option>
-              {availableRoles.map(role => (
-                <option key={role} value={role}>
-                  {getRoleDisplayName(role)}
-                </option>
-              ))}
+              {availableRoles
+                .filter(role => role !== "Admin")
+                .map(role => (
+                  <option key={role} value={role}>
+                    {getRoleDisplayName(role)}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
