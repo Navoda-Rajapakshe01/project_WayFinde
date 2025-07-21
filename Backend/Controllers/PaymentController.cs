@@ -107,16 +107,16 @@ namespace Backend.Controllers
     public class PayHereNotificationDto
     {
         [FromForm(Name = "merchant_id")]
-        public string MerchantId { get; set; }
+        public required string MerchantId { get; set; }
         [FromForm(Name = "order_id")]
-        public string OrderId { get; set; }
+        public required string OrderId { get; set; }
         [FromForm(Name = "payhere_amount")]
         public decimal PayhereAmount { get; set; }
         [FromForm(Name = "payhere_currency")]
-        public string PayhereCurrency { get; set; }
+        public required string PayhereCurrency { get; set; }
         [FromForm(Name = "status_code")]
         public int StatusCode { get; set; }
         [FromForm(Name = "md5sig")]
-        public string Md5Sig { get; set; }
+        public required string Md5Sig { get; set; }
     }
 }

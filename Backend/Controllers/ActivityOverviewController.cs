@@ -44,7 +44,7 @@ namespace Backend.Controllers
             var signupsByMonth = users
                 .Where(u => DateTime.TryParse(u.RegisteredDate, out _))
                 .GroupBy(u => {
-                    var dt = DateTime.Parse(u.RegisteredDate);
+                    var dt = DateTime.Parse(u.RegisteredDate ?? DateTime.MinValue.ToString("yyyy-MM-dd"));
                     return (dt.Year, dt.Month);
                 })
                 .ToDictionary(g => g.Key, g => g.Count());

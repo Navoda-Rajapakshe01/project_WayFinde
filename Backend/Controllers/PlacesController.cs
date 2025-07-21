@@ -172,12 +172,12 @@ namespace Backend.Controllers
                 OpeningHours = dto.OpeningHours,
                 Address = dto.Address,
                 GoogleMapLink = dto.GoogleMapLink,
-                DistrictId = (int)dto.DistrictId,
+                DistrictId = dto.DistrictId ?? throw new ArgumentNullException(nameof(dto.DistrictId), "DistrictId cannot be null"),
                 District = district,
-                CategoryId = (int)dto.CategoryId,
+                CategoryId = dto.CategoryId ?? 0,
                 Category = category!,
-                PlaceImage = new List<PlaceImage>(), // Set to an empty list or as appropriate
-                TripPlaces = new List<TripPlace>(), // Set TripPlaces to an empty list or as appropriate
+                PlaceImage = new List<PlaceImage>(),
+                TripPlaces = new List<TripPlace>(),
             };
 
             _context.PlacesToVisit.Add(place);

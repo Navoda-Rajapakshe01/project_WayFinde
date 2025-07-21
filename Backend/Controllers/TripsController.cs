@@ -41,12 +41,17 @@ namespace Backend.Data
             if (dto.PlaceIds == null || !dto.PlaceIds.Any())
                 return BadRequest(new { message = "Validation failed", errors = new { Field = "PlaceIds", Message = "The PlaceIds field is required and must contain at least one place." } });
 
+            var user = await _context.UsersNew.FindAsync(dto.UserId);
+            if (user == null)
+                return BadRequest(new { message = "User not found for the provided UserId." });
+
             var trip = new Trip
             {
                 TripName = dto.TripName,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
                 UserId = dto.UserId,
+                User = user,
                 TripPlaces = dto.PlaceIds.Select(pid => new TripPlace { PlaceId = pid }).ToList()
             };
 
@@ -90,7 +95,7 @@ namespace Backend.Data
                         {
                             Id = tp.Place.Id,
                             Name = tp.Place.Name,
-                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            GoogleMapLink = tp.Place.GoogleMapLink!,
                             AvgTime = tp.Place.AvgTime,
                             AvgSpend = tp.Place.AvgSpend,
                             Rating = reviews.Any() ? reviews.Average(r => r.Rating) : (double?)null,
@@ -222,11 +227,8 @@ namespace Backend.Data
             if (userId == Guid.Empty)
                 return BadRequest("UserId is required.");
 
-            if (!Guid.TryParse(userId, out Guid userGuid))
-                return BadRequest("Invalid UserId format.");
-
             var trips = await _context.Trips
-                .Where(t => t.UserId == userGuid)
+                .Where(t => t.UserId == userId)
                 .Include(t => t.TripPlaces)
                     .ThenInclude(tp => tp.Place)
                         .ThenInclude(p => p.Reviews)
@@ -257,7 +259,7 @@ namespace Backend.Data
                         {
                             Id = tp.Place.Id,
                             Name = tp.Place.Name,
-                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            GoogleMapLink = tp.Place.GoogleMapLink!,
                             AvgTime = tp.Place.AvgTime,
                             AvgSpend = tp.Place.AvgSpend,
                             Rating = avgRating,
@@ -316,7 +318,7 @@ namespace Backend.Data
                         {
                             Id = tp.Place.Id,
                             Name = tp.Place.Name,
-                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            GoogleMapLink = tp.Place.GoogleMapLink!,
                             AvgTime = tp.Place.AvgTime,
                             AvgSpend = tp.Place.AvgSpend,
                             Rating = avgRating,               // dynamic average
@@ -355,7 +357,7 @@ namespace Backend.Data
                     Id = u.Id,
                     Username = u.Username,
                     Email = u.ContactEmail,
-                    ProfilePictureUrl = u.ProfilePictureUrl
+                    ProfilePictureUrl = u.ProfilePictureUrl!
                 })
                 .ToListAsync();
 
