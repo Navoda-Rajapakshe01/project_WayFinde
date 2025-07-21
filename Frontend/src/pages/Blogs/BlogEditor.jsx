@@ -22,6 +22,7 @@ import {
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import "../CSS/BlogEditor.css"; // Import your CSS file for styling
 
 // ToolbarButton component defined outside of BlogEditor
@@ -141,7 +142,12 @@ function BlogEditor() {
       "image/webp",
     ];
     if (!allowedTypes.includes(file.type)) {
-      alert("Please select a valid image file (JPEG, PNG, GIF, or WebP)");
+      Swal.fire({
+        icon: "error",
+        title: "Invalid File Type",
+        text: "Please select a valid image file (JPEG, PNG, GIF, or WebP)",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
@@ -256,7 +262,12 @@ function BlogEditor() {
       ];
 
       if (file.size > maxSize) {
-        alert("Image size should be less than 5MB");
+        Swal.fire({
+          icon: "error",
+          title: "File Too Large",
+          text: "Image size should be less than 5MB",
+          confirmButtonColor: "#3085d6",
+        });
         return;
       }
 
@@ -273,7 +284,12 @@ function BlogEditor() {
       };
 
       reader.onerror = () => {
-        alert("Error reading image file.");
+        Swal.fire({
+          icon: "error",
+          title: "File Error",
+          text: "Unable to read the image file.",
+          confirmButtonColor: "#3085d6",
+        });
       };
 
       reader.readAsDataURL(file); // Read the file as base64 for inline preview
@@ -282,40 +298,80 @@ function BlogEditor() {
 
   // Handle inserting links with basic validation
   const handleInsertLink = () => {
-    const url = prompt("Enter the URL:");
-    if (url) {
-      // Basic URL validation
-      try {
-        new URL(url);
-        executeCommand("createLink", url);
-      } catch {
-        // If URL is invalid, try adding https://
-        if (!url.includes("://")) {
-          const fullUrl = `https://${url}`;
-          try {
-            new URL(fullUrl);
-            executeCommand("createLink", fullUrl);
-          } catch {
-            alert("Please enter a valid URL");
+    Swal.fire({
+      title: "Insert Link",
+      input: "url",
+      inputPlaceholder: "Enter URL",
+      showCancelButton: true,
+      inputValidator: (value) => {
+        if (!value) {
+          return "Please enter a URL";
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        let url = result.value;
+
+        // Basic URL validation
+        try {
+          new URL(url);
+          executeCommand("createLink", url);
+        } catch {
+          // If URL is invalid, try adding https://
+          if (!url.includes("://")) {
+            const fullUrl = `https://${url}`;
+            try {
+              new URL(fullUrl);
+              executeCommand("createLink", fullUrl);
+            } catch {
+              Swal.fire({
+                icon: "error",
+                title: "Invalid URL",
+                text: "Please enter a valid URL",
+                confirmButtonColor: "#3085d6",
+              });
+            }
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Invalid URL",
+              text: "Please enter a valid URL",
+              confirmButtonColor: "#3085d6",
+            });
           }
-        } else {
-          alert("Please enter a valid URL");
         }
       }
-    }
+    });
   };
 
   // Handle text color change
   const handleTextColorChange = () => {
-    const color = prompt("Enter a color name or hex (e.g., red or #ff0000):");
-    if (color) {
-      executeCommand("foreColor", color);
-    }
+    Swal.fire({
+      title: "Select Text Color",
+      input: "text",
+      inputPlaceholder: "Enter color name or hex (e.g., red or #ff0000)",
+      showCancelButton: true,
+      confirmButtonText: "Apply Color",
+      inputValidator: (value) => {
+        if (!value) {
+          return "Please enter a color";
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        executeCommand("foreColor", result.value);
+      }
+    });
   };
 
   const handleSubmit = async () => {
     if (!title.trim() || !content.trim()) {
-      alert("Please fill in both title and content");
+      Swal.fire({
+        icon: "warning",
+        title: "Incomplete Blog",
+        text: "Please fill in both title and content",
+        confirmButtonColor: "#3085d6",
+      });
       return;
     }
 
@@ -376,7 +432,14 @@ function BlogEditor() {
       );
 
       if (response.ok) {
-        alert("Blog submitted successfully!");
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Blog submitted successfully!",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate("/profile/profileBlogs"); // Navigate after user clicks OK
+        });
         setTitle("");
         setContent("");
         setBlogImages([]);
@@ -410,18 +473,25 @@ function BlogEditor() {
 
   const handleClear = () => {
     if (content.trim() || title.trim()) {
-      if (
-        window.confirm(
-          "Are you sure you want to clear all content? This action cannot be undone."
-        )
-      ) {
-        setTitle("");
-        setContent("");
-        setBlogImages([]);
-        if (editorRef.current) {
-          editorRef.current.innerHTML = "";
+      Swal.fire({
+        title: "Clear Content?",
+        text: "Are you sure you want to clear all content? This action cannot be undone.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, clear it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setTitle("");
+          setContent("");
+          setBlogImages([]);
+          if (editorRef.current) {
+            editorRef.current.innerHTML = "";
+          }
+          Swal.fire("Cleared!", "All content has been cleared.", "success");
         }
-      }
+      });
     }
   };
 

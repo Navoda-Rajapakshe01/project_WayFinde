@@ -1,11 +1,12 @@
 .todo-list-container {
     display: flex;
     flex-direction: column;
-    width: 40%;
     position: relative;
-    padding-bottom: 60px;
-    margin: 30px;
-    margin-left:5%; 
+    width: 80%;
+    padding: 60px;
+    margin-left: 45px;
+   
+  
   }
   
   .todo-title {
@@ -60,7 +61,7 @@
     padding: 8px 12px;
     border: 1px solid #fcfcfc;
     border-radius: 4px;
-    background-color: #057c54;
+    background-color: #379dba;
     color: rgb(17, 5, 5);
     font-size: 15px;
     cursor: pointer;
@@ -104,7 +105,7 @@
   }
   
   .checkbox-container input:checked ~ .custom-checkbox {
-    background-color: #10b981;
+    background-color: #45b1c9;
     border-color: #10b981;
   }
   
@@ -151,18 +152,20 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #10b981;
+    background-color: #19b3c7;
     color: white;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 50px 0px 0px 50px;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
   
   .plus-icon {
     font-size: 24px;
+    
   }
 
   

@@ -75,29 +75,31 @@ function PlaceToStay() {
   };
 
   return (
-    <div className="places-to-stay-container">
-      {/* Hotel Grid */}
-      <div className="hotel-grid">
-        {hotels.map((hotel) => (
-          <div key={hotel.id} className="hotel-card">
+    <div className="placess-to-stay-container">
+      
+      {/* Render each travel place item */}
+      <div className="placess-cards-container">
+        {places.map((item, index) => (
+          <div key={index} className="places-card">
+            {/* Main Image */}
             <div
-              className="hotel-image"
-              style={{ backgroundImage: `url(${hotel.imageSrc})` }}>
-              <span className="hotel-label">{hotel.label}</span>
-              <button className="favorite-button">
-                <i className="fas fa-heart"></i>
+              className="places-image"
+              style={{ backgroundImage: `url(${item.mainImageUrl})` }}
+            >
+              {/* Save Button */}
+              <button
+                className={`save-button ${savedPlaces.includes(item.id) ? 'save-button-active' : ''}`}
+                onClick={(e) => toggleSave(item.id, e)}
+                aria-label="Save this place"
+              >
+                <span>+</span> Add
               </button>
             </div>
-            <div className="hotel-info">
-              <h3 className="hotel-name">{hotel.name}</h3>
-              <div className="hotel-rating">
-                <div className="star-rating">{renderStars(hotel.rating)}</div>
-                <span className="review-count">{hotel.reviews}</span>
-              </div>
-              <div className="hotel-score">
-                <span className="score-value">{hotel.rating.toFixed(1)}</span> /
-                5 (good)
-              </div>
+
+            {/* Place Information */}
+            <div className="places-info">
+              <h3 className="place-name">{item.name}</h3>
+              <p className="place-reviews">{item.reviews} reviews</p>
             </div>
           </div>
         ))}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ViewNotes.css';
 
-const ViewNotes = ({ isOpen, onClose }) => {
+const ViewNotes = ({ isOpen, onClose, tripId }) => {
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,14 +11,15 @@ const ViewNotes = ({ isOpen, onClose }) => {
   const [editContent, setEditContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const API_BASE_URL = 'http://localhost:5030/api/DashboardNote';
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && tripId) {
       setIsLoading(true);
       setError(null);
-      fetch(API_BASE_URL)
+      fetch(`${API_BASE_URL}/trip/${tripId}`)
         .then((res) => {
           if (!res.ok) throw new Error('Failed to fetch notes');
           return res.json();
@@ -46,7 +47,7 @@ const ViewNotes = ({ isOpen, onClose }) => {
       setSearchTerm('');
       setError(null);
     }
-  }, [isOpen]);
+  }, [isOpen, tripId]);
 
   const handleNoteClick = (note) => {
     if (isEditing) {
@@ -60,87 +61,108 @@ const ViewNotes = ({ isOpen, onClose }) => {
   };
 
   const handleDeleteNote = (noteId) => {
-  fetch(`${API_BASE_URL}/${noteId}`, {
-    method: 'DELETE',
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error('Failed to delete note');
-      setNotes(notes.filter((note) => note.id !== noteId));
-      if (selectedNote && selectedNote.id === noteId) {
-        setSelectedNote(null);
-        setIsEditing(false);
-      }
+    fetch(`${API_BASE_URL}/${noteId}`, {
+      method: 'DELETE',
     })
-    .catch((err) => {
-      console.error('Error deleting note:', err);
-      // Removed alert to silently handle error
-    });
-};
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to delete note');
+        setNotes(notes.filter((note) => note.id !== noteId));
+        if (selectedNote && selectedNote.id === noteId) {
+          setSelectedNote(null);
+          setIsEditing(false);
+        }
+      })
+      .catch((err) => {
+        console.error('Error deleting note:', err);
+      });
+  };
+
   const handleEditClick = () => {
     if (selectedNote) {
       setEditTitle(selectedNote.title || '');
       setEditContent(selectedNote.note || '');
       setIsEditing(true);
+      setError(null);
+      setSuccessMessage(null);
     }
   };
 
   const handleCancelEdit = () => {
     if (window.confirm('Discard unsaved changes?')) {
       setIsEditing(false);
+      setError(null);
+      setSuccessMessage(null);
     }
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editTitle.trim() || !editContent.trim()) {
-      alert('Please fill in both title and note content');
+      setError('Please fill in both title and note content');
+      setSuccessMessage(null);
       return;
     }
 
     setIsSaving(true);
+    setError(null);
+    setSuccessMessage(null);
 
-    // Prepare the update payload matching your API structure
-    const updatedNote = {
-      id: selectedNote.id,
-      noteTitle: editTitle.trim(),
-      noteDescription: editContent.trim(),
-      createdAt: selectedNote.createdAt.toISOString(),
-      userId: selectedNote.userId || null
-    };
+    try {
+      // Prepare the update payload
+      const updatedNote = {
+        id: selectedNote.id,
+        noteTitle: editTitle.trim(),
+        noteDescription: editContent.trim(),
+        tripId: parseInt(tripId),
+        createdAt: selectedNote.createdAt.toISOString(),
+        updatedAt: new Date().toISOString()
+      };
 
-    fetch(`${API_BASE_URL}/${selectedNote.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedNote),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error(`Failed to update note: ${res.status}`);
-        return res.json();
-      })
-      .then((updatedData) => {
-        // Update local notes state with the response from server
-        const updatedLocalNote = {
-          id: updatedData.id,
-          title: updatedData.noteTitle || editTitle.trim(),
-          note: updatedData.noteDescription || editContent.trim(),
-          createdAt: new Date(updatedData.createdAt || selectedNote.createdAt),
-          userId: updatedData.userId || selectedNote.userId
-        };
-
-        setNotes(notes.map(note => 
-          note.id === selectedNote.id ? updatedLocalNote : note
-        ));
-        
-        setSelectedNote(updatedLocalNote);
-        setIsEditing(false);
-        setIsSaving(false);
-      })
-      .catch((err) => {
-        console.error('Error updating note:', err);
-        alert('Failed to update the note. Please try again.');
-        setIsSaving(false);
+      const response = await fetch(`${API_BASE_URL}/${selectedNote.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedNote),
       });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update note: ${response.status}`);
+      }
+
+      // Update UI with the edited content
+      const updatedNotes = notes.map(note => 
+        note.id === selectedNote.id 
+          ? {
+              ...note,
+              title: editTitle.trim(),
+              note: editContent.trim(),
+              updatedAt: new Date()
+            }
+          : note
+      );
+      
+      setNotes(updatedNotes);
+      setSelectedNote({
+        ...selectedNote,
+        title: editTitle.trim(),
+        note: editContent.trim(),
+        updatedAt: new Date()
+      });
+      setIsEditing(false);
+      setSuccessMessage('Note updated successfully!');
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+
+    } catch (err) {
+      console.error('Error updating note:', err);
+      setError('Failed to update the note. Please try again.');
+      setIsEditing(true);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const filteredNotes = notes.filter(note => {
@@ -189,6 +211,13 @@ const ViewNotes = ({ isOpen, onClose }) => {
         {error && (
           <div className="error-message">
             {error}
+          </div>
+        )}
+        
+        {successMessage && (
+          <div className="success-notification">
+            <div className="success-icon">✓</div>
+            <span>{successMessage}</span>
           </div>
         )}
         

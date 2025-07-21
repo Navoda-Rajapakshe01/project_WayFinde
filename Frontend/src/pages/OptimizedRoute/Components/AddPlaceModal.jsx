@@ -92,7 +92,7 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
         <div className="modal-header-adp">
           <h2 className="modal-title-adp">Add More Places to Your Trip</h2>
           <button className="modal-close-adp" onClick={onClose}>
-            <X size={20} />
+            X
           </button>
         </div>
 

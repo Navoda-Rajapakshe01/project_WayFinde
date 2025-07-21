@@ -473,6 +473,54 @@ const PersonalBlog = () => {
       setFollowLoading(false);
     }
   };
+  // First, add a new function to delete comments
+const handleDeleteComment = async (commentId) => {
+  if (!commentId) return;
+  
+  // Confirm deletion
+  if (!window.confirm('Are you sure you want to delete this comment?')) {
+    return;
+  }
+  
+  try {
+    const token = localStorage.getItem("token");
+    const response = await fetch(
+      `http://localhost:5030/api/blog/comment/${commentId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "Failed to delete comment");
+    }
+
+    const data = await response.json();
+    console.log("Comment deleted successfully:", data);
+
+    // Remove the comment from state
+    setComments(prevComments => 
+      prevComments.filter(comment => comment.id !== commentId)
+    );
+    
+    // Update the blog's comment count
+    if (blog) {
+      setBlog({
+        ...blog,
+        commentCount: (blog.commentCount || comments.length) - 1
+      });
+    }
+    
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    alert("Failed to delete comment: " + error.message);
+  }
+};
 
   useEffect(() => {
     const fetchData = async () => {
@@ -680,7 +728,7 @@ const PersonalBlog = () => {
       <div>
         {/* Comment Form */}
         <div className="commentsArea">
-          <div className="numberOfComments">Comments ({comments.length})</div>
+          <div className="numberOfComments">Comments ({blog.commentCount || comments.length})</div>
           <div className="commentsAreaProfileDetails">
             {userLoading ? (
               <div className="loading-avatar">Loading...</div>
@@ -720,7 +768,8 @@ const PersonalBlog = () => {
             <button
               className="cancelButton"
               onClick={() => setCommentText("")}
-              disabled={commentSubmitting || !commentText.trim()}>
+              disabled={commentSubmitting || !commentText.trim()}
+            >
               Cancel
             </button>
             <button
@@ -728,14 +777,16 @@ const PersonalBlog = () => {
               onClick={handleSubmitComment}
               disabled={
                 commentSubmitting || !commentText.trim() || !currentUser
-              }>
+              }
+            >
               {commentSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
           {commentError && (
             <div
               className="error-message"
-              style={{ color: "red", marginTop: "5px" }}>
+              style={{ color: "red", marginTop: "5px" }}
+            >
               Error: {commentError}
             </div>
           )}
@@ -757,11 +808,52 @@ const PersonalBlog = () => {
                     {new Date(comment.createdAt).toLocaleDateString()}
                   </span>
                 </div>
-                <div className="comment-content">{comment.content}</div>
+                {/* Add delete button (only visible for comment author) */}
+                {currentUser && comment.user.id === currentUser.id && (
+                  <button
+                    className="delete-comment-btn"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleDeleteComment(comment.id);
+                    }}
+                    title="Delete comment"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
+                    </svg>
+                  </button>
+                )}
               </div>
-            ))
-          )}
-        </div>
+              <div className="comment-content">{comment.content}</div>
+              <p className="comLikeIcons">
+                <span className="flex items-center gap-1">
+                  <FaComment className="text-lg" />
+                  <span className="numComLikes">Reply</span>
+                </span>
+                <span className="flex items-center gap-1">
+                  <FaThumbsUp className="text-lg" />
+                  <span className="numComLikes">Like</span>
+                </span>
+              </p>
+              <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
+            </div>
+          ))
+        ) : (
+          <div className="no-comments">
+            <p>No comments yet. Be the first to comment!</p>
+          </div>
+        )}
+      </div>
+
+      <div className="allResponses">
+        <button>See all responses</button>
       </div>
     </div>
   );

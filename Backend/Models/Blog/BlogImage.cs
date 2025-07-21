@@ -6,7 +6,7 @@
         public string Username { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
-        public string Dsitrict { get; set; } = string.Empty;
+        public string District { get; set; } = string.Empty;
         public string UploadDate { get; set; } = string.Empty;
     }
 }

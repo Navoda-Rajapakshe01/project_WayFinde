@@ -1,9 +1,6 @@
+﻿﻿using Backend.DTO;
 
-
-
-﻿using Backend.DTOs;
-
-﻿﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 
 
@@ -19,6 +16,7 @@ namespace Backend.Data
     {
         //Profile
         public DbSet<UserNew> UsersNew { get; set; } = null!;
+        public DbSet<UserNew> UserNew { get; set; } = null!;
         public DbSet<Blog> Blogs { get; set; } = null!;
         public DbSet<Post> Posts { get; set; } = null!;
         public DbSet<Follows> Follows { get; set; } = null!;
@@ -38,7 +36,6 @@ namespace Backend.Data
         public DbSet<PlaceImage> PlaceImages { get; set; }
 
         // Trip and TripPlace
-        public DbSet<Trip> Trips { get; set; }
         public DbSet<TripPlace> TripPlaces { get; set; }
         public DbSet<TripCollaborator> TripCollaborator { get; set; }
         public DbSet<TripDate> TripDate { get; set; }
@@ -73,6 +70,9 @@ namespace Backend.Data
         public DbSet<BlogReaction> BlogReactions { get; set; }
         public object? Amenities { get; internal set; }
 
+        public DbSet<Trip> Trips { get; set; }
+
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -80,7 +80,7 @@ namespace Backend.Data
             base.OnModelCreating(modelBuilder);
 
             // DistrictWithPlacesCountDTO is a keyless DTO
-            modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
+            // modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
 
             modelBuilder.Entity<TripCollaborator>()
                 .HasOne(tc => tc.Trip)
@@ -120,7 +120,7 @@ namespace Backend.Data
                 .Property(d => d.ImageUrl)
                 .IsRequired();
 
-            // PlacesToVisit configuration
+            // PlacesToVisit Configuration
             modelBuilder.Entity<PlacesToVisit>()
                 .Property(p => p.Name)
                 .IsRequired();
@@ -130,9 +130,16 @@ namespace Backend.Data
                 .IsRequired();
 
             modelBuilder.Entity<PlacesToVisit>()
-                .HasOne(p => p.Category)
-                .WithMany()
-                .HasForeignKey(p => p.CategoryId);
+                .Property(p => p.Description)
+                .IsRequired();
+
+            modelBuilder.Entity<PlacesToVisit>()
+                .Property(p => p.DistrictId)
+                .IsRequired();
+
+            modelBuilder.Entity<PlacesToVisit>()
+                .Property(p => p.CategoryId)
+                .IsRequired();
 
             // Review Configuration
             // Review configuration
@@ -175,27 +182,18 @@ namespace Backend.Data
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
 
-            // DashboardNote configuration
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.NoteTitle)
-                .IsRequired()
-                .HasMaxLength(200);
+            modelBuilder.Entity<TravelBudget>()
+                .Property(t => t.UpdatedAt)
+                .HasDefaultValueSql("GETDATE()");
 
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.NoteDescription)
-                .IsRequired();
+            // Remove or comment out TravelBudgets navigation property for Trip
+            // modelBuilder.Entity<Trip>()
+            //     .WithMany(t => t.TravelBudgets)
+            //     .HasForeignKey(t => t.TripId)
+            //     .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.CreatedDate)
-                .IsRequired();
-
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.CreatedTime)
-                .IsRequired();
-
-            modelBuilder.Entity<DashboardNote>()
-                .Property(d => d.UserId)
-                .IsRequired();
+            // TripPlace composite key
+            modelBuilder.Entity<TripPlace>().HasKey(tp => new { tp.TripId, tp.PlaceId });
 
             // Blog configuration
             modelBuilder.Entity<Blog>()
@@ -240,10 +238,106 @@ namespace Backend.Data
                 .HasForeignKey(f => f.FollowedID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Add unique constraint to prevent multiple reactions from same user
-            modelBuilder.Entity<BlogReaction>()
-                .HasIndex(r => new { r.BlogId, r.UserId })
+            // TripDate configuration
+            modelBuilder.Entity<TripDate>(entity =>
+            {
+                entity.ToTable("TripDate");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("TripDateId")
+                    .UseIdentityColumn();
+
+                entity.Property(e => e.TripId)
+                    .IsRequired();
+
+                entity.Property(e => e.PlaceId)
+                    .IsRequired();
+
+                entity.Property(e => e.StartDate)
+                    .IsRequired();
+
+                entity.Property(e => e.EndDate)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<TripDate>()
+                .HasOne(td => td.Trip)
+                .WithMany(t => t.TripDates)
+                .HasForeignKey(td => td.TripId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TripDate>()
+                .HasOne(td => td.Place)
+                .WithMany()
+                .HasForeignKey(td => td.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Additional TripDate configurations for better performance
+            modelBuilder.Entity<TripDate>()
+                .Property(td => td.StartDate)
+                .IsRequired();
+
+            modelBuilder.Entity<TripDate>()
+                .Property(td => td.EndDate)
+                .IsRequired();
+
+            // Add index for better query performance
+            modelBuilder.Entity<TripDate>()
+                .HasIndex(td => new { td.TripId, td.PlaceId })
                 .IsUnique();
+
+            modelBuilder.Entity<TripDate>()
+                .HasIndex(td => td.TripId);
+
+            modelBuilder.Entity<TripDate>()
+                .HasIndex(td => td.PlaceId);
+
+            // Trip entity configuration
+            modelBuilder.Entity<Trip>(entity =>
+            {
+                entity.ToTable("Trips");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("Id")
+                    .UseIdentityColumn();
+
+                entity.Property(e => e.TripName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                // entity.Property(e => e.Description)
+                //     .IsRequired();
+
+                entity.Property(e => e.StartDate)
+                    .IsRequired();
+
+                entity.Property(e => e.EndDate)
+                    .IsRequired();
+
+                // entity.Property(e => e.TotalSpend)
+                //     .HasColumnType("decimal(18,2)")
+                //     .IsRequired();
+
+                // Remove or comment out TripDistance property mapping for Trip
+                // modelBuilder.Entity<Trip>().Property(t => t.TripDistance)
+                //     .HasColumnType("decimal(18,2)")
+                //     .IsRequired();
+
+                // entity.Property(e => e.TripTime)
+                //     .HasColumnType("decimal(18,2)")
+                //     .IsRequired();
+
+                entity.Property(e => e.UserId)
+                    .IsRequired();
+
+                entity.Property(e => e.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.UpdatedAt)
+                    .HasDefaultValueSql("GETDATE()")
+                    .ValueGeneratedOnAddOrUpdate();
+            });
         }
     }
 }

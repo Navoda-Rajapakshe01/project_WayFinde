@@ -8,6 +8,7 @@ namespace Backend.Models
         public Guid UserId { get; set; }
         public UserNew User { get; set; } = null!;
         public Blog Blog { get; set; } = null!;
+        public int BlogId { get; set; }
 
         public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

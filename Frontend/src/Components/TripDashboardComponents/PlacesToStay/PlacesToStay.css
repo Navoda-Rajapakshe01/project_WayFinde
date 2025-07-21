@@ -1,14 +1,12 @@
-/* Places to Stay Container */
-.places-to-stay-container {
-  width: 100%;
-  background-color: #fff;
-  font-family: "Arial", sans-serif;
-  max-width: 57%;
-}
-
-/* Tab Navigation Styles */
-.tab-navigation {
-  border-bottom: 1px solid #e0e0e0;
+.placess-to-stay-container {
+  display: flex;
+  flex-direction: column; 
+  gap: 20px; 
+  padding: 20px;
+  width: 53%; 
+  max-width: 59%; 
+  margin-left: 0; 
+  margin-right: 0; 
 }
 
 .main-tabs {
@@ -43,7 +41,7 @@
   border-radius: 3px 3px 0 0;
 }
 
-.sub-tabs {
+.placess-cards-container {
   display: flex;
   padding: 10px 15px;
   overflow-x: auto;
@@ -65,29 +63,15 @@
   border-radius: 20px;
 }
 
-.sub-tab-button.active {
-  background-color: #f0f0f0;
-  color: #000;
-  font-weight: 500;
-}
-
-/* Hotel Grid Styles */
-.hotel-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
-  padding: 15px;
-}
-
-/* Hotel Card Styles */
-.hotel-card {
-  border-radius: 12px;
+.places-card {
+  width: 48%; 
+  border-radius: 8px;
   overflow: hidden;
   background-color: white;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.hotel-image {
+.places-image {
   height: 150px;
   background-size: cover;
   background-position: center;
@@ -138,49 +122,39 @@
   margin-bottom: 5px;
 }
 
-.star-rating {
-  color: #ffb400;
-  font-size: 12px;
-  margin-right: 5px;
-  display: flex;
+.save-button-active {
+  background-color: rgba(0, 0, 255, 1); 
 }
 
-.review-count {
-  font-size: 12px;
-  color: #666;
+.places-info {
+  padding: 10px; 
 }
 
-.hotel-score {
-  font-size: 12px;
-  color: #666;
-}
-
-.score-value {
+.place-name {
+  font-size: 16px; 
   font-weight: bold;
   color: #4caf50;
 }
 
-/* Font Awesome Icons Placeholder */
-.fas,
-.far {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  margin-right: 2px;
+.place-reviews {
+  font-size: 12px; 
+  color: #666;
+  margin-top: 5px;
 }
 
-.fa-star,
-.fa-star-half-alt {
-  background-color: #ffb400;
+/* Media Query for Smaller Screens */
+@media (max-width: 1200px) {
+  .place-card {
+    width: 45%; 
+  }
 }
 
-.fa-heart {
-  background-color: #666;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-  .hotel-grid {
-    grid-template-columns: 1fr;
+  .place-card {
+    width: 100%; 
+  }
+
+  .places-cards-container {
+    justify-content: center; 
   }
 }
