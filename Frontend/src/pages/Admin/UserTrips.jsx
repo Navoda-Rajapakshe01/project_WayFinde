@@ -10,7 +10,10 @@ const UserTrips = () => {
 
   useEffect(() => {
     axios.get(`http://localhost:5030/api/trips/user/${userId}`)
-      .then(res => setTrips(res.data))
+      .then(res => {
+        const tripsArray = Array.isArray(res.data?.$values) ? res.data.$values : Array.isArray(res.data) ? res.data : [];
+        setTrips(tripsArray);
+      })
       .finally(() => setLoading(false));
   }, [userId]);
 

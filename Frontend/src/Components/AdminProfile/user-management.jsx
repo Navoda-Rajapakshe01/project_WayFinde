@@ -42,9 +42,10 @@ const UserManagement = () => {
       setLoading(true);
       // Fetch real users from the database
       const response = await axios.get("http://localhost:5030/api/profile/admin/users");
-      
+      console.log('API /profile/admin/users response:', response.data);
+      const usersArray = Array.isArray(response.data?.$values) ? response.data.$values : [];
       // Transform the data to match our frontend format
-      const users = response.data.map(user => ({
+      const users = usersArray.map(user => ({
         id: user.id,
         fullName: user.fullName || "N/A",
         email: user.email || "N/A",
@@ -58,12 +59,9 @@ const UserManagement = () => {
         followersCount: user.followersCount || 0,
         followingCount: user.followingCount || 0
       }));
-      
-      
       // Extract available roles from the data
       const roles = getUniqueRoles(users);
       setAvailableRoles(roles);
-      
       setUsers(users);
     } catch (error) {
       console.error("Failed to fetch users:", error);

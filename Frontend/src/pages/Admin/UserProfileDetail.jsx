@@ -36,7 +36,8 @@ const UserProfileDetail = () => {
         if (role === "NormalUser") {
           // Blogs
           const blogsRes = await axios.get("http://localhost:5030/api/Blog/all");
-          const userBlogs = blogsRes.data.filter(
+          const blogsArray = Array.isArray(blogsRes.data?.$values) ? blogsRes.data.$values : [];
+          const userBlogs = blogsArray.filter(
             (b) => b.User && (b.User.Id === userId || b.User.id === userId)
           );
           setBlogCount(userBlogs.length);
@@ -44,7 +45,8 @@ const UserProfileDetail = () => {
           const tripsRes = await axios.get(
             `http://localhost:5030/api/trips/user/${userId}`
           );
-          setTripCount(Array.isArray(tripsRes.data) ? tripsRes.data.length : tripsRes.data?.length || 0);
+          const tripsArray = Array.isArray(tripsRes.data?.$values) ? tripsRes.data.$values : Array.isArray(tripsRes.data) ? tripsRes.data : [];
+          setTripCount(tripsArray.length);
         } else if (role === "AccommodationProvider") {
           // Accommodations
           const accRes = await axios.get("http://localhost:5030/api/accommodation");
@@ -57,11 +59,13 @@ const UserProfileDetail = () => {
         } else if (role === "TransportProvider" || role === "VehicleProvider") {
           // Vehicles
           const vehiclesRes = await axios.get("http://localhost:5030/api/vehicle");
-          const userVehicles = vehiclesRes.data.filter(v => v.supplierId === userId || v.SupplierId === userId);
+          const vehiclesArray = Array.isArray(vehiclesRes.data?.$values) ? vehiclesRes.data.$values : [];
+          const userVehicles = vehiclesArray.filter(v => v.supplierId === userId || v.SupplierId === userId);
           setVehicleCount(userVehicles.length);
           // Vehicle Bookings
           const bookingsRes = await axios.get("http://localhost:5030/api/VehicleReservations");
-          const userBookings = bookingsRes.data.filter(b => b.ownerId === userId || b.OwnerId === userId || b.supplierId === userId || b.SupplierId === userId);
+          const bookingsArray = Array.isArray(bookingsRes.data?.$values) ? bookingsRes.data.$values : [];
+          const userBookings = bookingsArray.filter(b => b.ownerId === userId || b.OwnerId === userId || b.supplierId === userId || b.SupplierId === userId);
           setVehicleBookingCount(userBookings.length);
         }
       } catch (err) {
