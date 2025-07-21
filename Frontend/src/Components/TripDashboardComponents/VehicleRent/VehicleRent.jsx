@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './VehicleRent.css';
+import { AiOutlineHeart, AiOutlinePlusCircle } from "react-icons/ai";
 
 const VehicleRent = ({ tripId }) => {
   // State management
@@ -14,7 +15,8 @@ const VehicleRent = ({ tripId }) => {
   const [vehicleDetails, setVehicleDetails] = useState({});
   const [vehicleReviews, setVehicleReviews] = useState({});
   const [vehicleImages, setVehicleImages] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loadingPlaces, setLoadingPlaces] = useState(false);
+  const [loadingVehicles, setLoadingVehicles] = useState(false);
   const [error, setError] = useState(null);
 
   // Fetch trip places on component mount
@@ -33,7 +35,7 @@ const VehicleRent = ({ tripId }) => {
 
   const fetchTripPlaces = async () => {
     try {
-      setLoading(true);
+      setLoadingPlaces(true);
       // Fetch all trip places
       const response = await fetch('http://localhost:5030/api/TripPlaces');
       if (!response.ok) throw new Error('Failed to fetch trip places');
@@ -43,8 +45,6 @@ const VehicleRent = ({ tripId }) => {
       const tripPlacesData = allTripPlacesData.filter(tripPlace => 
         String(tripPlace.tripId) === String(tripId)
       );
-      
-      console.log('Filtered trip places for tripId:', tripId, tripPlacesData);
       
       // Fetch place names for each trip place
       const placesWithNames = await Promise.all(
@@ -57,43 +57,35 @@ const VehicleRent = ({ tripId }) => {
             }
             return { ...tripPlace, placeName: `Place ${tripPlace.placeId}` };
           } catch (error) {
-            console.error(`Error fetching place ${tripPlace.placeId}:`, error);
             return { ...tripPlace, placeName: `Place ${tripPlace.placeId}` };
           }
         })
       );
-      
       setPlaces(placesWithNames);
-      console.log('Places with names:', placesWithNames);
     } catch (err) {
       setError('Failed to load places');
-      console.error(err);
     } finally {
-      setLoading(false);
+      setLoadingPlaces(false);
     }
   };
 
   const fetchVehiclesForPlace = async () => {
     try {
-      setLoading(true);
+      setLoadingVehicles(true);
       // Fetch all vehicles (you might want to filter by place if your API supports it)
       const response = await fetch('http://localhost:5030/api/Vehicle');
       if (!response.ok) throw new Error('Failed to fetch vehicles');
       const vehiclesData = await response.json();
-      
       setVehicles(vehiclesData);
-      
       // Fetch additional details for each vehicle
       vehiclesData.forEach(vehicle => {
         fetchVehicleReviews(vehicle.id);
         fetchVehicleImages(vehicle.id);
       });
-      
     } catch (err) {
       setError('Failed to load vehicles');
-      console.error(err);
     } finally {
-      setLoading(false);
+      setLoadingVehicles(false);
     }
   };
 
@@ -162,29 +154,25 @@ const VehicleRent = ({ tripId }) => {
     return stars;
   };
 
-  if (loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
-
   return (
     <div className="vehicle-rent-container">
       {/* Places Selection */}
       <div className="places-container">
         <h2>Select a Place</h2>
         <div className="places-grid">
-          {places.map((place) => (
-            <div
-              key={place.placeId}
-              className={`place-card ${selectedPlace?.placeId === place.placeId ? 'selected' : ''}`}
-              onClick={() => setSelectedPlace(place)}
-            >
-              <h3>{place.placeName}</h3>
-            </div>
-          ))}
+          {places.length === 0 && loadingPlaces ? (
+            <div style={{ opacity: 0.5, minHeight: 40 }}>Loading places...</div>
+          ) : (
+            places.map((place) => (
+              <div
+                key={place.placeId}
+                className={`place-card ${selectedPlace?.placeId === place.placeId ? 'selected' : ''}`}
+                onClick={() => setSelectedPlace(place)}
+              >
+                <h3>{place.placeName}</h3>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -192,98 +180,106 @@ const VehicleRent = ({ tripId }) => {
       {selectedPlace && (
         <div className="vehicles-section">
           <h2>Available Vehicles in {selectedPlace.placeName}</h2>
-          
-          {/* Vehicle Cards */}
+          {/* Vehicle Cards - always render, no loading spinner */}
           <div className="vehicle-cards-container">
-            {vehicles.map((vehicle) => {
-              const reviews = vehicleReviews[vehicle.id];
-              const imageUrl = vehicleImages[vehicle.id] || '/placeholder-vehicle.jpg';
-              
-              return (
-                <div key={vehicle.id} className="vehicle-card">
-                  {/* Availability Badge */}
-                  <div className="availability-badge">
-                    <span className="availability-text">Available</span>
-                  </div>
-
-                  {/* Vehicle Image */}
-                  <div className="vehicle-image-container">
-                    <img 
-                      src={imageUrl} 
-                      alt={vehicle.name || 'Vehicle'} 
-                      className="vehicle-image"
-                      onError={(e) => {
-                        e.target.src = '/placeholder-vehicle.jpg';
-                      }}
-                    />
-                    
-                    {/* Save Button */}
-                    <button
-                      className={`save-button ${savedVehicles.includes(vehicle.id) ? 'saved' : ''}`}
-                      onClick={(e) => toggleSave(vehicle.id, e)}
-                      aria-label="Save this vehicle"
-                    >
-                      {savedVehicles.includes(vehicle.id) ? '❤️' : '🤍'}
-                    </button>
-                  </div>
-
-                  {/* Vehicle Info */}
-                  <div className="vehicle-info">
-                    <div className="vehicle-header">
-                      <h3 className="vehicle-name">{vehicle.name || 'Vehicle'}</h3>
-                      <div className="vehicle-type">{vehicle.type || 'Car'}</div>
+            {vehicles
+              .filter(vehicle => vehicle.placeId === selectedPlace.placeId)
+              .map((vehicle) => {
+                const reviews = vehicleReviews[vehicle.id];
+                const imageUrl = vehicleImages[vehicle.id] || '/placeholder-vehicle.jpg';
+                return (
+                  <div key={vehicle.id} className="vehicle-card">
+                    {/* Availability Badge */}
+                    <div className="availability-badge">
+                      <span className="availability-text">Available</span>
                     </div>
-
-                    {/* Vehicle Details */}
-                    <div className="vehicle-details">
-                      <div className="detail-item">
-                        <span className="detail-label">Passengers:</span>
-                        <span className="detail-value">{vehicle.numberOfPassengers || 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <span className="detail-label">Transmission:</span>
-                        <span className="detail-value">{vehicle.transmissionType || 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <span className="detail-label">Fuel:</span>
-                        <span className="detail-value">{vehicle.fuelType || 'N/A'}</span>
-                      </div>
-                      <div className="detail-item">
-                        <span className="detail-label">Price/Day:</span>
-                        <span className="detail-value price">${vehicle.pricePerDay || 'N/A'}</span>
-                      </div>
+                    {/* Vehicle Image */}
+                    <div className="vehicle-image-container">
+                      <img 
+                        src={imageUrl} 
+                        alt={vehicle.name || 'Vehicle'} 
+                        className="vehicle-image"
+                        onError={(e) => {
+                          e.target.src = '/placeholder-vehicle.jpg';
+                        }}
+                      />
+                      {/* Save Button */}
+                      <button
+                        className={`save-button ${savedVehicles.includes(vehicle.id) ? 'saved' : ''}`}
+                        onClick={(e) => toggleSave(vehicle.id, e)}
+                        aria-label="Save this vehicle"
+                      >
+                        <span style={{ position: "relative", display: "inline-block", width: 22, height: 22 }}>
+                          <AiOutlineHeart size={22} color="#111" />
+                          <AiOutlinePlusCircle
+                            size={12}
+                            color="#900D09"
+                            style={{
+                              position: "absolute",
+                              right: -4,
+                              bottom: -4,
+                              background: "white",
+                              borderRadius: "50%",
+                              boxShadow: "0 0 0 2px white",
+                            }}
+                          />
+                        </span>
+                      </button>
                     </div>
-
-                    {/* Vehicle Reviews */}
-                    <div className="vehicle-reviews">
-                      {reviews ? (
-                        <div className="rating-container">
-                          <div className="stars">
-                            {renderStars(parseFloat(reviews.rating))}
-                          </div>
-                          <span className="rating-text">
-                            {reviews.rating} ({reviews.count} reviews)
-                          </span>
+                    {/* Vehicle Info */}
+                    <div className="vehicle-info">
+                      <div className="vehicle-header">
+                        <h3 className="vehicle-name">{vehicle.brand || 'Vehicle'}</h3>
+                        <div className="vehicle-type">{vehicle.type || 'Car'}</div>
+                      </div>
+                      {/* Vehicle Details */}
+                      <div className="vehicle-details">
+                        <div className="detail-item">
+                          <span className="detail-label">Passengers:</span>
+                          <span className="detail-value">{vehicle.numberOfPassengers || 'N/A'}</span>
                         </div>
-                      ) : (
-                        <span className="no-reviews">No reviews yet</span>
-                      )}
+                        <div className="detail-item">
+                          <span className="detail-label">Transmission:</span>
+                          <span className="detail-value">{vehicle.transmissionType || 'N/A'}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Fuel:</span>
+                          <span className="detail-value">{vehicle.fuelType || 'N/A'}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="detail-label">Price/Day:</span>
+                          <span className="detail-value price">${vehicle.pricePerDay || 'N/A'}</span>
+                        </div>
+                      </div>
+                      {/* Vehicle Reviews */}
+                      <div className="vehicle-reviews">
+                        {reviews ? (
+                          <div className="rating-container">
+                            <div className="stars">
+                              {renderStars(parseFloat(reviews.rating))}
+                            </div>
+                            <span className="rating-text">
+                              {reviews.rating} ({reviews.count} reviews)
+                            </span>
+                          </div>
+                        ) : (
+                          null
+                        )}
+                      </div>
+                      {/* Book Now Button */}
+                      <button 
+                        className="book-now-button"
+                        onClick={() => {
+                          // Handle booking logic here
+                          console.log('Booking vehicle:', vehicle.id);
+                        }}
+                      >
+                        Book Now
+                      </button>
                     </div>
-
-                    {/* Book Now Button */}
-                    <button 
-                      className="book-now-button"
-                      onClick={() => {
-                        // Handle booking logic here
-                        console.log('Booking vehicle:', vehicle.id);
-                      }}
-                    >
-                      Book Now
-                    </button>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
       )}

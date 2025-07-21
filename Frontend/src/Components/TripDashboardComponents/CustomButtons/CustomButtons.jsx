@@ -48,7 +48,7 @@ const CustomButtons = ({ tripId }) => {
         {activeButton === 'todo-list' && <TodoList tripId={tripId} />}
         {activeButton === 'budget' && <TravelBudget tripId={tripId} />}
         {activeButton === 'vehicle-rent' && <VehicleRent tripId={tripId} />}
-        {activeButton === 'places' && <PlacesToStay />}
+        {activeButton === 'places' && <PlacesToStay tripId={tripId} />}
       </div>
 
     </div>

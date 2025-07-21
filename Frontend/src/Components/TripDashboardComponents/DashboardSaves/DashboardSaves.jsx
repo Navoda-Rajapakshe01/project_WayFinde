@@ -61,32 +61,40 @@ function DashboardSaves({ tripId }) {
       {/* To-Do List Section */}
       <div className="saves-section">
         <h2>To-Do List</h2>
-        <div className="to-do-card">
-          <p>
-            Display the to-do list for the trip, outlining all tasks that need to be completed before and during the journey.
-            <button
-              className="arrow-button"
-              onClick={() => setShowTodoPopup(true)}
-            >
-              &gt;
-            </button>
-          </p>
+        <div className="to-do-card enhanced-dashboard-card">
+          <div className="dashboard-card-content">
+            <div className="dashboard-card-title">Trip To-Do List</div>
+            <div className="dashboard-card-desc">
+              All tasks to complete before and during your journey are shown here. Stay organized and on track!
+            </div>
+          </div>
+          <button
+            className="arrow-button enhanced-arrow-button"
+            onClick={() => setShowTodoPopup(true)}
+            aria-label="Open To-Do List"
+          >
+            &gt;
+          </button>
         </div>
       </div>
 
       {/* Budget Section */}
       <div className="saves-section">
         <h2>Travel Budget</h2>
-        <div className="budget-card">
-          <p>
-            Show the travel budget list, detailing all the expected expenses to ensure proper financial planning for trip.
-            <button
-              className="arrow-button"
-              onClick={() => setShowBudgetPopup(true)}
-            >
-              &gt;
-            </button>
-          </p>
+        <div className="budget-card enhanced-dashboard-card">
+          <div className="dashboard-card-content">
+            <div className="dashboard-card-title">Trip Budget Overview</div>
+            <div className="dashboard-card-desc">
+              See all expected expenses and keep your travel finances under control. Plan ahead for a stress-free trip!
+            </div>
+          </div>
+          <button
+            className="arrow-button enhanced-arrow-button"
+            onClick={() => setShowBudgetPopup(true)}
+            aria-label="Open Travel Budget"
+          >
+            &gt;
+          </button>
         </div>
       </div>
 
