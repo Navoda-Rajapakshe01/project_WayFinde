@@ -12,7 +12,7 @@ const UserBlogs = () => {
     axios.get("http://localhost:5030/api/Blog/all")
       .then(res => {
         const userBlogs = res.data.filter(
-          b => b.User && (b.User.Id === userId || b.User.id === userId)
+          (b) => b.User && String(b.User.Id) === String(userId)
         );
         setBlogs(userBlogs);
       })
