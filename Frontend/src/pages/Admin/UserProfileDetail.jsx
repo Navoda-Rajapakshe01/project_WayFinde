@@ -18,6 +18,10 @@ const UserProfileDetail = () => {
   const [error, setError] = useState(null);
   const [blogCount, setBlogCount] = useState(0);
   const [tripCount, setTripCount] = useState(0);
+  const [accommodationCount, setAccommodationCount] = useState(0);
+  const [accommodationBookingCount, setAccommodationBookingCount] = useState(0);
+  const [vehicleCount, setVehicleCount] = useState(0);
+  const [vehicleBookingCount, setVehicleBookingCount] = useState(0);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -28,21 +32,39 @@ const UserProfileDetail = () => {
         );
         console.log("User data received:", response.data);
         setUser(response.data);
-        // Fetch blogs for this user
-        const blogsRes = await axios.get("http://localhost:5030/api/Blog/all");
-        const userBlogs = blogsRes.data.filter(
-          (b) => b.User && (b.User.Id === userId || b.User.id === userId)
-        );
-        setBlogCount(userBlogs.length);
-        // Fetch trips for this user
-        const tripsRes = await axios.get(
-          `http://localhost:5030/api/trips/user/${userId}`
-        );
-        setTripCount(
-          Array.isArray(tripsRes.data)
-            ? tripsRes.data.length
-            : tripsRes.data?.length || 0
-        );
+        // Fetch stats based on user role
+        const role = response.data.role || response.data.Role;
+        if (role === "NormalUser") {
+          // Blogs
+          const blogsRes = await axios.get("http://localhost:5030/api/Blog/all");
+          const userBlogs = blogsRes.data.filter(
+            (b) => b.User && (b.User.Id === userId || b.User.id === userId)
+          );
+          setBlogCount(userBlogs.length);
+          // Trips
+          const tripsRes = await axios.get(
+            `http://localhost:5030/api/trips/user/${userId}`
+          );
+          setTripCount(Array.isArray(tripsRes.data) ? tripsRes.data.length : tripsRes.data?.length || 0);
+        } else if (role === "AccommodationProvider") {
+          // Accommodations
+          const accRes = await axios.get("http://localhost:5030/api/accommodation");
+          const userAccs = accRes.data.filter(a => a.ownerId === userId || a.OwnerId === userId);
+          setAccommodationCount(userAccs.length);
+          // Accommodation Bookings
+          const bookingsRes = await axios.get("http://localhost:5030/api/AccommodationReservation");
+          const userBookings = bookingsRes.data.filter(b => b.ownerId === userId || b.OwnerId === userId);
+          setAccommodationBookingCount(userBookings.length);
+        } else if (role === "TransportProvider" || role === "VehicleProvider") {
+          // Vehicles
+          const vehiclesRes = await axios.get("http://localhost:5030/api/vehicle");
+          const userVehicles = vehiclesRes.data.filter(v => v.supplierId === userId || v.SupplierId === userId);
+          setVehicleCount(userVehicles.length);
+          // Vehicle Bookings
+          const bookingsRes = await axios.get("http://localhost:5030/api/VehicleReservations");
+          const userBookings = bookingsRes.data.filter(b => b.ownerId === userId || b.OwnerId === userId || b.supplierId === userId || b.SupplierId === userId);
+          setVehicleBookingCount(userBookings.length);
+        }
       } catch (err) {
         setError("Failed to fetch user details");
         console.error("Error fetching user details:", err);
@@ -219,14 +241,42 @@ const UserProfileDetail = () => {
           <div className="user-activity-section">
             <h3>User Activity</h3>
             <div className="activity-stats">
-              <div className="activity-stat clickable" onClick={handleBlogsClick} title="View all blogs by this user">
-                <span className="stat-label">Blogs Written:</span>
-                <span className="stat-value">{blogCount}</span>
-              </div>
-              <div className="activity-stat clickable" onClick={handleTripsClick} title="View all trips by this user">
-                <span className="stat-label">Trips Planned:</span>
-                <span className="stat-value">{tripCount}</span>
-              </div>
+              {user && (user.role === "NormalUser") && (
+                <>
+                  <div className="activity-stat clickable" onClick={handleBlogsClick} title="View all blogs by this user">
+                    <span className="stat-label">Blogs Written:</span>
+                    <span className="stat-value">{blogCount}</span>
+                  </div>
+                  <div className="activity-stat clickable" onClick={handleTripsClick} title="View all trips by this user">
+                    <span className="stat-label">Trips Planned:</span>
+                    <span className="stat-value">{tripCount}</span>
+                  </div>
+                </>
+              )}
+              {user && (user.role === "AccommodationProvider") && (
+                <>
+                  <div className="activity-stat">
+                    <span className="stat-label">Accommodation Places:</span>
+                    <span className="stat-value">{accommodationCount}</span>
+                  </div>
+                  <div className="activity-stat">
+                    <span className="stat-label">Bookings:</span>
+                    <span className="stat-value">{accommodationBookingCount}</span>
+                  </div>
+                </>
+              )}
+              {user && (user.role === "TransportProvider" || user.role === "VehicleProvider") && (
+                <>
+                  <div className="activity-stat">
+                    <span className="stat-label">Vehicles:</span>
+                    <span className="stat-value">{vehicleCount}</span>
+                  </div>
+                  <div className="activity-stat">
+                    <span className="stat-label">Vehicle Bookings:</span>
+                    <span className="stat-value">{vehicleBookingCount}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
