@@ -18,7 +18,7 @@ namespace Backend.DTOs
         public DateTime EndDate { get; set; }
 
         [Required]
-        public required string UserId { get; set; }
+        public required Guid UserId { get; set; }
 
         [Required]
         public required List<int> PlaceIds { get; set; }

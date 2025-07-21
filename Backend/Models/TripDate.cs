@@ -23,6 +23,6 @@ namespace Backend.Models
 		public DateTime? StartDate { get; set; }
 
 		[Required]
-		public DateTime? EndDate { get; set; }
+	public DateTime? EndDate { get; set; }
 	}
 }

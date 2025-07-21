@@ -23,19 +23,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
             ValidateAudience = true,
+            ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
-                    builder.Configuration["AppSettings:Token"] 
+                    builder.Configuration["AppSettings:Token"]
                     ?? throw new InvalidOperationException("JWT Token key is missing in configuration (AppSettings:Token).")
                 )
             ),
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 
@@ -92,6 +90,7 @@ builder.Services.AddSwaggerGen();
 // Add SignalR and HTTP Context
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 // Build the app
 var app = builder.Build();

@@ -33,7 +33,7 @@ namespace Backend.Data
             if (dto.EndDate == default)
                 return BadRequest(new { message = "Validation failed", errors = new { Field = "EndDate", Message = "The EndDate field is required and must be a valid date." } });
 
-            if (string.IsNullOrEmpty(dto.UserId))
+            if (dto.UserId == Guid.Empty)
                 return BadRequest(new { message = "Validation failed", errors = new { Field = "UserId", Message = "The UserId field is required." } });
 
             if (dto.PlaceIds == null || !dto.PlaceIds.Any())
@@ -220,11 +220,14 @@ namespace Backend.Data
             if (string.IsNullOrEmpty(userId))
                 return BadRequest("UserId is required.");
 
+            if (!Guid.TryParse(userId, out Guid userGuid))
+                return BadRequest("Invalid UserId format.");
+
             var trips = await _context.Trips
-                .Where(t => t.UserId == userId)
+                .Where(t => t.UserId == userGuid)
                 .Include(t => t.TripPlaces)
                     .ThenInclude(tp => tp.Place)
-                        .ThenInclude(p => p.Reviews)          // ← include reviews
+                        .ThenInclude(p => p.Reviews)
                 .Include(t => t.TripDates)
                 .ToListAsync();
 
@@ -234,7 +237,7 @@ namespace Backend.Data
                 tripName = trip.TripName,
                 startDate = trip.StartDate,
                 endDate = trip.EndDate,
-                
+
                 userId = trip.UserId,
                 places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -255,7 +258,7 @@ namespace Backend.Data
                             GoogleMapLink = tp.Place.GoogleMapLink,
                             AvgTime = tp.Place.AvgTime,
                             AvgSpend = tp.Place.AvgSpend,
-                            Rating = avgRating,               // ← dynamic average
+                            Rating = avgRating,
                             MainImageUrl = tp.Place.MainImageUrl,
                             District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
                             {
@@ -273,7 +276,6 @@ namespace Backend.Data
 
             return Ok(result);
         }
-
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetTripById(int id)
@@ -456,8 +458,6 @@ namespace Backend.Data
             return Ok(result);
         }
 
-
-
         [HttpGet("invitations")]
         public async Task<IActionResult> GetInvitations(Guid userId)
         {
@@ -492,8 +492,6 @@ namespace Backend.Data
             await _context.SaveChangesAsync();
             return Ok("Response recorded.");
         }
-
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTrip(int id)
@@ -548,12 +546,5 @@ namespace Backend.Data
                 return StatusCode(500, new { message = "Something went wrong", detail = ex.Message });
             }
         }
-
-
-
-
-
-
-
     }
 }

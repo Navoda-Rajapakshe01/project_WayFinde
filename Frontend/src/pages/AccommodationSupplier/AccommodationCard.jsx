@@ -3,18 +3,22 @@ import "../CSS/Accommodation.css";
 
 const AccommodationCard = ({
   accommodation,
-  onToggleStatus,
-  onEdit,
-  onDelete,
-  onViewBookings,
+  onToggleStatus = () => {},
+  onEdit = () => {},
+  onDelete = () => {},
+  onViewBookings = () => {},
 }) => {
+  const status = (accommodation.status || "Available").toLowerCase();
+  const isAvailable = status === "available";
+
   return (
     <div className="accommodation-card">
       <img
         src={
-          accommodation.imageUrls?.[0] || "/images/default-accommodation.jpg"
+          accommodation.imageUrls?.$values?.[0] ||
+          "/images/default-accommodation.jpg"
         }
-        alt={accommodation.name}
+        alt={accommodation.name || "Accommodation"}
         className="accommodation-image"
       />
       <div className="accommodation-card-body">
@@ -31,20 +35,23 @@ const AccommodationCard = ({
 
         <div className="accommodation-details">
           <div className="accommodation-detail">
-            <i className="bi bi-door-closed"></i> {accommodation.bedrooms}{" "}
+            <i className="bi bi-door-closed" aria-label="Bedrooms"></i>{" "}
+            {accommodation.bedrooms}{" "}
             {accommodation.bedrooms === 1 ? "bedroom" : "bedrooms"}
           </div>
           <div className="accommodation-detail">
-            <i className="bi bi-droplet"></i> {accommodation.bathrooms}{" "}
+            <i className="bi bi-droplet" aria-label="Bathrooms"></i>{" "}
+            {accommodation.bathrooms}{" "}
             {accommodation.bathrooms === 1 ? "bathroom" : "bathrooms"}
           </div>
           <div className="accommodation-detail">
-            <i className="bi bi-people"></i> {accommodation.maxGuests}{" "}
+            <i className="bi bi-people" aria-label="Guests"></i>{" "}
+            {accommodation.maxGuests}{" "}
             {accommodation.maxGuests === 1 ? "guest" : "guests"}
           </div>
         </div>
 
-        {accommodation.amenities && accommodation.amenities.length > 0 && (
+        {accommodation.amenities?.length > 0 && (
           <div className="accommodation-amenities">
             {accommodation.amenities.slice(0, 3).map((amenity, i) => (
               <span key={i} className="amenity-tag">
@@ -61,20 +68,16 @@ const AccommodationCard = ({
 
         <p className="accommodation-status">
           Status:{" "}
-          <span
-            className={`status-${
-              accommodation.status
-                ? accommodation.status.toLowerCase()
-                : "available"
-            }`}>
+          <span className={`status-${status}`}>
             {accommodation.status || "Available"}
           </span>
         </p>
 
         <div className="accommodation-card-actions">
           <button
+            type="button"
             className={`status-toggle-btn ${
-              accommodation.status === "Available" ? "available" : "unavailable"
+              isAvailable ? "available" : "unavailable"
             }`}
             onClick={() =>
               onToggleStatus(
@@ -82,30 +85,28 @@ const AccommodationCard = ({
                 accommodation.status || "Available"
               )
             }>
-            {accommodation.status === "Available" || !accommodation.status
-              ? "Mark as Unavailable"
-              : "Mark as Available"}
+            {isAvailable ? "Mark as Unavailable" : "Mark as Available"}
           </button>
 
-          {/* Add additional buttons for supplier actions */}
           <div className="action-buttons">
             <button
+              type="button"
               className="view-bookings-btn"
-              onClick={() =>
-                onViewBookings && onViewBookings(accommodation.id)
-              }>
+              onClick={() => onViewBookings(accommodation.id)}>
               View Bookings
             </button>
 
             <button
+              type="button"
               className="edit-btn"
-              onClick={() => onEdit && onEdit(accommodation)}>
+              onClick={() => onEdit(accommodation)}>
               Edit
             </button>
 
             <button
+              type="button"
               className="delete-btn"
-              onClick={() => onDelete && onDelete(accommodation.id)}>
+              onClick={() => onDelete(accommodation.id)}>
               Delete
             </button>
           </div>

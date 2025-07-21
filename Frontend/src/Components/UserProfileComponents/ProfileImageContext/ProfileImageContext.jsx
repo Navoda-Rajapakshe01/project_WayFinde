@@ -1,5 +1,4 @@
-// ProfileImageContext.js
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 // Create context with default values
@@ -8,13 +7,15 @@ export const ProfileImageContext = createContext({
   setProfileImage: () => {},
 });
 
+// ✅ Add this hook to fix the import error in MainNavbar
+export const useProfileImage = () => useContext(ProfileImageContext);
+
 // Provider component
 export const ProfileImageProvider = ({ children }) => {
   const [profileImage, setProfileImage] = useState("/default-profile.png");
 
   // You can add logic here to load profile image from localStorage or API
   useEffect(() => {
-    // Example: Load from localStorage if available
     const savedImage = localStorage.getItem("profileImage");
     if (savedImage) {
       setProfileImage(savedImage);

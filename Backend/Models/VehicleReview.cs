@@ -1,14 +1,32 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Backend.Models
 {
-        public class VehicleReview
-        {
-                public int Id { get; set; }
-                public string ReviewerName { get; set; } = string.Empty;
-                public string? Comment { get; set; }
-                public int Rating { get; set; }
-                public DateTime DatePosted { get; set; } = DateTime.Now;
+    public class VehicleReview
+    {
+        [Key]
+        public int Id { get; set; }
 
-                public int VehicleId { get; set; }
-                public Vehicle? Vehicle { get; set; }
-        }
+        [Required]
+        public int VehicleId { get; set; }
+
+        [ForeignKey("VehicleId")]
+        public Vehicle? Vehicle { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }  // Change from ReviewerName to Name
+
+        [StringLength(100)]
+        public string? Email { get; set; } 
+
+        [Range(1, 5)]
+        public int Rating { get; set; }
+
+        public string? Comment { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
 }

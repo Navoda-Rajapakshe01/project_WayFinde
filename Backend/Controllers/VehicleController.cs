@@ -13,11 +13,11 @@ using System.Linq;
 using System;
 
 namespace Backend.Controllers
-{ 
+{
     [ApiController]
     [Route("api/[controller]")]
     public class VehicleController : ControllerBase
-    {
+    { 
         private readonly AppDbContext _context;
         private readonly Cloudinary _cloudinary;
 
@@ -30,15 +30,25 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateVehicle([FromForm] VehicleCreateDto dto)
         {
-            if (dto == null) return BadRequest();
-
-            // Validate DistrictId exists in Districts table (optional but recommended)
-            var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
-            if (!districtExists)
+            if (!ModelState.IsValid)
             {
-                return BadRequest($"District with Id {dto.DistrictId} does not exist.");
+                return BadRequest(ModelState); // 🚨 Return validation errors!
             }
 
+            if (dto == null)
+                return BadRequest();
+
+            // Validate DistrictId exists
+            var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
+            if (!districtExists)
+                return BadRequest($"District with Id {dto.DistrictId} does not exist.");
+
+            // Validate Supplier
+            var supplier = await _context.UsersNew.FirstOrDefaultAsync(u => u.Id == dto.SupplierId);
+            if (supplier == null)
+                return BadRequest($"Supplier account not found.");
+
+            // Create Vehicle
             var vehicle = new Vehicle
             {
                 Brand = dto.Brand,
@@ -49,15 +59,17 @@ namespace Backend.Controllers
                 NumberOfPassengers = dto.NumberOfPassengers,
                 FuelType = dto.FuelType,
                 TransmissionType = dto.TransmissionType,
-                DistrictId = dto.DistrictId,   // <-- Set DistrictId here
-                IsAvailable = true
+                DistrictId = dto.DistrictId,
+                PlaceId = dto.PlaceId,
+                IsAvailable = true,
+                SupplierId = supplier.Id,
+                SupplierUsername = supplier.Username
             };
 
-            // Save vehicle first to get Id
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
 
-            // Handle amenities
+            // Save Amenities
             if (dto.Amenities != null)
             {
                 foreach (var amenity in dto.Amenities)
@@ -70,13 +82,12 @@ namespace Backend.Controllers
                 }
             }
 
-            // Handle image uploads to Cloudinary
+            // Upload Images
             if (dto.Images != null)
             {
                 foreach (var file in dto.Images)
                 {
                     var imageUrl = await UploadFileToCloudinary(file);
-
                     _context.VehicleImages.Add(new VehicleImage
                     {
                         VehicleId = vehicle.Id,
@@ -86,7 +97,6 @@ namespace Backend.Controllers
             }
 
             await _context.SaveChangesAsync();
-
             return Ok(vehicle);
         }
 
@@ -97,7 +107,7 @@ namespace Backend.Controllers
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(file.FileName, stream),
-                Folder = "vehicles" // Optional: folder in Cloudinary
+                Folder = "vehicles"
             };
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -112,7 +122,8 @@ namespace Backend.Controllers
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] VehicleUpdateStatusDto dto)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
-            if (vehicle == null) return NotFound();
+            if (vehicle == null)
+                return NotFound();
 
             vehicle.IsAvailable = dto.Status == "Available";
             await _context.SaveChangesAsync();
@@ -128,7 +139,8 @@ namespace Backend.Controllers
                 .Include(v => v.Amenities)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
-            if (vehicle == null) return NotFound();
+            if (vehicle == null)
+                return NotFound();
 
             if (vehicle.Images != null)
                 _context.VehicleImages.RemoveRange(vehicle.Images);
@@ -152,6 +164,38 @@ namespace Backend.Controllers
             return Ok(bookings);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehicles()
+        {
+            var vehicles = await _context.Vehicles
+                .Include(v => v.Images)
+                .Include(v => v.Amenities)
+                .Include(v => v.Supplier)      // include supplier navigation
+                .Include(v => v.District)      // include district navigation
+                .Include(v => v.PlacesToVisit) // include place navigation
+                .ToListAsync();
+
+            var dtos = vehicles.Select(MapToDto);
+            return Ok(dtos);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<VehicleDto>> GetVehicle(int id)
+        {
+            var vehicle = await _context.Vehicles
+                .Include(v => v.Images)
+                .Include(v => v.Amenities)
+                .Include(v => v.Supplier)
+                .Include(v => v.District)
+                .Include(v => v.PlacesToVisit)
+                .FirstOrDefaultAsync(v => v.Id == id);
+
+            if (vehicle == null)
+                return NotFound();
+
+            return Ok(MapToDto(vehicle));
+        }
+
         private VehicleDto MapToDto(Vehicle vehicle)
         {
             return new VehicleDto
@@ -166,37 +210,13 @@ namespace Backend.Controllers
                 Location = vehicle.Location ?? string.Empty,
                 PricePerDay = vehicle.PricePerDay,
                 IsAvailable = vehicle.IsAvailable,
+                DistrictId = vehicle.DistrictId,
+                PlaceId = vehicle.PlaceId,
+                SupplierId = vehicle.SupplierId,
+                SupplierUsername = vehicle.SupplierUsername ?? string.Empty,
                 ImageUrls = vehicle.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>(),
                 Amenities = vehicle.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>(),
-                // Optional: include DistrictId in DTO if needed
-                DistrictId = vehicle.DistrictId
             };
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehicles()
-        {
-            var vehicles = await _context.Vehicles
-                .Include(v => v.Images)
-                .Include(v => v.Amenities)
-                .ToListAsync();
-
-            var dtos = vehicles.Select(MapToDto);
-            return Ok(dtos);
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<VehicleDto>> GetVehicle(int id)
-        {
-            var vehicle = await _context.Vehicles
-                .Include(v => v.Images)
-                .Include(v => v.Amenities)
-                .FirstOrDefaultAsync(v => v.Id == id);
-
-            if (vehicle == null)
-                return NotFound();
-
-            return Ok(MapToDto(vehicle));
         }
     }
 }

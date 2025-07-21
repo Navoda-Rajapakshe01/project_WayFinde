@@ -32,7 +32,7 @@ const PlaceDetails = () => {
 
   useEffect(() => {
     setLoading(true);
-    const user = JSON.parse(localStorage.getItem("user"));
+    const user = JSON.parse(localStorage.getItem("userProfile"));
     setCurrentUser(user);
 
     axios
@@ -49,10 +49,31 @@ const PlaceDetails = () => {
 
     axios
       .get(`http://localhost:5030/api/places/${placeId}/reviews`)
-      .then((res) => setReviews(res.data))
+      .then((res) => setReviews(res.data.$values || []))
       .catch((err) => console.error("Failed to fetch reviews:", err));
 
     window.scrollTo(0, 0);
+
+    // Listen for localStorage changes (other tabs)
+    const handleStorageChange = () => {
+      const updatedUser = JSON.parse(localStorage.getItem("userProfile"));
+      setCurrentUser(updatedUser);
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    // Listen for tab visibility change (same tab, after logout)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        const updatedUser = JSON.parse(localStorage.getItem("userProfile"));
+        setCurrentUser(updatedUser);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [placeId]);
 
   const handleWishlistClick = () => {
@@ -61,7 +82,9 @@ const PlaceDetails = () => {
 
   const fetchGalleryImages = async (placeId) => {
     try {
-      const response = await axios.get(`http://localhost:5030/api/places/${placeId}/images`);
+      const response = await axios.get(
+        `http://localhost:5030/api/places/${placeId}/images`
+      );
       return response.data;
     } catch (error) {
       console.error("Failed to fetch images", error);
@@ -94,12 +117,19 @@ const PlaceDetails = () => {
       return;
     }
 
-    if (!currentUser) {
+    // Always check localStorage for the latest user state
+    const latestUser = JSON.parse(localStorage.getItem("userProfile"));
+    setCurrentUser(latestUser);
+
+    if (!latestUser) {
       setShowGuestModal(true);
       return;
     }
 
-    submitReview(currentUser.name || "Anonymous", currentUser.email || "");
+    submitReview(
+      latestUser.username || latestUser.name || "Anonymous",
+      latestUser.email || latestUser.contactEmail || ""
+    );
   };
 
   const submitReview = (name, email) => {
@@ -110,6 +140,17 @@ const PlaceDetails = () => {
       name,
       email,
     };
+    console.log("Submitting review:", reviewData);
+
+    if (!rating || rating < 1 || rating > 5) {
+      swal.fire({
+        title: "Please provide a rating",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      setSubmitting(false);
+      return;
+    }
 
     axios
       .post(`http://localhost:5030/api/places/${placeId}/reviews`, reviewData)
@@ -273,7 +314,11 @@ const PlaceDetails = () => {
                     />
                     <div className="image-grid">
                       {galleryImages.map((img, i) => (
-                        <img key={i} src={img} alt={`Gallery ${i + 1}`} />
+                        <img
+                          key={i}
+                          src={img.imageUrls?.$values?.[0]}
+                          alt={`Gallery ${i + 1}`}
+                        />
                       ))}
                     </div>
                   </div>
@@ -332,6 +377,9 @@ const PlaceDetails = () => {
                 <>
                   {reviews
                     .filter((r) => r.comment?.trim())
+                    .sort(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
                     .slice(0, 2)
                     .map((review, index) => (
                       <div key={index} className="review-card">
@@ -483,6 +531,7 @@ const PlaceDetails = () => {
             <div className="custom-modal-body">
               {reviews
                 .filter((r) => r.comment?.trim())
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                 .map((r, idx) => (
                   <div key={idx} className="review-card">
                     <strong>{r.name}</strong>

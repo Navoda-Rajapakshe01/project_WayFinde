@@ -14,9 +14,12 @@ const LocationSection = ({
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch("http://localhost:5030/api/places/top-rated");
+        const response = await fetch(
+          "http://localhost:5030/api/places/top-rated"
+        );
         const data = await response.json();
-        setLocations(data); // no need to sort if API already returns top rated
+        console.log("Fetched locations data:", data);
+        setLocations(data.$values || []); // Unwrap the actual array here
       } catch (error) {
         console.error("Failed to fetch locations:", error);
       }
@@ -25,7 +28,6 @@ const LocationSection = ({
     fetchLocations();
   }, []);
 
-  // Guard: show nothing if no locations
   if (!locations || locations.length === 0) {
     return null;
   }
