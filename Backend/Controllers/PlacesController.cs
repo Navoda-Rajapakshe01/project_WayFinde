@@ -20,8 +20,6 @@ namespace Backend.Controllers
             _context = context;
         }
 
-
-
         // GET: api/places
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetAllPlaces()
@@ -254,8 +252,6 @@ namespace Backend.Controllers
 
             return Ok(place);
         }
-
-
 
         // DELETE: api/places/5
         [HttpDelete("{id:int}")]

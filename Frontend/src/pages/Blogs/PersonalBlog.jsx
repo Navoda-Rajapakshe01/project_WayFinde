@@ -125,6 +125,7 @@ const PersonalBlog = () => {
       setUserLoading(false);
     }
   };
+
   const handleSubmitComment = async () => {
     // Validate input
     if (!commentText.trim()) {
@@ -657,13 +658,6 @@ const handleDeleteComment = async (commentId) => {
             dangerouslySetInnerHTML={{ __html: blogContent }}
           />
         )}
-
-        {!blogContent && !contentLoading && !contentError && blog.blogUrl && (
-          <div className="no-content">
-            <p>No content available</p>
-            <button onClick={retryContentFetch}>Try Loading Content</button>
-          </div>
-        )}
       </div>
 
       {blog.coverImageUrl && (
@@ -766,18 +760,11 @@ const handleDeleteComment = async (commentId) => {
           </div>
           <div className="commentAreaAddComments">
             <textarea
-              className="commentInput"
-              placeholder={
-                currentUser
-                  ? "Write your comment here..."
-                  : "Please log in to comment"
-              }
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              disabled={!currentUser}
+              placeholder="Write a comment..."
+              className="comment-textarea"
             />
-          </div>
-          <div className="functionButtons">
             <button
               className="cancelButton"
               onClick={() => setCommentText("")}
@@ -806,31 +793,20 @@ const handleDeleteComment = async (commentId) => {
           <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
         </div>
 
-        {/* Display Comments */}
-        {comments.length > 0 ? (
-          comments.map((comment) => (
-            <div key={comment.id} className="comment-item">
-              <div className="writerDetails space-x-4">
-                <div>
-                  <img
-                    src={
-                      comment.user.profilePictureUrl ||
-                      "https://via.placeholder.com/40"
-                    }
-                    alt={`${comment.user.username}'s profile`}
-                    className="profile-img"
-                    onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/40";
-                    }}
-                  />
-                </div>
-                <div className="name-container">
-                  <div className="writerName">{comment.user.username}</div>
-                  <div className="numOfFollowersFollowing">
-                    <div className="publishDay text-sm">
-                      {new Date(comment.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
+        {/* Comments List */}
+        <div className="comments-list">
+          {comments.length === 0 ? (
+            <p>No comments yet. Be the first to comment!</p>
+          ) : (
+            comments.map((comment) => (
+              <div key={comment.id} className="comment-item">
+                <div className="comment-header">
+                  <span className="comment-author">
+                    {comment.user?.username || "Anonymous"}
+                  </span>
+                  <span className="comment-date">
+                    {new Date(comment.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
                 {/* Add delete button (only visible for comment author) */}
                 {currentUser && comment.user.id === currentUser.id && (

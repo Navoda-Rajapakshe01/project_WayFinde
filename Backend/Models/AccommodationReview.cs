@@ -1,14 +1,31 @@
-﻿namespace Backend.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace Backend.Models
 {
     public class AccommodationReview
     {
+        [Key]
         public int Id { get; set; }
-        public string ReviewerName { get; set; } = string.Empty;
-        public string? Comment { get; set; }
-        public int Rating { get; set; }
-        public DateTime DatePosted { get; set; } = DateTime.Now;
 
+        [Required]
         public int AccommodationId { get; set; }
+
+        [ForeignKey("AccommodationId")]
         public Accommodation? Accommodation { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }  // Change from ReviewerName to Name
+
+        [StringLength(100)]
+        public string? Email { get; set; }
+
+        [Range(1, 5)]
+        public int Rating { get; set; }
+
+        public string? Comment { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

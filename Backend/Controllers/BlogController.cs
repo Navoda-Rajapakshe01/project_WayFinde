@@ -1,5 +1,5 @@
 
-﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs;
 using Backend.Data;
 using Backend.DTO;
 

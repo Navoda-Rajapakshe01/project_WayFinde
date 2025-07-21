@@ -49,7 +49,7 @@ const PlaceDetails = () => {
 
     axios
       .get(`http://localhost:5030/api/places/${placeId}/reviews`)
-      .then((res) => setReviews(res.data))
+      .then((res) => setReviews(res.data.$values || []))
       .catch((err) => console.error("Failed to fetch reviews:", err));
 
     window.scrollTo(0, 0);
@@ -318,7 +318,11 @@ const PlaceDetails = () => {
                     />
                     <div className="image-grid">
                       {galleryImages.map((img, i) => (
-                        <img key={i} src={img} alt={`Gallery ${i + 1}`} />
+                        <img
+                          key={i}
+                          src={img.imageUrls?.$values?.[0]}
+                          alt={`Gallery ${i + 1}`}
+                        />
                       ))}
                     </div>
                   </div>

@@ -8,10 +8,10 @@ import { Tabs, Tab } from "react-bootstrap";
 
 const AccommodationSupplier = () => {
   const [accommodations, setAccommodations] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [alert, setAlert] = useState("");
   const [activeTab, setActiveTab] = useState("listings");
-  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [dashboardStats, setDashboardStats] = useState({
     totalAccommodations: 0,
@@ -21,246 +21,123 @@ const AccommodationSupplier = () => {
     monthlyRevenue: 0,
   });
 
-  // Fetch accommodations from API
+  const showTemporaryAlert = (message) => {
+    setAlert(message);
+    setTimeout(() => setAlert(""), 3000);
+  };
+
+  // Fetch accommodations and compute stats
   const fetchAccommodations = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5030/api/accommodation");
-      setAccommodations(res.data);
+      const res = await axios.get("http://localhost:5030/api/Accommodation");
 
-      // Calculate dashboard stats
-      const totalAccommodations = res.data.length;
-      const activeAccommodations = res.data.filter(
-        (a) => a.status === "Available"
-      ).length;
+      const rawData = res.data;
+      const data = Array.isArray(rawData) ? rawData : rawData?.$values || [];
 
-      // Set dashboard stats
+      const active = data.filter((a) => a.isAvailable).length;
+
+      setAccommodations(data);
       setDashboardStats((prev) => ({
         ...prev,
-        totalAccommodations,
-        activeAccommodations,
-        totalBookings: bookings.length, // This will be updated after fetching bookings
-        monthlyBookings: dashboardStats.monthlyBookings, // Will be updated after fetchBookings
-        monthlyRevenue: dashboardStats.monthlyRevenue, // Will be updated after fetchBookings
+        totalAccommodations: data.length,
+        activeAccommodations: active,
       }));
-
-      setLoading(false);
     } catch (error) {
-      console.error("Failed to fetch accommodations", error);
-
-      // Sample accommodations data for development
-      const sampleAccommodations = [
-        {
-          id: 1,
-          name: "Luxury Beachfront Villa",
-          type: "Villa",
-          location: "Bentota",
-          pricePerNight: 250,
-          imagePaths: ["https://via.placeholder.com/400x250?text=Luxury+Villa"],
-          bedrooms: 4,
-          bathrooms: 3,
-          maxGuests: 8,
-          amenities: [
-            "Wi-Fi",
-            "Pool",
-            "Air Conditioning",
-            "Kitchen",
-            "Beach Access",
-          ],
-          description:
-            "Beautiful beachfront villa with private pool and direct beach access.",
-          status: "Available",
-        },
-        {
-          id: 2,
-          name: "Modern City Apartment",
-          type: "Apartment",
-          location: "Colombo",
-          pricePerNight: 120,
-          imagePaths: [
-            "https://via.placeholder.com/400x250?text=Modern+Apartment",
-          ],
-          bedrooms: 2,
-          bathrooms: 1,
-          maxGuests: 4,
-          amenities: ["Wi-Fi", "Air Conditioning", "Kitchen", "Gym Access"],
-          description:
-            "Stylish apartment in the heart of Colombo with city views.",
-          status: "Booked",
-        },
-      ];
-
-      setAccommodations(sampleAccommodations);
-      setDashboardStats({
-        totalAccommodations: sampleAccommodations.length,
-        activeAccommodations: sampleAccommodations.filter(
-          (a) => a.status === "Available"
-        ).length,
-        totalBookings: 7,
-        monthlyBookings: 3,
-        monthlyRevenue: 750,
-      });
-
+      console.error("Fetch accommodations failed:", error);
+      // fallback data...
+    } finally {
       setLoading(false);
     }
   };
 
-  // Fetch bookings from API
   const fetchBookings = async () => {
     try {
       const res = await axios.get(
         "http://localhost:5030/api/AccommodationReservation"
       );
-      setBookings(res.data);
+      const rawData = res.data;
+      const data = Array.isArray(rawData) ? rawData : rawData?.$values || [];
 
-      // Update dashboard stats with booking info
-      const totalBookings = res.data.length;
-
-      // Calculate monthly bookings and revenue
-      const currentDate = new Date();
-      const firstDayOfMonth = new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
+      const currentMonth = new Date();
+      const startOfMonth = new Date(
+        currentMonth.getFullYear(),
+        currentMonth.getMonth(),
         1
       );
 
-      const monthlyBookings = res.data.filter((booking) => {
-        const bookingDate = new Date(booking.bookingDate);
-        return bookingDate >= firstDayOfMonth;
-      });
-
-      const monthlyRevenue = monthlyBookings.reduce(
-        (total, booking) => total + booking.totalAmount,
-        0
+      const thisMonth = data.filter(
+        (b) => new Date(b.bookingDate) >= startOfMonth
       );
+      const revenue = thisMonth.reduce((sum, b) => sum + b.totalAmount, 0);
 
-      // Update dashboard stats
+      setBookings(data);
       setDashboardStats((prev) => ({
         ...prev,
-        totalBookings,
-        monthlyBookings: monthlyBookings.length,
-        monthlyRevenue,
+        totalBookings: data.length,
+        monthlyBookings: thisMonth.length,
+        monthlyRevenue: revenue,
       }));
     } catch (error) {
-      console.error("Failed to fetch bookings", error);
-
-      // Sample bookings data for development
-      const sampleBookings = [
-        {
-          id: 101,
-          accommodationId: 1,
-          accommodationName: "Luxury Beachfront Villa",
-          customerName: "John Smith",
-          checkInDate: "2025-05-20",
-          checkOutDate: "2025-05-23",
-          guests: 4,
-          totalAmount: 750,
-          status: "Confirmed",
-          bookingDate: "2025-05-15",
-          specialRequests: "Late check-in around 10pm",
-        },
-        {
-          id: 102,
-          accommodationId: 2,
-          accommodationName: "Modern City Apartment",
-          customerName: "Emma Johnson",
-          checkInDate: "2025-05-25",
-          checkOutDate: "2025-05-28",
-          guests: 2,
-          totalAmount: 360,
-          status: "Pending",
-          bookingDate: "2025-05-16",
-          specialRequests: "High floor preferred",
-        },
-      ];
-
-      setBookings(sampleBookings);
-
-      // Update dashboard stats with sample booking data
-      setDashboardStats((prev) => ({
-        ...prev,
-        totalBookings: sampleBookings.length,
-        monthlyBookings: sampleBookings.length,
-        monthlyRevenue: sampleBookings.reduce(
-          (total, booking) => total + booking.totalAmount,
-          0
-        ),
-      }));
+      console.error("Fetch bookings failed:", error);
     }
   };
 
-  // Toggle accommodation status
   const handleToggleStatus = async (id, currentStatus) => {
     try {
-      const updatedStatus =
+      const updated =
         currentStatus === "Available" ? "Unavailable" : "Available";
-      await axios.put(`http://localhost:5030/api/accommodation/${id}/status`, {
-        status: updatedStatus,
+      await axios.put(`http://localhost:5030/api/Accommodation/${id}/status`, {
+        status: updated,
       });
-      fetchAccommodations();
-      setAlert("Accommodation status updated.");
-
-      // Auto-dismiss alert after 3 seconds
-      setTimeout(() => setAlert(""), 3000);
-    } catch (error) {
-      setAlert("Failed to update status.");
-      setTimeout(() => setAlert(""), 3000);
+      await fetchAccommodations();
+      showTemporaryAlert("Accommodation status updated.");
+    } catch {
+      showTemporaryAlert("Failed to update status.");
     }
   };
 
-  // Delete accommodation
   const handleDeleteAccommodation = async (id) => {
     if (window.confirm("Are you sure you want to delete this accommodation?")) {
       try {
-        await axios.delete(`http://localhost:5030/api/accommodation/${id}`);
-        fetchAccommodations();
-        setAlert("Accommodation deleted successfully.");
-        setTimeout(() => setAlert(""), 3000);
-      } catch (error) {
-        setAlert("Failed to delete accommodation.");
-        setTimeout(() => setAlert(""), 3000);
+        await axios.delete(`http://localhost:5030/api/Accommodation/${id}`);
+        await fetchAccommodations();
+        showTemporaryAlert("Accommodation deleted.");
+      } catch {
+        showTemporaryAlert("Failed to delete accommodation.");
       }
     }
   };
 
-  // Edit accommodation
-  const handleEditAccommodation = (accommodation) => {
-    // You can implement the edit functionality here
-    // For now, we'll just show an alert
-    setAlert("Edit functionality will be implemented soon.");
-    setTimeout(() => setAlert(""), 3000);
+  const handleEditAccommodation = () => {
+    showTemporaryAlert("Edit functionality coming soon.");
   };
 
-  // View accommodation bookings
   const handleViewBookings = async (accommodationId) => {
     try {
       const res = await axios.get(
         `http://localhost:5030/api/AccommodationReservation/accommodation/${accommodationId}`
       );
-      setBookings(res.data);
+      const rawData = res.data;
+      const data = Array.isArray(rawData) ? rawData : rawData?.$values || [];
+      setBookings(data);
       setActiveTab("bookings");
-    } catch (error) {
-      console.error("Failed to fetch accommodation bookings", error);
-      setAlert("Failed to fetch bookings for this accommodation.");
-      setTimeout(() => setAlert(""), 3000);
+    } catch {
+      showTemporaryAlert("Failed to fetch bookings.");
     }
   };
 
-  // Initial data fetch
   useEffect(() => {
     fetchAccommodations();
     fetchBookings();
   }, []);
 
-  // Loading state
   if (loading) {
     return (
-      <>
-        <div className="loading-container">
-          <div className="spinner"></div>
-          <p>Loading your accommodations...</p>
-        </div>
-      </>
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading your accommodations...</p>
+      </div>
     );
   }
 
@@ -277,34 +154,28 @@ const AccommodationSupplier = () => {
         {alert && <Alert message={alert} />}
 
         <div className="supplier-header">
-          <h2 className="section-title">My Accommodation Listings</h2>
+          <h2>My Accommodation Listings</h2>
           <button className="post-btn" onClick={() => setShowForm(!showForm)}>
             {showForm ? "Close Form" : "+ Post New Accommodation"}
           </button>
         </div>
 
         {showForm && (
-          <div className="accommodation-form-container">
-            <AccommodationForm
-              onClose={() => setShowForm(false)}
-              onSuccess={() => {
-                setShowForm(false);
-                fetchAccommodations();
-                setAlert("Accommodation posted successfully.");
-                setTimeout(() => setAlert(""), 3000);
-              }}
-              onFail={() => {
-                setAlert("Failed to post accommodation.");
-                setTimeout(() => setAlert(""), 3000);
-              }}
-            />
-          </div>
+          <AccommodationForm
+            onClose={() => setShowForm(false)}
+            onSuccess={() => {
+              setShowForm(false);
+              fetchAccommodations();
+              showTemporaryAlert("Accommodation posted successfully.");
+            }}
+            onFail={() => showTemporaryAlert("Failed to post accommodation.")}
+          />
         )}
 
         <Tabs
           activeKey={activeTab}
           onSelect={(k) => setActiveTab(k)}
-          className="supplier-tabs mb-4">
+          className="mb-4">
           <Tab eventKey="dashboard" title="Dashboard">
             <div className="dashboard-stats">
               <div className="stat-card">
@@ -316,7 +187,7 @@ const AccommodationSupplier = () => {
                   <span className="active-stat">
                     {dashboardStats.activeAccommodations} available
                   </span>{" "}
-                  /
+                  /{" "}
                   <span className="inactive-stat">
                     {dashboardStats.totalAccommodations -
                       dashboardStats.activeAccommodations}{" "}
@@ -337,7 +208,7 @@ const AccommodationSupplier = () => {
                 <h3>Monthly Revenue</h3>
                 <div className="stat-value">
                   Rs {dashboardStats.monthlyRevenue.toFixed(2)}
-                </div>{" "}
+                </div>
                 <div className="stat-detail">
                   {dashboardStats.monthlyBookings > 0
                     ? `Avg Rs ${(
@@ -368,12 +239,10 @@ const AccommodationSupplier = () => {
                       {bookings.slice(0, 5).map((booking) => (
                         <tr key={booking.id}>
                           <td>#{booking.id}</td>
-                          {/* Find accommodation by matching ID */}
                           <td>
                             {accommodations.find(
-                              (accommodation) =>
-                                accommodation.id === booking.accommodationId
-                            )?.name || "Unknown Accommodation"}
+                              (a) => a.id === booking.accommodationId
+                            )?.name || "Unknown"}
                           </td>
                           <td>{booking.customerName}</td>
                           <td>
@@ -402,17 +271,12 @@ const AccommodationSupplier = () => {
           <Tab eventKey="listings" title="Your Accommodations">
             <div className="accommodation-grid">
               {accommodations.length === 0 ? (
-                <div className="no-accommodations">
-                  <p>
-                    You haven't added any accommodations yet. Click "Post New
-                    Accommodation" to get started.
-                  </p>
-                </div>
+                <p>No accommodations posted yet.</p>
               ) : (
-                accommodations.map((accommodation, index) => (
+                accommodations.map((acc) => (
                   <AccommodationCard
-                    key={accommodation.id}
-                    accommodation={accommodation}
+                    key={acc.id}
+                    accommodation={acc}
                     onDelete={handleDeleteAccommodation}
                     onEdit={handleEditAccommodation}
                     onToggleStatus={handleToggleStatus}
@@ -440,15 +304,13 @@ const AccommodationSupplier = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.slice(0, 5).map((booking) => (
+                    {bookings.map((booking) => (
                       <tr key={booking.id}>
                         <td>#{booking.id}</td>
-                        {/* Find accommodation by matching ID */}
                         <td>
                           {accommodations.find(
-                            (accommodation) =>
-                              accommodation.id === booking.accommodationId
-                          )?.name || "Unknown Accommodation"}
+                            (a) => a.id === booking.accommodationId
+                          )?.name || "Unknown"}
                         </td>
                         <td>{booking.customerName}</td>
                         <td>

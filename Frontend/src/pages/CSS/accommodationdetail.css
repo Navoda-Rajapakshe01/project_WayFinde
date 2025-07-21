@@ -1,8 +1,8 @@
-.vehicle-detail-container {
+.accommodation-detail-container {
   font-family: "Segoe UI", sans-serif;
 }
 
-.vehicle-hero {
+.accommodation-hero {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -14,28 +14,28 @@
   flex-wrap: wrap;
 }
 
-.vehicle-lottie-wrapper {
+.accommodation-lottie-wrapper {
   width: 280px;
   max-width: 100%;
 }
 
-.vehicle-hero-content {
+.accommodation-hero-content {
   flex: 1;
 }
 
-.vehicle-hero-content h1 {
+.accommodation-hero-content h1 {
   margin: 0;
   font-size: 2rem;
   color: #333;
 }
 
-.vehicle-hero-content p {
+.accommodation-hero-content p {
   margin: 0.3rem 0;
   font-size: 1rem;
   color: #666;
 }
 
-.vehicle-main-content {
+.accommodation-main-content {
   display: flex;
   gap: 20px;
   padding: 20px;
@@ -43,15 +43,15 @@
   margin: auto;
 }
 
-.vehicle-left {
+.accommodation-left {
   flex: 2;
 }
 
-.vehicle-right {
+.accommodation-right {
   flex: 1;
 }
 
-.vehicle-image {
+.accommodation-image {
   width: 100%;
   max-height: 500px;
   object-fit: cover;
@@ -60,20 +60,20 @@
   transition: transform 0.2s ease;
 }
 
-.vehicle-image:hover {
+.accommodation-image:hover {
   transform: scale(1.02);
 }
 
-.vehicle-description {
+.accommodation-description {
   margin-top: 20px;
 }
 
-.vehicle-specs {
+.accommodation-specs {
   list-style: none;
   padding: 0;
 }
 
-.vehicle-amenities .tag {
+.accommodation-amenities .tag {
   display: inline-block;
   background-color: #dbeafe;
   color: #1e40af;

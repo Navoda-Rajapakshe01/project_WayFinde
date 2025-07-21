@@ -28,7 +28,7 @@ namespace Backend.Controllers
             if (bookingDto == null)
                 return BadRequest("Invalid booking data.");
 
-            if (bookingDto.CheckOutDate <= bookingDto.CheckInDate)
+            if (bookingDto.EndDate <= bookingDto.StartDate)
                 return BadRequest("Check-out date must be after check-in date.");
 
             var accommodation = await _context.Accommodations
@@ -40,21 +40,23 @@ namespace Backend.Controllers
             if (bookingDto.Guests < 1 || bookingDto.Guests > accommodation.MaxGuests)
                 return BadRequest($"Guests must be between 1 and {accommodation.MaxGuests}.");
 
-            var nights = (bookingDto.CheckOutDate - bookingDto.CheckInDate).Days;
-            var totalAmount = accommodation.PricePerNight * nights;
+            var nights = (bookingDto.EndDate - bookingDto.StartDate).Days;
+
+            // Calculate total amount considering number of guests
+            var totalAmount = accommodation.PricePerNight * nights * bookingDto.Guests;
 
             var reservation = new AccommodationReservation
             {
                 AccommodationId = bookingDto.AccommodationId,
-                StartDate = bookingDto.CheckInDate,
-                EndDate = bookingDto.CheckOutDate,
+                StartDate = bookingDto.StartDate,
+                EndDate = bookingDto.EndDate,
                 Guests = bookingDto.Guests,
                 CustomerName = bookingDto.CustomerName,
                 AdditionalRequirements = bookingDto.SpecialRequests,
-                TotalAmount = totalAmount,
+                TotalAmount = totalAmount,  // <-- here it must be assigned
                 Status = "Pending",
                 BookingDate = DateTime.UtcNow,
-                TripId = bookingDto.TripId,
+                TripId = bookingDto.TripId
             };
 
             try
@@ -69,6 +71,7 @@ namespace Backend.Controllers
                 return BadRequest($"Error booking accommodation: {ex.Message}");
             }
         }
+
 
         // GET api/AccommodationReservation/{id}
         [HttpGet("{id}")]

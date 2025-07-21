@@ -36,7 +36,7 @@ const Vehicle = ({ isSignedIn = true }) => {
       try {
         setLoading(true);
         const response = await axios.get("http://localhost:5030/api/Vehicle");
-        const allVehicles = response.data;
+        const allVehicles = response.data?.$values || [];
         setVehicles(allVehicles);
 
         const recentlyViewedIds =
@@ -56,7 +56,6 @@ const Vehicle = ({ isSignedIn = true }) => {
     fetchVehicles();
   }, []);
 
-  // Filter vehicles based on filters
   const filteredVehicles = useMemo(() => {
     return vehicles.filter((vehicle) => {
       // Type filter
@@ -76,7 +75,7 @@ const Vehicle = ({ isSignedIn = true }) => {
       // FuelType filter
       if (
         filters.FuelType &&
-        vehicle.FuelType?.toLowerCase() !== filters.FuelType.toLowerCase()
+        vehicle.fuelType?.toLowerCase() !== filters.FuelType.toLowerCase()
       )
         return false;
 
@@ -86,7 +85,7 @@ const Vehicle = ({ isSignedIn = true }) => {
           filters.NumberOfPassengers === "8+"
             ? 8
             : parseInt(filters.NumberOfPassengers, 10);
-        const vehicleCap = parseInt(vehicle.NumberOfPassengers, 10);
+        const vehicleCap = parseInt(vehicle.numberOfPassengers, 10);
         if (filters.NumberOfPassengers === "8+") {
           if (!vehicleCap || vehicleCap < filterCap) return false;
         } else {
@@ -94,7 +93,7 @@ const Vehicle = ({ isSignedIn = true }) => {
         }
       }
 
-      // Transmission filter
+      // TransmissionType filter
       if (
         filters.transmissionType &&
         vehicle.transmissionType?.toLowerCase() !==
@@ -104,12 +103,12 @@ const Vehicle = ({ isSignedIn = true }) => {
 
       // Price range filter
       if (
-        vehicle.PricePerDay < filters.priceRange[0] ||
-        vehicle.PricePerDay > filters.priceRange[1]
+        vehicle.pricePerDay < filters.priceRange[0] ||
+        vehicle.pricePerDay > filters.priceRange[1]
       )
         return false;
 
-      // Search term filter (brand, model, location)
+      // Search filter
       if (filters.searchTerm) {
         const search = filters.searchTerm.toLowerCase();
         if (
@@ -137,7 +136,6 @@ const Vehicle = ({ isSignedIn = true }) => {
   };
 
   const handleBookNow = (vehicle) => {
-    // You can implement booking logic here
     console.log("Book Now clicked for:", vehicle);
   };
 
@@ -200,6 +198,7 @@ const Vehicle = ({ isSignedIn = true }) => {
         )}
         <br />
         <br />
+
         {/* Popular Destinations */}
         <DestinationTags destinations={popularDestinations} />
       </div>

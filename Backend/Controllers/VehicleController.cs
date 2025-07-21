@@ -14,10 +14,11 @@ using System;
 
 namespace Backend.Controllers
 {
+{
     [ApiController]
     [Route("api/[controller]")]
     public class VehicleController : ControllerBase
-    {
+    { 
         private readonly AppDbContext _context;
         private readonly Cloudinary _cloudinary;
 
@@ -170,6 +171,9 @@ namespace Backend.Controllers
             var vehicles = await _context.Vehicles
                 .Include(v => v.Images)
                 .Include(v => v.Amenities)
+                .Include(v => v.Supplier)      // include supplier navigation
+                .Include(v => v.District)      // include district navigation
+                .Include(v => v.PlacesToVisit) // include place navigation
                 .ToListAsync();
 
             var dtos = vehicles.Select(MapToDto);
@@ -182,6 +186,9 @@ namespace Backend.Controllers
             var vehicle = await _context.Vehicles
                 .Include(v => v.Images)
                 .Include(v => v.Amenities)
+                .Include(v => v.Supplier)
+                .Include(v => v.District)
+                .Include(v => v.PlacesToVisit)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vehicle == null)

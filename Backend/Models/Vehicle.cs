@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models
 {
@@ -41,6 +41,7 @@ namespace Backend.Models
 
         [Required]
         public int PlaceId { get; set; }
+        public PlacesToVisit? PlacesToVisit { get; set; }
 
         // 🔑 Add supplier foreign key
         [Required]
@@ -54,5 +55,5 @@ namespace Backend.Models
         public List<VehicleImage>? Images { get; set; }
         public List<VehicleReview>? Reviews { get; set; }
         public List<VehicleAmenity>? Amenities { get; set; }
-    }
+    } 
 }

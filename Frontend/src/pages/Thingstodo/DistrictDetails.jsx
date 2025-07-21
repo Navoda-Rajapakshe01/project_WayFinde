@@ -20,8 +20,8 @@ const DistrictDetails = () => {
       axios
         .get(`http://localhost:5030/api/places/by-district-name/${slug}`)
         .then((res) => {
-          setPlaces(res.data);
-          setFilteredPlaces(res.data); // Show all by default
+          setPlaces(res.data.$values || []); // Ensure we handle the response correctly
+          setFilteredPlaces(res.data.$values || []); // Show all by default
           setLoading(false);
         })
         .catch((err) => {
@@ -67,8 +67,7 @@ const DistrictDetails = () => {
           <p>{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="ttd-retry-button"
-          >
+            className="ttd-retry-button">
             Try Again
           </button>
         </div>
@@ -82,8 +81,7 @@ const DistrictDetails = () => {
               <div
                 key={place.id}
                 className="ttd-place-card"
-                onClick={() => handleCardClick(place.id)}
-              >
+                onClick={() => handleCardClick(place.id)}>
                 <div className="ttd-place-image-container">
                   <img
                     src={place.mainImageUrl || "/placeholder.jpg"}
@@ -101,15 +99,16 @@ const DistrictDetails = () => {
                     onClick={(e) => {
                       e.stopPropagation();
                       handleCardClick(place.id);
-                    }}
-                  >
+                    }}>
                     View Details
                   </button>
                 </div>
               </div>
             ))
           ) : (
-            <p className="ttd-no-places">No places available for this category.</p>
+            <p className="ttd-no-places">
+              No places available for this category.
+            </p>
           )}
         </div>
       )}
