@@ -56,11 +56,11 @@ import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
 import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 
+import "./App.css";
 import BlogCard from "./Components/BlogComponents/BlogCard/BlogCard";
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
-
-import "./App.css";
+import ProfilePosts from "./Components/UserProfileComponents/Post/Post";
 
 function AppRoutes() {
   const location = useLocation();
@@ -141,6 +141,7 @@ function AppRoutes() {
           />
         </Route>
         <Route path="/blogcard" element={<BlogCard />} />
+        <Route path="/profile/posts" element={<ProfilePosts/>} />
       </Routes>
 
       {!isAdminRoute && <Footer />}

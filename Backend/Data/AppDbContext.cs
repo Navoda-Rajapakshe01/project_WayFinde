@@ -9,6 +9,7 @@
 
 using Backend.Models;
 using Backend.Models.User;
+using Backend.Models.Post;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using System.Text.Json;
@@ -22,6 +23,8 @@ namespace Backend.Data
         public DbSet<Blog> Blogs { get; set; } = null!;
         public DbSet<Post> Posts { get; set; } = null!;
         public DbSet<Follows> Follows { get; set; } = null!;
+        public DbSet<PostImage> PostImages { get; set; } = null!;
+        
 
         // DbSets for your models
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -50,7 +53,7 @@ namespace Backend.Data
         public DbSet<TodoItem> TodoItems { get; set; }
 
         // Blogs
-        public DbSet<BlogImage> BlogImages { get; set; }
+        
         public DbSet<Comment> Comments { get; set; }
 
         // Travel Budget

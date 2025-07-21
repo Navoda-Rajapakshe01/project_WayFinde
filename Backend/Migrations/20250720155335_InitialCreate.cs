@@ -12,22 +12,6 @@ namespace Backend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "BlogImages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Dsitrict = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UploadDate = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BlogImages", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -80,8 +64,8 @@ namespace Backend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SubTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SubTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PlacesCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -126,9 +110,6 @@ namespace Backend.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TripName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TripDistance = table.Column<double>(type: "float", nullable: true),
-                    TripTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TotalSpend = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -154,11 +135,13 @@ namespace Backend.Migrations
                     RegisteredDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastLoginDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FollowersCount = table.Column<int>(type: "int", nullable: false),
+                    FollowingCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserNew", x => x.Id);
+                    table.PrimaryKey("PK_UsersNew", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -202,12 +185,10 @@ namespace Backend.Migrations
                     OpeningHours = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     GoogleMapLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Rating = table.Column<double>(type: "float", nullable: true),
                     AvgSpend = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     AvgTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PlaceType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DistrictId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: true)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -216,7 +197,8 @@ namespace Backend.Migrations
                         name: "FK_PlacesToVisit_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "CategoryId");
+                        principalColumn: "CategoryId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PlacesToVisit_Districts_DistrictId",
                         column: x => x.DistrictId,
@@ -277,9 +259,9 @@ namespace Backend.Migrations
                 {
                     table.PrimaryKey("PK_Blogs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Blogs_UserNew_UserId",
+                        name: "FK_Blogs_UsersNew_UserId",
                         column: x => x.UserId,
-                        principalTable: "UserNew",
+                        principalTable: "UsersNew",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -296,15 +278,15 @@ namespace Backend.Migrations
                 {
                     table.PrimaryKey("PK_Follows", x => new { x.FollowerID, x.FollowedID });
                     table.ForeignKey(
-                        name: "FK_Follows_UserNew_FollowedID",
+                        name: "FK_Follows_UsersNew_FollowedID",
                         column: x => x.FollowedID,
-                        principalTable: "UserNew",
+                        principalTable: "UsersNew",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Follows_UserNew_FollowerID",
+                        name: "FK_Follows_UsersNew_FollowerID",
                         column: x => x.FollowerID,
-                        principalTable: "UserNew",
+                        principalTable: "UsersNew",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -315,16 +297,12 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Caption = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DistrictId = table.Column<int>(type: "int", nullable: false),
-                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NumberOfComments = table.Column<int>(type: "int", nullable: false),
-                    NumberOfReads = table.Column<int>(type: "int", nullable: false),
                     NumberOfReacts = table.Column<int>(type: "int", nullable: false),
-                    CoverImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageUrls = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -337,9 +315,9 @@ namespace Backend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Posts_UserNew_UserId",
+                        name: "FK_Posts_UsersNew_UserId",
                         column: x => x.UserId,
-                        principalTable: "UserNew",
+                        principalTable: "UsersNew",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -352,6 +330,7 @@ namespace Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TripId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
                     AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -364,11 +343,11 @@ namespace Backend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TripCollaborator_UserNew_UserId",
+                        name: "FK_TripCollaborator_UsersNew_UserId",
                         column: x => x.UserId,
-                        principalTable: "UserNew",
+                        principalTable: "UsersNew",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -508,11 +487,40 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TripDate",
+                columns: table => new
+                {
+                    TripDateId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TripId = table.Column<int>(type: "int", nullable: false),
+                    PlaceId = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripDate", x => x.TripDateId);
+                    table.ForeignKey(
+                        name: "FK_TripDate_PlacesToVisit_PlaceId",
+                        column: x => x.PlaceId,
+                        principalTable: "PlacesToVisit",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TripDate_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TripPlaces",
                 columns: table => new
                 {
                     TripId = table.Column<int>(type: "int", nullable: false),
-                    PlaceId = table.Column<int>(type: "int", nullable: false)
+                    PlaceId = table.Column<int>(type: "int", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -624,6 +632,33 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "BlogReactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BlogId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BlogReactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_BlogReactions_Blogs_BlogId",
+                        column: x => x.BlogId,
+                        principalTable: "Blogs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_BlogReactions_UsersNew_UserId",
+                        column: x => x.UserId,
+                        principalTable: "UsersNew",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Comments",
                 columns: table => new
                 {
@@ -650,9 +685,9 @@ namespace Backend.Migrations
                         principalTable: "Posts",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Comments_UserNew_UserId",
+                        name: "FK_Comments_UsersNew_UserId",
                         column: x => x.UserId,
-                        principalTable: "UserNew",
+                        principalTable: "UsersNew",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -681,6 +716,17 @@ namespace Backend.Migrations
                 name: "IX_Accommodations_DistrictId",
                 table: "Accommodations",
                 column: "DistrictId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlogReactions_BlogId_UserId",
+                table: "BlogReactions",
+                columns: new[] { "BlogId", "UserId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_BlogReactions_UserId",
+                table: "BlogReactions",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Blogs_UserId",
@@ -754,6 +800,16 @@ namespace Backend.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TripDate_PlaceId",
+                table: "TripDate",
+                column: "PlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripDate_TripId",
+                table: "TripDate",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TripPlaces_PlaceId",
                 table: "TripPlaces",
                 column: "PlaceId");
@@ -800,7 +856,7 @@ namespace Backend.Migrations
                 name: "AccommodationReviews");
 
             migrationBuilder.DropTable(
-                name: "BlogImages");
+                name: "BlogReactions");
 
             migrationBuilder.DropTable(
                 name: "Comments");
@@ -828,6 +884,9 @@ namespace Backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "TripCollaborator");
+
+            migrationBuilder.DropTable(
+                name: "TripDate");
 
             migrationBuilder.DropTable(
                 name: "TripPlaces");
@@ -863,7 +922,7 @@ namespace Backend.Migrations
                 name: "Vehicles");
 
             migrationBuilder.DropTable(
-                name: "UserNew");
+                name: "UsersNew");
 
             migrationBuilder.DropTable(
                 name: "Categories");

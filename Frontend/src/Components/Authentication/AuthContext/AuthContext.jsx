@@ -1,5 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import React, { createContext, useEffect, useState } from "react";
 
 // Create the context with default values
 export const AuthContext = createContext({
@@ -14,17 +14,43 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Fetch user profile from backend on app load
+  // Fetch user profile from backend on app load
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await fetch("http://localhost:5030/api/auth/profile", {
-          credentials: "include", // Important: send cookies with request
+        // Get the token from localStorage
+        const token = localStorage.getItem("token");
+
+        // If no token exists, user is not logged in
+        if (!token) {
+          console.log("No authentication token found");
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
+        // Make the request with the token in Authorization header
+        const res = await fetch("http://localhost:5030/api/Auth/profile", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         });
 
         if (res.ok) {
           const userData = await res.json();
+          console.log("User profile loaded:", userData);
           setUser(userData);
         } else {
+          // Handle different error status codes
+          if (res.status === 401) {
+            console.log("Authentication token expired or invalid");
+            // Optionally clear the invalid token
+            localStorage.removeItem("token");
+          } else {
+            console.error(`Profile fetch failed with status: ${res.status}`);
+          }
           setUser(null);
         }
       } catch (err) {
@@ -37,19 +63,26 @@ export const AuthProvider = ({ children }) => {
 
     fetchUser();
   }, []);
-
-  // Logout function: clear user and optionally call backend logout API
+  // Logout function: clear user and token
   const logout = async () => {
     try {
-      // Optional: call backend logout to clear cookie server-side
-      await fetch("http://localhost:5030/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      const token = localStorage.getItem("token");
+      if (token) {
+        // Call backend logout endpoint with token
+        await fetch("http://localhost:5030/api/Auth/logout", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+      }
     } catch (err) {
       console.error("Error during logout:", err);
     }
 
+    // Clear token and user state regardless of API success
+    localStorage.removeItem("token");
     setUser(null);
   };
 

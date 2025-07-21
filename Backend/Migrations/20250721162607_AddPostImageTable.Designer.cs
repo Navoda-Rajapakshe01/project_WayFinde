@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250712202431_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250721162607_AddPostImageTable")]
+    partial class AddPostImageTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,11 +86,9 @@ namespace Backend.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Slug")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SubTitle")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("DistrictWithPlacesCountDTO");
@@ -287,37 +285,6 @@ namespace Backend.Migrations
                     b.ToTable("Blogs");
                 });
 
-            modelBuilder.Entity("Backend.Models.BlogImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Dsitrict")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UploadDate")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("BlogImages");
-                });
-
             modelBuilder.Entity("Backend.Models.Category", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -353,17 +320,12 @@ namespace Backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PostId")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("BlogId");
-
-                    b.HasIndex("PostId");
 
                     b.HasIndex("UserId");
 
@@ -490,7 +452,7 @@ namespace Backend.Migrations
                     b.Property<string>("AvgTime")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CategoryId")
+                    b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -517,12 +479,6 @@ namespace Backend.Migrations
                     b.Property<string>("OpeningHours")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PlaceType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double?>("Rating")
-                        .HasColumnType("float");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
@@ -535,7 +491,7 @@ namespace Backend.Migrations
                     b.ToTable("PlacesToVisit");
                 });
 
-            modelBuilder.Entity("Backend.Models.Post", b =>
+            modelBuilder.Entity("Backend.Models.Post.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -543,11 +499,7 @@ namespace Backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CoverImageUrl")
+                    b.Property<string>("Caption")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -567,17 +519,6 @@ namespace Backend.Migrations
                     b.Property<int>("NumberOfReacts")
                         .HasColumnType("int");
 
-                    b.Property<int>("NumberOfReads")
-                        .HasColumnType("int");
-
-                    b.PrimitiveCollection<string>("Tags")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -588,6 +529,31 @@ namespace Backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Backend.Models.Post.PostImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.ToTable("PostImages");
                 });
 
             modelBuilder.Entity("Backend.Models.Review", b =>
@@ -701,17 +667,8 @@ namespace Backend.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal?>("TotalSpend")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<double?>("TripDistance")
-                        .HasColumnType("float");
-
                     b.Property<string>("TripName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TripTime")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -739,6 +696,9 @@ namespace Backend.Migrations
                     b.Property<DateTime>("AddedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsAccepted")
+                        .HasColumnType("bit");
+
                     b.Property<int>("TripId")
                         .HasColumnType("int");
 
@@ -754,6 +714,35 @@ namespace Backend.Migrations
                     b.ToTable("TripCollaborator");
                 });
 
+            modelBuilder.Entity("Backend.Models.TripDate", b =>
+                {
+                    b.Property<int>("TripDateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TripDateId"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TripDateId");
+
+                    b.HasIndex("PlaceId");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("TripDate");
+                });
+
             modelBuilder.Entity("Backend.Models.TripPlace", b =>
                 {
                     b.Property<int>("TripId")
@@ -762,11 +751,41 @@ namespace Backend.Migrations
                     b.Property<int>("PlaceId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
                     b.HasKey("TripId", "PlaceId");
 
                     b.HasIndex("PlaceId");
 
                     b.ToTable("TripPlaces");
+                });
+
+            modelBuilder.Entity("Backend.Models.User.BlogReaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlogId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("BlogId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("BlogReactions");
                 });
 
             modelBuilder.Entity("Backend.Models.UserNew", b =>
@@ -781,6 +800,12 @@ namespace Backend.Migrations
                     b.Property<string>("ContactEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FollowersCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FollowingCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("LastLoginDate")
                         .HasColumnType("nvarchar(max)");
@@ -813,7 +838,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserNew");
+                    b.ToTable("UsersNew");
                 });
 
             modelBuilder.Entity("Backend.Models.Vehicle", b =>
@@ -1070,10 +1095,6 @@ namespace Backend.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Models.Post", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId");
-
                     b.HasOne("Backend.Models.UserNew", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -1119,7 +1140,9 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Models.Category", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Backend.Models.District", "District")
                         .WithMany()
@@ -1132,7 +1155,7 @@ namespace Backend.Migrations
                     b.Navigation("District");
                 });
 
-            modelBuilder.Entity("Backend.Models.Post", b =>
+            modelBuilder.Entity("Backend.Models.Post.Post", b =>
                 {
                     b.HasOne("Backend.Models.District", "District")
                         .WithMany()
@@ -1149,6 +1172,17 @@ namespace Backend.Migrations
                     b.Navigation("District");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.Post.PostImage", b =>
+                {
+                    b.HasOne("Backend.Models.Post.Post", "Post")
+                        .WithMany("Images")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("Backend.Models.Review", b =>
@@ -1173,12 +1207,31 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.UserNew", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Trip");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Models.TripDate", b =>
+                {
+                    b.HasOne("Backend.Models.PlacesToVisit", "Place")
+                        .WithMany()
+                        .HasForeignKey("PlaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Trip", "Trip")
+                        .WithMany("TripDates")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Place");
+
+                    b.Navigation("Trip");
                 });
 
             modelBuilder.Entity("Backend.Models.TripPlace", b =>
@@ -1198,6 +1251,25 @@ namespace Backend.Migrations
                     b.Navigation("Place");
 
                     b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("Backend.Models.User.BlogReaction", b =>
+                {
+                    b.HasOne("Backend.Models.Blog", "Blog")
+                        .WithMany()
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.UserNew", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Blog");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Models.Vehicle", b =>
@@ -1278,14 +1350,16 @@ namespace Backend.Migrations
                     b.Navigation("TripPlaces");
                 });
 
-            modelBuilder.Entity("Backend.Models.Post", b =>
+            modelBuilder.Entity("Backend.Models.Post.Post", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
                     b.Navigation("Collaborators");
+
+                    b.Navigation("TripDates");
 
                     b.Navigation("TripPlaces");
                 });

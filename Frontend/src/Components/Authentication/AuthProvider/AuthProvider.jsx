@@ -1,9 +1,8 @@
+import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext/AuthContext";
-import axios from "axios";
-import React from "react";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -11,7 +10,7 @@ const AuthProvider = ({ children }) => {
 
   const setupAuthenticatedAxios = (token) => {
     return axios.create({
-      baseURL: "https://localhost:7138",
+      baseURL: "http://localhost:5030", // Changed from https://localhost:7138
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -25,7 +24,19 @@ const AuthProvider = ({ children }) => {
       const response = await api.get("/api/Auth/profile");
       return response.data;
     } catch (error) {
-      console.error("Error fetching user profile:", error);
+      // Improved error handling
+      if (error.code === "ERR_NETWORK") {
+        console.error("Network error - API server may be down or unreachable");
+      } else if (error.response) {
+        // The server responded with a status code outside the 2xx range
+        console.error(
+          `API error: ${error.response.status} - ${
+            error.response.data?.message || "Unknown error"
+          }`
+        );
+      } else {
+        console.error("Error fetching user profile:", error);
+      }
       return null;
     }
   };
@@ -62,7 +73,7 @@ const AuthProvider = ({ children }) => {
 
               const normalizedUser = {
                 ...decodedToken,
-                ...userProfile,
+                ...(userProfile || {}),
                 role: roleClaim,
                 username: usernameClaim,
               };
@@ -130,7 +141,8 @@ const AuthProvider = ({ children }) => {
         updateUser,
         logout,
         isAuthenticated: !!user,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
