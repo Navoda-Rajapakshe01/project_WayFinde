@@ -5,15 +5,13 @@ namespace Backend.DTOs
         public int Id { get; set; }
         public string NoteTitle { get; set; } = string.Empty;
         public string NoteDescription { get; set; } = string.Empty;
-        public DateTime CreatedDate { get; set; }
-        public TimeSpan CreatedTime { get; set; }
-        public Guid UserId { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public int UserId { get; set; }
+        public int TripId { get; set; }
 
-        // Extra user info from UserDbContext
-        public string Username { get; set; } = string.Empty;
-        public string? ProfilePictureUrl { get; set; }
-
-        // Add this property to make date + time available as one field:
-        public DateTime CreatedAt => CreatedDate + CreatedTime;
+        // Extra user info
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
     }
 }

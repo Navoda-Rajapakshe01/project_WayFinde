@@ -1,9 +1,9 @@
 import axios from "axios";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
-
+import Swal from "sweetalert2";
 import BlogCard from "../../Components/BlogComponents/BlogCard/BlogCard";
 import ProfileHeadSection from "../../Components/UserProfileComponents/ProfileHeadsection/ProfileHeadsection";
 import "../CSS/ProfileBlogs.css";
@@ -221,14 +221,22 @@ const ProfileBlogs = () => {
 
     if (!blogId) return;
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this blog?"
-    );
-    if (!confirmDelete) return;
+    // Replace window.confirm with SweetAlert2 confirmation dialog
+    const result = await Swal.fire({
+      title: "Delete Blog?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
 
     try {
       const response = await axios.delete(
-        `http://localhost:5030/api/blog/${blogId}`,
+        `http://localhost:5030/api/blog/delete/${blogId}`, // <-- Corrected URL
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -239,10 +247,30 @@ const ProfileBlogs = () => {
       if (response.status === 200) {
         // Remove the deleted blog from the state
         setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
+        // Dispatch a custom event to notify other components
+        const event = new CustomEvent("blogDeleted");
+        window.dispatchEvent(event);
+
+        // Show success message with SweetAlert2
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your blog has been deleted.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // No need for setTimeout or setSuccessMessage anymore
         console.log("Blog deleted successfully");
       }
     } catch (error) {
       console.error("Error deleting blog:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Deletion Failed",
+        text: "Unable to delete this blog. Please try again.",
+        footer: '<a href="#">Contact support if the problem persists</a>',
+      });
       setError("Failed to delete blog. Please try again.");
     }
   };
@@ -336,10 +364,7 @@ const ProfileBlogs = () => {
         ) : (
           <div className="profile-blogs-grid">
             {blogs.map((blog, index) => (
-              <ProfileBlogCard
-                key={blog.id || `blog-${index}`}
-                blog={blog}
-              />
+              <ProfileBlogCard key={blog.id || `blog-${index}`} blog={blog} />
             ))}
           </div>
         )}

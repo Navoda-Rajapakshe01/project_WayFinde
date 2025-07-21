@@ -34,12 +34,6 @@ const AdminSidebar = () => {
       path: "/admin/users-management",
     },
     {
-      id: "user-analytics",
-      label: "User Analytics",
-      icon: <FaChartLine />,
-      path: "/admin/user-analytics",
-    },
-    {
       id: "accommodation",
       label: "Accommodation",
       icon: <FaHotel />,
@@ -71,6 +65,15 @@ const AdminSidebar = () => {
     navigate("/signin");
   };
 
+  const isUsersActive = () => {
+    return (
+      location.pathname.startsWith("/admin/users-management") ||
+      location.pathname.startsWith("/admin/user-profile") ||
+      location.pathname.startsWith("/admin/user-blogs") ||
+      location.pathname.startsWith("/admin/user-trips")
+    );
+  };
+
   return (
     <aside className="admin-sidebar">
       <div className="sidebar-header">Admin Panel</div>
@@ -80,7 +83,11 @@ const AdminSidebar = () => {
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={location.pathname === item.path ? "active" : ""}
+              className={
+                item.id === "users"
+                  ? isUsersActive() ? "active" : ""
+                  : location.pathname === item.path ? "active" : ""
+              }
               onClick={() => navigate(item.path)}
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}

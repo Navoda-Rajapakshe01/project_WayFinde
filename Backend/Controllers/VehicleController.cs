@@ -14,6 +14,7 @@ using System;
 
 namespace Backend.Controllers
 {
+{
     [ApiController]
     [Route("api/[controller]")]
     public class VehicleController : ControllerBase
@@ -194,6 +195,13 @@ namespace Backend.Controllers
                 return NotFound();
 
             return Ok(MapToDto(vehicle));
+        }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetVehicleCount()
+        {
+            var count = await _context.Vehicles.CountAsync();
+            return Ok(count);
         }
 
         private VehicleDto MapToDto(Vehicle vehicle)

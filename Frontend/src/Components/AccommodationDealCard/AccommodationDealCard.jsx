@@ -1,13 +1,13 @@
 import React from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import useNavigate
+import { useNavigate } from "react-router-dom"; //  Import useNavigate
 import { FaBed, FaUsers, FaBath, FaHome, FaMapMarkerAlt } from "react-icons/fa";
 import "./AccommodationDealCard.css";
 
 const AccommodationDealCard = ({ accommodation }) => {
-  const navigate = useNavigate(); // ✅ Initialize navigate
+  const navigate = useNavigate(); //  Initialize navigate
 
   const handleViewNow = () => {
-    // ✅ Navigate using accommodation.id
+    //  Navigate using accommodation.id
     navigate(`/Accommodation/${accommodation.id}`);
   };
 

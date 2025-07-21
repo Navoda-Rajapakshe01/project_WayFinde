@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Backend.DTOs;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs
-
 {
     public class TripCreateDto
     {
@@ -18,12 +16,9 @@ namespace Backend.DTOs
         public DateTime EndDate { get; set; }
 
         [Required]
-        public required Guid UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
         public required List<int> PlaceIds { get; set; }
-
-
-
     }
 }

@@ -94,6 +94,9 @@ const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userProfile");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("isAdmin");
     setUser(null);
     window.location.href = "/";
   };

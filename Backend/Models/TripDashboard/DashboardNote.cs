@@ -1,25 +1,30 @@
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models
 {
     public class DashboardNote
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        public string NoteTitle { get; set; } = string.Empty;
+        [MaxLength(200)]
+        public string NoteTitle { get; set; }
 
         [Required]
-        public string NoteDescription { get; set; } = string.Empty;
+        public string NoteDescription { get; set; }
 
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow.Date;
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedAt { get; set; }
 
-        public TimeSpan CreatedTime { get; set; } = DateTime.Now.TimeOfDay;
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime UpdatedAt { get; set; }
 
-        // Foreign key reference to UserNew (stored in UserDbContext)
-        public Guid UserId { get; set; }  // Match with UserNew.Id (GUID)
-
-        // No navigation property, since UserNew lives in a separate DbContext
+        [Required]
+        [ForeignKey(nameof(TripId))]
+        public int TripId { get; set; }
     }
 }

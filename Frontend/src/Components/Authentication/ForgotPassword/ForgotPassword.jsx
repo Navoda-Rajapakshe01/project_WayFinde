@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./ForgotPassword.css";
+import Swal from "sweetalert2";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -10,7 +11,18 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [emailSent, setEmailSent] = useState(false);
 
-  // Email validation function using regex
+  const Toast = Swal.mixin({
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    },
+  });
+
   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
@@ -18,13 +30,15 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Reset states
     setError("");
     setMessage("");
 
-    // Validate email format
     if (!validateEmail(email)) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Email",
+        text: "Please enter a valid email address",
+      });
       setError("Please enter a valid email address");
       return;
     }
@@ -32,29 +46,37 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // Make the API call with improved error handling
       const response = await axios.post(
         "http://localhost:5030/api/Auth/forgot-password",
-        { email: email.trim() }, // Trim whitespace from email
+        { email: email.trim() },
         {
           headers: {
             "Content-Type": "application/json",
           },
-          // Add timeout to prevent long waits if server is unresponsive
           timeout: 8000,
         }
       );
 
-      // If we get here, the request was successful, which means the email exists
       console.log("Password reset response:", response.data);
-      // Check if the response contains an error message about non-existent user
+
       if (
         response.data.message &&
         response.data.message.includes("doesn't exist")
       ) {
+        Swal.fire({
+          icon: "error",
+          title: "Email Not Found",
+          text: "This email is not registered in our system.",
+        });
         setError("This email is not registered in our system.");
       } else {
-        // Only show success if user exists and email was sent
+        Swal.fire({
+          icon: "success",
+          title: "Email Sent!",
+          text: "A password reset link has been sent to your email address.",
+          timer: 3000,
+          showConfirmButton: false,
+        });
         setMessage(
           "A password reset link has been sent to your email address."
         );
@@ -64,11 +86,15 @@ const ForgotPassword = () => {
       console.error("Forgot password error:", error);
 
       if (error.response) {
-        // Server responded with an error status code
         if (error.response.status === 404) {
           setError("This email is not registered in our system.");
         } else if (error.response.status === 500) {
-          // Handle 500 Internal Server Error specifically
+          Swal.fire({
+            icon: "error",
+            title: "Server Error",
+            text: "The password reset service is currently unavailable. Please try again later or contact support.",
+            footer: '<a href="mailto:support@wayfinde.com">Contact Support</a>',
+          });
           setError(
             "The password reset service is currently unavailable. Please try again later or contact support."
           );
@@ -84,17 +110,14 @@ const ForgotPassword = () => {
           setError("An error occurred. Please try again later.");
         }
       } else if (error.code === "ECONNABORTED") {
-        // Request timed out
         setError(
           "The server is taking too long to respond. Please try again later."
         );
       } else if (error.request) {
-        // The request was made but no response was received
         setError(
           "No response from server. Please check your connection and try again."
         );
       } else {
-        // Something happened in setting up the request
         setError(
           "An error occurred while sending the request. Please try again later."
         );
@@ -104,7 +127,6 @@ const ForgotPassword = () => {
     }
   };
 
-  // Add a temporary contact support option while the backend is being fixed
   const renderSupportContact = () => {
     if (error && error.includes("currently unavailable")) {
       return (
@@ -126,8 +148,8 @@ const ForgotPassword = () => {
           {!emailSent ? (
             <>
               <p className="instruction-text">
-                Enter your email address and we&apos;ll send you a link to reset your
-                password.
+                Enter your email address and we&apos;ll send you a link to reset
+                your password.
               </p>
 
               <div className="input-group">

@@ -77,9 +77,6 @@ const handleSubmit = async (e) => {
       apiData.serviceType = "";
     }
 
-    // You might want to normalize serviceType as well if needed
-    // But your backend should decide on allowed values anyway
-
   try {
     console.log("Sending registration data:", apiData);
     const response = await axios.post(

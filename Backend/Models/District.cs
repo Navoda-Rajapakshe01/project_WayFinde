@@ -9,5 +9,8 @@ namespace Backend.Models
         public required string ImageUrl { get; set; }
         public required string Slug { get; set; }
         public string? SubTitle { get; set; } 
+        
+        // Navigation property to PlacesToVisit
+        public ICollection<PlacesToVisit> PlacesToVisit { get; set; } = new List<PlacesToVisit>();
     }
 }

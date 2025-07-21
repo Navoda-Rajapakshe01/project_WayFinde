@@ -581,5 +581,74 @@ namespace Backend.Controllers
 
             return Ok(new { reacted = true, count = blog.NumberOfReacts });
         }
+        // In your BlogController.cs or a separate CommentsController.cs
+        [HttpDelete("comment/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteComment(int id)
+        {
+            try
+            {
+                // Get current user from claims
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(new { message = "User not authenticated" });
+                }
+
+                // Find the comment
+                var comment = await _context.Comments
+                    .Include(c => c.Blog)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+
+                if (comment == null)
+                {
+                    return NotFound(new { message = "Comment not found" });
+                }
+
+                // Convert userId to Guid for comparison
+                if (!Guid.TryParse(userId, out Guid userGuid))
+                {
+                    return Unauthorized(new { message = "Invalid user ID" });
+                }
+
+                // Check if the user is authorized to delete this comment
+                // Allow deletion if user is comment owner or blog owner
+                if (comment.UserId != userGuid && comment.Blog.UserId != userGuid)
+                {
+                    return Forbid();
+                }
+
+                // Store blog ID before deletion to update count
+                var blogId = comment.BlogId;
+
+                // Delete the comment
+                _context.Comments.Remove(comment);
+                await _context.SaveChangesAsync();
+
+                // Get updated comment count for the blog
+                var updatedCommentCount = await _context.Comments
+                    .CountAsync(c => c.BlogId == blogId);
+
+                // Update blog's comment count if applicable
+                var blog = await _context.Blogs.FindAsync(blogId);
+                if (blog != null)
+                {
+                    blog.NumberOfComments = updatedCommentCount;
+                    await _context.SaveChangesAsync();
+                }
+
+                // Return success with updated count
+                return Ok(new
+                {
+                    message = "Comment deleted successfully",
+                    commentCount = updatedCommentCount
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

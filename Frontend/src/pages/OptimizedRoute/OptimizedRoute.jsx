@@ -290,10 +290,10 @@ const OptimizedRoute = () => {
       )}
 
       {successMessage && (
-        <div className="success-message">
-          <div className="success-content">
-            <span className="success-icon">✓</span>
-            <p>{successMessage}</p>
+        <div className="optimized-route-success-message">
+          <div className="optimized-route-success-content">
+            <span className="optimized-route-success-icon">✓</span>
+            <h3>Trip Updated Successfully!</h3>
           </div>
         </div>
       )}

@@ -107,13 +107,15 @@ const MainNavbar = () => {
             },
           }
         );
+        // Add this console log to see the full profile data
+        console.log("Profile API Response:", response.data);
 
         setProfileData({
           profileImage:
             response.data.profilePictureUrl || profileImageFromContext,
           username: response.data.username || user?.username || "User",
           contactEmail:
-            response.data.contactemail ||
+            response.data.contactEmail ||
             user?.contactemail ||
             "user@example.com",
         });
@@ -122,7 +124,7 @@ const MainNavbar = () => {
         setProfileData({
           profileImage: profileImageFromContext,
           username: user?.username || "User",
-          contactEmail: user?.contactemail || "user@example.com",
+          contactEmail: user?.Contactemail || "user@example.com",
         });
       } finally {
         setIsLoadingProfile(false);
@@ -261,7 +263,8 @@ const MainNavbar = () => {
                 key={item.name}
                 className={`navbar-item${
                   activeTab === item.path ? " active" : ""
-                }`}>
+                }`}
+              >
                 <Link
                   to={
                     item.name === "Vehicle"
@@ -274,7 +277,8 @@ const MainNavbar = () => {
                         : "/accommodation"
                       : item.path
                   }
-                  className="navbar-link">
+                  className="navbar-link"
+                >
                   <span className="navbar-icon">{item.icon}</span>
                   <span className="navbar-text">{item.name}</span>
                 </Link>
@@ -315,7 +319,7 @@ const MainNavbar = () => {
                     <span className="profile-indicator"></span>
                     <div className="popup-user-info">
                       <h4>{profileData.username}</h4>
-                      <p>@{profileData.contactEmail}</p>
+                      <p>{profileData.contactEmail}</p>
                     </div>
                   </div>
 
@@ -326,7 +330,8 @@ const MainNavbar = () => {
                       <div
                         key={item.name}
                         className="popup-item"
-                        onClick={() => handleProfileMenuClick(item)}>
+                        onClick={() => handleProfileMenuClick(item)}
+                      >
                         <span className="popup-icon">{item.icon}</span>
                         <span>{item.name}</span>
                       </div>
