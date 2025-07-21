@@ -30,7 +30,6 @@ const UserProfileDetail = () => {
         const response = await axios.get(
           `http://localhost:5030/api/profile/admin/users/${userId}`
         );
-        console.log("User data received:", response.data);
         setUser(response.data);
         // Fetch stats based on user role
         const role = response.data.role || response.data.Role;

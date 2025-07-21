@@ -33,7 +33,7 @@ namespace Backend.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState); // 🚨 Return validation errors!
+                return BadRequest(ModelState); 
             }
 
             if (dto == null)
