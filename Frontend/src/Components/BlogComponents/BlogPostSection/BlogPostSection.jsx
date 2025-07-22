@@ -10,74 +10,79 @@ const BlogPostSection = ({
   showViewAllButton = true,
 }) => {
   const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const posts = [
-      {
-        id: 1,
-        title: "A Hiker's Paradise: Conquering the Peaks of Ella",
-        // content: "This is the content of the first post. It talks about the wonderful experience...",
-        excerpt:
-          "Discover the breathtaking trails and panoramic views that make Ella a must-visit for any hiking enthusiast.",
-        image:
-          "https://via.placeholder.com/400x250/87CEFA/FFFFFF?text=Hiking+in+Ella", // Use compelling, relevant images
-        author: "Alex P.",
-        date: "2023-10-15", // Format: YYYY-MM-DD for easier sorting
-        updatedAt: "2023-10-15",
-        category: "Adventure", // Optional
-        slug: "hikers-paradise-ella", // For URL
-      },
-      {
-        id: 2,
-        title: "Culinary Journey Through Sri Lanka's Coastal Towns",
-        excerpt:
-          "From fresh seafood to spicy curries, explore the rich flavors that define Sri Lankan coastal cuisine.",
-        image:
-          "https://via.placeholder.com/400x250/90EE90/FFFFFF?text=Sri+Lankan+Food",
-        author: "Maria S.",
-        date: "2023-10-12",
-        updatedAt: "2023-10-12",
-        category: "Food & Culture",
-        slug: "sri-lankan-coastal-cuisine",
-      },
-      {
-        id: 3,
-        title: "Unveiling the Secrets of Ancient Sigiriya",
-        excerpt:
-          "Step back in time and explore the history, art, and legends surrounding the magnificent Sigiriya rock fortress.",
-        image:
-          "https://via.placeholder.com/400x250/ADD8E6/FFFFFF?text=Sigiriya+Fortress",
-        author: "John D.",
-        date: "2023-10-10",
-        updatedAt: "2023-10-10",
-        category: "History",
-        slug: "secrets-of-sigiriya",
-      },
-      {
-        id: 4,
-        title: "Top 5 Secluded Beaches for a Relaxing Getaway",
-        excerpt:
-          "Escape the crowds and find your own slice of paradise with our guide to Sri Lanka's most beautiful hidden beaches.",
-        image:
-          "https://via.placeholder.com/400x250/FFB6C1/FFFFFF?text=Secluded+Beaches",
-        author: "Sarah L.",
-        date: "2023-10-08",
-        updatedAt: "2023-10-08",
-        category: "Travel Tips",
-        slug: "top-secluded-beaches",
-      },
-    ];
-
-    const sortedPosts = posts.sort(
-      (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-    );
-
-    setBlogPosts(sortedPosts);
+    const fetchPopularBlogs = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch("http://localhost:5030/api/blog/all", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        let data = await response.json();
+        // Handle .NET $values or direct array
+        let blogsArray = [];
+        if (data.$values) {
+          blogsArray = data.$values;
+        } else if (Array.isArray(data)) {
+          blogsArray = data;
+        }
+        // Map and sort by engagement (comments + reactions)
+        const processedBlogs = blogsArray.map((blog) => {
+          const blogId = blog.id ?? blog.Id ?? blog.blogId ?? blog.BlogId;
+          let desc = blog.description;
+          if (!desc && blog.blog) {
+            desc = blog.blog.description || blog.blog.Description;
+          }
+          if (desc && typeof desc === "string") {
+            desc = desc.replace(/<[^>]*>/g, "");
+          }
+          const briefDescription = (desc || "No description available").split(/\s+/).slice(0, 50).join(" ") + (desc && desc.split(/\s+/).length > 50 ? "..." : "");
+          return {
+            id: blogId,
+            title: blog.title ?? blog.Title ?? "Untitled",
+            excerpt: briefDescription,
+            image: blog.coverImageUrl ?? blog.CoverImageUrl ?? "/default-blog-image.jpg",
+            author: blog.author ?? blog.Author ?? "Anonymous",
+            date: blog.createdAt ?? blog.CreatedAt ?? blog.date ?? blog.Date,
+            category: blog.category ?? blog.Category ?? undefined,
+            slug: blogId,
+            commentCount: blog.numberOfComments ?? blog.CommentCount ?? 0,
+            reactionCount: blog.numberOfReacts ?? blog.ReactionCount ?? 0,
+          };
+        });
+        // Sort by engagement (comments + reactions)
+        const sortedByEngagement = processedBlogs.sort(
+          (a, b) => (b.commentCount + b.reactionCount) - (a.commentCount + a.reactionCount)
+        );
+        setBlogPosts(sortedByEngagement);
+      } catch (err) {
+        setError(err.message);
+        setBlogPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPopularBlogs();
   }, []);
+
   const postsToShow = 3;
   const displayedPosts = blogPosts.slice(0, postsToShow);
 
+  if (loading) {
+    return <div className="loading">Loading blogs...</div>;
+  }
+  if (error) {
+    return <div className="error">Error: {error}</div>;
+  }
   if (displayedPosts.length === 0) {
     return null;
   }
@@ -107,8 +112,8 @@ const BlogPostSection = ({
 
         {showViewAllButton && blogPosts.length > postsToShow && (
           <div className="view-all-container text-center">
-          <a href="/blog" className="homebtn homebtn-outline">Read More Blogs</a>
-      </div>
+            <a href="/blog" className="homebtn homebtn-outline">Read More Blogs</a>
+          </div>
         )}
       </div>
     </section>

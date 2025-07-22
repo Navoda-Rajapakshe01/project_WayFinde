@@ -59,8 +59,8 @@ const EditPlace = () => {
           districtId: fetchedPlace.districtId || "",
           categoryId: fetchedPlace.categoryId || "",
         });
-        setDistricts(districtsResponse.data);
-        setCategories(categoriesResponse.data);
+        setDistricts(Array.isArray(districtsResponse.data?.$values) ? districtsResponse.data.$values : []);
+        setCategories(Array.isArray(categoriesResponse.data?.$values) ? categoriesResponse.data.$values : []);
       } catch (error) {
         console.error("Error fetching data:", error);
         Swal.fire("Error!", "Could not load data for editing.", "error");

@@ -1,0 +1,184 @@
+.accommodation-detail-container {
+  font-family: "Segoe UI", sans-serif;
+}
+
+.accommodation-hero {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.accommodation-lottie-wrapper {
+  width: 280px;
+  max-width: 100%;
+}
+
+.accommodation-hero-content {
+  flex: 1;
+}
+
+.accommodation-hero-content h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #333;
+}
+
+.accommodation-hero-content p {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+  color: #666;
+}
+
+.accommodation-main-content {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.accommodation-left {
+  flex: 2;
+}
+
+.accommodation-right {
+  flex: 1;
+}
+
+.accommodation-image {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.accommodation-image:hover {
+  transform: scale(1.02);
+}
+
+.accommodation-description {
+  margin-top: 20px;
+}
+
+.accommodation-specs {
+  list-style: none;
+  padding: 0;
+}
+
+.accommodation-amenities .tag {
+  display: inline-block;
+  background-color: #dbeafe;
+  color: #1e40af;
+  padding: 5px 10px;
+  border-radius: 15px;
+  margin: 4px;
+  font-size: 14px;
+}
+
+.booking-card {
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.booking-card input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+}
+
+.book-button {
+  background-color: #1d4ed8;
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 100%;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.book-button:hover {
+  background-color: #2563eb;
+}
+
+.gallery-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.gallery-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 90%;
+  max-width: 900px;
+  position: relative;
+}
+
+.gallery-content .close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: black;
+  cursor: pointer;
+}
+
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+.image-grid img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.loading-container,
+.error-message {
+  text-align: center;
+  padding: 50px;
+  font-size: 18px;
+}
+
+.status {
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.status.available {
+  color: #128a44;
+  background-color: #e6f4ea;
+}
+.status.unavailable {
+  color: #bb1e1e;
+  background-color: #f9e6e6;
+}

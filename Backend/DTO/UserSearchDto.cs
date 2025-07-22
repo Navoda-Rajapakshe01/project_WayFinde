@@ -1,7 +1,4 @@
-
 using System;
-using System.Collections.Generic;
-using Backend.DTOs;
 
 namespace Backend.DTOs
 {
@@ -9,5 +6,8 @@ namespace Backend.DTOs
     {
         public Guid Id { get; set; }
         public string? Username { get; set; }
+        public string Email { get; set; }
+        public string ProfilePictureUrl { get; set; }
+
     }
 }

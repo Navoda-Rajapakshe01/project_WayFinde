@@ -14,9 +14,10 @@ import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
 import ReviewsManagement from "./Components/AdminProfile/reviews-management";
 import SettingsPanel from "./Components/AdminProfile/settings-panel";
-import UserAnalytics from "./Components/AdminProfile/user-analytics";
-import UsersManagement from "./Components/AdminProfile/users-management";
+import UsersManagement from "./Components/AdminProfile/user-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
+import AdminProfile from "./Components/AdminProfile/admin-profile";
+import UserProfileDetail from "./pages/Admin/UserProfileDetail";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
 
 import { AuthContext } from "./Components/Authentication/AuthContext/AuthContext";
@@ -59,8 +60,13 @@ import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 import "./App.css";
 import BlogCard from "./Components/BlogComponents/BlogCard/BlogCard";
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
-import OptimizedRoute from "./pages/OptimizedRoute/OptimizedRoute";
+
 import ProfilePosts from "./Components/UserProfileComponents/Post/Post";
+import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
+import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
+import "./App.css";
+import UserTrips from "./pages/Admin/UserTrips";
+import UserBlogs from "./pages/Admin/UserBlogs";
 
 function AppRoutes() {
   const location = useLocation();
@@ -74,6 +80,9 @@ function AppRoutes() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/plantrip" element={<CreateTrip />} />
+        <Route path="/trip-planner" element={<PlanTrip />} />
+        <Route path="/upcomingtrips" element={<AllTrips />} />
         <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
         <Route path="/vehicle" element={<Vehicle />} />
@@ -101,8 +110,8 @@ function AppRoutes() {
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
         <Route path="/things-to-do/:slug/:placeId" element={<PlaceDetails />} />
+        <Route path="/tripdashboard" element={<TripDashboard />} />
         <Route path="/tripdashboard/:tripId" element={<TripDashboard />} />
-
         <Route path="/vehicle/:id" element={<VehicleDetail />} />
         <Route path="/accommodation/:id" element={<AccommodationDetail />} />
         <Route path="/chat" element={<Chat />} />
@@ -125,16 +134,20 @@ function AppRoutes() {
         />
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
         <Route path="/plantrip" element={<CreateTrip />} />
-        <Route path="/optimizedroute/:id" element={<OptimizedRoute />} />
+        <Route path="/optimizedroute/:id" element={<OptimizedTripRoute />} />
         <Route path="/admin" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />
           <Route path="users-management" element={<UsersManagement />} />
           <Route path="vehicles-management" element={<VehiclesManagement />} />
           <Route path="reviews-management" element={<ReviewsManagement />} />
-          <Route path="user-analytics" element={<UserAnalytics />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
+          {/* This is the correct route for the admin profile page: /admin/profile */}
+          <Route path="profile" element={<AdminProfile />} />
+          <Route path="user-profile/:userId" element={<UserProfileDetail />} />
+          <Route path="user-trips/:userId" element={<UserTrips />} />
+          <Route path="user-blogs/:userId" element={<UserBlogs />} />
           <Route
             path="accommodation-management"
             element={<AccommodationManagement />}

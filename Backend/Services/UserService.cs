@@ -13,7 +13,7 @@ namespace Backend.Services
             _context = context;
         }
 
-        public async Task<UserNew> GetUserByIdAsync(string userId)
+        public async Task<UserNew?> GetUserByIdAsync(string userId)
         {
             if (!Guid.TryParse(userId, out var parsedId))
             {

@@ -139,10 +139,6 @@ const AuthProvider = ({ children }) => {
   };
   
 
-  if (loading) {
-    return <div>Loading authentication...</div>;
-  }
-
   return (
     <AuthContext.Provider
       value={{

@@ -27,7 +27,7 @@ namespace Backend.DTOs
 
         public required string MainImageUrl { get; set; }
 
-        public DistrictWithPlacesCountDTO District { get; set; } = null!;
+        public DistrictWithPlacesCountDTO? District { get; set; } = null!;
 
 
     }

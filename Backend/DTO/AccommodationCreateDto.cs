@@ -18,5 +18,7 @@ namespace Backend.DTOs
         public IFormFileCollection? Images { get; set; }
 
         public int DistrictId { get; set; }
+        public int PlaceId { get; set; }
+        public Guid SupplierId { get; set; }
     }
 }

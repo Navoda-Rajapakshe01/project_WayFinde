@@ -1,4 +1,4 @@
-.popup-overlay {
+.popups-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     z-index: 100;
   }
   
-  .popup-content {
+  .popups-content {
     background-color: white;
     padding: 20px;
     border-radius: 10px;
@@ -41,7 +41,7 @@
   }
   
   .save-button {
-    background-color: #4CAF50;
+    background-color: #34bfc9;
     color: white;
   }
   

@@ -31,6 +31,7 @@ const PlaceDetails = () => {
   const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
+    if (!placeId) return; // Prevent API calls if placeId is undefined
     setLoading(true);
     const user = JSON.parse(localStorage.getItem("userProfile"));
     setCurrentUser(user);
@@ -49,7 +50,7 @@ const PlaceDetails = () => {
 
     axios
       .get(`http://localhost:5030/api/places/${placeId}/reviews`)
-      .then((res) => setReviews(res.data))
+      .then((res) => setReviews(res.data.$values || []))
       .catch((err) => console.error("Failed to fetch reviews:", err));
 
     window.scrollTo(0, 0);
@@ -140,7 +141,6 @@ const PlaceDetails = () => {
       name,
       email,
     };
-    console.log("Submitting review:", reviewData);
 
     if (!rating || rating < 1 || rating > 5) {
       swal.fire({
@@ -318,7 +318,11 @@ const PlaceDetails = () => {
                     />
                     <div className="image-grid">
                       {galleryImages.map((img, i) => (
-                        <img key={i} src={img} alt={`Gallery ${i + 1}`} />
+                        <img
+                          key={img.id || img.imageUrls?.$values?.[0] || i}
+                          src={img.imageUrls?.$values?.[0]}
+                          alt={`Gallery ${i + 1}`}
+                        />
                       ))}
                     </div>
                   </div>
@@ -382,8 +386,8 @@ const PlaceDetails = () => {
                       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
                     )
                     .slice(0, 2)
-                    .map((review, index) => (
-                      <div key={index} className="review-card">
+                    .map((review) => (
+                      <div key={review.id || review.createdAt || review.name} className="review-card">
                         <div className="review-header">
                           <div className="reviewer-info">
                             <div className="reviewer-avatar">
@@ -538,8 +542,8 @@ const PlaceDetails = () => {
               {reviews
                 .filter((r) => r.comment?.trim())
                 .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .map((r, idx) => (
-                  <div key={idx} className="review-card">
+                .map((r) => (
+                  <div key={r.id || r.createdAt || r.name} className="review-card">
                     <strong>{r.name}</strong>
                     <span
                       style={{

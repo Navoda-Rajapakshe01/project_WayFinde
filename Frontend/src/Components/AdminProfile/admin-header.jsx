@@ -13,6 +13,7 @@ const AdminHeader = () => {
   const [notifications, setNotifications] = useState([]);
   const [showAllModal, setShowAllModal] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
+  const [adminEmail, setAdminEmail] = useState("");
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
@@ -37,6 +38,13 @@ const AdminHeader = () => {
       connection.off("ReceiveNotification");
       connection.stop();
     };
+  }, []);
+
+  useEffect(() => {
+    const userProfile = JSON.parse(localStorage.getItem("userProfile"));
+    if (userProfile && userProfile.email) {
+      setAdminEmail(userProfile.email);
+    }
   }, []);
 
   return (
@@ -189,11 +197,18 @@ const AdminHeader = () => {
                 </div>
                 <div>
                   <h4>Admin User</h4>
-                  <p>admin@wayfinde.com</p>
+                  <p>{adminEmail}</p>
                 </div>
               </div>
               <ul>
-                <li>My Profile</li>
+                <li
+                  onClick={() => {
+                    navigate("/admin/profile");
+                    setShowProfile(false);
+                  }}
+                >
+                  My Profile
+                </li>
                 <li>Account Settings</li>
                 <li
                   className="admin-header-logout"

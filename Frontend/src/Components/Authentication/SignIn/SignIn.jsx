@@ -235,28 +235,24 @@ const Login = () => {
       {showSignInModal && (
         <div
           className="signin-modal-overlay"
-          onClick={() => setShowSignInModal(false)}
-        >
+          onClick={() => setShowSignInModal(false)}>
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}
-              >
+                onClick={() => handleSignInOption("user")}>
                 Normal User
               </button>
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}
-              >
+                onClick={() => handleSignInOption("service")}>
                 Service Provider
               </button>
             </div>
             <button
               className="close-modal-btn"
-              onClick={() => setShowSignInModal(false)}
-            >
+              onClick={() => setShowSignInModal(false)}>
               Close
             </button>
           </div>

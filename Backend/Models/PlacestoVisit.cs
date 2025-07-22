@@ -1,12 +1,9 @@
-using System.Collections.Generic;
+using Backend.Models;
 using Microsoft.EntityFrameworkCore;
-using Backend.Models; 
 
-namespace Backend.Models
+[Index(nameof(Name), nameof(DistrictId), IsUnique = true)]
+public class PlacesToVisit
 {
-    [Index(nameof(Name), nameof(DistrictId), IsUnique = true)] // Ensure unique index for Name and DistrictId
-    public class PlacesToVisit
-    {
         public int Id { get; set; }
 
         // Ensuring required properties for validation
@@ -16,11 +13,10 @@ namespace Backend.Models
         public required string MainImageUrl { get; set; }
         public required string Description { get; set; }
 
-        // Optional fields
-        public string? History { get; set; }
-        public string? OpeningHours { get; set; }
-        public string? Address { get; set; }
-        public string? GoogleMapLink { get; set; }
+    public string? History { get; set; }
+    public string? OpeningHours { get; set; }
+    public string? Address { get; set; }
+    public string? GoogleMapLink { get; set; }
 
 
         // Average spend and time for the place
@@ -40,6 +36,5 @@ namespace Backend.Models
 
         // Reviews and images related to this place
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
-        public ICollection<PlaceImage>? PlaceImage { get; set; }
-    }
+        public ICollection<PlaceImage>? PlaceImage { get;set;}
 }

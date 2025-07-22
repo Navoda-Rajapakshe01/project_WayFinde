@@ -5,15 +5,20 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CloudinaryDotNet;
+using Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add AppDbContext with NavodaConnection (only one context to avoid duplication)
-//builder.Services.AddDbContext<AppDbContext>(options =>
-  //  options.UseSqlServer(builder.Configuration.GetConnectionString("NavodaConnection")));
 
+// Register HttpClient and WeatherService
+builder.Services.AddHttpClient<IWeatherService, WeatherService>();
+
+
+// Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
+
+
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -28,7 +33,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
-                    builder.Configuration["AppSettings:Token"] 
+                    builder.Configuration["AppSettings:Token"]
                     ?? throw new InvalidOperationException("JWT Token key is missing in configuration (AppSettings:Token).")
                 )
             ),
@@ -56,11 +61,9 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddScoped<VehicleReservationService>();
 
-
 // Add CORS policies
 builder.Services.AddCors(options =>
 {
-    // Development policy for local React apps
     options.AddPolicy("AllowReactApp", policy =>
         policy.WithOrigins("http://localhost:5173", "https://localhost:5174", "https://localhost:5175")
               .AllowAnyHeader()
@@ -68,7 +71,6 @@ builder.Services.AddCors(options =>
               .AllowCredentials()
     );
 
-    // Production policy (customize as needed)
     options.AddPolicy("ProductionCorsPolicy", policy =>
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
@@ -79,7 +81,7 @@ builder.Services.AddCors(options =>
 // Add Controllers with JSON options
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.MaxDepth = 32;
 });
 
@@ -90,22 +92,19 @@ builder.Services.AddSwaggerGen();
 // Add SignalR and HTTP Context
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
-// Build the app
 var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors("AllowReactApp"); // or your relevant policy
-
-// Enable CORS before auth
-// Apply CORS policy BEFORE Authentication middleware
 app.UseCors("AllowReactApp");
 
-// Use HTTPS redirection
+// Enable HTTPS
 app.UseHttpsRedirection();
-// Enable Authentication and Authorization middlewares
+
+// Enable Authentication and Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 

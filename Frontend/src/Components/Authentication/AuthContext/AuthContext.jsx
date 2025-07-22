@@ -1,7 +1,8 @@
+import React, { createContext, useState, useEffect,useContext } from "react";
 import PropTypes from "prop-types";
-import React, { createContext, useEffect, useState } from "react";
 
-// Create the context with default values
+
+// Create the context
 export const AuthContext = createContext({
   user: null,
   setUser: () => {},
@@ -9,14 +10,23 @@ export const AuthContext = createContext({
   loading: true,
 });
 
+// Hook for easier usage
+export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile from backend on app load
-  // Fetch user profile from backend on app load
+  
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         // Get the token from localStorage
         const token = localStorage.getItem("token");
@@ -63,7 +73,8 @@ export const AuthProvider = ({ children }) => {
 
     fetchUser();
   }, []);
-  // Logout function: clear user and token
+
+  
   const logout = async () => {
     try {
       const token = localStorage.getItem("token");
