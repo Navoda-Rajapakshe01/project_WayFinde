@@ -136,6 +136,12 @@ const UserProfileDetail = () => {
   const handleTripsClick = () => {
     navigate(`/admin/user-trips/${userId}`);
   };
+  const handleVehiclesClick = () => {
+    navigate(`/admin/user-vehicles/${userId}`);
+  };
+  const handleAccommodationsClick = () => {
+    navigate(`/admin/user-accommodations/${userId}`);
+  };
 
   if (loading) {
     return (
@@ -228,17 +234,19 @@ const UserProfileDetail = () => {
               </div>
             </div>
 
-            <div className="detail-section">
-              <h3>Social Statistics</h3>
-              <div className="detail-item">
-                <strong>Followers:</strong>{" "}
-                {user.followersCount || user.FollowersCount || 0}
+            {user.role === 'NormalUser' && (
+              <div className="detail-section">
+                <h3>Social Statistics</h3>
+                <div className="detail-item">
+                  <strong>Followers:</strong>{" "}
+                  {user.followersCount || user.FollowersCount || 0}
+                </div>
+                <div className="detail-item">
+                  <strong>Following:</strong>{" "}
+                  {user.followingCount || user.FollowingCount || 0}
+                </div>
               </div>
-              <div className="detail-item">
-                <strong>Following:</strong>{" "}
-                {user.followingCount || user.FollowingCount || 0}
-              </div>
-            </div>
+            )}
 
             {user.bio && (
               <div className="detail-section full-width">
@@ -264,7 +272,7 @@ const UserProfileDetail = () => {
               )}
               {user && (user.role === "AccommodationProvider") && (
                 <>
-                  <div className="activity-stat">
+                  <div className="activity-stat clickable" onClick={handleAccommodationsClick} title="View all accommodations by this user">
                     <span className="stat-label">Accommodation Places:</span>
                     <span className="stat-value">{accommodationCount}</span>
                   </div>
@@ -276,7 +284,7 @@ const UserProfileDetail = () => {
               )}
               {user && (user.role === "TransportProvider" || user.role === "VehicleProvider") && (
                 <>
-                  <div className="activity-stat">
+                  <div className="activity-stat clickable" onClick={handleVehiclesClick} title="View all vehicles by this user">
                     <span className="stat-label">Vehicles:</span>
                     <span className="stat-value">{vehicleCount}</span>
                   </div>

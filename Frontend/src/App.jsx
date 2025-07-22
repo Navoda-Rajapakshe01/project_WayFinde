@@ -65,6 +65,8 @@ import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 import "./App.css";
 import UserTrips from "./pages/Admin/UserTrips";
 import UserBlogs from "./pages/Admin/UserBlogs";
+import AdminUserVehicles from "./pages/Admin/AdminUserVehicles";
+import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
 
 function AppRoutes() {
   const location = useLocation();
@@ -133,7 +135,7 @@ function AppRoutes() {
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
         <Route path="/plantrip" element={<CreateTrip />} />
         <Route path="/optimizedroute/:id" element={<OptimizedTripRoute />} />
-        <Route path="/admin" element={<AdminDashboard />}>
+        <Route path="/admin/*" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />
           <Route path="users-management" element={<UsersManagement />} />
@@ -141,15 +143,13 @@ function AppRoutes() {
           <Route path="reviews-management" element={<ReviewsManagement />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
-          {/* This is the correct route for the admin profile page: /admin/profile */}
           <Route path="profile" element={<AdminProfile />} />
           <Route path="user-profile/:userId" element={<UserProfileDetail />} />
           <Route path="user-trips/:userId" element={<UserTrips />} />
           <Route path="user-blogs/:userId" element={<UserBlogs />} />
-          <Route
-            path="accommodation-management"
-            element={<AccommodationManagement />}
-          />
+          <Route path="accommodation-management" element={<AccommodationManagement />} />
+          <Route path="user-vehicles/:userId" element={<AdminUserVehicles />} />
+          <Route path="user-accommodations/:userId" element={<AdminUserAccommodations />} />
         </Route>
         <Route path="/blogcard" element={<BlogCard />} />
       </Routes>

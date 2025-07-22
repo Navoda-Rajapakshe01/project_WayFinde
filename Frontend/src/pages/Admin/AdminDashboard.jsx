@@ -1,11 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import { useNavigate, Routes, Route, Outlet } from "react-router-dom";
 import AdminSidebar from "../../Components/AdminProfile/admin-sidebar";
 import AdminHeader from "../../Components/AdminProfile/admin-header";
 import "../CSS/AdminDashboard.css";
 import "../../App.css";
+import AdminUserVehicles from "./AdminUserVehicles";
+import AdminUserAccommodations from "./AdminUserAccommodations";
 
 const AdminDashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -56,7 +57,7 @@ const AdminDashboard = () => {
       <div className="admin-main">
         <AdminHeader />
         <div className="admin-content">
-          <Outlet /> {/* Dynamically loads nested routes here */}
+          <Outlet />
         </div>
       </div>
     </div>
