@@ -78,10 +78,6 @@ const UserTrips = () => {
                 } Destinations</span>
               </div>
               <div className="admin-trip-card-content">
-                <div className="admin-trip-card-dates">
-                  <span>Start: {trip.startDate ? new Date(trip.startDate).toLocaleDateString() : "-"}</span>
-                  <span>End: {trip.endDate ? new Date(trip.endDate).toLocaleDateString() : "-"}</span>
-                </div>
                 {(Array.isArray(trip.places?.$values) ? trip.places.$values : trip.places)?.length > 0 && (
                   <div className="admin-trip-card-destinations">
                     <strong>Destinations:</strong>
