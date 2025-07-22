@@ -50,6 +50,7 @@ builder.Services.AddScoped<BlobService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 
+
 builder.Services.AddTransient<IEmailService, EmailService>();
 
 

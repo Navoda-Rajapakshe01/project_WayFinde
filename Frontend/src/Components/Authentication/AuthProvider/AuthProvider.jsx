@@ -1,8 +1,17 @@
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext/AuthContext";
+
+// Add the useAuth hook that was missing
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -128,6 +137,7 @@ const AuthProvider = ({ children }) => {
       return false;
     }
   };
+  
 
   if (loading) {
     return <div>Loading authentication...</div>;

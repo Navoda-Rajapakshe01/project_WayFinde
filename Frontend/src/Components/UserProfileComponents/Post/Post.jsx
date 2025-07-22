@@ -1,169 +1,281 @@
+import axios from "axios";
 import { Heart, MessageCircle, Plus, Upload, X } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import { useAuth } from "../../Authentication/AuthProvider/AuthProvider";
 import ProfileHeadSection from "../ProfileHeadsection/ProfileHeadsection";
 import "./Post.css";
-import axios from "axios";
-import { useAuth } from "../../Authentication/AuthProvider/AuthProvider";
-import Swal from "sweetalert2"; // Optional, for nice alerts
 
 const PostsPage = () => {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState({});
-  const { user } = useAuth(); // Get the authenticated user
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
-  // Fetch posts on component mount
+  const { user } = useAuth();
+
+  // API Base URL - adjust this to match your backend
+  const API_BASE_URL = "http://localhost:5030/api";
+
+  // Fetch posts when component mounts
   useEffect(() => {
     fetchPosts();
   }, []);
 
+  // Fetch posts from API
   const fetchPosts = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
-        throw new Error("Authentication required");
+        console.error("No authentication token found");
+        setLoading(false);
+        return;
       }
 
-      const response = await axios.get("http://localhost:5030/api/Posts", {
+      const response = await axios.get(`${API_BASE_URL}/Posts`, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
-      setPosts(response.data.map(post => ({
-        ...post,
-        images: post.images.map(img => img.imageUrl)
-      })));
-      setError(null);
+      console.log("Posts API response:", response.data);
+
+      // Map API response to our component's structure
+      if (response.data) {
+        const formattedPosts = response.data.map((post) => ({
+          id: post.id,
+          images: post.images.map((img) => img.imageUrl),
+          caption: post.caption,
+          likes: post.likes || 0,
+          comments: post.comments || 0,
+          liked: false, // You can implement this based on user's reaction
+          timestamp: formatDate(post.createdAt),
+          username: post.username,
+          profilePicture: post.profilePicture,
+        }));
+
+        setPosts(formattedPosts);
+      }
     } catch (err) {
       console.error("Error fetching posts:", err);
-      setError("Failed to load posts. Please try again.");
+      if (err.response?.status === 401) {
+        // Handle unauthorized access
+        Swal.fire({
+          icon: "error",
+          title: "Authentication Error",
+          text: "Please log in again to view posts.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to load posts. Please try again.",
+        });
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "Unknown time";
+
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+
+    if (diffInSeconds < 60) return "Just now";
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 604800)
+      return `${Math.floor(diffInSeconds / 86400)} days ago`;
+
+    return date.toLocaleDateString();
+  };
+
+  // Handle like/unlike post
   const handleLike = async (postId) => {
+    // Optimistic UI update
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              liked: !post.liked,
+              likes: post.liked ? post.likes - 1 : post.likes + 1,
+            }
+          : post
+      )
+    );
+
     try {
       const token = localStorage.getItem("token");
-      
-      if (!token) {
-        throw new Error("Authentication required");
-      }
+      if (!token) return;
 
-      // Find the current post to get its liked status
-      const post = posts.find(p => p.id === postId);
-      const newLikedStatus = !post.liked;
+      // Call API to update like status
+      const response = await axios.post(
+        `${API_BASE_URL}/Posts/${postId}/react`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // Update the UI optimistically
-      setPosts(
-        posts.map((post) =>
+      // Update with actual server response
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
           post.id === postId
             ? {
                 ...post,
-                liked: newLikedStatus,
-                likes: newLikedStatus ? post.likes + 1 : post.likes - 1,
+                likes: response.data.likes,
+                liked: response.data.liked,
+              }
+            : post
+        )
+      );
+    } catch (err) {
+      console.error("Error updating like:", err);
+      // If API call fails, revert the optimistic update
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                liked: !post.liked,
+                likes: post.liked ? post.likes + 1 : post.likes - 1,
               }
             : post
         )
       );
 
-      // Send the update to the server
-      await axios.post(`http://localhost:5030/api/Posts/${postId}/like`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-
-    } catch (err) {
-      console.error("Error updating like:", err);
-      // Revert the optimistic update
-      fetchPosts();
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Could not update the like. Please try again.',
+        icon: "error",
+        title: "Error",
+        text: "Failed to update like. Please try again.",
+        timer: 2000,
+        showConfirmButton: false,
       });
     }
   };
 
+  // Handle file selection
   const handleFileSelect = (event) => {
     const files = Array.from(event.target.files);
+    if (files.length > 10) {
+      Swal.fire({
+        icon: "warning",
+        title: "Too many files",
+        text: "Please select maximum 10 images.",
+      });
+      return;
+    }
     setSelectedFiles(files);
   };
 
+  // Remove selected file
+  const removeSelectedFile = (index) => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Handle post upload
   const handleUpload = async () => {
-    if (selectedFiles.length > 0) {
-      try {
-        const token = localStorage.getItem("token");
-        
-        if (!token) {
-          throw new Error("Authentication required");
-        }
+    if (selectedFiles.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "No files selected",
+        text: "Please select at least one image to upload.",
+      });
+      return;
+    }
 
-        // Create a FormData object to send files
-        const formData = new FormData();
-        formData.append("caption", caption);
-        
-        // Append all selected files
-        selectedFiles.forEach(file => {
-          formData.append("images", file);
-        });
+    try {
+      setUploading(true);
 
-        // Show loading indicator
-        Swal.fire({
-          title: 'Uploading...',
-          text: 'Please wait while we upload your post',
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          }
-        });
+      // Show loading indicator
+      Swal.fire({
+        title: "Uploading...",
+        text: "Please wait while we upload your post",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-        // Send the post to the server
-        const response = await axios.post("http://localhost:5030/api/Posts", formData, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "multipart/form-data"
-          }
-        });
-
-        // Close loading indicator
-        Swal.close();
-
-        // Show success message
-        Swal.fire({
-          icon: 'success',
-          title: 'Success!',
-          text: 'Your post has been uploaded successfully.',
-          timer: 2000,
-          showConfirmButton: false
-        });
-
-        // Refresh posts to include the new one
-        fetchPosts();
-        
-        // Reset form
-        setSelectedFiles([]);
-        setCaption("");
-        setShowUploadModal(false);
-      } catch (err) {
-        console.error("Error uploading post:", err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Upload Failed',
-          text: 'Could not upload your post. Please try again.',
-        });
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Authentication required");
       }
+
+      // Create form data to send files
+      const formData = new FormData();
+      formData.append("Title", "Post from mobile app"); // Add a default title
+      formData.append("Content", caption.trim()); // Use Content instead of Caption
+      formData.append("Tags", ""); // Empty tags
+
+      // Append files
+      selectedFiles.forEach((file) => {
+        formData.append("Files", file);
+      });
+
+      // Log what you're sending (for debugging)
+      console.log("Uploading post with files:", selectedFiles.length);
+
+      // Send post data to server
+      const response = await axios.post(`${API_BASE_URL}/Posts`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Upload response:", response.data);
+
+      // Close loading indicator
+      Swal.close();
+
+      // Show success message
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Your post has been uploaded successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Reset form and close modal
+      setSelectedFiles([]);
+      setCaption("");
+      setShowUploadModal(false);
+
+      // Refresh posts to show the new post
+      await fetchPosts();
+    } catch (err) {
+      console.error("Error uploading post:", err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Upload Failed",
+        text:
+          err.response?.data?.message ||
+          err.response?.data ||
+          "Could not upload your post. Please try again.",
+      });
+    } finally {
+      setUploading(false);
     }
   };
 
+  // Navigation functions for image carousel
   const nextImage = (postId) => {
     setCurrentImageIndex((prev) => ({
       ...prev,
@@ -184,14 +296,6 @@ const PostsPage = () => {
     }));
   };
 
-  if (loading) {
-    return <div className="loading">Loading posts...</div>;
-  }
-
-  if (error) {
-    return <div className="error">{error}</div>;
-  }
-
   return (
     <div className="posts-container">
       {/* Header */}
@@ -199,17 +303,23 @@ const PostsPage = () => {
 
       {/* Upload Button */}
       <div className="upload-section">
-        <button className="upload-btn" onClick={() => setShowUploadModal(true)}>
+        <button
+          className="upload-btn"
+          onClick={() => setShowUploadModal(true)}
+          disabled={uploading}
+        >
           <Upload size={20} />
-          Upload Photos
+          {uploading ? "Uploading..." : "Upload Photos"}
         </button>
       </div>
 
       {/* Posts Grid */}
       <div className="posts-grid">
-        {posts.length === 0 ? (
+        {loading ? (
+          <div className="loading">Loading posts...</div>
+        ) : posts.length === 0 ? (
           <div className="no-posts">
-            <p>No posts yet. Share your first photo!</p>
+            <p>No posts yet. Share your first post!</p>
           </div>
         ) : (
           posts.map((post) => (
@@ -243,22 +353,37 @@ const PostsPage = () => {
                     </div>
                   </>
                 )}
-                <img
-                  src={post.images[currentImageIndex[post.id] || 0]}
-                  alt="Post"
-                  className="post-image"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/assets/images/post-placeholder.jpg";
-                  }}
-                />
+                {post.images.length > 0 && (
+                  <img
+                    src={post.images[currentImageIndex[post.id] || 0]}
+                    alt="Post"
+                    className="post-image"
+                    onError={(e) => {
+                      e.target.src =
+                        "https://via.placeholder.com/400x400?text=Image+Not+Found";
+                    }}
+                  />
+                )}
               </div>
 
               <div className="post-content">
-                <p className="post-caption">{post.caption}</p>
-                <div className="post-meta">
-                  <span className="post-time">{new Date(post.createdAt).toLocaleString()}</span>
+                <div className="post-header">
+                  {post.profilePicture && (
+                    <img
+                      src={post.profilePicture}
+                      alt={post.username}
+                      className="post-profile-pic"
+                    />
+                  )}
+                  <span className="post-username">{post.username}</span>
                 </div>
+
+                <p className="post-caption">{post.caption}</p>
+
+                <div className="post-meta">
+                  <span className="post-time">{post.timestamp}</span>
+                </div>
+
                 <div className="post-actions">
                   <button
                     className={`action-btn ${post.liked ? "liked" : ""}`}
@@ -269,7 +394,7 @@ const PostsPage = () => {
                   </button>
                   <button className="action-btn">
                     <MessageCircle size={18} />
-                    <span>Comments ({post.comments?.length || 0})</span>
+                    <span>Comments ({post.comments})</span>
                   </button>
                 </div>
               </div>
@@ -287,6 +412,7 @@ const PostsPage = () => {
               <button
                 className="close-btn"
                 onClick={() => setShowUploadModal(false)}
+                disabled={uploading}
               >
                 <X size={20} />
               </button>
@@ -301,11 +427,12 @@ const PostsPage = () => {
                   accept="image/*"
                   onChange={handleFileSelect}
                   className="file-input"
+                  disabled={uploading}
                 />
                 <label htmlFor="file-input" className="file-upload-label">
                   <Plus size={40} />
                   <span>Choose Photos</span>
-                  <small>Select one or multiple images</small>
+                  <small>Select one or multiple images (max 10)</small>
                 </label>
               </div>
 
@@ -321,6 +448,13 @@ const PostsPage = () => {
                           className="file-thumbnail"
                         />
                         <span className="file-name">{file.name}</span>
+                        <button
+                          className="remove-file-btn"
+                          onClick={() => removeSelectedFile(index)}
+                          disabled={uploading}
+                        >
+                          <X size={16} />
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -335,7 +469,10 @@ const PostsPage = () => {
                   onChange={(e) => setCaption(e.target.value)}
                   placeholder="Write a caption for your post..."
                   rows="3"
+                  disabled={uploading}
+                  maxLength={500}
                 />
+                <small className="char-count">{caption.length}/500</small>
               </div>
             </div>
 
@@ -343,15 +480,16 @@ const PostsPage = () => {
               <button
                 className="cancel-btn"
                 onClick={() => setShowUploadModal(false)}
+                disabled={uploading}
               >
                 Cancel
               </button>
               <button
                 className="upload-submit-btn"
                 onClick={handleUpload}
-                disabled={selectedFiles.length === 0}
+                disabled={selectedFiles.length === 0 || uploading}
               >
-                Upload Post
+                {uploading ? "Uploading..." : "Upload Post"}
               </button>
             </div>
           </div>

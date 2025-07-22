@@ -269,6 +269,43 @@ namespace Backend.Data
             modelBuilder.Entity<BlogReaction>()
                 .HasIndex(r => new { r.BlogId, r.UserId })
                 .IsUnique();
+
+            // Configure Post entity
+            modelBuilder.Entity<Post>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Content).IsRequired(false);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.NumberOfComments).HasDefaultValue(0);
+                entity.Property(e => e.NumberOfReacts).HasDefaultValue(0);
+
+                
+                // Configure relationship with User
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Configure relationship with PostImages
+                entity.HasMany(e => e.Images)
+                    .WithOne(i => i.Post)
+                    .HasForeignKey(i => i.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configure PostImage entity
+            modelBuilder.Entity<PostImage>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ImageUrl).IsRequired();
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+
+                entity.HasOne(e => e.Post)
+                    .WithMany(p => p.Images)
+                    .HasForeignKey(e => e.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }
