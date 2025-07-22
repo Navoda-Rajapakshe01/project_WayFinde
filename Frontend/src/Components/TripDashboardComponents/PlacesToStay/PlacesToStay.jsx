@@ -18,6 +18,7 @@ const PlacesToStay = ({ tripId }) => {
   useEffect(() => {
     if (tripId) {
       fetchTripPlaces();
+      fetchSavedAccommodations();
     }
   }, [tripId]);
 
@@ -122,14 +123,47 @@ const PlacesToStay = ({ tripId }) => {
     }
   };
 
-  const toggleSave = (accommodationId, e) => {
+  const fetchSavedAccommodations = async () => {
+    try {
+      const response = await fetch(`http://localhost:5030/api/SavedAccommodation/trip/${tripId}`);
+      if (!response.ok) throw new Error();
+      const tripSaved = await response.json();
+      setSavedAccommodations(tripSaved.map(sa => sa.accommodationId));
+    } catch {
+      setSavedAccommodations([]);
+    }
+  };
+
+  const toggleSave = async (accommodationId, e) => {
     e.preventDefault();
     e.stopPropagation();
+    const isSaved = savedAccommodations.includes(accommodationId);
+    // Optimistically update UI
     setSavedAccommodations(prev =>
-      prev.includes(accommodationId)
-        ? prev.filter(id => id !== accommodationId)
-        : [...prev, accommodationId]
+      isSaved ? prev.filter(id => id !== accommodationId) : [...prev, accommodationId]
     );
+    try {
+      if (!tripId) throw new Error("No tripId available");
+      if (isSaved) {
+        // Remove from saved accommodations in DB
+        await fetch(`http://localhost:5030/api/SavedAccommodation/${tripId}/${accommodationId}`, {
+          method: "DELETE"
+        });
+      } else {
+        // Add to saved accommodations in DB
+        await fetch(`http://localhost:5030/api/SavedAccommodation`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tripId, accommodationId })
+        });
+      }
+    } catch (err) {
+      // Revert UI if error
+      setSavedAccommodations(prev =>
+        isSaved ? [...prev, accommodationId] : prev.filter(id => id !== accommodationId)
+      );
+      alert("Failed to update saved accommodations.");
+    }
   };
 
   const renderStars = (rating) => {
@@ -241,7 +275,7 @@ const PlacesToStay = ({ tripId }) => {
                         </div>
                         <div className="detail-item">
                           <span className="detail-label">Price/Night:</span>
-                          <span className="detail-value price">${accommodation.pricePerNight || 'N/A'}</span>
+                          <span className="detail-value price">Rs:{accommodation.pricePerNight || 'N/A'}</span>
                         </div>
                       </div>
 

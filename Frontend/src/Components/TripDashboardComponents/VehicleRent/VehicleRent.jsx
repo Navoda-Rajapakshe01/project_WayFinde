@@ -33,6 +33,12 @@ const VehicleRent = ({ tripId }) => {
     }
   }, [selectedPlace]);
 
+  useEffect(() => {
+    if (tripId) {
+      fetchSavedVehicles();
+    }
+  }, [tripId]);
+
   const fetchTripPlaces = async () => {
     try {
       setLoadingPlaces(true);
@@ -127,14 +133,52 @@ const VehicleRent = ({ tripId }) => {
     }
   };
 
-  const toggleSave = (vehicleId, e) => {
+  const fetchSavedVehicles = async () => {
+    try {
+      const response = await fetch(`http://localhost:5030/api/SavedVehicle`);
+      if (!response.ok) throw new Error();
+      const allSaved = await response.json();
+      // Filter for this trip
+      setSavedVehicles(allSaved.filter(sv => sv.tripId === tripId).map(sv => sv.vehicleId));
+    } catch {
+      setSavedVehicles([]);
+    }
+  };
+
+  const toggleSave = async (vehicleId, e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    const isSaved = savedVehicles.includes(vehicleId);
+
+    // Optimistically update UI
     setSavedVehicles(prev =>
-      prev.includes(vehicleId)
-        ? prev.filter(id => id !== vehicleId)
-        : [...prev, vehicleId]
+      isSaved ? prev.filter(id => id !== vehicleId) : [...prev, vehicleId]
     );
+
+    try {
+      if (!tripId) throw new Error("No tripId available");
+
+      if (isSaved) {
+        // Remove from saved vehicles in DB
+        await fetch(`http://localhost:5030/api/SavedVehicle/${tripId}/${vehicleId}`, {
+          method: "DELETE"
+        });
+      } else {
+        // Add to saved vehicles in DB
+        await fetch(`http://localhost:5030/api/SavedVehicle`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ tripId, vehicleId })
+        });
+      }
+    } catch (err) {
+      // Revert UI if error
+      setSavedVehicles(prev =>
+        isSaved ? [...prev, vehicleId] : prev.filter(id => id !== vehicleId)
+      );
+      alert("Failed to update saved vehicles.");
+    }
   };
 
   const renderStars = (rating) => {
