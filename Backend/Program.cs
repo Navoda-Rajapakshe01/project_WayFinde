@@ -54,6 +54,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<VehicleReservationService>();
+builder.Services.AddSingleton<CometChatService>();
 
 // Add CORS policies
 builder.Services.AddCors(options =>
