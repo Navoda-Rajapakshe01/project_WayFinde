@@ -316,10 +316,6 @@ const UserManagement = () => {
     navigate(`/admin/user-profile/${user.id}`);
   };
 
-  const handleDeleteUser = (user) => {
-    // TODO: Implement delete confirmation modal
-  };
-
   // Accept deletion request
   const handleAcceptRequest = async (requestId) => {
     setActionLoading((prev) => ({ ...prev, [requestId]: true }));
@@ -560,13 +556,6 @@ const UserManagement = () => {
                       title="View Details"
                     >
                       <FaEye />
-                    </button>
-                    <button
-                      className="admindelete-button"
-                      onClick={() => handleDeleteUser(user)}
-                      title="Delete User"
-                    >
-                      <FaTrash />
                     </button>
                   </div>
                 </td>

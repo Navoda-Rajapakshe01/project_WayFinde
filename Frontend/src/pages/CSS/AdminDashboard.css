@@ -11,17 +11,17 @@ body {
   font-size: 15px;
 }
 
-a {
+.admin-dashboard a {
   color: var(--primary-color);
   text-decoration: none;
   transition: var(--transition);
 }
 
-a:hover {
+.admin-dashboard a:hover {
   color: var(--primary-dark);
 }
 
-img {
+.admin-dashboard img {
   max-width: 100%;
   height: auto;
 }
@@ -80,7 +80,7 @@ img {
 }
 
 /* --- Buttons --- */
-button {
+.admin-dashboard button {
   cursor: pointer;
   border: none;
   border-radius: 6px;
@@ -94,7 +94,7 @@ button {
   line-height: 1;
 }
 
-button:disabled {
+.admin-dashboard button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
@@ -246,14 +246,14 @@ button:disabled {
   overflow-x: auto;
 }
 
-.admin-data-table {
+.admin-dashboard .admin-data-table {
   width: 100%;
   border-collapse: collapse;
   color: #2c3e50; /* Dark text */
 }
 
-.admin-data-table th,
-.admin-data-table td {
+.admin-dashboard .admin-data-table th,
+.admin-dashboard .admin-data-table td {
   padding: 14px 18px;
   text-align: left;
   border-bottom: 1px solid #e0e0e0; /* Light border */
@@ -261,7 +261,7 @@ button:disabled {
   white-space: nowrap;
 }
 
-.admin-data-table thead th {
+.admin-dashboard .admin-data-table thead th {
   background-color: #f8f9fa; /* Very light gray */
   font-weight: 600;
   font-size: 0.9rem;
@@ -272,11 +272,11 @@ button:disabled {
   z-index: 10;
 }
 
-.admin-data-table tbody tr:hover {
+.admin-dashboard .admin-data-table tbody tr:hover {
   background-color: #f1f3f5; /* Light gray */
 }
 
-.admin-data-table tbody tr:last-child td {
+.admin-dashboard .admin-data-table tbody tr:last-child td {
   border-bottom: none;
 }
 
