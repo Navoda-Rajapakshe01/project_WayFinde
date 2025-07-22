@@ -21,7 +21,9 @@ namespace Backend.Data
         public DbSet<Post> Posts { get; set; } = null!;
         public DbSet<Follows> Follows { get; set; } = null!;
         public DbSet<PostImage> PostImages { get; set; } = null!;
-        
+        public DbSet<PostReact> PostReactions { get; set; } = null!;
+        public DbSet<PostComment> PostComments { get; set; } = null!;
+
 
         // DbSets for your models
         public DbSet<Vehicle> Vehicles { get; set; }

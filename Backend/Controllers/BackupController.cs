@@ -32,7 +32,7 @@ namespace Backend.Controllers
                 }).ToListAsync();
             var posts = await _context.Posts
                 .Select(p => new {
-                    p.Id, p.Title, p.Content, p.CreatedAt, p.UserId, p.DistrictId, p.Tags, p.NumberOfComments, p.NumberOfReads, p.NumberOfReacts, p.CoverImageUrl, p.ImageUrls
+                    p.Id, p.Title, p.Content, p.CreatedAt, p.UserId, p.Tags, p.NumberOfComments, p.NumberOfReads, p.NumberOfReacts, p.CoverImageUrl, p.ImageUrls
                 }).ToListAsync();
             var follows = await _context.Follows
                 .Select(f => new { f.FollowerID, f.FollowedID, f.FollowDate }).ToListAsync();

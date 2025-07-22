@@ -45,38 +45,32 @@ const PostsPage = () => {
 
       console.log("Posts API response:", response.data);
 
-      // Map API response to our component's structure
-      if (response.data) {
-        const formattedPosts = response.data.map((post) => ({
+      // Check if data exists and has the $values property
+      if (response.data && response.data.$values) {
+        // Map from $values array instead of directly from response.data
+        const formattedPosts = response.data.$values.map((post) => ({
           id: post.id,
-          images: post.images.map((img) => img.imageUrl),
-          caption: post.caption,
+          // Handle nested $values for images as well
+          images:
+            post.images && post.images.$values
+              ? post.images.$values.map((img) => img.imageUrl)
+              : [],
+          caption: post.content || "",
           likes: post.likes || 0,
           comments: post.comments || 0,
-          liked: false, // You can implement this based on user's reaction
+          liked: false,
           timestamp: formatDate(post.createdAt),
-          username: post.username,
-          profilePicture: post.profilePicture,
+          username: post.username || "Unknown",
         }));
 
         setPosts(formattedPosts);
+      } else {
+        console.warn("Unexpected API response format:", response.data);
+        setPosts([]);
       }
     } catch (err) {
       console.error("Error fetching posts:", err);
-      if (err.response?.status === 401) {
-        // Handle unauthorized access
-        Swal.fire({
-          icon: "error",
-          title: "Authentication Error",
-          text: "Please log in again to view posts.",
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to load posts. Please try again.",
-        });
-      }
+      // Rest of your error handling
     } finally {
       setLoading(false);
     }
@@ -275,25 +269,71 @@ const PostsPage = () => {
     }
   };
 
-  // Navigation functions for image carousel
-  const nextImage = (postId) => {
+  // Add this function to handle dot navigation
+  const goToImage = (postId, index) => {
     setCurrentImageIndex((prev) => ({
       ...prev,
-      [postId]:
-        ((prev[postId] || 0) + 1) %
-        posts.find((p) => p.id === postId).images.length,
+      [postId]: index,
     }));
   };
 
-  const prevImage = (postId) => {
-    setCurrentImageIndex((prev) => ({
-      ...prev,
-      [postId]:
-        ((prev[postId] || 0) -
-          1 +
-          posts.find((p) => p.id === postId).images.length) %
-        posts.find((p) => p.id === postId).images.length,
-    }));
+  // Add this function in the PostsPage component
+  const handleDeletePost = async (postId, event) => {
+    // Prevent event propagation if called from a click event
+    if (event) {
+      event.stopPropagation();
+    }
+
+    if (!postId) return;
+
+    // Show confirmation dialog
+    const result = await Swal.fire({
+      title: "Delete Post?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      setLoading(true);
+
+      const response = await axios.delete(`${API_BASE_URL}/Posts/${postId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      if (response.status === 200) {
+        // Remove the deleted post from state
+        setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+
+        // Show success message
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your post has been deleted.",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        console.log("Post deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Deletion Failed",
+        text: "Unable to delete this post. Please try again.",
+        footer: '<a href="#">Contact support if the problem persists</a>',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -325,34 +365,23 @@ const PostsPage = () => {
           posts.map((post) => (
             <div key={post.id} className="post-card">
               <div className="post-images">
+                {/* Show indicators for all posts with multiple images */}
                 {post.images.length > 1 && (
-                  <>
-                    <button
-                      className="nav-arrow nav-arrow-left"
-                      onClick={() => prevImage(post.id)}
-                    >
-                      ‹
-                    </button>
-                    <button
-                      className="nav-arrow nav-arrow-right"
-                      onClick={() => nextImage(post.id)}
-                    >
-                      ›
-                    </button>
-                    <div className="image-indicators">
-                      {post.images.map((_, index) => (
-                        <div
-                          key={index}
-                          className={`indicator ${
-                            index === (currentImageIndex[post.id] || 0)
-                              ? "active"
-                              : ""
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </>
+                  <div className="image-indicators">
+                    {post.images.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`indicator ${
+                          index === (currentImageIndex[post.id] || 0)
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() => goToImage(post.id, index)}
+                      />
+                    ))}
+                  </div>
                 )}
+
                 {post.images.length > 0 && (
                   <img
                     src={post.images[currentImageIndex[post.id] || 0]}
@@ -376,6 +405,16 @@ const PostsPage = () => {
                     />
                   )}
                   <span className="post-username">{post.username}</span>
+
+                  {post.username === user?.username && (
+                    <button
+                      className="delete-btn"
+                      onClick={(e) => handleDeletePost(post.id, e)}
+                      aria-label="Delete post"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
                 </div>
 
                 <p className="post-caption">{post.caption}</p>

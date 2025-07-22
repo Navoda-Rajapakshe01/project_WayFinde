@@ -54,7 +54,7 @@ namespace Backend.Controllers
                 var result = posts.Select(p => new PostDto
                 {
                     Id = p.Id,
-                    Caption = p.Content, // Map Content to Caption for frontend compatibility
+                    Content = p.Content, // Map Content to Caption for frontend compatibility
                     CreatedAt = p.CreatedAt,
                     Likes = p.NumberOfReacts,
                     Comments = p.NumberOfComments,
@@ -88,7 +88,7 @@ namespace Backend.Controllers
                 }
 
                 _logger.LogInformation($"User ID: {userId}");
-                _logger.LogInformation($"Caption: '{request.Caption}'");
+                _logger.LogInformation($"Content: '{request.Content}'");
                 _logger.LogInformation($"Files count: {request.Files?.Count ?? 0}");
 
                 // Step 1: Check if user exists
@@ -158,9 +158,9 @@ namespace Backend.Controllers
                 // Step 3: Create post object
                 var post = new Post
                 {
-                    Title = string.IsNullOrEmpty(request.Caption) ? "Untitled" :
-                           (request.Caption.Length > 50 ? request.Caption.Substring(0, 50) + "..." : request.Caption),
-                    Content = request.Caption ?? string.Empty,
+                    Title = string.IsNullOrEmpty(request.Content   ) ? "Untitled" :
+                           (request.Content.Length > 50 ? request.Content.Substring(0, 50) + "..." : request.Content),
+                    Content = request.Content ?? string.Empty,
                     CreatedAt = DateTime.UtcNow,
                     UserId = userId,
                     Tags = string.Empty,
@@ -240,7 +240,7 @@ namespace Backend.Controllers
                 var postDto = new PostDto
                 {
                     Id = createdPost.Id,
-                    Caption = createdPost.Content,
+                    Content = createdPost.Content,
                     CreatedAt = createdPost.CreatedAt,
                     Likes = createdPost.NumberOfReacts,
                     Comments = createdPost.NumberOfComments,
@@ -295,7 +295,7 @@ namespace Backend.Controllers
                 var postDto = new PostDto
                 {
                     Id = post.Id,
-                    Caption = post.Content,
+                    Content = post.Content,
                     CreatedAt = post.CreatedAt,
                     Likes = post.NumberOfReacts,
                     Comments = post.NumberOfComments,
@@ -400,19 +400,67 @@ namespace Backend.Controllers
 
             return imageList;
         }
+
+        // Add this method to your existing PostsController
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            try
+            {
+                // Get current user ID
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                {
+                    return Unauthorized("Invalid user credentials");
+                }
+
+                // Find post
+                var post = await _context.Posts
+                    .Include(p => p.Images)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
+                if (post == null)
+                {
+                    return NotFound("Post not found");
+                }
+
+                // Verify user owns the post
+                if (post.UserId != userId)
+                {
+                    return Forbid("You can only delete your own posts");
+                }
+
+                // Delete related images first
+                if (post.Images != null && post.Images.Any())
+                {
+                    _context.PostImages.RemoveRange(post.Images);
+                }
+
+                // Delete the post
+                _context.Posts.Remove(post);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Post deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting post {PostId}", id);
+                return StatusCode(500, "An error occurred while deleting the post");
+            }
+        }
     }
 
     // Keep the same DTOs
     public class CreatePostRequest
     {
-        public string Caption { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
         public List<IFormFile> Files { get; set; } = new List<IFormFile>();
     }
 
     public class PostDto
     {
         public int Id { get; set; }
-        public string Caption { get; set; } = string.Empty;
+        public string Content { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public int Likes { get; set; }
         public int Comments { get; set; }
