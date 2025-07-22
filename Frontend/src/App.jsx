@@ -60,7 +60,6 @@ import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 import BlogCard from "./Components/BlogComponents/BlogCard/BlogCard";
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
-import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 
 import "./App.css";
 import UserTrips from "./pages/Admin/UserTrips";
@@ -117,10 +116,14 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/plantrip" element={<CreateTrip />} />
-        <Route path="/trip-planner" element={<PlanTrip />} />
         <Route path="/upcomingtrips" element={<AllTrips />} />
         <Route path="/alltrips" element={<AllTrips />} />
         <Route path="/accommodation" element={<Accommodation />} />
+        <Route
+          path="/shared-trip/:tripId"
+          element={<TripDashboard sharedMode={true} />}
+        />
+
         <Route path="/vehicle" element={<Vehicle />} />
         <Route
           path="/vehicle/supplier"

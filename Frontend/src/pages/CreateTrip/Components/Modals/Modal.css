@@ -8,6 +8,9 @@
   width: 100%;
 }
 
+.select-container select {
+  border: none !important;
+}
 .select-icon {
   position: absolute;
   left: 1rem;
@@ -21,7 +24,7 @@
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+
   background-color: #f8fafc;
   font-size: 0.875rem;
   color: #0f172a;
@@ -83,6 +86,17 @@
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.modal-date-field input[type="date"] {
+  position: static;
+  z-index: auto;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  width: 100%;
+  outline: none;
 }
 
 /* Name input styles */

@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import './AddNotes.css';
+import React, { useState } from "react";
+import "./AddNotes.css";
 
-const AddNotes = ({ isOpen, onClose, onSave, tripId }) => {
-  const [title, setTitle] = useState('');
-  const [note, setNote] = useState('');
+const AddNotes = ({ isOpen, onClose, onSave, tripId, sharedMode = false }) => {
+  const [title, setTitle] = useState("");
+  const [note, setNote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // Function to call backend API
   const createNote = async (title, note) => {
-    const response = await fetch('http://localhost:5030/api/DashboardNote', {
-      method: 'POST',
+    const response = await fetch("http://localhost:5030/api/DashboardNote", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'text/plain',
+        "Content-Type": "application/json",
+        Accept: "text/plain",
       },
       body: JSON.stringify({
         noteTitle: title,
@@ -25,9 +25,9 @@ const AddNotes = ({ isOpen, onClose, onSave, tripId }) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(errorText || 'Failed to create note');
+      throw new Error(errorText || "Failed to create note");
     } else {
-      alert('Successfully added.');
+      alert("Successfully added.");
     }
 
     return response.json();
@@ -35,7 +35,7 @@ const AddNotes = ({ isOpen, onClose, onSave, tripId }) => {
 
   const handleSave = async () => {
     if (!title.trim() || !note.trim()) {
-      alert('Please enter both title and note content');
+      alert("Please enter both title and note content");
       return;
     }
 
@@ -45,24 +45,24 @@ const AddNotes = ({ isOpen, onClose, onSave, tripId }) => {
     try {
       const savedNote = await createNote(title, note);
       onSave(savedNote);
-      setTitle('');
-      setNote('');
+      setTitle("");
+      setNote("");
       onClose();
     } catch (err) {
-      setError(err.message || 'Failed to save note');
+      setError(err.message || "Failed to save note");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    setTitle('');
-    setNote('');
+    setTitle("");
+    setNote("");
     setError(null);
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || sharedMode) return null;
 
   return (
     <div className="add-notes-overlay">
@@ -72,9 +72,7 @@ const AddNotes = ({ isOpen, onClose, onSave, tripId }) => {
         </div>
 
         <div className="add-notes-content">
-          {error && (
-            <div className="error-message">{error}</div>
-          )}
+          {error && <div className="error-message">{error}</div>}
 
           <div className="form-group">
             <label htmlFor="note-title">Title</label>
@@ -114,7 +112,7 @@ const AddNotes = ({ isOpen, onClose, onSave, tripId }) => {
             onClick={handleSave}
             disabled={isLoading}
           >
-            {isLoading ? 'Saving...' : 'Save Note'}
+            {isLoading ? "Saving..." : "Save Note"}
           </button>
         </div>
       </div>

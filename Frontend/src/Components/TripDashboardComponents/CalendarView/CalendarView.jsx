@@ -1,44 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "./CalendarView.css";
 
-const CalendarView = ({ trip }) => {
-  const [selectedDate, setSelectedDate] = useState(null);
+const CalendarView = ({ tripId, setSelectedDate, sharedMode = false }) => {
+  const [tripPlaces, setTripPlaces] = useState([]);
+  const [activeDate, setActiveDate] = useState(null);
 
-  const tripDates = trip.places.flatMap((place) => {
-    const date = place?.startDate?.split("T")[0];
-    return date ? [{ ...place, date }] : [];
-  });
+  // ✅ Always normalize .NET backend result
+  const places = tripPlaces?.$values || [];
 
-  const uniqueDates = [...new Set(tripDates.map((p) => p.date))];
+  useEffect(() => {
+    const fetchTripPlaces = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5030/api/trips/lightweight-map/${tripId}`
+        );
+        setTripPlaces(response.data);
+      } catch (err) {
+        console.error("Error fetching trip map data:", err);
+      }
+    };
 
-  const handleDateClick = (date) => {
-    setSelectedDate(date);
-  };
+    if (tripId) fetchTripPlaces();
+  }, [tripId]);
 
-  const filteredPlaces = selectedDate
-    ? tripDates.filter((p) => p.date === selectedDate)
+  const uniqueDates = [...new Set(places.map((p) => p.startDate))];
+
+  const filteredPlaces = activeDate
+    ? places.filter((p) => p.startDate === activeDate)
     : [];
 
   return (
     <div className="calendar-view">
       <div className="calendar-dates">
-        {uniqueDates.length === 0 ? (
-          <p>No dates available for this trip.</p>
-        ) : (
-          uniqueDates.map((date, index) => (
+        {uniqueDates.map((date, idx) => {
+          const formatted = sharedMode
+            ? `${new Date(date).getFullYear()}-XX-XX`
+            : new Date(date).toLocaleDateString();
+
+          return (
             <div
-              key={index}
-              className={`calendar-date ${selectedDate === date ? "active" : ""}`}
-              onClick={() => handleDateClick(date)}
+              key={idx}
+              className={`calendar-date ${activeDate === date ? "active" : ""}`}
+              onClick={() => {
+                setSelectedDate(date);
+                setActiveDate(date);
+              }}
             >
-              {date}
+              {formatted}
             </div>
-          ))
-        )}
+          );
+        })}
       </div>
 
       <div className="calendar-places">
-        {selectedDate ? (
+        {activeDate ? (
           filteredPlaces.length ? (
             filteredPlaces.map((place, index) => (
               <div key={index} className="calendar-place">
