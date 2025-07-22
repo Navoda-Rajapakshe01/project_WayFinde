@@ -47,19 +47,25 @@ namespace Backend.Controllers
 
         // GET: api/places/by-district-name/nuwara-eliya
         [HttpGet("by-district-name/{slug}")]
-        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
+        public async Task<IActionResult> GetPlacesByDistrictSlug(string slug)
         {
-            // Find the district by the slug
             var district = await _context.Districts
                 .FirstOrDefaultAsync(d => d.Slug.ToLower() == slug.ToLower());
 
-            // If district not found, return a 404 Not Found
             if (district == null)
                 return NotFound("District not found");
 
-            // Get places belonging to the found district
             var places = await _context.PlacesToVisit
                 .Where(p => p.DistrictId == district.Id)
+                .Select(p => new
+                {
+                    id = p.Id,
+                    name = p.Name,
+                    categoryId = p.CategoryId,
+                    mainImageUrl = p.MainImageUrl,
+                    description = p.Description,
+                    // Add any other properties you need for the frontend
+                })
                 .ToListAsync();
 
             return Ok(places);
