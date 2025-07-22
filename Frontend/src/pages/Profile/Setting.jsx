@@ -18,9 +18,57 @@ const ProfileSettings = () => {
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
 
+  const DELETION_REASONS = [
+    "I have privacy concerns",
+    "I don't find the service useful",
+    "I have multiple accounts",
+    "Other"
+  ];
+  const [deletionRequest, setDeletionRequest] = useState(null);
+  const [deletionLoading, setDeletionLoading] = useState(false);
+  const [deletionError, setDeletionError] = useState(null);
+  const [deletionSuccess, setDeletionSuccess] = useState(null);
+  const [selectedReason, setSelectedReason] = useState("");
+  const [hasTriedDelete, setHasTriedDelete] = useState(false);
+
   useEffect(() => {
     fetchProfileDetails();
   }, []);
+
+  useEffect(() => {
+    // Fetch account deletion request status
+    const fetchDeletionRequest = async () => {
+      try {
+        setDeletionLoading(true);
+        setDeletionError(null);
+        const token = localStorage.getItem("token");
+        const user = JSON.parse(localStorage.getItem("userProfile"));
+        if (!user?.id) return;
+        const res = await axios.get(`http://localhost:5030/api/account-deletion/requests`);
+        // Handle .NET $values arrays
+        const data = res.data?.$values || res.data;
+        // Find the request for this user
+        const req = data.find(r => (r.userId === user.id || r.userId === user.Id));
+        setDeletionRequest(req || null);
+      } catch (err) {
+        setDeletionError("Failed to fetch account deletion request status.");
+      } finally {
+        setDeletionLoading(false);
+      }
+    };
+    fetchDeletionRequest();
+  }, []);
+
+  useEffect(() => {
+    if (deletionRequest && deletionRequest.status === 'Approved') {
+      // Show goodbye message, then logout and redirect
+      setTimeout(() => {
+        localStorage.removeItem('userProfile');
+        localStorage.removeItem('token');
+        window.location.href = '/signin';
+      }, 3000); // 3 seconds
+    }
+  }, [deletionRequest]);
 
   const fetchProfileDetails = async () => {
     try {
@@ -111,6 +159,27 @@ const ProfileSettings = () => {
     }
   };
 
+  const handleRequestDeletion = async () => {
+    setHasTriedDelete(true);
+    setDeletionLoading(true);
+    setDeletionError(null);
+    setDeletionSuccess(null);
+    try {
+      const user = JSON.parse(localStorage.getItem("userProfile"));
+      if (!user?.id) throw new Error("User not found");
+      await axios.post(`http://localhost:5030/api/account-deletion/request`, JSON.stringify(user.id), {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      setDeletionSuccess("Your account deletion request has been sent to the admin.");
+      setDeletionRequest({ status: "Pending" });
+      setSelectedReason("");
+    } catch (err) {
+      setDeletionError(err.response?.data || "Failed to send request.");
+    } finally {
+      setDeletionLoading(false);
+    }
+  };
+
   const handleImageClick = () => {
     fileInputRef.current.click();
   };
@@ -171,6 +240,35 @@ const ProfileSettings = () => {
     setPreviewImage(null);
     setSelectedFile(null);
     setShowSaveButton(false);
+  };
+
+  // Add a function to clear declined request
+  const handleClearDeclinedRequest = async () => {
+    try {
+      setDeletionLoading(true);
+      setDeletionError(null);
+      const user = JSON.parse(localStorage.getItem("userProfile"));
+      if (!user?.id) throw new Error("User not found");
+      // Find the declined request for this user
+      const res = await axios.get(`http://localhost:5030/api/account-deletion/requests`);
+      const data = res.data?.$values || res.data;
+      const req = data.find(r => (r.userId === user.id || r.userId === user.Id) && r.status === 'Declined');
+      if (!req) throw new Error("No declined request found");
+      // Delete the declined request (assume DELETE endpoint exists)
+      await axios.delete(`http://localhost:5030/api/account-deletion/${req.id}`);
+      setDeletionRequest(null);
+      setDeletionSuccess(null);
+      setSelectedReason("");
+      // Focus the reason dropdown after clearing
+      setTimeout(() => {
+        const dropdown = document.querySelector('.account-deletion-dropdown');
+        if (dropdown) dropdown.focus();
+      }, 100);
+    } catch (err) {
+      setDeletionError("Failed to clear declined request. Please try again later.");
+    } finally {
+      setDeletionLoading(false);
+    }
   };
 
   return (
@@ -249,17 +347,101 @@ const ProfileSettings = () => {
         {passwordError && <p style={{ color: "red" }}>{passwordError}</p>}
         {passwordSuccess && <p style={{ color: "green" }}>{passwordSuccess}</p>}
       </div>
-
+      {/* Account Deletion Section */}
       <div className="delete-section">
-        <label className="section-title">Delete account</label>
-        <p>Reason for deleting the account</p>
-        <textarea
-          placeholder="Type here.."
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-        />
-        <small>Send a request to admin to delete the account</small>
-        <button className="btn delete-btn">Delete Account</button>
+        <label className="section-title">Delete Account</label>
+        <div style={{ margin: '12px 0 18px 0', color: '#7b8794', fontSize: '1rem' }}>
+          You can request to delete your account. Please select a reason and confirm.
+        </div>
+        {deletionLoading && <div>Loading account deletion status...</div>}
+        {hasTriedDelete && deletionError && (
+          <div style={{ color: 'red' }}>
+            {deletionError === 'User not found.'
+              ? 'Your account could not be found. Please log out and log in again.'
+              : deletionError === 'A pending deletion request already exists.'
+              ? 'You already have a pending account deletion request.'
+              : 'Failed to send account deletion request. Please try again later.'}
+          </div>
+        )}
+        {deletionSuccess && <div style={{ color: 'green' }}>{deletionSuccess}</div>}
+        {deletionRequest ? (
+          <div
+            className={`account-deletion-status ${deletionRequest.status?.toLowerCase()}`}
+            style={{
+              margin: '24px auto',
+              maxWidth: 400,
+              background: '#f4f6fa', // lighter neutral background
+              border: '1px solid #d1d5db', // subtle border
+              borderRadius: 10,
+              padding: '24px 20px',
+              boxShadow: '0 2px 8px rgba(44,62,80,0.06)',
+              textAlign: 'center',
+            }}
+          >
+            <strong style={{ fontSize: '1.1rem', color: '#e74c3c' }}>
+              Account Deletion Request Status
+            </strong>
+            <div style={{ margin: '12px 0 0 0', fontSize: '1.05rem', color: '#1a3456' }}>
+              {deletionRequest.status === 'Declined' ? (
+                <span style={{ color: '#e74c3c', fontWeight: 600 }}>{deletionRequest.status}</span>
+              ) : (
+                deletionRequest.status
+              )}
+            </div>
+            {deletionRequest.status === 'Declined' && deletionRequest.adminReply && (
+              <>
+                <div className="account-deletion-status declined" style={{ marginTop: 10, color: '#b94a48', background: '#fff3f3', borderRadius: 6, padding: '10px 12px', border: '1px solid #f5c6cb', fontSize: '1rem' }}>
+                  <strong style={{ color: '#e74c3c' }}>Admin Reply:</strong> <span style={{ color: '#333' }}>{deletionRequest.adminReply}</span>
+                </div>
+                <button
+                  className="btn delete-btn account-deletion-btn-small"
+                  style={{ marginTop: 18, background: '#2563eb', color: '#fff', padding: '8px 20px', fontSize: '1rem', borderRadius: 6, border: 'none', fontWeight: 500 }}
+                  onClick={handleClearDeclinedRequest}
+                  disabled={deletionLoading}
+                >
+                  Clear and Re-request
+                </button>
+              </>
+            )}
+            {deletionRequest.status === 'Pending' && (
+              <div className="account-deletion-status pending" style={{ marginTop: 10, color: '#129bb3' }}>
+                Your request is being reviewed by the admin.
+              </div>
+            )}
+            {deletionRequest.status === 'Approved' && (
+              <div className="account-deletion-status approved" style={{ marginTop: 10, color: '#27ae60' }}>
+                Your account will be deleted soon.<br />
+                <span style={{ color: '#1a3456', fontWeight: 500 }}>
+                  You will be logged out in a moment. Thank you for using our service!
+                </span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <div style={{ marginBottom: 16 }}>
+              <select
+                className="account-deletion-dropdown"
+                value={selectedReason}
+                onChange={e => setSelectedReason(e.target.value)}
+                style={{ padding: '8px 12px', borderRadius: 6, border: '1px solid #ccc', fontSize: '1rem', minWidth: 220 }}
+              >
+                <option value="">Select a reason...</option>
+                {DELETION_REASONS.map((reason) => (
+                  <option key={reason} value={reason}>{reason}</option>
+                ))}
+              </select>
+            </div>
+            <button
+              className="btn delete-btn account-deletion-btn-small"
+              onClick={handleRequestDeletion}
+              disabled={!selectedReason || deletionLoading}
+              style={{ background: '#e74c3c', color: '#fff', padding: '8px 20px', fontSize: '1rem', borderRadius: 6, border: 'none', fontWeight: 500 }}
+            >
+              Delete My Account
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

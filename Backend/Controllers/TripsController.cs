@@ -383,7 +383,9 @@ namespace Backend.Data
             var collaborator = new TripCollaborator
             {
                 TripId = tripId,
-                UserId = userId
+                UserId = userId,
+                Trip = trip!,
+                User = user!
             };
 
             _context.TripCollaborator.Add(collaborator);

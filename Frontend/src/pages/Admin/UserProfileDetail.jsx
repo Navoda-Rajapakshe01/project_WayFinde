@@ -36,10 +36,10 @@ const UserProfileDetail = () => {
         if (role === "NormalUser") {
           // Blogs
           const blogsRes = await axios.get("http://localhost:5030/api/Blog/all");
-          const blogsArray = Array.isArray(blogsRes.data?.$values) ? blogsRes.data.$values : [];
-          const userBlogs = blogsArray.filter(
+          const blogsArray = Array.isArray(blogsRes.data?.$values) ? blogsRes.data.$values : Array.isArray(blogsRes.data) ? blogsRes.data : [];
+          const userBlogs = Array.isArray(blogsArray) ? blogsArray.filter(
             (b) => b.User && (b.User.Id === userId || b.User.id === userId)
-          );
+          ) : [];
           setBlogCount(userBlogs.length);
           // Trips
           const tripsRes = await axios.get(
@@ -50,22 +50,28 @@ const UserProfileDetail = () => {
         } else if (role === "AccommodationProvider") {
           // Accommodations
           const accRes = await axios.get("http://localhost:5030/api/accommodation");
-          const userAccs = accRes.data.filter(a => a.ownerId === userId || a.OwnerId === userId);
+          let accData = accRes.data;
+          if (accData && accData.$values) accData = accData.$values;
+          const userAccs = Array.isArray(accData) ? accData.filter(a => a.ownerId === userId || a.OwnerId === userId) : [];
           setAccommodationCount(userAccs.length);
           // Accommodation Bookings
           const bookingsRes = await axios.get("http://localhost:5030/api/AccommodationReservation");
-          const userBookings = bookingsRes.data.filter(b => b.ownerId === userId || b.OwnerId === userId);
+          let bookingsData = bookingsRes.data;
+          if (bookingsData && bookingsData.$values) bookingsData = bookingsData.$values;
+          const userBookings = Array.isArray(bookingsData) ? bookingsData.filter(b => b.ownerId === userId || b.OwnerId === userId) : [];
           setAccommodationBookingCount(userBookings.length);
         } else if (role === "TransportProvider" || role === "VehicleProvider") {
           // Vehicles
           const vehiclesRes = await axios.get("http://localhost:5030/api/vehicle");
-          const vehiclesArray = Array.isArray(vehiclesRes.data?.$values) ? vehiclesRes.data.$values : [];
-          const userVehicles = vehiclesArray.filter(v => v.supplierId === userId || v.SupplierId === userId);
+          let vehiclesData = vehiclesRes.data;
+          if (vehiclesData && vehiclesData.$values) vehiclesData = vehiclesData.$values;
+          const userVehicles = Array.isArray(vehiclesData) ? vehiclesData.filter(v => v.supplierId === userId || v.SupplierId === userId) : [];
           setVehicleCount(userVehicles.length);
           // Vehicle Bookings
           const bookingsRes = await axios.get("http://localhost:5030/api/VehicleReservations");
-          const bookingsArray = Array.isArray(bookingsRes.data?.$values) ? bookingsRes.data.$values : [];
-          const userBookings = bookingsArray.filter(b => b.ownerId === userId || b.OwnerId === userId || b.supplierId === userId || b.SupplierId === userId);
+          let bookingsData = bookingsRes.data;
+          if (bookingsData && bookingsData.$values) bookingsData = bookingsData.$values;
+          const userBookings = Array.isArray(bookingsData) ? bookingsData.filter(b => b.ownerId === userId || b.OwnerId === userId || b.supplierId === userId || b.SupplierId === userId) : [];
           setVehicleBookingCount(userBookings.length);
         }
       } catch (err) {
