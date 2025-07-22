@@ -67,6 +67,42 @@ import UserBlogs from "./pages/Admin/UserBlogs";
 import AdminUserVehicles from "./pages/Admin/AdminUserVehicles";
 import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
 
+import { CometChat } from "@cometchat-pro/chat";
+
+const appID = "279195a6164aa3fa"; 
+const region = "in"; 
+const authKey = import.meta.env.VITE_COMETCHAT_AUTH_KEY;
+
+CometChat.init(appID, new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(region).build())
+  .then(() => {
+    console.log("CometChat initialized successfully");
+  })
+  .catch(error => {
+    console.error("CometChat initialization failed", error);
+  });
+
+const loginCometChat = async (userId, userName) => {
+  try {
+    await CometChat.login(userId, authKey);
+    console.log("CometChat Login Successful");
+  } catch (error) {
+    if (error.code === "ERR_UID_NOT_FOUND") {
+      // Call backend to create user
+      await fetch("/api/cometchat/create-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: userId, name: userName }),
+      });
+      // Retry login
+      await CometChat.login(userId, authKey);
+    } else {
+      console.error("CometChat Login failed", error);
+    }
+  }
+};
+
+export { loginCometChat };
+
 function AppRoutes() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
