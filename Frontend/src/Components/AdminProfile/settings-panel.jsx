@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaGlobe,
   FaEnvelope,
@@ -20,6 +19,7 @@ import "../../App.css";
 const SettingsPanel = () => {
   const [siteName, setSiteName] = useState("WayFinde");
   const [contactEmail, setContactEmail] = useState("admin@wayfinde.com");
+  const [contactNumber, setContactNumber] = useState("+94 xx xxx xxxx");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,14 +30,34 @@ const SettingsPanel = () => {
   const [feedback, setFeedback] = useState("");
   const [backupInProgress, setBackupInProgress] = useState(false);
 
+  // Load siteSettings from localStorage on mount
+  useEffect(() => {
+    const settings = localStorage.getItem("siteSettings");
+    if (settings) {
+      try {
+        const parsed = JSON.parse(settings);
+        if (parsed.siteName) setSiteName(parsed.siteName);
+        if (parsed.contactEmail) setContactEmail(parsed.contactEmail);
+        if (parsed.contactNumber) setContactNumber(parsed.contactNumber);
+      } catch {}
+    }
+  }, []);
+
   const handleSave = () => {
     setFeedback("Settings saved successfully!");
     setTimeout(() => setFeedback(""), 2000);
+    // Optionally, persist to localStorage or backend here
+    localStorage.setItem("siteSettings", JSON.stringify({
+      siteName,
+      contactEmail,
+      contactNumber,
+    }));
   };
 
   const handleReset = () => {
     setSiteName("WayFinde");
     setContactEmail("admin@wayfinde.com");
+    setContactNumber("+94 xx xxx xxxx");
     setEmailNotifications(true);
     setPushNotifications(false);
     setFeedback("Settings reset to default.");
@@ -61,13 +81,38 @@ const SettingsPanel = () => {
     setConfirmPassword("");
   };
 
-  const handleBackup = () => {
+  const handleBackup = async () => {
     setBackupInProgress(true);
-    setTimeout(() => {
-      setBackupInProgress(false);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:5030/api/backup/export", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) throw new Error("Failed to download backup");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      // Try to get filename from response header, fallback to default
+      const disposition = response.headers.get("Content-Disposition");
+      let filename = "wayfinde-backup.json";
+      if (disposition && disposition.indexOf("filename=") !== -1) {
+        filename = disposition.split("filename=")[1].replace(/['"]/g, "");
+      }
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
       setFeedback("Backup completed successfully!");
+    } catch (err) {
+      setFeedback("Backup failed: " + (err.message || err));
+    } finally {
+      setBackupInProgress(false);
       setTimeout(() => setFeedback(""), 2000);
-    }, 1500);
+    }
   };
 
   return (
@@ -102,52 +147,21 @@ const SettingsPanel = () => {
               onChange={(e) => setContactEmail(e.target.value)}
             />
           </div>
-        </div>
-        <div className="admin-card pro-section-card">
-          <div className="pro-section-header pro-section-header-accent">
-            <FaShieldAlt className="pro-icon-accent" />
-            <span>Security</span>
-          </div>
           <div className="settings-row">
-            <label>Current Password</label>
+            <label>Contact Number</label>
             <input
-              type="password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
+              type="text"
+              value={contactNumber}
+              onChange={(e) => setContactNumber(e.target.value)}
             />
           </div>
-          <div className="settings-password-row">
-            <div className="settings-row">
-              <label>New Password</label>
-              <input
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-            </div>
-            <div className="settings-row">
-              <label>Confirm New Password</label>
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-          </div>
-          {passwordError && (
-            <div className="settings-error pro-animate">
-              <FaExclamationTriangle className="pro-icon-error" />{" "}
-              {passwordError}
-            </div>
-          )}
-          {passwordSuccess && (
-            <div className="settings-success pro-animate">
-              <FaCheck className="pro-icon-accent" /> {passwordSuccess}
-            </div>
-          )}
-          <div className="settings-actions">
-            <button className="adminsave-button" onClick={handleChangePassword}>
-              <FaSave /> Change Password
+          {/* Save/Reset buttons inside the card */}
+          <div className="settings-actions pro-actions-footer">
+            <button className="adminreset-button" onClick={handleReset}>
+              <FaUndo /> Reset
+            </button>
+            <button className="adminsave-button" onClick={handleSave}>
+              <FaSave /> Save All
             </button>
           </div>
         </div>
@@ -164,16 +178,6 @@ const SettingsPanel = () => {
             >
               <FaCloudUploadAlt />{" "}
               {backupInProgress ? "Backing Up..." : "Backup Data"}
-            </button>
-          </div>
-        </div>
-        <div className=" pro-section-card pro-actions-card">
-          <div className="settings-actions pro-actions-footer">
-            <button className="adminreset-button" onClick={handleReset}>
-              <FaUndo /> Reset
-            </button>
-            <button className="adminsave-button" onClick={handleSave}>
-              <FaSave /> Save All
             </button>
           </div>
         </div>

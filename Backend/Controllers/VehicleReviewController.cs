@@ -43,7 +43,6 @@ namespace Backend.Controllers
             return await _context.VehicleReviews
                 .Where(vr => vr.VehicleId == vehicleId)
                 .Include(vr => vr.Vehicle)
-                .OrderByDescending(vr => vr.DatePosted)
                 .ToListAsync();
         }
 
@@ -54,7 +53,6 @@ namespace Backend.Controllers
             if (vehicle == null)
                 return BadRequest("Vehicle not found");
 
-            vehicleReview.DatePosted = DateTime.UtcNow;
             _context.VehicleReviews.Add(vehicleReview);
             await _context.SaveChangesAsync();
 

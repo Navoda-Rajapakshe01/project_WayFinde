@@ -8,16 +8,14 @@ const VehicleCard = ({
   onDelete,
   onViewBookings,
 }) => {
-  // Determine status string safely
-  const status =
-    vehicle.status ?? (vehicle.isAvailable ? "Available" : "Rented");
-  console.log(vehicle); // Check the actual structure of the vehicle object
-  console.log(vehicle.imageUrls);
+  const imageUrl = vehicle.imageUrls?.$values?.[0] || "/default.jpg";
+  const status = vehicle.isAvailable ? "Available" : "Rented";
+  const amenities = vehicle.amenities?.$values || [];
 
   return (
     <div className="vehicle-card">
       <img
-        src={vehicle.imageUrls?.[0] || "/default.jpg"}
+        src={imageUrl}
         alt={`${vehicle.brand} ${vehicle.model}`}
         className="vehicle-image"
       />
@@ -32,14 +30,14 @@ const VehicleCard = ({
           {vehicle.transmissionType}
         </p>
 
-        {/* Amenities section */}
-        {vehicle.amenities && vehicle.amenities.length > 0 && (
+        {/* Amenities */}
+        {amenities.length > 0 && (
           <div className="vehicle-amenities">
             <p>
               <strong>Amenities:</strong>
             </p>
             <div className="amenity-tags">
-              {vehicle.amenities.map((amenity, i) => (
+              {amenities.map((amenity, i) => (
                 <span key={i} className="amenity-tag">
                   {amenity}
                 </span>
@@ -48,11 +46,13 @@ const VehicleCard = ({
           </div>
         )}
 
+        {/* Status */}
         <p className="vehicle-status">
           Status:{" "}
           <span className={`status-${status.toLowerCase()}`}>{status}</span>
         </p>
 
+        {/* Actions */}
         <div className="vehicle-card-actions">
           <button
             className="status-toggle-btn"

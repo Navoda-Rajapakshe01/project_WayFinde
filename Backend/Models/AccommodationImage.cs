@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Backend.Models;
     public class AccommodationImage
 {
@@ -11,4 +11,3 @@ using Backend.Models;
     public Accommodation? Accommodation { get; set; }
 
 }
-

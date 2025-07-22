@@ -13,7 +13,6 @@ const FilterSection = ({ onFilterChange }) => {
     searchTerm: "",
   });
 
-  // Vehicle types
   const vehicleTypes = [
     "Sedan",
     "SUV",
@@ -22,22 +21,12 @@ const FilterSection = ({ onFilterChange }) => {
     "Luxury",
     "Minibus",
   ];
-
-  // Locations
   const locations = ["Colombo", "Kandy", "Galle", "Negombo", "Nuwara Eliya"];
-
-  // Passenger options
   const NumberOfPassengers = ["2", "4", "5", "7", "8+"];
-
-  // Transmission options
   const transmissionOptions = ["Automatic", "Manual", "Triptonic"];
-
-  // Fuel options
   const FuelType = ["Petrol", "Diesel", "Hybrid", "Electric"];
 
-  const toggleFilters = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleFilters = () => setIsOpen(!isOpen);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

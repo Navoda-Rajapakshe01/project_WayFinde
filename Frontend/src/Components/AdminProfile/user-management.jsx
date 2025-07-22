@@ -9,8 +9,98 @@ import {
   FaEye,
   FaTrash,
   FaBuilding,
-  FaTruck
+  FaTruck,
+  FaBell
 } from "react-icons/fa";
+import "./user-management.css";
+import "../../pages/OptimizedRoute/Components/AddPlaceModal.css";
+
+const DeclineRequestModal = ({ open, onClose, onConfirm, loading }) => {
+  const DECLINE_REASONS = [
+    'User has ongoing trips with bookings',
+    'User has pending payments',
+    'User account under review',
+    'Other (please specify)'
+  ];
+  const [reason, setReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!open) {
+      setReason("");
+      setCustomReason("");
+      setError("");
+    }
+  }, [open]);
+
+  const handleConfirm = () => {
+    if (!reason) {
+      setError("Please select a reason.");
+      return;
+    }
+    if (reason === 'Other (please specify)' && !customReason.trim()) {
+      setError("Please enter a custom reason.");
+      return;
+    }
+    setError("");
+    onConfirm(reason === 'Other (please specify)' ? customReason.trim() : reason);
+  };
+
+  if (!open) return null;
+  return (
+    <div className="modal-overlay-adp" style={{ zIndex: 1000 }}>
+      <div className="add-place-modal-adp" style={{ maxWidth: 400, padding: 0 }}>
+        <div className="modal-header-adp">
+          <h2 className="modal-title-adp" style={{ fontSize: 20 }}>Decline Account Deletion Request</h2>
+          <button className="modal-close-adp" onClick={onClose}>X</button>
+        </div>
+        <div style={{ padding: '1.5rem' }}>
+          <label style={{ fontWeight: 500, marginBottom: 8, display: 'block' }}>Reason</label>
+          <select
+            className="decline-modal-select"
+            value={reason}
+            onChange={e => setReason(e.target.value)}
+          >
+            <option value="">Select a reason</option>
+            {DECLINE_REASONS.map(r => (
+              <option key={r} value={r}>{r}</option>
+            ))}
+          </select>
+          {reason === 'Other (please specify)' && (
+            <input
+              className="decline-modal-input"
+              placeholder="Enter reason..."
+              value={customReason}
+              onChange={e => setCustomReason(e.target.value)}
+            />
+          )}
+          {error && <div style={{ color: 'red', marginBottom: 12 }}>{error}</div>}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 0 }}>
+            <button
+              className="decline-modal-btn decline-cancel-btn"
+              onClick={onClose}
+              disabled={loading}
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter') onClose(); }}
+            >
+              Cancel
+            </button>
+            <button
+              className="decline-modal-btn decline-confirm-btn"
+              onClick={handleConfirm}
+              disabled={loading}
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter') handleConfirm(); }}
+            >
+              {loading ? 'Declining...' : 'Confirm'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const UserManagement = () => {
   const navigate = useNavigate();
@@ -22,14 +112,36 @@ const UserManagement = () => {
   const [sortBy, setSortBy] = useState("dateJoined");
   const [sortOrder, setSortOrder] = useState("desc");
   const [availableRoles, setAvailableRoles] = useState([]);
+  const [deletionRequests, setDeletionRequests] = useState([]);
+  const [showRequests, setShowRequests] = useState(false);
+  const [requestLoading, setRequestLoading] = useState(true);
+  const [requestError, setRequestError] = useState(null);
+  const [actionLoading, setActionLoading] = useState({}); // { [requestId]: true/false }
+  const [declineDropdown, setDeclineDropdown] = useState({ open: false, requestId: null, reason: '' });
+  const [declineModal, setDeclineModal] = useState({ open: false, requestId: null });
+  const [declineReasonLoading, setDeclineReasonLoading] = useState(false);
+  const DECLINE_REASONS = [
+    'User has ongoing trips with bookings',
+    'User has pending payments',
+    'User account under review',
+    'Other (please specify)'
+  ];
 
   useEffect(() => {
     fetchUsers();
+    fetchDeletionRequests();
   }, []);
 
   useEffect(() => {
     filterAndSortUsers();
   }, [users, searchTerm, roleFilter, sortBy, sortOrder]);
+
+  useEffect(() => {
+    // Listen for custom event from notification click
+    const handler = () => setShowRequests(true);
+    window.addEventListener('show-pending-deletion-requests', handler);
+    return () => window.removeEventListener('show-pending-deletion-requests', handler);
+  }, []);
 
   // Get unique roles from the data
   const getUniqueRoles = (usersData) => {
@@ -42,9 +154,10 @@ const UserManagement = () => {
       setLoading(true);
       // Fetch real users from the database
       const response = await axios.get("http://localhost:5030/api/profile/admin/users");
-      
+      console.log('API /profile/admin/users response:', response.data);
+      const usersArray = Array.isArray(response.data?.$values) ? response.data.$values : [];
       // Transform the data to match our frontend format
-      const users = response.data.map(user => ({
+      const users = usersArray.map(user => ({
         id: user.id,
         fullName: user.fullName || "N/A",
         email: user.email || "N/A",
@@ -58,12 +171,9 @@ const UserManagement = () => {
         followersCount: user.followersCount || 0,
         followingCount: user.followingCount || 0
       }));
-      
-      
       // Extract available roles from the data
       const roles = getUniqueRoles(users);
       setAvailableRoles(roles);
-      
       setUsers(users);
     } catch (error) {
       console.error("Failed to fetch users:", error);
@@ -74,8 +184,29 @@ const UserManagement = () => {
     }
   };
 
+  const fetchDeletionRequests = async () => {
+    try {
+      setRequestLoading(true);
+      setRequestError(null);
+      const res = await axios.get("http://localhost:5030/api/account-deletion/requests");
+      let requests = res.data;
+      if (requests && requests.$values) {
+        requests = requests.$values;
+      }
+      setDeletionRequests(Array.isArray(requests) ? requests : []);
+    } catch (err) {
+      setRequestError("Failed to fetch account deletion requests.");
+      setDeletionRequests([]);
+    } finally {
+      setRequestLoading(false);
+    }
+  };
+
   const filterAndSortUsers = () => {
     let filtered = [...users];
+
+    // Remove admin users
+    filtered = filtered.filter(user => user.role !== "Admin");
 
     // Search filter
     if (searchTerm) {
@@ -147,8 +278,6 @@ const UserManagement = () => {
 
   const getRoleDisplayName = (role) => {
     switch (role) {
-      case "Admin":
-        return "Admin";
       case "AccommodationProvider":
         return "Accommodation Provider";
       case "TransportProvider":
@@ -187,9 +316,47 @@ const UserManagement = () => {
     navigate(`/admin/user-profile/${user.id}`);
   };
 
-  const handleDeleteUser = (user) => {
-    // TODO: Implement delete confirmation modal
+  // Accept deletion request
+  const handleAcceptRequest = async (requestId) => {
+    setActionLoading((prev) => ({ ...prev, [requestId]: true }));
+    try {
+      await axios.post(`http://localhost:5030/api/account-deletion/approve/${requestId}`);
+      await fetchDeletionRequests();
+    } catch (err) {
+      alert(
+        err?.response?.data ||
+        err?.message ||
+        "Failed to approve account deletion request."
+      );
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [requestId]: false }));
+    }
   };
+
+  // Decline deletion request (with SweetAlert2 popup and custom input)
+  const handleDeclineRequest = (requestId) => {
+    setDeclineModal({ open: true, requestId });
+  };
+
+  const handleConfirmDecline = async (reason) => {
+    const requestId = declineModal.requestId;
+    setDeclineReasonLoading(true);
+    setActionLoading((prev) => ({ ...prev, [requestId]: true }));
+    try {
+      await axios.post(`http://localhost:5030/api/account-deletion/decline/${requestId}`, reason, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+      await fetchDeletionRequests();
+      setDeclineModal({ open: false, requestId: null });
+    } catch (err) {
+      alert(err?.response?.data || err?.message || 'Failed to decline account deletion request.');
+    } finally {
+      setDeclineReasonLoading(false);
+      setActionLoading((prev) => ({ ...prev, [requestId]: false }));
+    }
+  };
+
+  const pendingCount = Array.isArray(deletionRequests) ? deletionRequests.filter(r => r.status === 'Pending').length : 0;
 
   if (loading) {
     return (
@@ -205,6 +372,94 @@ const UserManagement = () => {
       <div className="adminsection-header">
         <h1 className="page-title">Users Management</h1>
       </div>
+      {/* Account Deletion Requests Notification & List */}
+      {pendingCount > 0 && (
+        <div className="account-deletion-requests-bar">
+          <div className="account-deletion-requests-header">
+            <FaBell style={{ color: '#e74c3c', fontSize: 22 }} />
+            <span className="account-deletion-requests-count">
+              {pendingCount} Pending Account Deletion Requests
+            </span>
+            <span
+              className="show-requests-toggle"
+              onClick={() => setShowRequests((prev) => !prev)}
+            >
+              {showRequests ? 'Hide Requests' : 'Show Requests'}
+            </span>
+          </div>
+          {showRequests && (
+            <div style={{ marginTop: 18 }}>
+              {requestLoading ? (
+                <div>Loading requests...</div>
+              ) : requestError ? (
+                <div style={{ color: 'red' }}>{requestError}</div>
+              ) : !Array.isArray(deletionRequests) || deletionRequests.length === 0 ? (
+                <div style={{ color: '#7b8794' }}>No account deletion requests.</div>
+              ) : (
+                <table className="account-deletion-requests-table">
+                  <thead>
+                    <tr>
+                      <th>User ID</th>
+                      <th>Requested At</th>
+                      <th>Status</th>
+                      <th>Admin Reply</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Array.isArray(deletionRequests) && deletionRequests.map((req) => (
+                      <tr key={req.id}>
+                        <td
+                          className="account-deletion-requests-userid clickable-userid"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => navigate(`/admin/user-profile/${req.userId}`)}
+                          title="View User Profile"
+                        >
+                          {req.userId}
+                        </td>
+                        <td>{new Date(req.requestedAt).toLocaleString()}</td>
+                        <td className={
+                          req.status === 'Pending' ? 'account-deletion-requests-status-pending' :
+                          req.status === 'Approved' ? 'account-deletion-requests-status-approved' :
+                          'account-deletion-requests-status-declined'
+                        }>{req.status}</td>
+                        <td className="account-deletion-requests-admin-reply">{req.adminReply || '-'}</td>
+                        <td>
+                          {req.status === 'Pending' && (
+                            <>
+                              {/* Removed View Details button */}
+                              {actionLoading[req.id] ? (
+                                <span style={{ marginLeft: 12, color: '#888' }}>Processing...</span>
+                              ) : (
+                                <>
+                                  <span
+                                    style={{ color: 'green', marginLeft: 12, cursor: 'pointer', fontWeight: 500 }}
+                                    title="Accept Request"
+                                    onClick={() => handleAcceptRequest(req.id)}
+                                  >
+                                    Accept
+                                  </span>
+                                  <span
+                                    style={{ color: 'red', marginLeft: 16, cursor: 'pointer', fontWeight: 500 }}
+                                    title="Decline Request"
+                                    onClick={() => handleDeclineRequest(req.id)}
+                                  >
+                                    Decline
+                                  </span>
+                                </>
+                              )}
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Search and Filter Section */}
       <div className="adminfilter-bar">
@@ -222,11 +477,13 @@ const UserManagement = () => {
           <div className="adminfilter-dropdown">
             <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
               <option value="all">All Roles</option>
-              {availableRoles.map(role => (
-                <option key={role} value={role}>
-                  {getRoleDisplayName(role)}
-                </option>
-              ))}
+              {availableRoles
+                .filter(role => role !== "Admin")
+                .map(role => (
+                  <option key={role} value={role}>
+                    {getRoleDisplayName(role)}
+                  </option>
+                ))}
             </select>
           </div>
         </div>
@@ -300,13 +557,6 @@ const UserManagement = () => {
                     >
                       <FaEye />
                     </button>
-                    <button
-                      className="admindelete-button"
-                      onClick={() => handleDeleteUser(user)}
-                      title="Delete User"
-                    >
-                      <FaTrash />
-                    </button>
                   </div>
                 </td>
               </tr>
@@ -321,6 +571,12 @@ const UserManagement = () => {
         )}
       </div>
 
+      <DeclineRequestModal
+        open={declineModal.open}
+        onClose={() => setDeclineModal({ open: false, requestId: null })}
+        onConfirm={handleConfirmDecline}
+        loading={declineReasonLoading}
+      />
     </div>
   );
 };

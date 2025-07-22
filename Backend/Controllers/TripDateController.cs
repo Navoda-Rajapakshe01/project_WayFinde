@@ -270,9 +270,9 @@ namespace Backend.Controllers
     {
         public int Id { get; set; }
         public int TripId { get; set; }
-        public string TripName { get; set; }
+        public string? TripName { get; set; }
         public int PlaceId { get; set; }
-        public string PlaceName { get; set; }
+        public string? PlaceName { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
     }

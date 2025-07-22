@@ -1,7 +1,7 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
-// Create the context with default values
+// Create the context
 export const AuthContext = createContext({
   user: null,
   setUser: () => {},
@@ -9,16 +9,27 @@ export const AuthContext = createContext({
   loading: true,
 });
 
+// Hook for easier usage
+export const useAuth = () => useContext(AuthContext);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile from backend on app load
   useEffect(() => {
     const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
       try {
         const res = await fetch("http://localhost:5030/api/auth/profile", {
-          credentials: "include", // Important: send cookies with request
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (res.ok) {
@@ -38,18 +49,9 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  // Logout function: clear user and optionally call backend logout API
   const logout = async () => {
-    try {
-      // Optional: call backend logout to clear cookie server-side
-      await fetch("http://localhost:5030/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error("Error during logout:", err);
-    }
-
+    // Optionally call your backend logout endpoint here if needed
+    localStorage.removeItem("token");
     setUser(null);
   };
 

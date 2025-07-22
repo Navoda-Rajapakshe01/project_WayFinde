@@ -247,8 +247,7 @@ const MainNavbar = () => {
                             onClick={() =>
                               navigate("/signin?redirect=/plantrip")
                             }
-                            style={{ cursor: "pointer" }}
-                          >
+                            style={{ cursor: "pointer" }}>
                             Create a New Trip
                           </div>
                           <div
@@ -256,8 +255,7 @@ const MainNavbar = () => {
                             onClick={() =>
                               navigate("/signin?redirect=/alltrips")
                             }
-                            style={{ cursor: "pointer" }}
-                          >
+                            style={{ cursor: "pointer" }}>
                             My All Trips
                           </div>
                         </>

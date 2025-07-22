@@ -14,10 +14,12 @@
         public bool IsAvailable { get; set; }
         public int DistrictId { get; set; }
         public int PlaceId { get; set; }
-        public Guid SupplierId { get; set; }
-        public string SupplierUsername { get; set; } = string.Empty;
+
+        public Guid? SupplierId { get; set; } // ⭐ NEW
+        public string? SupplierUsername { get; set; } // ⭐ NEW
 
         public List<string> ImageUrls { get; set; } = new List<string>();
         public List<string> Amenities { get; set; } = new List<string>();
     }
+
 }

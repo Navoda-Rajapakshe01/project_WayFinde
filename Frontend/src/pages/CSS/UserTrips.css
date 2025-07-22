@@ -1,14 +1,14 @@
-/* User Trips Page Styles - Professional Minimal Look */
-.user-trips-container {
+/* Admin User Trips Page Styles */
+.admin-user-trips-container {
   max-width: 1200px;
   margin: 40px auto 0 auto;
-  padding: 32px 8px;
+  padding: 40px 16px 48px 16px;
   background: #f8fafc;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.06);
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(44, 62, 80, 0.08);
 }
 
-.user-trips-title {
+.admin-user-trips-title {
   font-size: 2rem;
   font-weight: 700;
   color: #1a3456;
@@ -16,43 +16,55 @@
   text-align: center;
 }
 
-.user-trips-loading,
-.user-trips-empty {
+.admin-user-trips-loading,
+.admin-user-trips-empty {
   text-align: center;
   color: #7b8794;
   font-size: 1.2rem;
   margin-top: 40px;
 }
 
-.user-trips-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+.admin-user-trips-container h3 {
+  margin-top: 40px;
+  margin-bottom: 24px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #129bb3;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #e3eaf3;
+  padding-bottom: 6px;
 }
 
-.trip-card {
+.admin-user-trips-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  margin-bottom: 24px;
+}
+
+.admin-trip-card {
   background: #fff;
   color: #1a3456;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.06);
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.09);
   padding: 0;
   display: flex;
   flex-direction: column;
-  border-left: 5px solid #14b9d5;
+  border-left: 6px solid #14b9d5;
   overflow: hidden;
   transition: box-shadow 0.18s, border 0.18s, transform 0.18s;
   position: relative;
   border-bottom: 1px solid #e3eaf3;
 }
-.trip-card:hover {
+.admin-trip-card:hover {
   box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
   border-left: 5px solid #129bb3;
   transform: translateY(-1px) scale(1.01);
 }
-.trip-card-header {
+.admin-trip-card-header {
   background: #fff;
-  padding: 20px 28px 8px 28px;
-  font-size: 1.18rem;
+  padding: 28px 36px 12px 36px;
+  font-size: 1.22rem;
   font-weight: 700;
   color: #1a3456;
   border-bottom: 1px solid #e3eaf3;
@@ -60,7 +72,7 @@
   align-items: center;
   justify-content: space-between;
 }
-.trip-card-badge {
+.admin-trip-card-badge {
   background: #f4f8fb;
   color: #129bb3;
   font-size: 0.93rem;
@@ -71,73 +83,59 @@
   border: 1px solid #e3eaf3;
   letter-spacing: 0.3px;
 }
-.trip-card-content {
-  padding: 14px 28px 18px 28px;
+.admin-trip-card-content {
+  padding: 22px 36px 28px 36px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 14px;
 }
-.trip-card-dates {
+.admin-trip-card-dates {
+  font-size: 1.05rem;
+  color: #7b8794;
+  margin-bottom: 8px;
   display: flex;
-  gap: 18px;
-  font-size: 1.01rem;
-  opacity: 0.93;
-  margin-bottom: 2px;
+  gap: 24px;
 }
-.trip-card-dates span {
-  background: #f4f8fb;
+.admin-trip-card-places {
+  font-size: 1.08rem;
   color: #1a3456;
-  border-radius: 7px;
-  padding: 2px 10px;
-  font-weight: 500;
-  font-size: 0.97rem;
+  margin-bottom: 6px;
 }
-.trip-card-places {
-  font-size: 1.01rem;
-  font-weight: 500;
-  margin-bottom: 2px;
-  color: #129bb3;
-}
-.trip-card-destinations {
-  font-size: 0.97rem;
-  margin-top: 2px;
+.admin-trip-card-destinations {
+  font-size: 1.05rem;
   color: #1a3456;
+  margin-top: 10px;
 }
-.trip-card-destinations ul {
+.admin-trip-card-destinations ul {
   margin: 0;
-  padding-left: 18px;
-}
-.trip-card-destinations li {
-  margin-bottom: 2px;
-  color: #1a3456;
-  font-size: 0.96rem;
+  padding-left: 22px;
 }
 @media (max-width: 900px) {
-  .user-trips-container {
+  .admin-user-trips-container {
     padding: 10px 0;
   }
-  .user-trips-title {
+  .admin-user-trips-title {
     font-size: 1.3rem;
   }
-  .user-trips-grid {
+  .admin-user-trips-grid {
     gap: 14px;
   }
-  .trip-card-header, .trip-card-content {
+  .admin-trip-card-header, .admin-trip-card-content {
     padding-left: 10px;
     padding-right: 10px;
   }
 }
 @media (max-width: 600px) {
-  .trip-card-header, .trip-card-content {
+  .admin-trip-card-header, .admin-trip-card-content {
     padding-left: 6px;
     padding-right: 6px;
   }
-  .trip-card-header {
+  .admin-trip-card-header {
     font-size: 1.01rem;
     padding-top: 10px;
     padding-bottom: 6px;
   }
-  .trip-card-content {
+  .admin-trip-card-content {
     padding-top: 7px;
     padding-bottom: 10px;
   }

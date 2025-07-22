@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CloudinaryDotNet;
+using Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,7 +80,7 @@ builder.Services.AddCors(options =>
 // Add Controllers with JSON options
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.MaxDepth = 32;
 });
 
@@ -90,6 +91,7 @@ builder.Services.AddSwaggerGen();
 // Add SignalR and HTTP Context
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

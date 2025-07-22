@@ -15,10 +15,12 @@ const ReviewsManagement = () => {
       try {
         const res = await fetch("http://localhost:5030/api/reviews");
         const data = await res.json();
-        setReviews(data);
+        console.log('API /reviews response:', data);
+        setReviews(Array.isArray(data?.$values) ? data.$values : []);
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching reviews:", error);
+        setReviews([]); // Always set to array on error
         setIsLoading(false);
       }
     };
@@ -67,7 +69,7 @@ const ReviewsManagement = () => {
   };
 
   const now = new Date();
-  const filteredReviews = reviews.filter((review) => {
+  const filteredReviews = Array.isArray(reviews) ? reviews.filter((review) => {
     const matchesSearch =
       (review.placeName || "")
         .toLowerCase()
@@ -89,7 +91,8 @@ const ReviewsManagement = () => {
     }
 
     return matchesSearch && matchesRating && matchesPeriod;
-  });
+  }) : [];
+  console.log('Filtered reviews:', filteredReviews);
 
   if (isLoading) {
     return (

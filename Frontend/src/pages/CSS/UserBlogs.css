@@ -1,5 +1,5 @@
 /* User Blogs Page Styles - Professional Admin Theme */
-.user-blogs-container {
+.admin-user-blogs-container {
   max-width: 900px;
   margin: 40px auto 0 auto;
   padding: 32px 8px;
@@ -8,7 +8,7 @@
   box-shadow: 0 2px 12px rgba(44, 62, 80, 0.06);
 }
 
-.user-blogs-title {
+.admin-user-blogs-title {
   font-size: 2rem;
   font-weight: 700;
   color: #1a3456;
@@ -16,21 +16,21 @@
   text-align: center;
 }
 
-.user-blogs-loading,
-.user-blogs-empty {
+.admin-user-blogs-loading,
+.admin-user-blogs-empty {
   text-align: center;
   color: #7b8794;
   font-size: 1.2rem;
   margin-top: 40px;
 }
 
-.user-blogs-grid {
+.admin-user-blogs-grid {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-.blog-card {
+.admin-blog-card {
   background: #fff;
   color: #1a3456;
   border-radius: 12px;
@@ -44,12 +44,12 @@
   position: relative;
   border-bottom: 1px solid #e3eaf3;
 }
-.blog-card:hover {
+.admin-blog-card:hover {
   box-shadow: 0 6px 24px rgba(44, 62, 80, 0.10);
   border-left: 5px solid #129bb3;
   transform: translateY(-1px) scale(1.01);
 }
-.blog-card-header {
+.admin-blog-card-header {
   background: #fff;
   padding: 20px 28px 8px 28px;
   font-size: 1.18rem;
@@ -60,7 +60,7 @@
   align-items: center;
   justify-content: space-between;
 }
-.blog-card-badge {
+.admin-blog-card-badge {
   background: #f4f8fb;
   color: #129bb3;
   font-size: 0.93rem;
@@ -71,48 +71,48 @@
   border: 1px solid #e3eaf3;
   letter-spacing: 0.3px;
 }
-.blog-card-content {
+.admin-blog-card-content {
   padding: 14px 28px 18px 28px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-.blog-card-meta {
+.admin-blog-card-meta {
   font-size: 0.98rem;
   color: #7b8794;
   margin-bottom: 4px;
 }
-.blog-card-description {
+.admin-blog-card-description {
   font-size: 1.01rem;
   color: #1a3456;
   margin-bottom: 2px;
 }
 @media (max-width: 900px) {
-  .user-blogs-container {
+  .admin-user-blogs-container {
     padding: 10px 0;
   }
-  .user-blogs-title {
+  .admin-user-blogs-title {
     font-size: 1.3rem;
   }
-  .user-blogs-grid {
+  .admin-user-blogs-grid {
     gap: 14px;
   }
-  .blog-card-header, .blog-card-content {
+  .admin-blog-card-header, .admin-blog-card-content {
     padding-left: 10px;
     padding-right: 10px;
   }
 }
 @media (max-width: 600px) {
-  .blog-card-header, .blog-card-content {
+  .admin-blog-card-header, .admin-blog-card-content {
     padding-left: 6px;
     padding-right: 6px;
   }
-  .blog-card-header {
+  .admin-blog-card-header {
     font-size: 1.01rem;
     padding-top: 10px;
     padding-bottom: 6px;
   }
-  .blog-card-content {
+  .admin-blog-card-content {
     padding-top: 7px;
     padding-bottom: 10px;
   }

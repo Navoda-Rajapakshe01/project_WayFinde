@@ -11,7 +11,7 @@ namespace Backend.Models
         public int Id { get; set; }
 
         [Required]
-        public string TripName { get; set; }
+        public required string TripName { get; set; }
 
         [Required]
         public DateTime StartDate { get; set; }
@@ -22,7 +22,7 @@ namespace Backend.Models
         public Guid UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public UserNew User { get; set; }
+        public required UserNew User { get; set; }
 
 
         public DateTime CreatedAt { get; set; }  // timestamps:true

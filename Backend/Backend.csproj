@@ -41,6 +41,15 @@
 
   <ItemGroup>
     <Folder Include="Migrations\" />
+    <Folder Include="Migrations\UserDb\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="D:\A- Sajeewa\2nd Year\IS 2901 - Software Development Project\Connect Travellers\project_WayFinde\Backend\DTO\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="D:\A- Sajeewa\2nd Year\IS 2901 - Software Development Project\Connect Travellers\project_WayFinde\Backend\DTO\.editorconfig" />
   </ItemGroup>
 
 </Project>
