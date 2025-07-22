@@ -15,6 +15,9 @@ const InviteCollaboratorsModal = ({
   setSearchResults,
   refreshCollaborators,
 }) => {
+  // ✅ Normalize searchResults if it has $values from ASP.NET backend
+  const normalizedSearchResults = searchResults?.$values || searchResults || [];
+
   const addCollaborators = async () => {
     try {
       await Promise.all(
@@ -56,7 +59,7 @@ const InviteCollaboratorsModal = ({
         />
 
         <ul className="search-results">
-          {searchResults
+          {normalizedSearchResults
             .filter(
               (user) =>
                 user.id !== currentUserId &&

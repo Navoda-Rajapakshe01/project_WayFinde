@@ -6,6 +6,9 @@ const CalendarView = ({ tripId, setSelectedDate, sharedMode = false }) => {
   const [tripPlaces, setTripPlaces] = useState([]);
   const [activeDate, setActiveDate] = useState(null);
 
+  // ✅ Always normalize .NET backend result
+  const places = tripPlaces?.$values || [];
+
   useEffect(() => {
     const fetchTripPlaces = async () => {
       try {
@@ -18,13 +21,13 @@ const CalendarView = ({ tripId, setSelectedDate, sharedMode = false }) => {
       }
     };
 
-    fetchTripPlaces();
+    if (tripId) fetchTripPlaces();
   }, [tripId]);
 
-  const uniqueDates = [...new Set(tripPlaces.map((p) => p.startDate))];
+  const uniqueDates = [...new Set(places.map((p) => p.startDate))];
 
   const filteredPlaces = activeDate
-    ? tripPlaces.filter((p) => p.startDate === activeDate)
+    ? places.filter((p) => p.startDate === activeDate)
     : [];
 
   return (

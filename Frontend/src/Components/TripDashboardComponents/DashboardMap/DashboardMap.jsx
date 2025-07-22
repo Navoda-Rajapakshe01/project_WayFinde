@@ -49,7 +49,8 @@ const DashboardMap = ({ tripId, selectedDate }) => {
         const res = await axios.get(
           `http://localhost:5030/api/trips/ordered-route/${tripId}`
         );
-        const allPlaces = res.data;
+
+        const allPlaces = res.data?.$values || [];
 
         // ✅ Always calculate total distance from all places
         calculateTotalDistance(allPlaces);
@@ -139,22 +140,35 @@ const DashboardMap = ({ tripId, selectedDate }) => {
   };
 
   const calculateTotalDistance = (places) => {
-    if (places.length < 2) {
+    if (!Array.isArray(places) || places.length < 2) {
       setTotalDistance(null);
       return;
     }
 
-    const directionsService = new window.google.maps.DirectionsService();
+    const originPlace = places[0];
+    const destinationPlace = places[places.length - 1];
 
-    const origin = extractLatLngFromGoogleMapLink(places[0].googleMapLink);
+    if (!originPlace?.googleMapLink || !destinationPlace?.googleMapLink) {
+      console.warn("Missing googleMapLink in origin or destination place.");
+      setTotalDistance(null);
+      return;
+    }
+
+    const origin = extractLatLngFromGoogleMapLink(originPlace.googleMapLink);
     const destination = extractLatLngFromGoogleMapLink(
-      places[places.length - 1].googleMapLink
+      destinationPlace.googleMapLink
     );
 
-    const waypoints = places.slice(1, -1).map((place) => ({
-      location: extractLatLngFromGoogleMapLink(place.googleMapLink),
-      stopover: true,
-    }));
+    const waypoints = places
+      .slice(1, -1)
+      .map((place) => {
+        if (!place?.googleMapLink) return null;
+        const coords = extractLatLngFromGoogleMapLink(place.googleMapLink);
+        return coords ? { location: coords, stopover: true } : null;
+      })
+      .filter(Boolean);
+
+    const directionsService = new window.google.maps.DirectionsService();
 
     directionsService.route(
       {

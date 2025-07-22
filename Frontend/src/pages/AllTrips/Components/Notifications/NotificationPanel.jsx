@@ -1,6 +1,9 @@
 import React from "react";
 
 const NotificationPanel = ({ pendingInvites, onClose, onRespondToInvite }) => {
+  // ✅ Normalize in case it's wrapped in $values
+  const normalizedInvites = pendingInvites?.$values || pendingInvites || [];
+
   return (
     <>
       <div className="overlay-backdrop" onClick={onClose}></div>
@@ -15,10 +18,10 @@ const NotificationPanel = ({ pendingInvites, onClose, onRespondToInvite }) => {
           </button>
         </div>
 
-        {pendingInvites.length === 0 ? (
+        {normalizedInvites.length === 0 ? (
           <p>No new invitations</p>
         ) : (
-          pendingInvites.map((invite) => (
+          normalizedInvites.map((invite) => (
             <div key={invite.tripId} className="invitation-card">
               <div className="invitation-text-flex">
                 <img

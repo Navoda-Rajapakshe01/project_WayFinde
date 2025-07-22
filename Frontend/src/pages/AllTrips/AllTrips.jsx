@@ -50,7 +50,9 @@ const AllTrips = () => {
         `http://localhost:5030/api/trips/collaborative?userId=${currentUserId}`
       );
       const data = await res.json();
-      const mappedCollaborative = data.map((trip) => {
+
+      const trips = data?.$values || [];
+      const mappedCollaborative = trips.map((trip) => {
         const { totalSpent, totalDistance } = calculateTripStats(
           trip.places || []
         );
@@ -58,10 +60,11 @@ const AllTrips = () => {
           ...trip,
           name: trip.tripName,
           avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
-          startLocation: trip.places?.[0]?.name || "N/A",
+          startLocation: (trip.places?.$values || [])[0]?.name || "N/A",
+
           totalDistance: `${totalDistance} km`,
           destinations:
-            trip.places?.map((place) => ({
+            (trip.places?.$values || []).map((place) => ({
               name: place.name || "N/A",
               stay: place.avgTime || "24 hrs",
               date: place.startDate
@@ -80,7 +83,7 @@ const AllTrips = () => {
   const refreshPendingInvites = () => {
     fetch(`http://localhost:5030/api/trips/invitations?userId=${currentUserId}`)
       .then((res) => res.json())
-      .then(setPendingInvites);
+      .then((data) => setPendingInvites(data?.$values || []));
   };
 
   useEffect(() => {
@@ -89,8 +92,12 @@ const AllTrips = () => {
         `http://localhost:5030/api/trips/get-collaborators?tripId=${selectedTrip.id}`
       )
         .then((res) => res.json())
-        .then(setExistingCollaborators)
+        .then((data) => {
+          const collaborators = data?.$values || [];
+          setExistingCollaborators(collaborators);
+        })
         .catch(console.error);
+
       fetch(
         `http://localhost:5030/api/trips/get-pending-invites?tripId=${selectedTrip.id}`
       )
@@ -118,7 +125,14 @@ const AllTrips = () => {
       const res = await fetch(
         `http://localhost:5030/api/trips/user-preview/${currentUserId}`
       );
-      const data = await res.json();
+      const response = await res.json();
+      const data = response.$values;
+      console.log("Trip preview response:", data);
+      if (!Array.isArray(data)) {
+        console.error("Expected array in response.$values, got:", data);
+        return;
+      }
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
@@ -140,7 +154,7 @@ const AllTrips = () => {
       const totalTrips = data.length;
       const placesVisited = data
         .filter((trip) => new Date(trip.endDate) < new Date())
-        .reduce((sum, trip) => sum + (trip.places?.length || 0), 0);
+        .reduce((sum, trip) => sum + (trip.places?.$values || []).length, 0);
 
       const nextTrip = upcoming.sort(
         (a, b) => new Date(a.startDate) - new Date(b.startDate)
@@ -154,26 +168,26 @@ const AllTrips = () => {
       });
 
       const allTripsWithPreview = data.map((trip) => {
-        const { totalSpent, totalDistance } = calculateTripStats(
-          trip.places || []
-        );
+        const places = trip.places?.$values || []; // ✅ Always extract this way
+
+        const { totalSpent, totalDistance } = calculateTripStats(places);
+
         return {
           ...trip,
           name: trip.tripName,
           avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
-          startLocation: trip.places?.[0]?.name || "N/A",
+          startLocation: places[0]?.name || "N/A", // ✅ Use array safely
           userId: trip.userId,
           totalDistance: `${totalDistance} km`,
-          destinations:
-            trip.places?.map((place) => ({
-              name: place.name || "N/A",
-              stay: place.avgTime || "24 hrs",
-              date: place.startDate
-                ? new Date(place.startDate).toLocaleDateString()
-                : new Date(trip.startDate).toLocaleDateString(),
-            })) || [],
+          destinations: places.map((place) => ({
+            name: place.name || "N/A",
+            stay: place.avgTime || "24 hrs",
+            date: place.startDate
+              ? new Date(place.startDate).toLocaleDateString()
+              : new Date(trip.startDate).toLocaleDateString(),
+          })),
           thumbnail: trip.thumbnail || "https://via.placeholder.com/120",
-          places: trip.places || [],
+          places: places, // ✅ Store back as array
         };
       });
 
@@ -214,31 +228,31 @@ const AllTrips = () => {
     )
       .then((res) => res.json())
       .then((data) => {
-        const mappedCollaborative = data.map((trip) => {
-          const { totalSpent, totalDistance } = calculateTripStats(
-            trip.places || []
-          );
+        const trips = data?.$values || []; // ✅ handle .NET format
+        const mappedCollaborative = trips.map((trip) => {
+          const places = trip.places?.$values || [];
+          const { totalSpent, totalDistance } = calculateTripStats(places);
           return {
             ...trip,
             name: trip.tripName,
             avgSpent: `LKR ${trip.avgSpend?.toLocaleString() ?? "0"}`,
-            startLocation: trip.places?.[0]?.name || "N/A",
+            startLocation: places[0]?.name || "N/A",
             userId: trip.userId,
             totalDistance: `${totalDistance} km`,
-            destinations:
-              trip.places?.map((place) => ({
-                name: place.name || "N/A",
-                stay: place.avgTime || "24 hrs",
-                date: place.startDate
-                  ? new Date(place.startDate).toLocaleDateString()
-                  : new Date(trip.startDate).toLocaleDateString(),
-              })) || [],
+            destinations: places.map((place) => ({
+              name: place.name || "N/A",
+              stay: place.avgTime || "24 hrs",
+              date: place.startDate
+                ? new Date(place.startDate).toLocaleDateString()
+                : new Date(trip.startDate).toLocaleDateString(),
+            })),
             thumbnail: trip.thumbnail || "https://via.placeholder.com/120",
           };
         });
         setCollaborativeTrips(mappedCollaborative);
         setSelectedTrip(mappedCollaborative[0] || null);
       })
+
       .catch((error) => {
         console.error("Failed to fetch collaborative trips:", error);
       });
@@ -247,16 +261,23 @@ const AllTrips = () => {
   useEffect(() => {
     if (selectedTrip && showPopup === "invite") {
       console.log("selectedTrip.userId:", selectedTrip.userId);
-      existingCollaborators.forEach((u) =>
-        console.log("collaborator id:", u.id)
-      );
+      if (Array.isArray(existingCollaborators)) {
+        existingCollaborators.forEach((u) =>
+          console.log("collaborator id:", u.id)
+        );
+      } else {
+        console.warn(
+          "existingCollaborators is not an array:",
+          existingCollaborators
+        );
+      }
     }
   }, [selectedTrip, existingCollaborators, showPopup]);
 
   useEffect(() => {
     fetch(`http://localhost:5030/api/trips/invitations?userId=${currentUserId}`)
       .then((res) => res.json())
-      .then(setPendingInvites);
+      .then((data) => setPendingInvites(data?.$values || []));
   }, []);
 
   useEffect(() => {
@@ -606,7 +627,7 @@ const AllTrips = () => {
                               }}
                             >
                               <Calendar size={12} />
-                              {trip.places?.some(
+                              {(trip.places?.$values || []).some(
                                 (p) => p.startDate && p.endDate
                               )
                                 ? "Update Dates"
@@ -723,7 +744,8 @@ const AllTrips = () => {
               `http://localhost:5030/api/trips/get-collaborators?tripId=${selectedTrip.id}`
             );
             const data = await res.json();
-            setExistingCollaborators(data);
+            const collaborators = data?.$values || [];
+            setExistingCollaborators(collaborators);
           }}
         />
       )}

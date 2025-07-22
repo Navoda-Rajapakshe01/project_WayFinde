@@ -46,9 +46,11 @@ const OptimizedRoute = () => {
         );
         if (!isCancelled && data) {
           setTrip(data);
-          setPlaces(
-            (data.places || []).map((p) => ({ ...p, id: p.id ?? uuid() }))
-          );
+          const rawPlaces = data.places?.$values || [];
+          const safePlaces = rawPlaces
+            .filter((p) => p && (p.id || p.name || p.googleMapLink)) // avoid undefined
+            .map((p) => ({ ...p, id: p.id ?? uuid() }));
+          setPlaces(safePlaces);
         }
       } catch (err) {
         if (!isCancelled) {

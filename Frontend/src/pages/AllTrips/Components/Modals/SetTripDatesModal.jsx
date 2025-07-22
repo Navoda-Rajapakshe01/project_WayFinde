@@ -45,7 +45,9 @@ const SetTripDatesModal = ({
         const res = await fetch(`http://localhost:5030/api/trips/${trip.id}`);
         const data = await res.json();
 
-        const updated = data.places.map((p, idx, arr) => ({
+        const places = data.places?.$values || [];
+
+        const updated = places.map((p, idx, arr) => ({
           placeId: p.id,
           placeName: p.name,
           startDate:
