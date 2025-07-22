@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
 namespace Backend.DTOs
@@ -18,5 +18,7 @@ namespace Backend.DTOs
         public IFormFileCollection? Images { get; set; }
 
         public int DistrictId { get; set; }
+        public int PlaceId { get; set; }
+        public Guid SupplierId { get; set; }
     }
 }
