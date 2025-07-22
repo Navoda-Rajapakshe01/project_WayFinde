@@ -222,11 +222,11 @@ namespace Backend.Data
             if (userId == Guid.Empty)
                 return BadRequest("UserId is required.");
 
-            if (!Guid.TryParse(userId, out Guid userGuid))
-                return BadRequest("Invalid UserId format.");
+            if (userId == Guid.Empty)
+                return BadRequest("Invalid UserId.");
 
             var trips = await _context.Trips
-                .Where(t => t.UserId == userGuid)
+                .Where(t => t.UserId == userId)
                 .Include(t => t.TripPlaces)
                     .ThenInclude(tp => tp.Place)
                         .ThenInclude(p => p.Reviews)
@@ -711,14 +711,5 @@ namespace Backend.Data
 
             return Ok(result);
         }
-
-
-
-
-
-
-
-
-
     }
 }

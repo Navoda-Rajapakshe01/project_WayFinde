@@ -6,6 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CloudinaryDotNet;
 using Backend.Hubs;
+using Stripe;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,8 +43,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+
+
 // Cloudinary Configuration
-builder.Services.AddSingleton(new Cloudinary(new Account(
+builder.Services.AddSingleton(new Cloudinary(new CloudinaryDotNet.Account(
     "diccvuqqo",
     "269366281956762",
     "80wa84I1eT5EwO6CW3RIAtW56rc"
@@ -72,12 +76,24 @@ builder.Services.AddCors(options =>
     );
 });
 
+builder.Services.Configure<StripeSettings>(
+    builder.Configuration.GetSection("Stripe")
+);
+
+var stripeSettings = builder.Configuration.GetSection("Stripe").Get<StripeSettings>();
+StripeConfiguration.ApiKey = stripeSettings.SecretKey;
+
+
 // Add Controllers with JSON options
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.MaxDepth = 32;
 });
+
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

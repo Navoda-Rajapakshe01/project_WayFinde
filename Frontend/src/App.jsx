@@ -62,6 +62,8 @@ import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
 import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+
 import "./App.css";
 import UserTrips from "./pages/Admin/UserTrips";
 import UserBlogs from "./pages/Admin/UserBlogs";
@@ -104,6 +106,7 @@ function AppRoutes() {
             )
           }
         />
+        <Route path="/payment-success" element={<PaymentSuccessPage />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />

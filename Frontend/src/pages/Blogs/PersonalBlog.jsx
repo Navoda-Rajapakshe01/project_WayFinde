@@ -57,7 +57,7 @@ const PersonalBlog = () => {
           method: "GET",
           headers: {
             Accept:
-              "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+              "text/html,application/xhtml+xml,application/xml;q=0.9,/;q=0.8",
             "Cache-Control": "no-cache",
           },
         }
@@ -67,12 +67,10 @@ const PersonalBlog = () => {
 
       if (!contentResponse.ok) {
         const errorText = await contentResponse.text();
-        console.error(
-          `Error fetching blog content: ${contentResponse.status} - ${errorText}`
-        );
-        throw new Error(
-          `Failed to fetch blog content: ${contentResponse.status} - ${errorText}`
-        );
+        console.error(`
+          Error  blog : ${contentResponse.status} - ${errorText}`);
+        throw new Error(`
+          Failed to fetch blog content: ${contentResponse.status} - ${errorText}`);
       }
 
       const htmlContent = await contentResponse.text();
@@ -105,7 +103,7 @@ const PersonalBlog = () => {
 
       const response = await fetch("http://localhost:5030/api/profile/me", {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${ken}`,
           "Content-Type": "application/json",
         },
       });
@@ -125,7 +123,6 @@ const PersonalBlog = () => {
       setUserLoading(false);
     }
   };
-
   const handleSubmitComment = async () => {
     // Validate input
     if (!commentText.trim()) {
@@ -474,53 +471,52 @@ const PersonalBlog = () => {
     }
   };
   // First, add a new function to delete comments
-const handleDeleteComment = async (commentId) => {
-  if (!commentId) return;
-  
-  // Confirm deletion
-  if (!window.confirm('Are you sure you want to delete this comment?')) {
-    return;
-  }
-  
-  try {
-    const token = localStorage.getItem("token");
-    const response = await fetch(
-      `http://localhost:5030/api/blog/comment/${commentId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+  const handleDeleteComment = async (commentId) => {
+    if (!commentId) return;
+
+    // Confirm deletion
+    if (!window.confirm("Are you sure you want to delete this comment?")) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:5030/api/blog/comment/${commentId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to delete comment");
       }
-    );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || "Failed to delete comment");
+      const data = await response.json();
+      console.log("Comment deleted successfully:", data);
+
+      // Remove the comment from state
+      setComments((prevComments) =>
+        prevComments.filter((comment) => comment.id !== commentId)
+      );
+
+      // Update the blog's comment count
+      if (blog) {
+        setBlog({
+          ...blog,
+          commentCount: (blog.commentCount || comments.length) - 1,
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      alert("Failed to delete comment: " + error.message);
     }
-
-    const data = await response.json();
-    console.log("Comment deleted successfully:", data);
-
-    // Remove the comment from state
-    setComments(prevComments => 
-      prevComments.filter(comment => comment.id !== commentId)
-    );
-    
-    // Update the blog's comment count
-    if (blog) {
-      setBlog({
-        ...blog,
-        commentCount: (blog.commentCount || comments.length) - 1
-      });
-    }
-    
-  } catch (error) {
-    console.error("Error deleting comment:", error);
-    alert("Failed to delete comment: " + error.message);
-  }
-};
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -556,9 +552,8 @@ const handleDeleteComment = async (commentId) => {
               throw new Error("Invalid blog ID");
             } else {
               const errorText = await response.text();
-              throw new Error(
-                `HTTP error! status: ${response.status} - ${errorText}`
-              );
+              throw new Error(`
+                HTTP error! status: ${response.status} - ${errorText}`);
             }
           }
 
@@ -658,6 +653,13 @@ const handleDeleteComment = async (commentId) => {
             dangerouslySetInnerHTML={{ __html: blogContent }}
           />
         )}
+
+        {!blogContent && !contentLoading && !contentError && blog.blogUrl && (
+          <div className="no-content">
+            <p>No content available</p>
+            <button onClick={retryContentFetch}>Try Loading Content</button>
+          </div>
+        )}
       </div>
 
       {blog.coverImageUrl && (
@@ -688,8 +690,7 @@ const handleDeleteComment = async (commentId) => {
             <button
               className={`follow_button ${isFollowing ? "following" : ""}`}
               onClick={handleFollow}
-              disabled={followLoading || isSameUser}
-            >
+              disabled={followLoading || isSameUser}>
               {followLoading
                 ? "Processing..."
                 : isFollowing
@@ -705,18 +706,17 @@ const handleDeleteComment = async (commentId) => {
           {/* <div className="follow_button">Follow</div> */}
           <div className="reaction-button-container">
             <button
-              className={`reaction-button ${hasReacted ? "reacted" : ""}`}
+              className={reaction - button`${hasReacted ? "reacted" : ""}`}
               onClick={handleReaction}
-              disabled={reactionLoading || !currentUser}
-            >
+              disabled={reactionLoading || !currentUser}>
               <FaThumbsUp
-                className={`reaction-icon ${hasReacted ? "active" : ""}`}
+                className={reaction - icon`${hasReacted ? "active" : ""}`}
               />
               <span className="reaction-text">
                 {hasReacted ? "Liked" : "Like"}
               </span>
               <span className="reaction-count">
-                {reactionCount > 0 && `(${reactionCount})`}
+                {reactionCount > 0 && `${reactionCount}`}
               </span>
             </button>
           </div>
@@ -728,7 +728,9 @@ const handleDeleteComment = async (commentId) => {
       <div>
         {/* Comment Form */}
         <div className="commentsArea">
-          <div className="numberOfComments">Comments ({blog.commentCount || comments.length})</div>
+          <div className="numberOfComments">
+            Comments ({blog.commentCount || comments.length})
+          </div>
           <div className="commentsAreaProfileDetails">
             {userLoading ? (
               <div className="loading-avatar">Loading...</div>
@@ -760,16 +762,22 @@ const handleDeleteComment = async (commentId) => {
           </div>
           <div className="commentAreaAddComments">
             <textarea
+              className="commentInput"
+              placeholder={
+                currentUser
+                  ? "Write your comment here..."
+                  : "Please log in to comment"
+              }
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Write a comment..."
-              className="comment-textarea"
+              disabled={!currentUser}
             />
+          </div>
+          <div className="functionButtons">
             <button
               className="cancelButton"
               onClick={() => setCommentText("")}
-              disabled={commentSubmitting || !commentText.trim()}
-            >
+              disabled={commentSubmitting || !commentText.trim()}>
               Cancel
             </button>
             <button
@@ -777,36 +785,45 @@ const handleDeleteComment = async (commentId) => {
               onClick={handleSubmitComment}
               disabled={
                 commentSubmitting || !commentText.trim() || !currentUser
-              }
-            >
+              }>
               {commentSubmitting ? "Submitting..." : "Submit"}
             </button>
           </div>
           {commentError && (
             <div
               className="error-message"
-              style={{ color: "red", marginTop: "5px" }}
-            >
+              style={{ color: "red", marginTop: "5px" }}>
               Error: {commentError}
             </div>
           )}
           <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
         </div>
 
-        {/* Comments List */}
-        <div className="comments-list">
-          {comments.length === 0 ? (
-            <p>No comments yet. Be the first to comment!</p>
-          ) : (
-            comments.map((comment) => (
-              <div key={comment.id} className="comment-item">
-                <div className="comment-header">
-                  <span className="comment-author">
-                    {comment.user?.username || "Anonymous"}
-                  </span>
-                  <span className="comment-date">
-                    {new Date(comment.createdAt).toLocaleDateString()}
-                  </span>
+        {/* Display Comments */}
+        {comments.length > 0 ? (
+          comments.map((comment) => (
+            <div key={comment.id} className="comment-item">
+              <div className="writerDetails space-x-4">
+                <div>
+                  <img
+                    src={
+                      comment.user.profilePictureUrl ||
+                      "https://via.placeholder.com/40"
+                    }
+                    alt={`${comment.user.username}'s profile`}
+                    className="profile-img"
+                    onError={(e) => {
+                      e.target.src = "https://via.placeholder.com/40";
+                    }}
+                  />
+                </div>
+                <div className="name-container">
+                  <div className="writerName">{comment.user.username}</div>
+                  <div className="numOfFollowersFollowing">
+                    <div className="publishDay text-sm">
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </div>
+                  </div>
                 </div>
                 {/* Add delete button (only visible for comment author) */}
                 {currentUser && comment.user.id === currentUser.id && (
@@ -816,15 +833,13 @@ const handleDeleteComment = async (commentId) => {
                       e.preventDefault();
                       handleDeleteComment(comment.id);
                     }}
-                    title="Delete comment"
-                  >
+                    title="Delete comment">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="16"
                       height="16"
                       fill="currentColor"
-                      viewBox="0 0 16 16"
-                    >
+                      viewBox="0 0 16 16">
                       <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z" />
                       <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z" />
                     </svg>
