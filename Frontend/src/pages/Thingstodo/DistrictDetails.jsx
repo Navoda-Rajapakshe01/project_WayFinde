@@ -20,8 +20,9 @@ const DistrictDetails = () => {
       axios
         .get(`http://localhost:5030/api/places/by-district-name/${slug}`)
         .then((res) => {
-          setPlaces(res.data.$values || []); // Ensure we handle the response correctly
-          setFilteredPlaces(res.data.$values || []); // Show all by default
+          const fullPlaces = (res.data.$values || []).filter(p => p && p.id);
+          setPlaces(fullPlaces); // Only use fully expanded place objects
+          setFilteredPlaces(fullPlaces); // Show all by default
           setLoading(false);
         })
         .catch((err) => {
@@ -36,6 +37,10 @@ const DistrictDetails = () => {
 
   // Handle navigation to detailed page of the place
   const handleCardClick = (placeId) => {
+    if (!placeId || placeId === 'undefined' || Number.isNaN(placeId)) {
+      alert('Invalid place ID. Cannot show details.');
+      return;
+    }
     navigate(`/things-to-do/${slug}/${placeId}`);
   };
 
@@ -77,34 +82,40 @@ const DistrictDetails = () => {
       {!loading && !error && (
         <div className="ttd-places-grid">
           {filteredPlaces.length ? (
-            filteredPlaces.map((place) => (
-              <div
-                key={place.id}
-                className="ttd-place-card"
-                onClick={() => handleCardClick(place.id)}>
-                <div className="ttd-place-image-container">
-                  <img
-                    src={place.mainImageUrl || "/placeholder.jpg"}
-                    alt={place.name}
-                    className="ttd-place-image"
-                  />
-                  {place.category && (
-                    <span className="ttd-place-category">{place.category}</span>
-                  )}
+            filteredPlaces.map((place, idx) => {
+              let key = place.id;
+              if (!key || typeof key !== 'string' && typeof key !== 'number' || isNaN(key)) {
+                key = `place-${idx}`;
+              }
+              return (
+                <div
+                  key={key}
+                  className="ttd-place-card"
+                  onClick={() => handleCardClick(place.id)}>
+                  <div className="ttd-place-image-container">
+                    <img
+                      src={place.mainImageUrl || "/placeholder.jpg"}
+                      alt={place.name}
+                      className="ttd-place-image"
+                    />
+                    {place.category && (
+                      <span className="ttd-place-category">{place.category}</span>
+                    )}
+                  </div>
+                  <div className="ttd-place-info">
+                    <h3 className="ttd-place-name">{place.name}</h3>
+                    <button
+                      className="ttd-view-details-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCardClick(place.id);
+                      }}>
+                      View Details
+                    </button>
+                  </div>
                 </div>
-                <div className="ttd-place-info">
-                  <h3 className="ttd-place-name">{place.name}</h3>
-                  <button
-                    className="ttd-view-details-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCardClick(place.id);
-                    }}>
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           ) : (
             <p className="ttd-no-places">
               No places available for this category.
