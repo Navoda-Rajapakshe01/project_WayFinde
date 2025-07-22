@@ -24,7 +24,7 @@ namespace Backend.Models.Post
 
         public int NumberOfComments { get; set; } = 0;
 
-        public int NumberOfReads { get; set; } = 0; // Added NumberOfReads field
+        public int? NumberOfReads { get; set; } = 0; // Added NumberOfReads field
 
         public int NumberOfReacts { get; set; } = 0;
 

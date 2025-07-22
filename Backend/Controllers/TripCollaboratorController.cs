@@ -70,7 +70,7 @@ namespace Backend.Controllers
             }
 
             // Check if the user exists
-            var user = await _context.UserNew.FindAsync(tripCollaborator.UserId);
+            var user = await _context.UsersNew.FindAsync(tripCollaborator.UserId);
             if (user == null)
             {
                 return BadRequest("User not found");
