@@ -41,7 +41,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("AccommodationId");
 
-                    b.ToTable("AccommodationAmenities", (string)null);
+                    b.ToTable("AccommodationAmenities");
                 });
 
             modelBuilder.Entity("AccommodationImage", b =>
@@ -63,32 +63,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("AccommodationId");
 
-                    b.ToTable("AccommodationImages", (string)null);
-                });
-
-            modelBuilder.Entity("Backend.DTO.DistrictWithPlacesCountDTO", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PlacesCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Slug")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SubTitle")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.ToTable("DistrictWithPlacesCountDTO", (string)null);
+                    b.ToTable("AccommodationImages");
                 });
 
             modelBuilder.Entity("Backend.Models.Accommodation", b =>
@@ -137,7 +112,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("DistrictId");
 
-                    b.ToTable("Accommodations", (string)null);
+                    b.ToTable("Accommodations");
                 });
 
             modelBuilder.Entity("Backend.Models.AccommodationReservation", b =>
@@ -185,7 +160,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("AccommodationId");
 
-                    b.ToTable("AccommodationReservations", (string)null);
+                    b.ToTable("AccommodationReservations");
                 });
 
             modelBuilder.Entity("Backend.Models.AccommodationReview", b =>
@@ -216,7 +191,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("AccommodationId");
 
-                    b.ToTable("AccommodationReviews", (string)null);
+                    b.ToTable("AccommodationReviews");
                 });
 
             modelBuilder.Entity("Backend.Models.Blog", b =>
@@ -279,7 +254,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Blogs", (string)null);
+                    b.ToTable("Blogs");
                 });
 
             modelBuilder.Entity("Backend.Models.BlogImage", b =>
@@ -310,7 +285,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BlogImages", (string)null);
+                    b.ToTable("BlogImages");
                 });
 
             modelBuilder.Entity("Backend.Models.Category", b =>
@@ -327,7 +302,7 @@ namespace Backend.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Backend.Models.Comment", b =>
@@ -362,7 +337,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Backend.Models.DashboardNote", b =>
@@ -395,9 +370,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TripId");
-
-                    b.ToTable("DashboardNote", (string)null);
+                    b.ToTable("DashboardNote");
                 });
 
             modelBuilder.Entity("Backend.Models.District", b =>
@@ -426,7 +399,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Districts", (string)null);
+                    b.ToTable("Districts");
                 });
 
             modelBuilder.Entity("Backend.Models.Follows", b =>
@@ -444,7 +417,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("FollowedID");
 
-                    b.ToTable("Follows", (string)null);
+                    b.ToTable("Follows");
                 });
 
             modelBuilder.Entity("Backend.Models.PlaceImage", b =>
@@ -469,7 +442,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("PlacesToVisitId");
 
-                    b.ToTable("PlaceImages", (string)null);
+                    b.ToTable("PlaceImages");
                 });
 
             modelBuilder.Entity("Backend.Models.PlacesToVisit", b =>
@@ -525,7 +498,7 @@ namespace Backend.Migrations
                     b.HasIndex("Name", "DistrictId")
                         .IsUnique();
 
-                    b.ToTable("PlacesToVisit", (string)null);
+                    b.ToTable("PlacesToVisit");
                 });
 
             modelBuilder.Entity("Backend.Models.Post", b =>
@@ -580,7 +553,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Backend.Models.Review", b =>
@@ -613,7 +586,33 @@ namespace Backend.Migrations
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
+                });
+
+            modelBuilder.Entity("Backend.Models.SavedAccommodation", b =>
+                {
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AccommodationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TripId", "AccommodationId");
+
+                    b.ToTable("SavedAccommodations");
+                });
+
+            modelBuilder.Entity("Backend.Models.SavedVehicle", b =>
+                {
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TripId", "VehicleId");
+
+                    b.ToTable("SavedVehicles");
                 });
 
             modelBuilder.Entity("Backend.Models.TodoItem", b =>
@@ -650,7 +649,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("TodoItems", (string)null);
+                    b.ToTable("TodoItems");
                 });
 
             modelBuilder.Entity("Backend.Models.TravelBudget", b =>
@@ -704,30 +703,16 @@ namespace Backend.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("TotalSpend")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TripDistance")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("TripName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("TripTime")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -775,7 +760,40 @@ namespace Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TripCollaborator", (string)null);
+                    b.ToTable("TripCollaborator");
+                });
+
+            modelBuilder.Entity("Backend.Models.TripDate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("TripDateId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PlaceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlaceId");
+
+                    b.HasIndex("TripId");
+
+                    b.HasIndex("TripId", "PlaceId")
+                        .IsUnique();
+
+                    b.ToTable("TripDate", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Models.TripPlace", b =>
@@ -786,11 +804,40 @@ namespace Backend.Migrations
                     b.Property<int>("PlaceId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
                     b.HasKey("TripId", "PlaceId");
 
                     b.HasIndex("PlaceId");
 
-                    b.ToTable("TripPlaces", (string)null);
+                    b.ToTable("TripPlaces");
+                });
+
+            modelBuilder.Entity("Backend.Models.User.BlogReaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BlogId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BlogId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BlogReactions");
                 });
 
             modelBuilder.Entity("Backend.Models.UserNew", b =>
@@ -805,6 +852,12 @@ namespace Backend.Migrations
                     b.Property<string>("ContactEmail")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FollowersCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FollowingCount")
+                        .HasColumnType("int");
 
                     b.Property<string>("LastLoginDate")
                         .HasColumnType("nvarchar(max)");
@@ -837,7 +890,7 @@ namespace Backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserNew", (string)null);
+                    b.ToTable("UsersNew");
                 });
 
             modelBuilder.Entity("Backend.Models.Vehicle", b =>
@@ -900,7 +953,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("SupplierId");
 
-                    b.ToTable("Vehicles", (string)null);
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleImage", b =>
@@ -922,7 +975,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleImages", (string)null);
+                    b.ToTable("VehicleImages");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleReservation", b =>
@@ -975,7 +1028,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleReservations", (string)null);
+                    b.ToTable("VehicleReservations");
                 });
 
             modelBuilder.Entity("Backend.Models.VehicleReview", b =>
@@ -1006,7 +1059,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleReviews", (string)null);
+                    b.ToTable("VehicleReviews");
                 });
 
             modelBuilder.Entity("VehicleAmenity", b =>
@@ -1028,7 +1081,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("VehicleAmenities", (string)null);
+                    b.ToTable("VehicleAmenities");
                 });
 
             modelBuilder.Entity("AccommodationAmenity", b =>
@@ -1120,15 +1173,6 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.Models.DashboardNote", b =>
-                {
-                    b.HasOne("Backend.Models.Trip", null)
-                        .WithMany("DashboardNotes")
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Backend.Models.Follows", b =>
                 {
                     b.HasOne("Backend.Models.UserNew", "Followed")
@@ -1211,7 +1255,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.TodoItem", b =>
                 {
                     b.HasOne("Backend.Models.Trip", "Trip")
-                        .WithMany("TodoItems")
+                        .WithMany()
                         .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1222,7 +1266,7 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.TravelBudget", b =>
                 {
                     b.HasOne("Backend.Models.Trip", "Trip")
-                        .WithMany("TravelBudgets")
+                        .WithMany()
                         .HasForeignKey("TripId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1405,12 +1449,6 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Trip", b =>
                 {
                     b.Navigation("Collaborators");
-
-                    b.Navigation("DashboardNotes");
-
-                    b.Navigation("TodoItems");
-
-                    b.Navigation("TravelBudgets");
 
                     b.Navigation("TripDates");
 
