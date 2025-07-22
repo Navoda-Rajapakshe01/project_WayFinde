@@ -11,4 +11,3 @@ using Backend.Models;
     public Accommodation? Accommodation { get; set; }
 
 }
-
