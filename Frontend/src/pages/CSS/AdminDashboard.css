@@ -23,7 +23,7 @@ a:hover {
 
 img {
   max-width: 100%;
-  height: auto;
+  /* height: auto; */
 }
 
 /* --- Main Layout --- */
@@ -123,7 +123,7 @@ button:disabled {
 }
 
 .adminedit-button {
-  background-color: var(--secondary-color); 
+  background-color: var(--secondary-color);
   color: #ffffff;
 }
 .adminedit-button:hover {
@@ -170,7 +170,7 @@ button:disabled {
 
 .adminfilter-dropdown-group {
   display: flex;
-  gap: 12px; 
+  gap: 12px;
 }
 
 .adminfilter-dropdown {
@@ -199,7 +199,6 @@ button:disabled {
   margin-right: 8px;
   color: #888;
   font-size: 1.1em;
-  
 }
 
 .adminsearch-box input[type="text"] {

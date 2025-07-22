@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext/AuthContext";
 import axios from "axios";
 import React from "react";
+import { Spinner } from "react-bootstrap";
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -119,7 +120,20 @@ const AuthProvider = ({ children }) => {
   };
 
   if (loading) {
-    return <div>Loading authentication...</div>;
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading authentication...</span>
+        </Spinner>
+      </div>
+    );
   }
 
   return (
@@ -130,7 +144,8 @@ const AuthProvider = ({ children }) => {
         updateUser,
         logout,
         isAuthenticated: !!user,
-      }}>
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

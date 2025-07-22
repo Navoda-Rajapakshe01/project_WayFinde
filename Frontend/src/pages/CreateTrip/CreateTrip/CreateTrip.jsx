@@ -364,7 +364,7 @@ const CreateTrip = () => {
             <div className="selected-district-view">
               <button
                 onClick={() => setSelectedDistrict(null)}
-                className="flex items-center gap-2 text-blue-600 font-medium hover:underline mb-4"
+                className="flex items-center gap-2 font-medium mb-4 transition duration-300 ease-in-out text-[#4CC9FE] hover:text-white hover:bg-[#4CC9FE] px-4 py-2 rounded"
               >
                 <ArrowLeft size={20} />
                 Back to Districts
