@@ -45,20 +45,20 @@ const VehicleRent = ({ sharedMode = false, tripId }) => {
       // Fetch all trip places
       const response = await fetch('http://localhost:5030/api/TripPlaces');
       if (!response.ok) throw new Error('Failed to fetch trip places');
-      const allTripPlacesData = await response.json();
-      
+      const allTripPlacesDataRaw = await response.json();
+      const allTripPlacesData = Array.isArray(allTripPlacesDataRaw.$values) ? allTripPlacesDataRaw.$values : allTripPlacesDataRaw;
       // Filter places by the specific tripId
       const tripPlacesData = allTripPlacesData.filter(tripPlace => 
         String(tripPlace.tripId) === String(tripId)
       );
-      
       // Fetch place names for each trip place
       const placesWithNames = await Promise.all(
         tripPlacesData.map(async (tripPlace) => {
           try {
             const placeResponse = await fetch(`http://localhost:5030/api/Places/${tripPlace.placeId}`);
             if (placeResponse.ok) {
-              const placeData = await placeResponse.json();
+              const placeDataRaw = await placeResponse.json();
+              const placeData = Array.isArray(placeDataRaw.$values) ? placeDataRaw.$values[0] : placeDataRaw;
               return { ...tripPlace, placeName: placeData.name };
             }
             return { ...tripPlace, placeName: `Place ${tripPlace.placeId}` };
@@ -81,7 +81,8 @@ const VehicleRent = ({ sharedMode = false, tripId }) => {
       // Fetch all vehicles (you might want to filter by place if your API supports it)
       const response = await fetch('http://localhost:5030/api/Vehicle');
       if (!response.ok) throw new Error('Failed to fetch vehicles');
-      const vehiclesData = await response.json();
+      const vehiclesDataRaw = await response.json();
+      const vehiclesData = Array.isArray(vehiclesDataRaw.$values) ? vehiclesDataRaw.$values : vehiclesDataRaw;
       setVehicles(vehiclesData);
       // Fetch additional details for each vehicle
       vehiclesData.forEach(vehicle => {
@@ -200,15 +201,39 @@ const VehicleRent = ({ sharedMode = false, tripId }) => {
 
   return (
     <div className="vehicle-rent-container">
-      
+      {/* Place Selection Section */}
+      {places.length > 0 && (
+        <div className="places-containers">
+          <h3>Select a Place</h3>
+          <div className="places-grid">
+            {places.map((place) => (
+              <div
+                key={place.placeId}
+                className={`place-card ${selectedPlace?.placeId === place.placeId ? 'selected' : ''}`}
+                onClick={() => setSelectedPlace(place)}
+              >
+                <h3>{place.placeName}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Loading and Error States */}
+      {loadingPlaces && <div className="loading">Loading places...</div>}
+      {loadingVehicles && <div className="loading">Loading vehicles...</div>}
+      {error && <div className="error">{error}</div>}
+
       {/* Vehicles List Section */}
       <div className="vehicle-cards-container">
         {vehicles.map((vehicle, index) => (
-          <div key={index} className="vehicle-card">
+          <div key={vehicle.id || index} className="vehicle-card">
             {/* Main Image */}
             <div
               className="vehicle-image"
-              style={{ backgroundImage: `url(${vehicle.mainImageUrl})` }}
+              style={{ 
+                backgroundImage: `url(${vehicleImages[vehicle.id] || vehicle.mainImageUrl || '/placeholder-vehicle.jpg'})` 
+              }}
             >
               {/* Save Button */}
               <button
@@ -221,24 +246,39 @@ const VehicleRent = ({ sharedMode = false, tripId }) => {
               </button>
             </div>
             <div className="vehicle-info">
+              <h4 className="vehicle-name">{vehicle.name || vehicle.make + ' ' + vehicle.model}</h4>
               <div className="vehicle-details">
-                <span>{vehicle.seats} Seats</span>
-                <span>{vehicle.bags} Bags</span>
+                <span>{vehicle.seats || vehicle.seatCount || 'N/A'} Seats</span>
+                <span>{vehicle.bags || vehicle.bagCapacity || 'N/A'} Bags</span>
               </div>
               <div className="vehicle-rating">
-                <span>⭐ {vehicle.rating} ({vehicle.reviews} reviews)</span>
+                {vehicleReviews[vehicle.id] ? (
+                  <span>⭐ {vehicleReviews[vehicle.id].rating} ({vehicleReviews[vehicle.id].count} reviews)</span>
+                ) : (
+                  <span>⭐ No ratings yet</span>
+                )}
+              </div>
+              <div className="vehicle-price">
+                <span>LKR {vehicle.pricePerDay || vehicle.price || 'N/A'}/day</span>
               </div>
               <button className="book-now-button">Book Now</button>
               <span className="availability-status available">Available</span>
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Show message when no place is selected */}
+      {!selectedPlace && places.length > 0 && !loadingPlaces && (
+        <div className="no-selection">
+          <p>Please select a place to view available vehicles</p>
         </div>
       )}
 
-      {/* Show message when no place is selected */}
-      {!selectedPlace && places.length > 0 && (
-        <div className="no-selection">
-          <p>Please select a place to view available vehicles</p>
+      {/* Show message when no vehicles found */}
+      {selectedPlace && vehicles.length === 0 && !loadingVehicles && (
+        <div className="no-vehicles">
+          <p>No vehicles available for the selected place</p>
         </div>
       )}
     </div>

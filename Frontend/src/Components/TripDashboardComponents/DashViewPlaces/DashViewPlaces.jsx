@@ -16,17 +16,28 @@ const DashViewPlaces = ({ isOpen, tripId, onClose }) => {
 
   useEffect(() => {
     if (isOpen) {
+      console.log('Modal is open, calling fetchPlaces');
       fetchPlaces();
     }
   }, [isOpen]);
 
   const fetchPlaces = async () => {
+    console.log('fetchPlaces called');
     setLoading(true);
     try {
       const response = await fetch('http://localhost:5030/api/TripPlaces');
       const data = await response.json();
+      console.log('TripPlaces API response:', data);
+      const tripPlacesArray = Array.isArray(data.$values) ? data.$values : [];
+      if (tripPlacesArray.length === 0) {
+        setPlaces([]);
+        setSelectedPlace(null);
+        setWeatherData(null);
+        setLoading(false);
+        return;
+      }
       // Filter places by tripId
-      const filtered = data.filter(place => String(place.tripId) === String(tripId));
+      const filtered = tripPlacesArray.filter(place => String(place.tripId) === String(tripId));
       // Fetch place details for each TripPlace to get the name
       const placesWithNames = await Promise.all(
         filtered.map(async (tp) => {

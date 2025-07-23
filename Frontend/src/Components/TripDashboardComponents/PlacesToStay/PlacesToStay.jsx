@@ -35,20 +35,20 @@ const PlacesToStay = ({ tripId }) => {
       // Fetch all trip places
       const response = await fetch('http://localhost:5030/api/TripPlaces');
       if (!response.ok) throw new Error('Failed to fetch trip places');
-      const allTripPlacesData = await response.json();
-      
+      const allTripPlacesDataRaw = await response.json();
+      const allTripPlacesData = Array.isArray(allTripPlacesDataRaw.$values) ? allTripPlacesDataRaw.$values : allTripPlacesDataRaw;
       // Filter places by the specific tripId
       const tripPlacesData = allTripPlacesData.filter(tripPlace => 
         String(tripPlace.tripId) === String(tripId)
       );
-      
       // Fetch place names for each trip place
       const placesWithNames = await Promise.all(
         tripPlacesData.map(async (tripPlace) => {
           try {
             const placeResponse = await fetch(`http://localhost:5030/api/Places/${tripPlace.placeId}`);
             if (placeResponse.ok) {
-              const placeData = await placeResponse.json();
+              const placeDataRaw = await placeResponse.json();
+              const placeData = Array.isArray(placeDataRaw.$values) ? placeDataRaw.$values[0] : placeDataRaw;
               return { ...tripPlace, placeName: placeData.name };
             }
             return { ...tripPlace, placeName: `Place ${tripPlace.placeId}` };
@@ -71,7 +71,8 @@ const PlacesToStay = ({ tripId }) => {
       // Fetch all accommodations
       const response = await fetch('http://localhost:5030/api/Accommodation');
       if (!response.ok) throw new Error('Failed to fetch accommodations');
-      const accommodationsData = await response.json();
+      const accommodationsDataRaw = await response.json();
+      const accommodationsData = Array.isArray(accommodationsDataRaw.$values) ? accommodationsDataRaw.$values : accommodationsDataRaw;
       setAccommodations(accommodationsData);
       // Fetch additional details for each accommodation
       accommodationsData.forEach(accommodation => {

@@ -15,7 +15,12 @@ const TravelBudget = ({ tripId, sharedMode = false }) => {
         .get(`http://localhost:5030/api/TravelBudget/trip/${tripId}`) // Use tripId in the API endpoint
         .then((res) => {
           console.log("Received budgets:", res.data); // Debug log
-          setExpenses(res.data);
+          const expensesArray = Array.isArray(res.data.$values) ? res.data.$values : res.data;
+          if (!Array.isArray(expensesArray)) {
+            setExpenses([]);
+            return;
+          }
+          setExpenses(expensesArray);
         })
         .catch((err) => {
           console.error("GET error: ", err);

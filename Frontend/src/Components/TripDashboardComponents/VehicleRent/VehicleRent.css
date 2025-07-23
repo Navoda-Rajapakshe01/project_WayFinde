@@ -22,11 +22,11 @@
 }
 
 /* Places Container */
-.places-container {
+.places-containers {
   margin-bottom: 30px;
 }
 
-.places-container h2 {
+.places-containers h3 {
   margin-bottom: 15px;
   color: #333;
   font-size: 18px;

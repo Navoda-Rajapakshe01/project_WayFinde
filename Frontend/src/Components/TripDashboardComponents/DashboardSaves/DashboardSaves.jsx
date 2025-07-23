@@ -24,17 +24,20 @@ function DashboardSaves({ tripId }) {
       // Get saved vehicles for this trip
       const response = await fetch(`http://localhost:5030/api/SavedVehicle/trip/${tripId}`);
       if (!response.ok) throw new Error();
-      const tripSaved = await response.json();
+      const tripSavedRaw = await response.json();
+      const tripSaved = Array.isArray(tripSavedRaw.$values) ? tripSavedRaw.$values : tripSavedRaw;
       setSavedVehicles(tripSaved);
 
       // Get all vehicles
       const vRes = await fetch('http://localhost:5030/api/Vehicle');
-      const vehiclesData = vRes.ok ? await vRes.json() : [];
+      const vehiclesDataRaw = vRes.ok ? await vRes.json() : [];
+      const vehiclesData = Array.isArray(vehiclesDataRaw.$values) ? vehiclesDataRaw.$values : vehiclesDataRaw;
       setAllVehicles(vehiclesData);
 
       // Get all vehicle images
       const imgRes = await fetch('http://localhost:5030/api/VehicleImage');
-      const imagesData = imgRes.ok ? await imgRes.json() : [];
+      const imagesDataRaw = imgRes.ok ? await imgRes.json() : [];
+      const imagesData = Array.isArray(imagesDataRaw.$values) ? imagesDataRaw.$values : imagesDataRaw;
       setAllImages(imagesData);
 
       // Log info for each saved vehicle
@@ -54,17 +57,20 @@ function DashboardSaves({ tripId }) {
       // Get saved accommodations for this trip
       const response = await fetch(`http://localhost:5030/api/SavedAccommodation/trip/${tripId}`);
       if (!response.ok) throw new Error();
-      const tripSaved = await response.json();
+      const tripSavedRaw = await response.json();
+      const tripSaved = Array.isArray(tripSavedRaw.$values) ? tripSavedRaw.$values : tripSavedRaw;
       setSavedAccommodations(tripSaved);
 
       // Get all accommodations
       const aRes = await fetch('http://localhost:5030/api/Accommodation');
-      const accommodationsData = aRes.ok ? await aRes.json() : [];
+      const accommodationsDataRaw = aRes.ok ? await aRes.json() : [];
+      const accommodationsData = Array.isArray(accommodationsDataRaw.$values) ? accommodationsDataRaw.$values : accommodationsDataRaw;
       setAllAccommodations(accommodationsData);
 
       // Get all accommodation images
       const imgRes = await fetch('http://localhost:5030/api/AccommodationImage');
-      const imagesData = imgRes.ok ? await imgRes.json() : [];
+      const imagesDataRaw = imgRes.ok ? await imgRes.json() : [];
+      const imagesData = Array.isArray(imagesDataRaw.$values) ? imagesDataRaw.$values : imagesDataRaw;
       setAllAccommodationImages(imagesData);
 
       // Log info for each saved accommodation

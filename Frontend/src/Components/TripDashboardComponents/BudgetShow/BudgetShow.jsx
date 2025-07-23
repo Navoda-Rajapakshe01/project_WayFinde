@@ -12,7 +12,8 @@ const BudgetShow = ({ onClose, tripId }) => {
     if (tripId) {
       axios.get(`http://localhost:5030/api/TravelBudget/trip/${tripId}`)
         .then((res) => {
-          setExpenses(res.data);
+          const expensesArray = Array.isArray(res.data.$values) ? res.data.$values : res.data;
+          setExpenses(Array.isArray(expensesArray) ? expensesArray : []);
         })
         .catch((err) => {
           console.error("GET error: ", err);

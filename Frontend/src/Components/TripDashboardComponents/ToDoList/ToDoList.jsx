@@ -18,7 +18,12 @@ const TodoList = ({ tripId, sharedMode = false }) => {
         .get("http://localhost:5030/api/Todo") // Fetch all todos
         .then((res) => {
           console.log("Received todos:", res.data);
-          const fetchedTodos = res.data
+          const todosArray = Array.isArray(res.data.$values) ? res.data.$values : res.data;
+          if (!Array.isArray(todosArray)) {
+            setNotes([]);
+            return;
+          }
+          const fetchedTodos = todosArray
             .filter((todo) => todo.tripId === Number(tripId))
             .map((todo) => ({
               id: todo.id,
