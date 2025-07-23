@@ -42,7 +42,7 @@ namespace Backend.Controllers
                 {
                     Id = r.Id,
                     VehicleId = r.VehicleId,
-                    VehicleInfo = r.Vehicle.Brand + " " + r.Vehicle.Model,
+                    VehicleInfo = r.Vehicle != null ? r.Vehicle.Brand + " " + r.Vehicle.Model : string.Empty,
                     Name = r.Name,
                     Email = r.Email,
                     Comment = r.Comment,

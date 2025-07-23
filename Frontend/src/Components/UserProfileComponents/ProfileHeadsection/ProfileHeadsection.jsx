@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 
+
 const ProfileHeadSection = () => {
   const [username, setUsername] = useState("");
   const [profilePictureUrl, setProfilePictureUrl] = useState("");

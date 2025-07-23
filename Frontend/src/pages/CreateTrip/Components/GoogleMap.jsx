@@ -1,200 +1,107 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { loadGoogleMapsApi } from "../../../utils/GoogleMapsLoader";
-import ErrorBoundary from "../../../components/ErrorBoundary";
-import MapFallback from "../../../Components/MapFallback";
-import "../../../components/MapFallback.css";
+import React, { useEffect, useRef, useState } from "react";
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 const GoogleMapContent = ({ markers = [] }) => {
   const mapRef = useRef(null);
-  const googleMapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [mapError, setMapError] = useState(null);
+  const [mapReady, setMapReady] = useState(false);
 
-  // Initialize the Google Map
-  const initMap = useCallback(async () => {
-    if (!mapRef.current) return;
+  // --- Initialize Map
+  const initializeMap = () => {
+    if (!window.google || !mapRef.current) return;
 
-    try {
-      // Load Google Maps API using our centralized loader
-      const maps = await loadGoogleMapsApi();
+    const map = new window.google.maps.Map(mapRef.current, {
+      center: { lat: 7.8731, lng: 80.7718 },
+      zoom: 8,
+      mapTypeControl: false,
+      streetViewControl: false,
+      fullscreenControl: false,
+      zoomControl: true,
+    });
 
-      // Create a new Google Map instance
-      const mapOptions = {
-        center: { lat: 7.8731, lng: 80.7718 }, // Center of Sri Lanka
-        zoom: 8,
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false,
-        zoomControl: true,
-        styles: [
-          {
-            featureType: "water",
-            elementType: "geometry",
-            stylers: [{ color: "#e9e9e9" }, { lightness: 17 }],
-          },
-          {
-            featureType: "landscape",
-            elementType: "geometry",
-            stylers: [{ color: "#f5f5f5" }, { lightness: 20 }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry.fill",
-            stylers: [{ color: "#ffffff" }, { lightness: 17 }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#ffffff" }, { lightness: 29 }, { weight: 0.2 }],
-          },
-          {
-            featureType: "road.arterial",
-            elementType: "geometry",
-            stylers: [{ color: "#ffffff" }, { lightness: 18 }],
-          },
-          {
-            featureType: "road.local",
-            elementType: "geometry",
-            stylers: [{ color: "#ffffff" }, { lightness: 16 }],
-          },
-          {
-            featureType: "poi",
-            elementType: "geometry",
-            stylers: [{ color: "#f5f5f5" }, { lightness: 21 }],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "geometry",
-            stylers: [{ color: "#dedede" }, { lightness: 21 }],
-          },
-          {
-            featureType: "administrative",
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#ffffff" }, { lightness: 16 }],
-          },
-        ],
-      };
+    mapInstanceRef.current = map;
+    setMapReady(true);
+  };
 
-      googleMapRef.current = new window.google.maps.Map(
-        mapRef.current,
-        mapOptions
-      );
-      setMapLoaded(true);
-    } catch (error) {
-      console.error("Error initializing Google Maps:", error);
-      setMapError(error.message || "Failed to load Google Maps");
-    }
-  }, []);
-
-  // Initialize map when component mounts
+  // --- Script Loader
   useEffect(() => {
-    let isMounted = true;
+    if (window.google && window.google.maps) {
+      initializeMap();
+      return;
+    }
 
-    const init = async () => {
-      await initMap();
-    };
+    if (!document.getElementById("google-maps-script")) {
+      // Define initMap callback on window
+      window.initMap = initializeMap;
 
-    init();
+      const script = document.createElement("script");
+      script.id = "google-maps-script";
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    } else {
+      // Fallback if script is loaded but google is not ready yet
+      const interval = setInterval(() => {
+        if (window.google && window.google.maps) {
+          clearInterval(interval);
+          initializeMap();
+        }
+      }, 300);
+    }
 
     return () => {
-      isMounted = false;
-
-      // Clean up markers when component unmounts
-      if (markersRef.current && markersRef.current.length > 0) {
-        markersRef.current.forEach((marker) => {
-          if (marker) marker.setMap(null);
-        });
-        markersRef.current = [];
-      }
-
-      // Clean up map
-      googleMapRef.current = null;
+      delete window.initMap;
     };
-  }, [initMap]);
+  }, []);
 
-  // Update markers when they change
+  // --- Add Markers
   useEffect(() => {
-    if (
-      !mapLoaded ||
-      !googleMapRef.current ||
-      !window.google ||
-      !window.google.maps
-    )
-      return;
+    if (!mapReady || !mapInstanceRef.current) return;
 
-    // Clear existing markers
-    if (markersRef.current && markersRef.current.length > 0) {
-      markersRef.current.forEach((marker) => {
-        if (marker) marker.setMap(null);
+    markersRef.current.forEach((marker) => marker.setMap(null));
+    markersRef.current = [];
+
+    if (markers.length === 0) return;
+
+    const bounds = new window.google.maps.LatLngBounds();
+
+    markers.forEach((markerData) => {
+      const marker = new window.google.maps.Marker({
+        position: markerData.position,
+        map: mapInstanceRef.current,
+        title: markerData.title,
+        animation: window.google.maps.Animation.DROP,
       });
-      markersRef.current = [];
+
+      const infoWindow = new window.google.maps.InfoWindow({
+        content: `<div><strong>${markerData.title}</strong></div>`,
+      });
+
+      marker.addListener("click", () =>
+        infoWindow.open(mapInstanceRef.current, marker)
+      );
+
+      markersRef.current.push(marker);
+      bounds.extend(markerData.position);
+    });
+
+    if (markers.length === 1) {
+      mapInstanceRef.current.setCenter(markers[0].position);
+      mapInstanceRef.current.setZoom(14);
+    } else {
+      mapInstanceRef.current.fitBounds(bounds);
     }
-
-    // Add new markers
-    if (markers.length > 0) {
-      try {
-        const bounds = new window.google.maps.LatLngBounds();
-
-        markers.forEach((markerData) => {
-          try {
-            // Create marker
-            const marker = new window.google.maps.Marker({
-              position: markerData.position,
-              map: googleMapRef.current,
-              title: markerData.title,
-              animation: window.google.maps.Animation.DROP,
-              icon: {
-                path: window.google.maps.SymbolPath.CIRCLE,
-                fillColor: "#ef4444",
-                fillOpacity: 1,
-                strokeColor: "#ffffff",
-                strokeWeight: 2,
-                scale: 8,
-              },
-            });
-
-            // Add info window
-            const infoWindow = new window.google.maps.InfoWindow({
-              content: `<div class="info-window"><strong>${markerData.title}</strong></div>`,
-            });
-
-            marker.addListener("click", () => {
-              infoWindow.open(googleMapRef.current, marker);
-            });
-
-            // Add marker to ref array for cleanup
-            markersRef.current.push(marker);
-
-            // Extend bounds to include this marker
-            bounds.extend(markerData.position);
-          } catch (error) {
-            console.error("Error creating marker:", error);
-          }
-        });
-
-        // Fit map to bounds if we have markers
-        if (markers.length > 1) {
-          googleMapRef.current.fitBounds(bounds);
-        } else if (markers.length === 1) {
-          googleMapRef.current.setCenter(markers[0].position);
-          googleMapRef.current.setZoom(14);
-        }
-      } catch (error) {
-        console.error("Error updating map markers:", error);
-      }
-    }
-  }, [markers, mapLoaded]);
-
-  if (mapError) {
-    return <MapFallback />;
-  }
+  }, [markers, mapReady]);
 
   return (
     <div className="google-map-container">
-      <div ref={mapRef} className="google-map">
-        {!mapLoaded && (
-          <div className="map-loading">
+      <div className="google-map">
+        <div ref={mapRef} className="map-inner" />
+        {!mapReady && (
+          <div className="map-loading-overlay">
             <div className="map-loading-spinner"></div>
             <p>Loading map...</p>
           </div>
@@ -204,13 +111,5 @@ const GoogleMapContent = ({ markers = [] }) => {
   );
 };
 
-// Wrap the map component with an error boundary
-const GoogleMap = (props) => {
-  return (
-    <ErrorBoundary fallback={<MapFallback />}>
-      <GoogleMapContent {...props} />
-    </ErrorBoundary>
-  );
-};
-
+const GoogleMap = (props) => <GoogleMapContent {...props} />;
 export default GoogleMap;

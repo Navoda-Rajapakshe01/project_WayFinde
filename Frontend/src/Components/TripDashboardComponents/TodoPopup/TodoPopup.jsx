@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import './TodoPopup.css';
+import React, { useState } from "react";
+import "./TodoPopup.css";
 
-const TodoPopup = ({ onClose, onSave }) => {
-  const [newNoteText, setNewNoteText] = useState('');
+const TodoPopup = ({ onClose, onSave, sharedMode = false }) => {
+  const [newNoteText, setNewNoteText] = useState("");
 
   const handleSave = () => {
     if (newNoteText.trim()) {
       onSave(newNoteText);
-      setNewNoteText(''); 
-      onClose(); 
+      setNewNoteText("");
+      onClose();
     }
   };
 
@@ -18,6 +18,7 @@ const TodoPopup = ({ onClose, onSave }) => {
         <h5>Add New Task</h5>
         <input
           type="text"
+          disabled={sharedMode}
           placeholder="Enter task..."
           value={newNoteText}
           onChange={(e) => setNewNoteText(e.target.value)}
@@ -27,7 +28,11 @@ const TodoPopup = ({ onClose, onSave }) => {
           <button onClick={onClose} className="popup-button closes-button">
             Cancel
           </button>
-          <button onClick={handleSave} className="popup-button saves-button">
+          <button
+            onClick={handleSave}
+            className="popup-button saves-button"
+            disabled={sharedMode}
+          >
             Apply
           </button>
         </div>

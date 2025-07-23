@@ -60,13 +60,54 @@ import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 import BlogCard from "./Components/BlogComponents/BlogCard/BlogCard";
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
-import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
-
-import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 
 import "./App.css";
 import UserTrips from "./pages/Admin/UserTrips";
 import UserBlogs from "./pages/Admin/UserBlogs";
+import AdminUserVehicles from "./pages/Admin/AdminUserVehicles";
+import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
+
+import { CometChat } from "@cometchat-pro/chat";
+
+const appID = "279195a6164aa3fa";
+const region = "in";
+const authKey = import.meta.env.VITE_COMETCHAT_AUTH_KEY;
+
+CometChat.init(
+  appID,
+  new CometChat.AppSettingsBuilder()
+    .subscribePresenceForAllUsers()
+    .setRegion(region)
+    .build()
+)
+  .then(() => {
+    console.log("CometChat initialized successfully");
+  })
+  .catch((error) => {
+    console.error("CometChat initialization failed", error);
+  });
+
+const loginCometChat = async (userId, userName) => {
+  try {
+    await CometChat.login(userId, authKey);
+    console.log("CometChat Login Successful");
+  } catch (error) {
+    if (error.code === "ERR_UID_NOT_FOUND") {
+      // Call backend to create user
+      await fetch("/api/cometchat/create-user", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uid: userId, name: userName }),
+      });
+      // Retry login
+      await CometChat.login(userId, authKey);
+    } else {
+      console.error("CometChat Login failed", error);
+    }
+  }
+};
+
+export { loginCometChat };
 
 function AppRoutes() {
   const location = useLocation();
@@ -81,7 +122,6 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/plantrip" element={<CreateTrip />} />
-        <Route path="/trip-planner" element={<PlanTrip />} />
         <Route path="/upcomingtrips" element={<AllTrips />} />
         <Route path="/alltrips" element={<AllTrips />} />
         <Route
@@ -172,7 +212,7 @@ function AppRoutes() {
         <Route path="/blog/:id" element={<ProfileBlogDisplay />} />
         <Route path="/plantrip" element={<CreateTrip />} />
         <Route path="/optimizedroute/:id" element={<OptimizedTripRoute />} />
-        <Route path="/admin" element={<AdminDashboard />}>
+        <Route path="/admin/*" element={<AdminDashboard />}>
           <Route index element={<DashboardOverview />} />
           <Route path="places-management" element={<PlacesManagement />} />
           <Route path="users-management" element={<UsersManagement />} />
@@ -180,7 +220,6 @@ function AppRoutes() {
           <Route path="reviews-management" element={<ReviewsManagement />} />
           <Route path="settings-panel" element={<SettingsPanel />} />
           <Route path="edit-place/:id" element={<EditPlace />} />
-          {/* This is the correct route for the admin profile page: /admin/profile */}
           <Route path="profile" element={<AdminProfile />} />
           <Route path="user-profile/:userId" element={<UserProfileDetail />} />
           <Route path="user-trips/:userId" element={<UserTrips />} />
@@ -188,6 +227,11 @@ function AppRoutes() {
           <Route
             path="accommodation-management"
             element={<AccommodationManagement />}
+          />
+          <Route path="user-vehicles/:userId" element={<AdminUserVehicles />} />
+          <Route
+            path="user-accommodations/:userId"
+            element={<AdminUserAccommodations />}
           />
         </Route>
         <Route path="/blogcard" element={<BlogCard />} />

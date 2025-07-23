@@ -69,6 +69,7 @@ namespace Backend.Data
         public object? Amenities { get; internal set; }
 
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<AccountDeletionRequest> AccountDeletionRequests { get; set; }
 
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }

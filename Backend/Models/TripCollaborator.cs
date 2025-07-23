@@ -16,18 +16,17 @@ namespace Backend.Models
         public int TripId { get; set; }
 
         [ForeignKey("TripId")]
-        public Trip Trip { get; set; }
+        public required Trip Trip { get; set; }
 
         [Required]
         public Guid UserId { get; set; }
 
         [ForeignKey("UserId")]
-        public UserNew User { get; set; }
+        public required UserNew User { get; set; }
 
         public bool IsAccepted { get; set; } = false;
 
         public DateTime AddedAt { get; set; } = DateTime.UtcNow;
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-        public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
+       
     }
 }

@@ -2,13 +2,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import {
-  FaPlus,
-  FaEdit,
-  FaTrash,
   FaSearch,
-  FaFilter,
-  FaCheck,
-  FaTimes,
+  FaEye,
 } from "react-icons/fa";
 import axios from "axios";
 
@@ -24,9 +19,11 @@ const VehicleManagement = () => {
       setError(null);
       try {
         const res = await axios.get("http://localhost:5030/api/vehicle");
-        setVehicles(res.data);
+        console.log('API /vehicle response:', res.data);
+        setVehicles(Array.isArray(res.data?.$values) ? res.data.$values : []);
       } catch (err) {
         setError("Failed to load vehicles");
+        setVehicles([]); 
       } finally {
         setIsLoading(false);
       }
@@ -35,12 +32,13 @@ const VehicleManagement = () => {
   }, []);
 
   // Filtered vehicles
-  const filtered = vehicles.filter((v) => {
+  const filtered = Array.isArray(vehicles) ? vehicles.filter((v) => {
     return (
       v.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
       v.model.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  });
+  }) : [];
+  console.log('Filtered vehicles:', filtered);
 
   return (
     <div className="vehicle-management">
@@ -77,15 +75,13 @@ const VehicleManagement = () => {
                 <th>Location</th>
                 <th>Capacity</th>
                 <th>Price/Day</th>
-                <th>Status</th>
-                <th>Join Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: "center" }}>
+                  <td colSpan={8} style={{ textAlign: "center" }}>
                     No vehicles found.
                   </td>
                 </tr>
@@ -99,15 +95,10 @@ const VehicleManagement = () => {
                     <td>{v.location}</td>
                     <td>{v.numberOfPassengers}</td>
                     <td>{v.pricePerDay}</td>
-                    <td>{v.isAvailable ? "Available" : "Unavailable"}</td>
-                    <td>N/A</td>
                     <td>
                       <div className="adminaction-buttons">
-                        <button className="adminedit-button" title="Edit">
-                          <FaEdit />
-                        </button>
-                        <button className="admindelete-button" title="Delete">
-                          <FaTrash />
+                        <button className="adminedit-button" title="View">
+                          <FaEye />
                         </button>
                       </div>
                     </td>

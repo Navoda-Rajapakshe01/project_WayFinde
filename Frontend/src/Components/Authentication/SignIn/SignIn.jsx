@@ -6,6 +6,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
+import { loginCometChat } from "../../../App";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -153,7 +154,6 @@ const Login = () => {
 
       setUser(userProfile);
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
-
       if (roleClaim === "TransportProvider") {
         window.location.href = "/vehicle/supplier";
       } else if (roleClaim === "AccommodationProvider") {
@@ -171,7 +171,15 @@ const Login = () => {
       const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
 
       setUser({ ...decodedToken, role: roleClaim });
-
+      // Ensure CometChat login before redirect
+      try {
+        await loginCometChat(decodedToken.id || decodedToken.userId, decodedToken.fullName || decodedToken.username || decodedToken.name);
+        console.log('CometChat login successful!');
+      } catch (e) {
+        console.error('CometChat login failed:', e);
+        setError('CometChat login failed. Please try again.');
+        return;
+      }
       if (roleClaim === "TransportProvider") {
         window.location.href = "/vehicle/supplier";
       } else if (roleClaim === "AccommodationProvider") {

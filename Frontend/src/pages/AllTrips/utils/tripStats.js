@@ -16,16 +16,18 @@ function haversineDistance(lat1, lon1, lat2, lon2) {
 }
 
 export function calculateTripStats(places = []) {
-  const totalSpent = places.reduce(
+  const list = places?.$values || places || [];
+
+  const totalSpent = list.reduce(
     (sum, place) => sum + (place.avgSpend || 0),
     0
   );
 
   let totalDistance = 0;
 
-  for (let i = 0; i < places.length - 1; i++) {
-    const a = places[i];
-    const b = places[i + 1];
+  for (let i = 0; i < list.length - 1; i++) {
+    const a = list[i];
+    const b = list[i + 1];
 
     if (a.lat && a.lng && b.lat && b.lng) {
       totalDistance += haversineDistance(a.lat, a.lng, b.lat, b.lng);

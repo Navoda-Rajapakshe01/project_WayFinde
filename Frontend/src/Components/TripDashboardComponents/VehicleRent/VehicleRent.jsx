@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import './VehicleRent.css'; // Import the CSS file
+import React, { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./VehicleRent.css"; // Import the CSS file
 
-const VehicleRent = () => {
+const VehicleRent = ({ sharedMode = false }) => {
   // State for managing selected dates
   const [pickupDate, setPickupDate] = useState(null);
   const [returnDate, setReturnDate] = useState(null);
@@ -18,7 +18,7 @@ const VehicleRent = () => {
       seats: 3,
       bags: 2,
       rating: 4.8,
-      reviews: 124
+      reviews: 124,
     },
     {
       id: 2,
@@ -27,24 +27,23 @@ const VehicleRent = () => {
       seats: 4,
       bags: 2,
       rating: 4.8,
-      reviews: 124
-    }
+      reviews: 124,
+    },
   ];
 
   // Toggle save function
   const toggleSave = (vehicleId, e) => {
     e.preventDefault();
     e.stopPropagation();
-    setSavedVehicles(prev => 
-      prev.includes(vehicleId) 
-        ? prev.filter(id => id !== vehicleId)
+    setSavedVehicles((prev) =>
+      prev.includes(vehicleId)
+        ? prev.filter((id) => id !== vehicleId)
         : [...prev, vehicleId]
     );
   };
 
   return (
     <div className="vehicle-rent-container">
-      
       {/* Vehicles List Section */}
       <div className="vehicle-cards-container">
         {vehicles.map((vehicle, index) => (
@@ -56,9 +55,12 @@ const VehicleRent = () => {
             >
               {/* Save Button */}
               <button
-                className={`save-button ${savedVehicles.includes(vehicle.id) ? 'save-button-active' : ''}`}
+                className={`save-button ${
+                  savedVehicles.includes(vehicle.id) ? "save-button-active" : ""
+                }`}
                 onClick={(e) => toggleSave(vehicle.id, e)}
                 aria-label="Save this vehicle"
+                disabled={sharedMode}
               >
                 <span>+</span> Add
               </button>
@@ -69,9 +71,13 @@ const VehicleRent = () => {
                 <span>{vehicle.bags} Bags</span>
               </div>
               <div className="vehicle-rating">
-                <span>⭐ {vehicle.rating} ({vehicle.reviews} reviews)</span>
+                <span>
+                  ⭐ {vehicle.rating} ({vehicle.reviews} reviews)
+                </span>
               </div>
-              <button className="book-now-button">Book Now</button>
+              <button className="book-now-button" disabled={sharedMode}>
+                Book Now
+              </button>
               <span className="availability-status available">Available</span>
             </div>
           </div>
