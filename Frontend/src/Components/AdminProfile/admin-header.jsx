@@ -216,18 +216,10 @@ const AdminHeader = ({ onShowPendingRequests }) => {
                   <p>{adminEmail}</p>
                 </div>
               </div>
-              <ul>
-                <li
-                  onClick={() => {
-                    navigate("/admin/profile");
-                    setShowProfile(false);
-                  }}
-                >
-                  My Profile
-                </li>
-                <li>Account Settings</li>
+              <ul style={{margin: 0, padding: 0}}>
                 <li
                   className="admin-header-logout"
+                  style={{borderTop: "none"}}
                   onClick={() => {
                     localStorage.removeItem("userProfile");
                     localStorage.removeItem("token");

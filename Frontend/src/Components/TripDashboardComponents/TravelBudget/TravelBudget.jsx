@@ -15,7 +15,12 @@ const TravelBudget = ({ tripId, sharedMode = false }) => {
         .get(`http://localhost:5030/api/TravelBudget/trip/${tripId}`) // Use tripId in the API endpoint
         .then((res) => {
           console.log("Received budgets:", res.data); // Debug log
-          setExpenses(res.data);
+          const expensesArray = Array.isArray(res.data.$values) ? res.data.$values : res.data;
+          if (!Array.isArray(expensesArray)) {
+            setExpenses([]);
+            return;
+          }
+          setExpenses(expensesArray);
         })
         .catch((err) => {
           console.error("GET error: ", err);
@@ -104,7 +109,7 @@ const TravelBudget = ({ tripId, sharedMode = false }) => {
         {expenses.map((expense) => (
           <li key={expense.id} className="expense-item">
             <span className="expense-description">{expense.description}</span>
-            <span className="expense-amount">Rs : {expense.amount}</span>
+            <span className="expense-amount">Rs : {parseFloat(expense.amount).toFixed(2)}</span>
             <button
               onClick={() => handleDeleteExpense(expense.id)}
               className="delete-expense-button"
@@ -118,13 +123,9 @@ const TravelBudget = ({ tripId, sharedMode = false }) => {
 
       {/* Total Budget */}
       <div className="total-amount">
-        <span className="total-label">Total Budget:</span>
+        <span className="total-label">Total Budget:</span> 
         <span className="total-value">
-          Rs{" "}
-          {expenses.reduce(
-            (acc, expense) => acc + parseFloat(expense.amount || 0),
-            0
-          )}
+         Rs {expenses.reduce((acc, expense) => acc + parseFloat(expense.amount || 0), 0).toFixed(2)}
         </span>
       </div>
     </div>

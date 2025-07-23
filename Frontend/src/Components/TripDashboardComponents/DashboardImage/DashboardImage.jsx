@@ -155,7 +155,8 @@ const DashboardImage = ({ tripId, sharedMode = false }) => {
     axios
       .get(`${API_URL}/TripPlaces?tripId=${tripId}`)
       .then((res) => {
-        const tripPlaces = res.data;
+        const tripPlacesRaw = res.data;
+        const tripPlaces = Array.isArray(tripPlacesRaw.$values) ? tripPlacesRaw.$values : tripPlacesRaw;
         // Step 1: Filter by tripId
         const filteredTripPlaces = tripPlaces.filter(
           (tp) => tp.tripId === Number(tripId)
