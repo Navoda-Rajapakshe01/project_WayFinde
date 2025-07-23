@@ -2,10 +2,8 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import {
-  FaPlus,
-  FaEdit,
-  FaTrash,
   FaSearch,
+  FaEye,
 } from "react-icons/fa";
 import axios from "axios";
 
@@ -14,7 +12,6 @@ const AccommodationManagement = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("all");
   const [showAddModal, setShowAddModal] = useState(false);
   const [currentAccommodation, setCurrentAccommodation] = useState(null);
 
@@ -28,7 +25,7 @@ const AccommodationManagement = () => {
         setAccommodations(Array.isArray(res.data?.$values) ? res.data.$values : []);
       } catch (err) {
         setError("Failed to load accommodations");
-        setAccommodations([]); // Always set to array on error
+        setAccommodations([]); 
       } finally {
         setIsLoading(false);
       }
@@ -38,13 +35,7 @@ const AccommodationManagement = () => {
 
   // Filtered accommodations
   const filtered = Array.isArray(accommodations) ? accommodations.filter((a) => {
-    const matchesSearch = a.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      selectedStatus === "all" ||
-      (selectedStatus === "approved" && a.isAvailable) ||
-      (selectedStatus === "pending" && !a.isAvailable) ||
-      (selectedStatus === "rejected" && false); // No rejected logic yet
-    return matchesSearch && matchesStatus;
+    return a.name.toLowerCase().includes(searchTerm.toLowerCase());
   }) : [];
   console.log('Filtered accommodations:', filtered);
 
@@ -63,19 +54,7 @@ const AccommodationManagement = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="adminfilters">
-          <div className="adminfilter-dropdown">
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-            >
-              <option value="all">All Status</option>
-              <option value="approved">Approved</option>
-              <option value="pending">Pending</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-        </div>
+        {/* Removed status filter dropdown */}
       </div>
       {isLoading ? (
         <div className="section-loading">
@@ -95,16 +74,13 @@ const AccommodationManagement = () => {
                 <th>Type</th>
                 <th>Location</th>
                 <th>Rooms</th>
-                <th>Rating</th>
-                <th>Status</th>
-                <th>Join Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: "center" }}>
+                  <td colSpan={7} style={{ textAlign: "center" }}>
                     No accommodations found.
                   </td>
                 </tr>
@@ -113,26 +89,14 @@ const AccommodationManagement = () => {
                   <tr key={a.id}>
                     <td>{idx + 1}</td>
                     <td>{a.name}</td>
-                    <td>N/A</td>
+                    <td>{a.supplierUsername || a.SupplierUsername || "N/A"}</td>
                     <td>{a.type}</td>
                     <td>{a.location}</td>
                     <td>{a.bedrooms}</td>
-                    <td>N/A</td>
-                    <td>
-                      {a.isAvailable ? (
-                        <span className="status-badge approved">Approved</span>
-                      ) : (
-                        <span className="status-badge pending">Pending</span>
-                      )}
-                    </td>
-                    <td>N/A</td>
                     <td>
                       <div className="adminaction-buttons">
-                        <button className="adminedit-button" title="Edit">
-                          <FaEdit />
-                        </button>
-                        <button className="admindelete-button" title="Delete">
-                          <FaTrash />
+                        <button className="adminedit-button" title="View">
+                          <FaEye />
                         </button>
                       </div>
                     </td>

@@ -18,56 +18,64 @@ namespace Backend.Controllers
         }
 
         [HttpGet("export")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ExportAllData()
         {
-            // Project each entity to exclude navigation properties
             var users = await _context.UsersNew
                 .Select(u => new {
                     u.Id, u.Username, u.PasswordHash, u.ContactEmail, u.Role, u.ServiceType, u.ProfilePictureUrl, u.RegisteredDate, u.LastLoginDate, u.Bio, u.PhoneNumber, u.FollowersCount, u.FollowingCount
                 }).ToListAsync();
             var blogs = await _context.Blogs
                 .Select(b => new {
-                    b.Id, b.Title, b.BlogUrl, b.CreatedAt, b.UserId, b.Location, b.Tags, b.NumberOfComments, b.NumberOfReads, b.NumberOfReacts, b.Author, b.CoverImageUrl, b.ImageUrls, b.Description
+                    b.Id, b.Title, b.BlogUrl, b.CreatedAt, b.UserId, b.Location, b.NumberOfComments, b.NumberOfReads, b.NumberOfReacts, b.Author, b.CoverImageUrl, b.Description
                 }).ToListAsync();
             var posts = await _context.Posts
                 .Select(p => new {
-                    p.Id, p.Title, p.Content, p.CreatedAt, p.UserId, p.DistrictId, p.Tags, p.NumberOfComments, p.NumberOfReads, p.NumberOfReacts, p.CoverImageUrl, p.ImageUrls
+                    p.Id, p.Title, p.Content, p.CreatedAt, p.UserId, p.NumberOfComments, p.NumberOfReads, p.NumberOfReacts, p.CoverImageUrl
                 }).ToListAsync();
             var follows = await _context.Follows
                 .Select(f => new { f.FollowerID, f.FollowedID, f.FollowDate }).ToListAsync();
             var vehicles = await _context.Vehicles
                 .Select(v => new { v.Id, v.Brand, v.Model, v.Type, v.NumberOfPassengers, v.FuelType, v.TransmissionType, v.Location, v.PricePerDay, v.IsAvailable }).ToListAsync();
-            var vehicleImages = await _context.VehicleImages.ToListAsync();
+            var vehicleImages = await _context.VehicleImages
+                .Select(vi => new { vi.Id, vi.ImageUrl, vi.VehicleId }).ToListAsync();
             var vehicleReviews = await _context.VehicleReviews
                 .Select(vr => new { vr.Id, vr.Comment, vr.Rating, vr.VehicleId }).ToListAsync();
-            var vehicleReservations = await _context.VehicleReservations.ToListAsync();
+            var vehicleReservations = await _context.VehicleReservations
+                .Select(vr => new { vr.Id, vr.VehicleId, vr.StartDate, vr.EndDate, vr.Status }).ToListAsync();
             var vehicleAmenities = await _context.VehicleAmenities
                 .Select(a => new { a.Id, a.VehicleId, a.AmenityName }).ToListAsync();
             var districts = await _context.Districts
                 .Select(d => new { d.Id, d.Name, d.ImageUrl, d.Slug, d.SubTitle }).ToListAsync();
             var places = await _context.PlacesToVisit
                 .Select(p => new { p.Id, p.Name, p.MainImageUrl, p.Description, p.History, p.OpeningHours, p.Address, p.GoogleMapLink, p.AvgSpend, p.AvgTime, p.DistrictId, p.CategoryId }).ToListAsync();
-            var categories = await _context.Categories.ToListAsync();
+            var categories = await _context.Categories
+                .Select(c => new { c.CategoryId, c.CategoryName }).ToListAsync();
             var reviews = await _context.Reviews
                 .Select(r => new { r.Id, r.PlaceId, r.Name, r.Email, r.Rating, r.Comment, r.CreatedAt }).ToListAsync();
-            var placeImages = await _context.PlaceImages.ToListAsync();
+            var placeImages = await _context.PlaceImages
+                .Select(pi => new { pi.Id, pi.ImageUrl, pi.PlaceId }).ToListAsync();
             var tripPlaces = await _context.TripPlaces
                 .Select(tp => new { tp.TripId, tp.PlaceId, tp.Order }).ToListAsync();
             var tripCollaborators = await _context.TripCollaborator
                 .Select(tc => new { tc.Id, tc.TripId, tc.UserId, tc.IsAccepted, tc.AddedAt }).ToListAsync();
-            var tripDates = await _context.TripDate.ToListAsync();
-            var todoItems = await _context.TodoItems.ToListAsync();
+            var tripDates = await _context.TripDate
+                .Select(td => new { td.Id, td.TripId }).ToListAsync();
+            var todoItems = await _context.TodoItems
+                .Select(td => new { td.Id, td.TaskName, td.TaskStatus, td.CreatedAt, td.UpdatedAt, td.TripId }).ToListAsync();
             var comments = await _context.Comments
                 .Select(c => new { c.Id, c.UserId, c.BlogId, c.Content, c.CreatedAt }).ToListAsync();
-            var travelBudgets = await _context.TravelBudgets.ToListAsync();
-            var dashboardNotes = await _context.DashboardNote.ToListAsync();
-            var accommodations = await _context.Accommodations.ToListAsync();
+            var travelBudgets = await _context.TravelBudgets
+                .Select(tb => new { tb.Id, tb.Description, tb.Amount, tb.CreatedAt, tb.UpdatedAt, tb.TripId }).ToListAsync();
+            var dashboardNotes = await _context.DashboardNote
+                .Select(dn => new { dn.Id, dn.NoteTitle, dn.NoteDescription, dn.CreatedAt, dn.UpdatedAt, dn.TripId }).ToListAsync();
+            var accommodations = await _context.Accommodations
+                .Select(a => new { a.Id, a.Name, a.Type, a.Location, a.PricePerNight, a.Bedrooms, a.Bathrooms, a.MaxGuests, a.Description, a.DistrictId, a.SupplierId, a.IsAvailable }).ToListAsync();
             var accommodationImages = await _context.AccommodationImages
                 .Select(ai => new { ai.Id, ai.ImageUrl, ai.AccommodationId }).ToListAsync();
             var accommodationReviews = await _context.AccommodationReviews
                 .Select(ar => new { ar.Id, ar.Comment, ar.Rating, ar.AccommodationId }).ToListAsync();
-            var accommodationReservations = await _context.AccommodationReservations.ToListAsync();
+            var accommodationReservations = await _context.AccommodationReservations
+                .Select(ar => new { ar.Id, ar.AccommodationId, ar.StartDate, ar.EndDate, ar.Guests, ar.CustomerName, ar.AdditionalRequirements, ar.TotalAmount, ar.Status, ar.BookingDate, ar.TripId }).ToListAsync();
             var accommodationAmenities = await _context.AccommodationAmenities
                 .Select(a => new { a.Id, a.AccommodationId, a.AmenityName }).ToListAsync();
             var blogReactions = await _context.BlogReactions
