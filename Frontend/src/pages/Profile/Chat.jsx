@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CometChat } from "@cometchat-pro/chat";
+import axios from "axios";
 
 const Chat = () => {
   const [conversations, setConversations] = useState([]);
@@ -33,17 +34,46 @@ const Chat = () => {
               setCometChatReady(true);
               setLoginError("");
             },
-            err => {
-              setCometChatReady(false);
-              setLoginError("CometChat login failed: " + (err && err.message ? err.message : JSON.stringify(err)));
+            async err => {
+              // If user does not exist, create and retry login
+              if (
+                err &&
+                err.message &&
+                err.message.includes("does not exist")
+              ) {
+                try {
+                  await axios.post("http://localhost:5030/api/cometchat/create-user", {
+                    uid: userId,
+                    name: userName,
+                  });
+                  // Try login again
+                  CometChat.login(userId, authKey).then(
+                    user => {
+                      setCometChatReady(true);
+                      setLoginError("");
+                    },
+                    err2 => {
+                      setCometChatReady(false);
+                      setLoginError("Chat is temporarily unavailable. Please try again later.");
+                    }
+                  );
+                } catch (createErr) {
+                  setCometChatReady(false);
+                  setLoginError("Chat is temporarily unavailable. Please try again later.");
+                }
+              } else {
+                setCometChatReady(false);
+                setLoginError("Chat is temporarily unavailable. Please try again later.");
+              }
             }
           );
         } else {
-          setLoginError("Missing user info or auth key for CometChat login.");
+          setLoginError("Chat is temporarily unavailable. Please try again later.");
         }
       }
     }, err => {
       setCometChatReady(false);
+      setLoginError("Chat is temporarily unavailable. Please try again later.");
     });
   }, []);
 
@@ -177,7 +207,7 @@ const Chat = () => {
       {/* Sidebar: Search + Conversations or Search Results */}
       <div style={{ width: 260, borderRight: "1px solid #eee", padding: 12, background: "#fafafa" }}>
         <h3 style={{ marginTop: 0 }}>Chats</h3>
-        {loginError && <div style={{ color: "red", fontSize: 12 }}>{loginError}</div>}
+        {loginError && <div style={{ color: "#b00", fontSize: 14, marginBottom: 8 }}>{loginError}</div>}
         <input
           type="text"
           placeholder="Search users..."
