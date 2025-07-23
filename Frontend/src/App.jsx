@@ -73,6 +73,8 @@ import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
 import { CometChat } from "@cometchat-pro/chat";
 import Postview from "./Components/UserProfileComponents/Post/Postview";
 
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+
 const appID = "279195a6164aa3fa";
 const region = "in";
 const authKey = import.meta.env.VITE_COMETCHAT_AUTH_KEY;
