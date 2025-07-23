@@ -1,23 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import './DashboardImage.css';
-import { FaCalendarAlt, FaCog, FaTimes, FaPlus, FaMinus, FaCheck, FaMapMarkerAlt } from 'react-icons/fa';
-import axios from 'axios';
-import DashViewPlaces from '../DashViewPlaces/DashViewPlaces';
+import React, { useEffect, useState } from "react";
+import "./DashboardImage.css";
+import {
+  FaCalendarAlt,
+  FaCog,
+  FaTimes,
+  FaPlus,
+  FaMinus,
+  FaCheck,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import axios from "axios";
+import DashViewPlaces from "../DashViewPlaces/DashViewPlaces";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5030/api';
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5030/api";
 
-const DashboardImage = ({ tripId }) => {
+const DashboardImage = ({ tripId, sharedMode = false }) => {
   const [mainImageUrl, setMainImageUrl] = useState(null);
-  const [tripName, setTripName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [tripName, setTripName] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editTripName, setEditTripName] = useState('');
-  const [editStartDate, setEditStartDate] = useState('');
-  const [editEndDate, setEditEndDate] = useState('');
+  const [editTripName, setEditTripName] = useState("");
+  const [editStartDate, setEditStartDate] = useState("");
+  const [editEndDate, setEditEndDate] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [warningMessage, setWarningMessage] = useState('');
+  const [warningMessage, setWarningMessage] = useState("");
   const [isViewAllPlacesOpen, setIsViewAllPlacesOpen] = useState(false);
 
   const handleSettingsClick = () => {
@@ -50,7 +58,7 @@ const DashboardImage = ({ tripId }) => {
       const today = new Date();
       setEditStartDate(today.toLocaleDateString());
     }
-    setWarningMessage('');
+    setWarningMessage("");
   };
 
   const decrementStartDate = () => {
@@ -59,20 +67,20 @@ const DashboardImage = ({ tripId }) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       currentDate.setHours(0, 0, 0, 0);
-      
+
       // Calculate what the new date would be after decreasing
       const newDate = new Date(currentDate);
       newDate.setDate(newDate.getDate() - 1);
-      
+
       // Check if the new date would be less than today
       if (newDate < today) {
         setWarningMessage("Can't decrease days below today's date");
         return;
       }
-      
+
       setEditStartDate(newDate.toLocaleDateString());
     }
-    setWarningMessage('');
+    setWarningMessage("");
   };
 
   const incrementEndDate = () => {
@@ -85,7 +93,7 @@ const DashboardImage = ({ tripId }) => {
       startDateObj.setDate(startDateObj.getDate() + 1);
       setEditEndDate(startDateObj.toLocaleDateString());
     }
-    setWarningMessage('');
+    setWarningMessage("");
   };
 
   const decrementEndDate = () => {
@@ -98,7 +106,7 @@ const DashboardImage = ({ tripId }) => {
         setEditEndDate(currentEndDate.toLocaleDateString());
       }
     }
-    setWarningMessage('');
+    setWarningMessage("");
   };
 
   const handleSave = async () => {
@@ -113,7 +121,7 @@ const DashboardImage = ({ tripId }) => {
       const updateData = {
         name: editTripName,
         startDate: formatDateForAPI(editStartDate),
-        endDate: formatDateForAPI(editEndDate)
+        endDate: formatDateForAPI(editEndDate),
       };
 
       await axios.patch(`${API_URL}/Trips/${tripId}`, updateData);
@@ -122,18 +130,18 @@ const DashboardImage = ({ tripId }) => {
       setTripName(editTripName);
       setStartDate(editStartDate);
       setEndDate(editEndDate);
-      
+
       // Show success message
       setShowSuccessMessage(true);
-      
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         setShowSuccessMessage(false);
       }, 3000);
-      
-      console.log('Trip updated successfully');
+
+      console.log("Trip updated successfully");
     } catch (error) {
-      console.error('Error updating trip:', error);
+      console.error("Error updating trip:", error);
       // You might want to show an error message to the user here
     } finally {
       setIsLoading(false);
@@ -144,17 +152,21 @@ const DashboardImage = ({ tripId }) => {
     if (!tripId) return;
 
     // Step 1: Get all trip places for this tripId
-    axios.get(`${API_URL}/TripPlaces?tripId=${tripId}`)
-      .then(res => {
+    axios
+      .get(`${API_URL}/TripPlaces?tripId=${tripId}`)
+      .then((res) => {
         const tripPlaces = res.data;
         // Step 1: Filter by tripId
-        const filteredTripPlaces = tripPlaces.filter(tp => tp.tripId === Number(tripId));
+        const filteredTripPlaces = tripPlaces.filter(
+          (tp) => tp.tripId === Number(tripId)
+        );
         // Step 2: Find the place with order === 0
-        const firstPlace = filteredTripPlaces.find(tp => tp.order === 0);
+        const firstPlace = filteredTripPlaces.find((tp) => tp.order === 0);
         if (firstPlace && firstPlace.placeId) {
           // Step 3: Fetch the place details for that placeId
-          axios.get(`${API_URL}/Places/${firstPlace.placeId}`)
-            .then(placeRes => {
+          axios
+            .get(`${API_URL}/Places/${firstPlace.placeId}`)
+            .then((placeRes) => {
               setMainImageUrl(placeRes.data.mainImageUrl);
             })
             .catch(() => setMainImageUrl(null));
@@ -164,16 +176,25 @@ const DashboardImage = ({ tripId }) => {
       })
       .catch(() => setMainImageUrl(null));
 
-    axios.get(`${API_URL}/Trips/${tripId}`)
-      .then(res => {
-        setTripName(res.data.tripName || res.data.name || '');
-        setStartDate(res.data.startDate ? new Date(res.data.startDate).toLocaleDateString() : '');
-        setEndDate(res.data.endDate ? new Date(res.data.endDate).toLocaleDateString() : '');
+    axios
+      .get(`${API_URL}/Trips/${tripId}`)
+      .then((res) => {
+        setTripName(res.data.tripName || res.data.name || "");
+        setStartDate(
+          res.data.startDate
+            ? new Date(res.data.startDate).toLocaleDateString()
+            : ""
+        );
+        setEndDate(
+          res.data.endDate
+            ? new Date(res.data.endDate).toLocaleDateString()
+            : ""
+        );
       })
       .catch(() => {
-        setTripName('');
-        setStartDate('');
-        setEndDate('');
+        setTripName("");
+        setStartDate("");
+        setEndDate("");
       });
   }, [tripId]);
 
@@ -186,7 +207,11 @@ const DashboardImage = ({ tripId }) => {
           <div className="dashboard-image-placeholder">No Image Available</div>
         )}
 
-        <div className="settings-icon" onClick={handleSettingsClick}>
+        <div
+          className={`settings-icon ${sharedMode ? "disabled" : ""}`}
+          onClick={!sharedMode ? handleSettingsClick : undefined}
+          title={sharedMode ? "Disabled in shared view" : "Edit trip details"}
+        >
           <FaCog className="settings-icon-svg" />
         </div>
 
@@ -199,14 +224,26 @@ const DashboardImage = ({ tripId }) => {
           <h2 className="trip-title">{tripName}</h2>
           <div className="info-item">
             <FaCalendarAlt className="icon" />
-            <span>Start Date: {startDate} - End Date: {endDate}</span>
+            <span>
+              Start Date:{" "}
+              {sharedMode
+                ? `${new Date(startDate).getFullYear()}-XX-XX`
+                : startDate}{" "}
+              - End Date:{" "}
+              {sharedMode
+                ? `${new Date(endDate).getFullYear()}-XX-XX`
+                : endDate}
+            </span>
           </div>
         </div>
       </div>
 
       {isModalOpen && (
         <div className="trip-modal-overlay" onClick={handleCloseModal}>
-          <div className="trip-modal-content" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="trip-modal-content"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="trip-modal-header">
               <h2 className="trip-modal-title">Edit trip details</h2>
               <button className="trip-modal-close" onClick={handleCloseModal}>
@@ -216,10 +253,11 @@ const DashboardImage = ({ tripId }) => {
 
             {showSuccessMessage && (
               <div className="trip-success-message">
-                
                 <div className="success-content">
                   <span className="success-title">Success!</span>
-                  <span className="success-subtitle">Trip details updated successfully</span>
+                  <span className="success-subtitle">
+                    Trip details updated successfully
+                  </span>
                 </div>
               </div>
             )}
@@ -240,13 +278,23 @@ const DashboardImage = ({ tripId }) => {
                 <label className="trip-form-label">Start Date</label>
                 <div className="trip-date-counter-wrapper">
                   <div className="trip-date-display">
-                    <span className="trip-date-text">{editStartDate || 'Select start date'}</span>
+                    <span className="trip-date-text">
+                      {editStartDate || "Select start date"}
+                    </span>
                   </div>
                   <div className="trip-date-controls">
-                    <button type="button" className="trip-date-btn trip-decrease-btn" onClick={decrementStartDate}>
+                    <button
+                      type="button"
+                      className="trip-date-btn trip-decrease-btn"
+                      onClick={decrementStartDate}
+                    >
                       <FaMinus />
                     </button>
-                    <button type="button" className="trip-date-btn trip-increase-btn" onClick={incrementStartDate}>
+                    <button
+                      type="button"
+                      className="trip-date-btn trip-increase-btn"
+                      onClick={incrementStartDate}
+                    >
                       <FaPlus />
                     </button>
                   </div>
@@ -257,13 +305,23 @@ const DashboardImage = ({ tripId }) => {
                 <label className="trip-form-label">End Date</label>
                 <div className="trip-date-counter-wrapper">
                   <div className="trip-date-display">
-                    <span className="trip-date-text">{editEndDate || 'Select end date'}</span>
+                    <span className="trip-date-text">
+                      {editEndDate || "Select end date"}
+                    </span>
                   </div>
                   <div className="trip-date-controls">
-                    <button type="button" className="trip-date-btn trip-decrease-btn" onClick={decrementEndDate}>
+                    <button
+                      type="button"
+                      className="trip-date-btn trip-decrease-btn"
+                      onClick={decrementEndDate}
+                    >
                       <FaMinus />
                     </button>
-                    <button type="button" className="trip-date-btn trip-increase-btn" onClick={incrementEndDate}>
+                    <button
+                      type="button"
+                      className="trip-date-btn trip-increase-btn"
+                      onClick={incrementEndDate}
+                    >
                       <FaPlus />
                     </button>
                   </div>
@@ -271,8 +329,8 @@ const DashboardImage = ({ tripId }) => {
               </div>
 
               <div className="trip-save-button-container">
-                <button 
-                  className={`trip-save-button ${isLoading ? 'loading' : ''}`} 
+                <button
+                  className={`trip-save-button ${isLoading ? "loading" : ""}`}
                   onClick={handleSave}
                   disabled={isLoading}
                 >
@@ -282,7 +340,7 @@ const DashboardImage = ({ tripId }) => {
                       <span>Saving...</span>
                     </>
                   ) : (
-                    'Save'
+                    "Save"
                   )}
                 </button>
               </div>
@@ -292,9 +350,9 @@ const DashboardImage = ({ tripId }) => {
       )}
 
       {isViewAllPlacesOpen && (
-        <DashViewPlaces 
+        <DashViewPlaces
           isOpen={isViewAllPlacesOpen}
-          tripId={tripId} 
+          tripId={tripId}
           onClose={handleCloseViewAllPlaces}
         />
       )}

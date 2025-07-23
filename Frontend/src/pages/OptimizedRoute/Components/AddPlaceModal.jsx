@@ -20,12 +20,13 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
         const districtsResponse = await axios.get(
           "http://localhost:5030/api/district/getAll"
         );
-        setDistricts(districtsResponse.data || []);
+        setDistricts(districtsResponse.data?.$values || []);
 
         const placesResponse = await axios.get(
           "http://localhost:5030/api/places/getAll"
         );
-        setPlaces(placesResponse.data || []);
+        setPlaces(placesResponse.data?.$values || []);
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -92,7 +93,7 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
         <div className="modal-header-adp">
           <h2 className="modal-title-adp">Add More Places to Your Trip</h2>
           <button className="modal-close-adp" onClick={onClose}>
-            <X size={20} />
+            X
           </button>
         </div>
 

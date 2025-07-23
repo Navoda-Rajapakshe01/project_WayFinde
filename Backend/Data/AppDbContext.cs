@@ -1,4 +1,3 @@
-
 ﻿using Backend.DTO;
 
 using Microsoft.EntityFrameworkCore;
@@ -62,8 +61,6 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-
-
         public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
 
 
@@ -72,6 +69,7 @@ namespace Backend.Data
         public object? Amenities { get; internal set; }
 
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<AccountDeletionRequest> AccountDeletionRequests { get; set; }
         public DbSet<SavedVehicle> SavedVehicles { get; set; }
         public DbSet<SavedAccommodation> SavedAccommodations { get; set; }
 
@@ -112,6 +110,7 @@ namespace Backend.Data
             modelBuilder.Entity<Trip>()
                 .Property(t => t.CreatedAt)
                 .HasDefaultValueSql("GETDATE()");
+
             // DistrictWithPlacesCountDTO is a keyless DTO
             // modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();
 

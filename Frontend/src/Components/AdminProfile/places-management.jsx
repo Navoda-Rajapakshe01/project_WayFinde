@@ -49,9 +49,10 @@ const PlacesManagement = () => {
   const fetchDistricts = async () => {
     try {
       const response = await axios.get("http://localhost:5030/api/district");
-      setDistricts(response.data);
+      setDistricts(Array.isArray(response.data?.$values) ? response.data.$values : Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error("Error fetching districts:", err);
+      setDistricts([]); // Always set to array on error
       Swal.fire("Error", "Failed to load districts.", "error");
     }
   };
@@ -61,9 +62,10 @@ const PlacesManagement = () => {
       const response = await axios.get(
         "http://localhost:5030/api/places/categories"
       );
-      setCategories(response.data);
+      setCategories(Array.isArray(response.data?.$values) ? response.data.$values : []);
     } catch (err) {
       console.error("Error fetching categories:", err);
+      setCategories([]); // Always set to array on error
       Swal.fire("Error", "Failed to load categories.", "error");
     }
   };
@@ -71,9 +73,11 @@ const PlacesManagement = () => {
   const fetchPlaces = async () => {
     try {
       const response = await axios.get("http://localhost:5030/api/places");
-      setPlaces(response.data);
+      console.log('API /places response:', response.data);
+      setPlaces(Array.isArray(response.data?.$values) ? response.data.$values : []);
     } catch (err) {
       console.error("Error fetching places:", err);
+      setPlaces([]); // Always set to array on error
       Swal.fire("Error", "Failed to load places.", "error");
     }
   };
@@ -183,11 +187,13 @@ const PlacesManagement = () => {
     setFormErrors({});
   };
 
-  const filteredPlaces = places
+  const filteredPlaces = Array.isArray(places) ? places
     .filter((p) =>
       selectedDistrict ? p.districtId === parseInt(selectedDistrict) : true
     )
-    .filter((p) => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    .filter((p) => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    : [];
+  console.log('Filtered places:', filteredPlaces);
 
   if (isLoading) {
     return (
@@ -218,13 +224,12 @@ const PlacesManagement = () => {
           />
         </div>
         <div className="adminfilter-dropdown">
-          <FaFilter className="adminfilter-icon" />
           <select
             value={selectedDistrict}
             onChange={(e) => setSelectedDistrict(e.target.value)}
           >
             <option value="">All Districts</option>
-            {districts.map((d) => (
+            {Array.isArray(districts) && districts.length > 0 && districts.map((d) => (
               <option key={d.id} value={d.id}>
                 {d.name}
               </option>
@@ -306,7 +311,7 @@ const PlacesManagement = () => {
                   required
                 >
                   <option value="">Select District</option>
-                  {districts.map((d) => (
+                  {Array.isArray(districts) && districts.length > 0 && districts.map((d) => (
                     <option key={d.id} value={d.id}>
                       {d.name}
                     </option>

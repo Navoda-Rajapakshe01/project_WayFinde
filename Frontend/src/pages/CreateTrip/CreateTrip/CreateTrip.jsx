@@ -29,9 +29,8 @@ const CreateTrip = () => {
   const [tripDistance, setTripDistance] = useState(0);
   const [tripTime, setTripTime] = useState("");
   const [totalSpend, setTotalSpend] = useState(0);
-  const userId = localStorage.getItem("userId");
-  console.log("Logged-in userId from localStorage:", userId);
 
+  const userId = localStorage.getItem("userId");
   // Modal states
   const [showStartLocationModal, setShowStartLocationModal] = useState(false);
   const [showTravelDatesModal, setShowTravelDatesModal] = useState(false);
@@ -48,7 +47,8 @@ const CreateTrip = () => {
           "http://localhost:5030/api/district/getAll"
         );
         console.log("Fetched districts:", response.data);
-        setDistricts(response.data);
+        setDistricts(response.data.$values || []);
+
         setLoading(false);
       } catch (error) {
         console.error("Error fetching districts:", error);
@@ -66,7 +66,7 @@ const CreateTrip = () => {
         const response = await axios.get(
           "http://localhost:5030/api/places/getAll"
         );
-        setPlaces(response.data);
+        setPlaces(response.data.$values || []);
       } catch (error) {
         console.error("Error fetching places:", error);
       }
@@ -141,36 +141,28 @@ const CreateTrip = () => {
   // Function to extract coordinates from Google Maps URL
   const extractCoordinates = (googleUrl) => {
     try {
-      // Try to extract coordinates from URL format like "https://maps.google.com/?q=6.0269,80.2167"
-      const match = googleUrl.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
-      if (match && match.length === 3) {
+      // ✅ Match @lat,lng format (most accurate)
+      const atMatch = googleUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (atMatch && atMatch.length >= 3) {
         return {
-          lat: Number.parseFloat(match[1]),
-          lng: Number.parseFloat(match[2]),
+          lat: parseFloat(atMatch[1]),
+          lng: parseFloat(atMatch[2]),
         };
       }
 
-      // Try to extract from format like "https://maps.google.com/?q=Place+Name,+Location"
-      const placeMatch = googleUrl.match(/q=([^&]+)/);
-      if (placeMatch && placeMatch.length > 1) {
-        // This is a place name, use a default position with slight randomization
+      // ✅ Match ?q=lat,lng fallback
+      const qMatch = googleUrl.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (qMatch && qMatch.length >= 3) {
         return {
-          lat: 6.0329 + Math.random() * 0.05,
-          lng: 80.2168 + Math.random() * 0.05,
+          lat: parseFloat(qMatch[1]),
+          lng: parseFloat(qMatch[2]),
         };
       }
 
-      // If no coordinates found, return default coordinates for Sri Lanka
-      return {
-        lat: 6.0329 + Math.random() * 0.05,
-        lng: 80.2168 + Math.random() * 0.05,
-      };
+      return null;
     } catch (error) {
-      console.error("Error extracting coordinates:", error);
-      return {
-        lat: 6.0329 + Math.random() * 0.05,
-        lng: 80.2168 + Math.random() * 0.05,
-      };
+      console.error("❌ Failed to extract coordinates:", error);
+      return null;
     }
   };
 
@@ -191,12 +183,14 @@ const CreateTrip = () => {
 
       if (place.googleMapLink) {
         const position = extractCoordinates(place.googleMapLink);
-        const newMarker = {
-          id: place.id,
-          position,
-          title: place.name,
-        };
-        setMapMarkers((prev) => [...prev, newMarker]);
+        if (position) {
+          const newMarker = {
+            id: place.id,
+            position,
+            title: place.name,
+          };
+          setMapMarkers((prev) => [...prev, newMarker]);
+        }
       }
     }
   };
@@ -371,7 +365,7 @@ const CreateTrip = () => {
             <div className="selected-district-view">
               <button
                 onClick={() => setSelectedDistrict(null)}
-                className="flex items-center gap-2 text-blue-600 font-medium hover:underline mb-4"
+                className="flex items-center gap-2 font-medium mb-4 transition duration-300 ease-in-out text-[#4CC9FE] hover:text-white hover:bg-[#4CC9FE] px-4 py-2 rounded"
               >
                 <ArrowLeft size={20} />
                 Back to Districts
@@ -504,7 +498,7 @@ const CreateTrip = () => {
 
       {/* Success message */}
       {submitSuccess && (
-        <div className="success-message">
+        <div className="success-message-trip">
           <div className="success-content">
             <div className="success-icon">✓</div>
             <h3>Trip Created Successfully!</h3>

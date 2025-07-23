@@ -1,4 +1,4 @@
-﻿﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Models
@@ -16,7 +16,7 @@ namespace Backend.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }  // Change from ReviewerName to Name
+        public required string Name { get; set; }  
 
         [StringLength(100)]
         public string? Email { get; set; }

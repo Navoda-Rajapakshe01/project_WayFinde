@@ -7,8 +7,9 @@
   
   
   .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 30px;
   }
   
@@ -16,6 +17,10 @@
       text-decoration: none;
       color: inherit;
       display: block; 
+      flex: 1 1 280px;
+      max-width: 350px;
+      min-width: 280px;
+      box-sizing: border-box;
   }
   
   .service-card {

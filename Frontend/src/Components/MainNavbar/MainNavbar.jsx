@@ -19,6 +19,7 @@ import logo from "../../assets/Images/logo.png";
 import { AuthContext } from "../Authentication/AuthContext/AuthContext";
 import { ProfileImageContext } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import "./MainNavbar.css";
+import { Spinner } from "react-bootstrap";
 
 const MainNavbar = () => {
   const location = useLocation();
@@ -169,11 +170,18 @@ const MainNavbar = () => {
   // Show loading indicator while auth loading
   if (loading) {
     return (
-      <nav className="navbar">
-        <div className="navbar-container">
-          <div className="navbar-loading">Loading authentication...</div>
-        </div>
-      </nav>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading authentication...</span>
+        </Spinner>
+      </div>
     );
   }
 
@@ -239,8 +247,7 @@ const MainNavbar = () => {
                             onClick={() =>
                               navigate("/signin?redirect=/plantrip")
                             }
-                            style={{ cursor: "pointer" }}
-                          >
+                            style={{ cursor: "pointer" }}>
                             Create a New Trip
                           </div>
                           <div
@@ -248,8 +255,7 @@ const MainNavbar = () => {
                             onClick={() =>
                               navigate("/signin?redirect=/alltrips")
                             }
-                            style={{ cursor: "pointer" }}
-                          >
+                            style={{ cursor: "pointer" }}>
                             My All Trips
                           </div>
                         </>

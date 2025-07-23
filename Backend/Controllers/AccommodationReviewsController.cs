@@ -39,7 +39,7 @@ namespace Backend.Controllers
                 {
                     Id = r.Id,
                     VehicleId = r.AccommodationId,
-                    AccommodationInfo = r.Accommodation.Name,
+                    AccommodationInfo = r.Accommodation != null ? r.Accommodation.Name : null,
                     Name = r.Name,
                     Email = r.Email,
                     Comment = r.Comment,
@@ -123,11 +123,11 @@ namespace Backend.Controllers
         {
             var reviews = await _context.AccommodationReviews
                 .Include(r => r.Accommodation)
-                .Select(r => new
+                .Select(static r => new
                 {
                     r.Id,
                     r.AccommodationId,
-                    AccommodationInfo = r.Accommodation.Name != null,
+                    AccommodationInfo = r.Accommodation != null ? r.Accommodation.Name : null,
                     r.Name,
                     r.Email,
                     r.Comment,

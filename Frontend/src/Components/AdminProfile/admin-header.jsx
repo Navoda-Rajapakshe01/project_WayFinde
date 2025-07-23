@@ -6,13 +6,14 @@ import * as signalR from "@microsoft/signalr";
 import "../AdminProfile/admin-header.css";
 import "../../App.css";
 
-const AdminHeader = () => {
+const AdminHeader = ({ onShowPendingRequests }) => {
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [showAllModal, setShowAllModal] = useState(false);
   const unreadCount = notifications.filter((n) => !n.read).length;
+  const [adminEmail, setAdminEmail] = useState("");
 
   useEffect(() => {
     const connection = new signalR.HubConnectionBuilder()
@@ -21,13 +22,18 @@ const AdminHeader = () => {
       .build();
 
     connection.start().then(() => {
-      connection.on("ReceiveNotification", ({ text, url }) => {
+      connection.on("ReceiveNotification", (message) => {
+        // message can be a string or an object
+        const text = typeof message === 'string' ? message : message.text;
+        // Mark if this is a delete request notification
+        const isDeleteRequest = text && text.toLowerCase().includes('account deletion request');
         const newNotification = {
           id: Date.now(),
           text,
-          url,
+          url: undefined,
           time: "Just now",
           read: false,
+          isDeleteRequest,
         };
         setNotifications((prev) => [newNotification, ...prev]);
       });
@@ -37,6 +43,13 @@ const AdminHeader = () => {
       connection.off("ReceiveNotification");
       connection.stop();
     };
+  }, []);
+
+  useEffect(() => {
+    const userProfile = JSON.parse(localStorage.getItem("userProfile"));
+    if (userProfile && userProfile.email) {
+      setAdminEmail(userProfile.email);
+    }
   }, []);
 
   return (
@@ -81,7 +94,18 @@ const AdminHeader = () => {
                     <li
                       key={n.id}
                       className={n.read ? "read" : "unread"}
-                      onClick={() => n.url && navigate(n.url)}
+                      onClick={() => {
+                        if (n.isDeleteRequest) {
+                          if (onShowPendingRequests) {
+                            onShowPendingRequests();
+                          } else {
+                            // Fire a custom event for parent to listen
+                            window.dispatchEvent(new CustomEvent('show-pending-deletion-requests'));
+                          }
+                        } else if (n.url) {
+                          navigate(n.url);
+                        }
+                      }}
                     >
                       <div className="admin-header-notification-content">
                         <p>{n.text}</p>
@@ -189,14 +213,13 @@ const AdminHeader = () => {
                 </div>
                 <div>
                   <h4>Admin User</h4>
-                  <p>admin@wayfinde.com</p>
+                  <p>{adminEmail}</p>
                 </div>
               </div>
-              <ul>
-                <li>My Profile</li>
-                <li>Account Settings</li>
+              <ul style={{margin: 0, padding: 0}}>
                 <li
                   className="admin-header-logout"
+                  style={{borderTop: "none"}}
                   onClick={() => {
                     localStorage.removeItem("userProfile");
                     localStorage.removeItem("token");

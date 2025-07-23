@@ -39,7 +39,8 @@
 }
 
 .optimized-route-left {
-  flex: 1;
+  flex: 1.3; /* was 1 */
+  min-width: 300px;
   background-color: white;
   border-radius: 0.5rem;
   padding: 1.5rem;
@@ -63,8 +64,9 @@
 }
 
 .optimized-route-right {
-  width: 40%;
-  min-width: 400px;
+  flex: 1;
+  min-width: 450px; /* slightly larger */
+  max-width: 520px;
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -97,11 +99,11 @@
 .map-container {
   background-color: #e2e8f0;
   width: 100%;
-  height: 50vh;
-  max-height: 400px;
-  min-height: 250px;
+  min-height: 300px;
+  height: 400px; /* or auto if needed */
   border-radius: 0.5rem;
   overflow: hidden;
+  position: relative;
 }
 
 .action-buttons {
@@ -135,13 +137,16 @@
 }
 
 .complete-trip-button {
-  background-color: #10b981;
+  background-color: #2196f3;
   color: white;
   border: none;
 }
+.optimized-route-container {
+  padding-bottom: 120px; /* Prevent overlap by footer */
+}
 
 .complete-trip-button:hover {
-  background-color: #059669;
+  background-color: #1976d2;
 }
 
 .places-list-optimized {
@@ -191,34 +196,39 @@
 /* Success message */
 .optimized-route-success-message {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 50;
-  animation: optimized-route-fadeIn 0.3s ease-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3); /* dimmed overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999; /* ensure it shows on top */
 }
 
 .optimized-route-success-content {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  background-color: #10b981;
-  color: white;
-  padding: 1rem 1.5rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  text-align: center;
+  max-width: 350px;
+  width: 90%;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .optimized-route-success-icon {
-  width: 24px;
-  height: 24px;
-  background-color: white;
-  color: #10b981;
+  width: 60px;
+  height: 60px;
+  background-color: #10b981;
+  color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  font-size: 2rem;
+  margin: 0 auto 1rem;
 }
 
 @keyframes optimized-route-fadeIn {
@@ -238,14 +248,10 @@
   }
 
   .optimized-route-right {
-    width: 100%;
-    min-width: auto;
-    position: relative;
-    top: 0;
-    height: auto;
-  }
-
-  .map-container {
-    height: 400px;
+    width: 40%;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
   }
 }

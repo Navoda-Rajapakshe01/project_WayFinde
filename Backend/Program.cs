@@ -5,15 +5,25 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CloudinaryDotNet;
+using Backend.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Register HttpClient and WeatherService
 builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
+
 // Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("CloudConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure()
+    )
+);
+
+
+
 
 // Add Authentication with JWT Bearer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -49,6 +59,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<VehicleReservationService>();
+builder.Services.AddSingleton<CometChatService>();
 
 // Add CORS policies
 builder.Services.AddCors(options =>
@@ -70,7 +81,7 @@ builder.Services.AddCors(options =>
 // Add Controllers with JSON options
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
     options.JsonSerializerOptions.MaxDepth = 32;
 });
 
@@ -81,6 +92,7 @@ builder.Services.AddSwaggerGen();
 // Add SignalR and HTTP Context
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

@@ -20,8 +20,6 @@ namespace Backend.Controllers
             _context = context;
         }
 
-
-
         // GET: api/places
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetAllPlaces()
@@ -49,19 +47,25 @@ namespace Backend.Controllers
 
         // GET: api/places/by-district-name/nuwara-eliya
         [HttpGet("by-district-name/{slug}")]
-        public async Task<ActionResult<IEnumerable<PlacesToVisit>>> GetPlacesByDistrictSlug(string slug)
+        public async Task<IActionResult> GetPlacesByDistrictSlug(string slug)
         {
-            // Find the district by the slug
             var district = await _context.Districts
                 .FirstOrDefaultAsync(d => d.Slug.ToLower() == slug.ToLower());
 
-            // If district not found, return a 404 Not Found
             if (district == null)
                 return NotFound("District not found");
 
-            // Get places belonging to the found district
             var places = await _context.PlacesToVisit
                 .Where(p => p.DistrictId == district.Id)
+                .Select(p => new
+                {
+                    id = p.Id,
+                    name = p.Name,
+                    categoryId = p.CategoryId,
+                    mainImageUrl = p.MainImageUrl,
+                    description = p.Description,
+                    // Add any other properties you need for the frontend
+                })
                 .ToListAsync();
 
             return Ok(places);
@@ -174,12 +178,12 @@ namespace Backend.Controllers
                 OpeningHours = dto.OpeningHours,
                 Address = dto.Address,
                 GoogleMapLink = dto.GoogleMapLink,
-                DistrictId = (int)dto.DistrictId,
+                DistrictId = dto.DistrictId ?? throw new ArgumentNullException(nameof(dto.DistrictId), "DistrictId cannot be null"),
                 District = district,
-                CategoryId = (int)dto.CategoryId,
+                CategoryId = dto.CategoryId ?? 0,
                 Category = category!,
-                PlaceImage = new List<PlaceImage>(), // Set to an empty list or as appropriate
-                TripPlaces = new List<TripPlace>(), // Set TripPlaces to an empty list or as appropriate
+                PlaceImage = new List<PlaceImage>(),
+                TripPlaces = new List<TripPlace>(),
             };
 
             _context.PlacesToVisit.Add(place);
@@ -255,8 +259,6 @@ namespace Backend.Controllers
             return Ok(place);
         }
 
-
-
         // DELETE: api/places/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeletePlace(int id)
@@ -283,7 +285,41 @@ namespace Backend.Controllers
         }
 
         // GET: api/places/popular
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularPlaces()
+        {
+            // Get top 8 places by average rating, then by number of reviews
+            var popularPlaces = await _context.PlacesToVisit
+                .Include(p => p.District)
+                .Include(p => p.Category)
+                .Include(p => p.Reviews)
+                .Select(p => new
+                {
+                    p.Id,
+                    p.Name,
+                    p.MainImageUrl,
+                    p.Address,
+                    District = new
+                    {
+                        p.District.Id,
+                        p.District.Name
+                    },
+                    Category = new
+                    {
+                        p.Category.CategoryId,
+                        p.Category.CategoryName
+                    },
+                    AverageRating = p.Reviews.Any() ? p.Reviews.Average(r => r.Rating) : 0,
+                    ReviewCount = p.Reviews.Count
+                })
+                .OrderByDescending(p => p.AverageRating)
+                .ThenByDescending(p => p.ReviewCount)
+                .Take(8)
+                .AsNoTracking()
+                .ToListAsync();
 
+            return Ok(popularPlaces);
+        }
 
         // GET: api/11/images
         [HttpGet("{placeId}/images")]

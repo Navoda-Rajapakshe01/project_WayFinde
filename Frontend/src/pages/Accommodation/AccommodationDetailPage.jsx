@@ -1,409 +1,594 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
-import { Modal, Button, Form, Row, Col, Alert } from "react-bootstrap";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import "../CSS/accommodation.css"; // adjust your CSS path accordingly
+import axios from "axios";
+import swal from "sweetalert2";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
+import "../CSS/accommodationdetail.css";
 
 const AccommodationDetailPage = () => {
   const { id } = useParams();
   const [accommodation, setAccommodation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showBookingModal, setShowBookingModal] = useState(false);
-
-  const [bookingData, setBookingData] = useState({
-    checkInDate: null,
-    checkOutDate: null,
-    guests: 1,
-    customerName: "",
-    specialRequests: "",
-    tripId: "",
-    totalAmount: 0,
-  });
-
+  const [showGallery, setShowGallery] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [bookingError, setBookingError] = useState("");
+  const [bookingData, setBookingData] = useState({
+    customerName: "",
+    startDate: "",
+    endDate: "",
+    guests: "",
+    additionalRequirements: "",
+    tripId: null, // optional
+  });
+  const [userTrips, setUserTrips] = useState([]);
 
-  // Fetch accommodation details by ID
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState("");
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewName, setReviewName] = useState("");
+  const [reviewEmail, setReviewEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [showGuestModal, setShowGuestModal] = useState(false);
+  const [showAllReviewsModal, setShowAllReviewsModal] = useState(false);
+
+  // New state for total amount calculation
+  const [calculatedAmount, setCalculatedAmount] = useState(0);
+
   useEffect(() => {
-    const fetchAccommodation = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5030/api/accommodation/${id}`
-        );
-        setAccommodation(response.data);
-      } catch (err) {
-        setError("Failed to load accommodation details.");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAccommodation();
+    if (!id) return;
+
+    // Fetch accommodation
+    axios
+      .get(`http://localhost:5030/api/Accommodation/${id}`)
+      .then((res) => setAccommodation(res.data))
+      .catch(() => setError("Failed to load accommodation details"))
+      .finally(() => setLoading(false));
+
+    // Fetch reviews
+    axios
+      .get(`http://localhost:5030/api/accommodations/${id}/reviews`)
+      .then((res) => {
+        const reviewsArray = Array.isArray(res.data?.$values)
+          ? res.data.$values
+          : [];
+        setReviews(reviewsArray);
+      })
+      .catch(() => console.error("Failed to fetch reviews"));
+
+    // Fetch user's trips
+    const userProfile = JSON.parse(localStorage.getItem("userProfile"));
+    if (userProfile?.userId) {
+      axios
+        .get(`http://localhost:5030/api/trips/user/${userProfile.userId}`)
+        .then((res) => {
+          const trips = res.data?.$values || res.data || [];
+          setUserTrips(trips);
+        })
+        .catch(() => console.error("Failed to fetch user trips"));
+    }
   }, [id]);
 
-  // Calculate total price whenever dates or price change
-  useEffect(() => {
-    if (
-      bookingData.checkInDate &&
-      bookingData.checkOutDate &&
-      accommodation?.pricePerNight
-    ) {
-      const days = Math.ceil(
-        (bookingData.checkOutDate - bookingData.checkInDate) /
-          (1000 * 60 * 60 * 24)
-      );
-      const total =
-        days > 0
-          ? days * accommodation.pricePerNight
-          : accommodation.pricePerNight;
-      setBookingData((prev) => ({ ...prev, totalAmount: total }));
-    } else {
-      setBookingData((prev) => ({ ...prev, totalAmount: 0 }));
-    }
-  }, [
-    bookingData.checkInDate,
-    bookingData.checkOutDate,
-    accommodation?.pricePerNight,
-  ]);
+  // Calculate total amount based on startDate and endDate
+  const calculateTotalAmount = (startDate, endDate, guests) => {
+    if (!startDate || !endDate) return 0;
 
-  // Booking form submission handler
-  const handleBookingSubmit = async (e) => {
-    e.preventDefault();
-    setBookingError("");
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
-    if (!bookingData.checkInDate || !bookingData.checkOutDate) {
-      setBookingError("Please select check-in and check-out dates.");
-      return;
-    }
+    const timeDiff = end - start;
 
-    if (!bookingData.customerName.trim()) {
-      setBookingError("Please enter your name.");
-      return;
-    }
+    if (timeDiff < 0) return 0;
 
-    if (
-      bookingData.guests < 1 ||
-      bookingData.guests > accommodation.maxGuests
-    ) {
-      setBookingError(
-        `Number of guests must be between 1 and ${accommodation.maxGuests}.`
-      );
-      return;
-    }
+    const numberOfDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1;
 
-    try {
-      const bookingPayload = {
-        accommodationId: accommodation.id,
-        checkInDate: bookingData.checkInDate.toISOString(),
-        checkOutDate: bookingData.checkOutDate.toISOString(),
-        guests: bookingData.guests,
-        customerName: bookingData.customerName,
-        specialRequests: bookingData.specialRequests,
-        tripId: bookingData.tripId || null,
-      };
-
-      await axios.post(
-        "http://localhost:5030/api/AccommodationReservation/accommodation",
-        bookingPayload
-      );
-
-      setBookingSuccess(true);
-      setTimeout(() => {
-        handleCloseModal();
-      }, 2000);
-    } catch (err) {
-      console.error("Booking failed:", err);
-      setBookingError("Booking failed. Please try again.");
-    }
+    return accommodation?.pricePerNight * numberOfDays * guests;
   };
 
-  const handleCloseModal = () => {
-    setShowBookingModal(false);
-    setBookingSuccess(false);
-    setBookingError("");
-    setBookingData({
-      checkInDate: null,
-      checkOutDate: null,
-      guests: 1,
-      customerName: "",
-      specialRequests: "",
-      tripId: "",
-      totalAmount: 0,
+  // Update total amount when booking dates or accommodation change
+  useEffect(() => {
+    if (accommodation) {
+      const amount = calculateTotalAmount(
+        bookingData.startDate,
+        bookingData.endDate,
+        bookingData.guests
+      );
+      setCalculatedAmount(amount);
+    }
+  }, [
+    bookingData.startDate,
+    bookingData.endDate,
+    bookingData.guests,
+    accommodation,
+  ]);
+
+  const handleBookNow = () => {
+    // basic front‑end validation
+    if (
+      !bookingData.customerName.trim() ||
+      !bookingData.startDate ||
+      !bookingData.endDate ||
+      !bookingData.guests
+    ) {
+      swal.fire(
+        "Missing fields",
+        "Please fill out all booking details.",
+        "warning"
+      );
+      return;
+    }
+
+    // build Date objects in local time (+05:30) then convert to ISO
+    const startDateTime = new Date(`${bookingData.startDate}T14:00:00+05:30`);
+    const endDateTime = new Date(`${bookingData.endDate}T10:00:00+05:30`);
+
+    if (startDateTime >= endDateTime) {
+      swal.fire("Invalid dates", "Check‑out must be after check‑in.", "error");
+      return;
+    }
+
+    /* ----------  PAYLOAD  ---------- */
+    const payload = {
+      accommodationId: accommodation.id,
+      customerName: bookingData.customerName.trim(),
+      startDate: startDateTime.toISOString(),
+      endDate: endDateTime.toISOString(),
+      guests: Number(bookingData.guests), // <‑‑ numeric!
+      additionalRequirements: bookingData.additionalRequirements.trim() || null,
+      tripId: bookingData.tripId || null,
+      totalAmount: calculatedAmount,
+    };
+
+    console.log("Payload:", payload);
+
+    axios
+      .post(
+        "http://localhost:5030/api/AccommodationReservation/accommodation",
+        payload
+      )
+      .then(() => {
+        setBookingSuccess(true);
+        swal.fire("Success", "Booking request sent!", "success");
+        setBookingData({
+          customerName: "",
+          startDate: "",
+          endDate: "",
+          guests: "",
+          additionalRequirements: "",
+          tripId: null,
+        });
+        setCalculatedAmount(0);
+      })
+      .catch((err) => {
+        console.error("Booking error:", err);
+        swal.fire(
+          "Booking failed",
+          err.response?.data || "Please try again later.",
+          "error"
+        );
+      });
+  };
+
+  const submitReview = (name, email) => {
+    setSubmitting(true);
+    const reviewData = {
+      comment: newReview,
+      rating,
+      name,
+      email,
+    };
+
+    if (!rating || rating < 1 || rating > 5) {
+      swal.fire({
+        title: "Please provide a rating",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      setSubmitting(false);
+      return;
+    }
+
+    axios
+      .post(
+        `http://localhost:5030/api/accommodations/${id}/reviews`,
+        reviewData
+      )
+      .then((res) => {
+        setReviews((prev) => {
+          const safePrev = Array.isArray(prev) ? prev : [];
+          return [...safePrev, res.data];
+        });
+        setNewReview("");
+        setRating(0);
+        setReviewName("");
+        setReviewEmail("");
+        setSubmitting(false);
+      })
+      .catch(() => {
+        swal.fire({
+          title: "Error submitting review",
+          text: "Please try again later.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+        setSubmitting(false);
+      });
+  };
+
+  const handleSubmitReview = () => {
+    if (!newReview.trim() && rating === 0) {
+      swal.fire({
+        title: "Please provide a review or rating",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    const latestUser = JSON.parse(localStorage.getItem("userProfile"));
+    setCurrentUser(latestUser);
+
+    if (!latestUser) {
+      setShowGuestModal(true);
+      return;
+    }
+
+    submitReview(
+      latestUser.username || latestUser.name || "Anonymous",
+      latestUser.email || latestUser.contactEmail || ""
+    );
+  };
+
+  // Static star renderer
+  const renderStaticStars = (value) => {
+    return [1, 2, 3, 4, 5].map((star) => {
+      if (value >= star) {
+        return (
+          <span key={star} className="star active">
+            ★
+          </span>
+        );
+      } else if (value >= star - 0.5) {
+        return (
+          <span key={star} className="star half">
+            ★
+          </span>
+        );
+      } else {
+        return (
+          <span key={star} className="star inactive">
+            ★
+          </span>
+        );
+      }
     });
   };
 
-  if (loading) return <div>Loading accommodation details...</div>;
-  if (error) return <div>{error}</div>;
+  // Interactive star renderer
+  const renderInteractiveStars = (
+    value,
+    hoverValue,
+    onClickFn,
+    onHoverFn,
+    onLeaveFn
+  ) => {
+    return [1, 2, 3, 4, 5].map((star) => (
+      <span
+        key={star}
+        className={`star ${
+          star <= (hoverValue || value) ? "active" : "inactive"
+        }`}
+        onClick={() => onClickFn && onClickFn(star)}
+        onMouseEnter={() => onHoverFn && onHoverFn(star)}
+        onMouseLeave={() => onLeaveFn && onLeaveFn()}>
+        ★
+      </span>
+    ));
+  };
+
+  const averageRating = reviews.length
+    ? (
+        reviews.reduce((sum, review) => sum + (review.rating || 0), 0) /
+        reviews.length
+      ).toFixed(1)
+    : "0.0";
+
+  if (loading)
+    return (
+      <div className="loading-container">Loading Accommodation details...</div>
+    );
+  if (error) return <div className="error-message">{error}</div>;
+  if (!accommodation) return null;
 
   return (
-    <div className="accommodation-detail-page">
-      <h2>Accommodation Details</h2>
-
-      <div className="accommodation-detail-card">
-        <div className="accommodation-images">
-          <img
-            src={accommodation.imageUrls?.[0] || "/default-accommodation.jpg"}
-            alt={accommodation.name}
-            className="accommodation-main-image"
+    <div className="accommodation-detail-container">
+      <div className="accommodation-hero">
+        <div className="accommodation-lottie-wrapper">
+          <DotLottieReact
+            src="../Animations/Beach Vacation.lottie"
+            loop
+            autoplay
           />
-          {/* Optionally show thumbnails or carousel */}
         </div>
 
-        <div className="accommodation-info">
-          <h3>{accommodation.name}</h3>
+        <div className="accommodation-hero-content">
+          <h1>{accommodation.name}</h1>
+          <p>{accommodation.location}</p>
+          <p>{accommodation.type}</p>
           <p>
-            <strong>Type:</strong> {accommodation.type}
+            <strong>Supplier:</strong> {accommodation.supplierUsername}
           </p>
-          <p>
-            <strong>Location:</strong> {accommodation.location}
-          </p>
-          <p>
-            <strong>Price per Night:</strong> Rs {accommodation.pricePerNight}
-          </p>
-          <p>
-            <strong>Details:</strong> {accommodation.bedrooms} bedrooms •{" "}
-            {accommodation.bathrooms} bathrooms • Max {accommodation.maxGuests}{" "}
-            guests
-          </p>
-
-          {accommodation.amenities?.length > 0 && (
-            <div className="accommodation-amenities">
-              <h4>Amenities:</h4>
-              <div className="amenity-tags">
-                {accommodation.amenities.map((amenity, i) => (
-                  <span key={i} className="amenity-tag">
-                    {amenity}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <p className="accommodation-description">
-            {accommodation.description}
-          </p>
-
-          <Button variant="primary" onClick={() => setShowBookingModal(true)}>
-            Book Now
-          </Button>
         </div>
       </div>
 
-      <Modal
-        show={showBookingModal}
-        onHide={handleCloseModal}
-        size="lg"
-        centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Book {accommodation.name}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {bookingSuccess ? (
-            <Alert variant="success">
-              Booking Successful! Check your email for confirmation details.
-            </Alert>
-          ) : (
-            <Form onSubmit={handleBookingSubmit}>
-              <Row className="mb-3">
-                <Col md={6}>
-                  <img
-                    src={
-                      accommodation.imageUrls?.[0] ||
-                      "/default-accommodation.jpg"
-                    }
-                    alt={accommodation.name}
-                    className="img-fluid rounded"
-                    style={{
-                      objectFit: "cover",
-                      width: "100%",
-                      maxHeight: "220px",
-                    }}
-                  />
-                </Col>
-                <Col md={6}>
-                  <h5>{accommodation.name}</h5>
-                  <p>
-                    <strong>Type:</strong> {accommodation.type}
-                  </p>
-                  <p>
-                    <strong>Location:</strong> {accommodation.location}
-                  </p>
-                  <p>
-                    <strong>Price:</strong> Rs {accommodation.pricePerNight} /
-                    night
-                  </p>
-                  <p>
-                    <strong>Details:</strong> {accommodation.bedrooms} bedrooms
-                    • {accommodation.bathrooms} bathrooms • Max{" "}
-                    {accommodation.maxGuests} guests
-                  </p>
-                  {accommodation.amenities?.length > 0 && (
-                    <p>
-                      <strong>Amenities:</strong>{" "}
-                      {accommodation.amenities.join(", ")}
-                    </p>
+      <div className="accommodation-main-content">
+        <div className="accommodation-left">
+          <img
+            src={accommodation.imageUrls?.$values?.[0] || "/default.jpg"}
+            alt="accommodation"
+            className="accommodation-image"
+            onClick={() => setShowGallery(true)}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/default.jpg"; // fallback image
+            }}
+          />
+
+          <div className="accommodation-description">
+            <h3>About this Place</h3>
+            <p>
+              {accommodation.description ||
+                "Comfortable and reliable places for your journey."}
+            </p>
+            <ul className="accommodation-specs">
+              <li>
+                <strong>Bed Rooms:</strong> {accommodation.bedrooms}
+              </li>
+              <li>
+                <strong>Bath Rooms:</strong> {accommodation.bathrooms}
+              </li>
+              <li>
+                <strong>Max Guests:</strong> {accommodation.maxGuests}
+              </li>
+              <li>
+                <strong>Type:</strong> {accommodation.type}
+              </li>
+            </ul>
+            {accommodation.amenities?.$values?.length > 0 && (
+              <div className="accommodation-amenities">
+                <h4>Amenities</h4>
+                <div className="amenities-tags">
+                  {accommodation.amenities.$values.map((a, i) => (
+                    <span key={i} className="tag">
+                      {a}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            <p>
+              <strong>Status:</strong>{" "}
+              {accommodation.isAvailable ? (
+                <span className="status available">Available</span>
+              ) : (
+                <span className="status unavailable">Not Available</span>
+              )}
+            </p>
+          </div>
+
+          {/* Include review section here */}
+          <div className="reviews-ratings-section">
+            <div className="reviews-header">
+              <h2 className="reviews-title">Reviews & Ratings</h2>
+              <div className="reviews-summary">
+                <div className="average-rating">
+                  <span className="rating-number">{averageRating}</span>
+                  <div className="rating-stars">
+                    {renderStaticStars(averageRating)}
+                  </div>
+                  <span className="rating-count">
+                    ({reviews.length} reviews)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="reviews-list">
+              <h3>What People Say</h3>
+              {reviews.length > 0 ? (
+                <>
+                  {reviews
+                    .filter((r) => r.comment?.trim())
+                    .sort(
+                      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+                    )
+                    .slice(0, 2)
+                    .map((review, index) => (
+                      <div key={index} className="review-card">
+                        <div className="review-header">
+                          <div className="reviewer-info">
+                            <div className="reviewer-avatar">
+                              {review.name
+                                ? review.name.charAt(0).toUpperCase()
+                                : "A"}
+                            </div>
+                            <h4 className="reviewer-name">
+                              {review.name || "Anonymous"}
+                            </h4>
+                          </div>
+                          <div className="review-date">
+                            {review.createdAt
+                              ? new Date(review.createdAt).toLocaleDateString()
+                              : "Recently"}
+                          </div>
+                        </div>
+                        <p className="review-comment">{review.comment}</p>
+                      </div>
+                    ))}
+
+                  {reviews.filter((r) => r.comment?.trim()).length > 2 && (
+                    <div className="show-more">
+                      <span
+                        className="show-more-link"
+                        onClick={() => setShowAllReviewsModal(true)}>
+                        Show More
+                      </span>
+                    </div>
                   )}
-                </Col>
-              </Row>
-
-              <Row>
-                <Form.Group className="mb-3" controlId="customerName">
-                  <Form.Label>Customer Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="customerName"
-                    value={bookingData.customerName}
-                    onChange={(e) =>
-                      setBookingData({
-                        ...bookingData,
-                        customerName: e.target.value,
-                      })
-                    }
-                    placeholder="Enter your full name"
-                    required
-                  />
-                </Form.Group>
-              </Row>
-
-              <Row>
-                <Col md={6}>
-                  <Form.Group className="mb-3" controlId="checkInDate">
-                    <Form.Label>Check-in Date</Form.Label>
-                    <DatePicker
-                      selected={bookingData.checkInDate}
-                      onChange={(date) =>
-                        setBookingData({ ...bookingData, checkInDate: date })
-                      }
-                      className="form-control"
-                      dateFormat="yyyy-MM-dd"
-                      minDate={new Date()}
-                      placeholderText="Select check-in date"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-
-                <Col md={6}>
-                  <Form.Group className="mb-3" controlId="checkOutDate">
-                    <Form.Label>Check-out Date</Form.Label>
-                    <DatePicker
-                      selected={bookingData.checkOutDate}
-                      onChange={(date) =>
-                        setBookingData({ ...bookingData, checkOutDate: date })
-                      }
-                      className="form-control"
-                      dateFormat="yyyy-MM-dd"
-                      minDate={bookingData.checkInDate || new Date()}
-                      placeholderText="Select check-out date"
-                      required
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <Row>
-                <Form.Group className="mb-3" controlId="guests">
-                  <Form.Label>Number of Guests</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="guests"
-                    value={bookingData.guests}
-                    min={1}
-                    max={accommodation.maxGuests}
-                    onChange={(e) =>
-                      setBookingData({ ...bookingData, guests: e.target.value })
-                    }
-                    required
-                  />
-                  <Form.Text className="text-muted">
-                    Maximum allowed: {accommodation.maxGuests} guests
-                  </Form.Text>
-                </Form.Group>
-              </Row>
-
-              <Row>
-                <Form.Group className="mb-3" controlId="specialRequests">
-                  <Form.Label>Special Requests</Form.Label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    name="specialRequests"
-                    value={bookingData.specialRequests}
-                    onChange={(e) =>
-                      setBookingData({
-                        ...bookingData,
-                        specialRequests: e.target.value,
-                      })
-                    }
-                    placeholder="Any special requests or requirements?"
-                  />
-                </Form.Group>
-              </Row>
-
-              <Row>
-                <Form.Group className="mb-3" controlId="tripId">
-                  <Form.Label>Trip ID (Optional)</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name="tripId"
-                    value={bookingData.tripId}
-                    onChange={(e) =>
-                      setBookingData({ ...bookingData, tripId: e.target.value })
-                    }
-                    placeholder="Enter Trip ID (Leave blank if booking separately)"
-                  />
-                </Form.Group>
-              </Row>
-
-              {/* Booking Summary */}
-              {bookingData.checkInDate && bookingData.checkOutDate && (
-                <div className="booking-summary bg-light p-3 rounded mb-3">
-                  <h5>Booking Summary</h5>
-                  <p>
-                    <strong>Accommodation:</strong> {accommodation.name}
-                    <br />
-                    <strong>Dates:</strong>{" "}
-                    {bookingData.checkInDate.toLocaleDateString()} to{" "}
-                    {bookingData.checkOutDate.toLocaleDateString()}
-                    <br />
-                    <strong>Duration:</strong>{" "}
-                    {Math.ceil(
-                      (bookingData.checkOutDate - bookingData.checkInDate) /
-                        (1000 * 60 * 60 * 24)
-                    )}{" "}
-                    nights
-                    <br />
-                    <strong>Guests:</strong> {bookingData.guests}
-                    <br />
-                    <strong>Price Per Night:</strong> Rs{" "}
-                    {accommodation.pricePerNight}
-                    <br />
-                    <strong>Estimated Total:</strong> Rs{" "}
-                    {bookingData.totalAmount.toFixed(2)}
-                  </p>
+                </>
+              ) : (
+                <div className="no-reviews">
+                  <p>No reviews yet. Be the first to share your experience!</p>
                 </div>
               )}
+            </div>
 
-              {bookingError && <Alert variant="danger">{bookingError}</Alert>}
-
-              <div className="d-flex justify-content-end">
-                <Button
-                  variant="secondary"
-                  onClick={handleCloseModal}
-                  className="me-2">
-                  Cancel
-                </Button>
-                <Button variant="primary" type="submit">
-                  Confirm Booking
-                </Button>
+            <div className="review-form-container">
+              <h3>Share Your Experience</h3>
+              <div className="review-form">
+                <div className="form-group">
+                  <label>Your Rating</label>
+                  <div className="rating-selector">
+                    {renderInteractiveStars(
+                      rating,
+                      hoverRating,
+                      (val) => setRating(val),
+                      (val) => setHoverRating(val),
+                      () => setHoverRating(0)
+                    )}
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label>Your Review</label>
+                  <textarea
+                    placeholder="Share your experience with this place..."
+                    value={newReview}
+                    onChange={(e) => setNewReview(e.target.value)}></textarea>
+                </div>
+                <button
+                  className="submit-review-btn"
+                  onClick={handleSubmitReview}
+                  disabled={submitting}>
+                  {submitting ? "Submitting..." : "Submit Review"}
+                </button>
               </div>
-            </Form>
+            </div>
+          </div>
+        </div>
+
+        <div className="accommodation-right">
+          {accommodation.isAvailable ? (
+            <div className="booking-card">
+              <h3>Book This Place</h3>
+              <p>
+                <strong>Price:</strong> Rs. {accommodation.pricePerNight} /
+                Night
+              </p>
+
+              {/* Display calculated total amount */}
+              <p>
+                <strong>Total Amount:</strong> Rs. {calculatedAmount}
+              </p>
+
+              <input
+                type="text"
+                placeholder="Your Name"
+                value={bookingData.customerName}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    customerName: e.target.value,
+                  })
+                }
+              />
+              <input
+                type="date"
+                value={bookingData.startDate}
+                onChange={(e) =>
+                  setBookingData({ ...bookingData, startDate: e.target.value })
+                }
+              />
+              <input
+                type="date"
+                value={bookingData.endDate}
+                onChange={(e) =>
+                  setBookingData({ ...bookingData, endDate: e.target.value })
+                }
+              />
+
+              <input
+                type="number"
+                placeholder="Number of Guests"
+                value={bookingData.guests}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    guests: e.target.value,
+                  })
+                }
+              />
+
+              <textarea
+                placeholder="Additional Requirements (optional)"
+                value={bookingData.additionalRequirements}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    additionalRequirements: e.target.value,
+                  })
+                }
+              />
+              <select
+                value={bookingData.tripId || ""}
+                onChange={(e) =>
+                  setBookingData({
+                    ...bookingData,
+                    tripId: e.target.value ? parseInt(e.target.value) : null,
+                  })
+                }>
+                <option value="">Select a Trip (optional)</option>
+                {userTrips.map((trip) => (
+                  <option key={trip.id} value={trip.id}>
+                    {trip.tripName}
+                  </option>
+                ))}
+              </select>
+
+              <button className="book-button" onClick={handleBookNow}>
+                Confirm Booking
+              </button>
+            </div>
+          ) : (
+            <div className="booking-card unavailable-message">
+              <h3>This Place is currently not available for booking</h3>
+            </div>
           )}
-        </Modal.Body>
-      </Modal>
+        </div>
+      </div>
+
+      {showGallery && (
+        <div className="gallery-modal">
+          <div className="gallery-content">
+            <button className="close-btn" onClick={() => setShowGallery(false)}>
+              &times;
+            </button>
+            <div className="image-grid">
+              {accommodation.imageUrls?.$values?.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt={`Gallery ${i}`}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/default.jpg";
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

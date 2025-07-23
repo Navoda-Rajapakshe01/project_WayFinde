@@ -34,12 +34,6 @@ const AdminSidebar = () => {
       path: "/admin/users-management",
     },
     {
-      id: "user-analytics",
-      label: "User Analytics",
-      icon: <FaChartLine />,
-      path: "/admin/user-analytics",
-    },
-    {
       id: "accommodation",
       label: "Accommodation",
       icon: <FaHotel />,
@@ -65,10 +59,13 @@ const AdminSidebar = () => {
     },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("userProfile");
-    localStorage.removeItem("token");
-    navigate("/signin");
+  const isUsersActive = () => {
+    return (
+      location.pathname.startsWith("/admin/users-management") ||
+      location.pathname.startsWith("/admin/user-profile") ||
+      location.pathname.startsWith("/admin/user-blogs") ||
+      location.pathname.startsWith("/admin/user-trips")
+    );
   };
 
   return (
@@ -80,7 +77,11 @@ const AdminSidebar = () => {
           {menuItems.map((item) => (
             <li
               key={item.id}
-              className={location.pathname === item.path ? "active" : ""}
+              className={
+                item.id === "users"
+                  ? isUsersActive() ? "active" : ""
+                  : location.pathname === item.path ? "active" : ""
+              }
               onClick={() => navigate(item.path)}
               onMouseEnter={() => setHoveredItem(item.id)}
               onMouseLeave={() => setHoveredItem(null)}
@@ -96,15 +97,6 @@ const AdminSidebar = () => {
           ))}
         </ul>
       </nav>
-
-      <div className="sidebar-footer">
-        <button className="logout-button" onClick={handleLogout}>
-          <span className="menu-icon">
-            <FaSignOutAlt />
-          </span>
-          <span className="menu-label">Logout</span>
-        </button>
-      </div>
     </aside>
   );
 };

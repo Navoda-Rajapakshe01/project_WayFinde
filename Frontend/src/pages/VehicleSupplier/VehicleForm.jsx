@@ -1,20 +1,24 @@
-import React, { useState, useEffect } from "react";
+// src/components/VehicleForm.jsx
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../Components/Authentication/AuthContext/AuthContext";
 import "../CSS/VehicleSupplier.css";
 
 const initialState = {
   brand: "",
   model: "",
-  PricePerDay: "",
+  pricePerDay: "",
   location: "",
   images: [],
   type: "",
-  NumberOfPassengers: "",
-  FuelType: "",
+  numberOfPassengers: "",
+  fuelType: "",
   transmissionType: "",
   amenities: [],
   supplierId: "",
+  supplierName: "", // ✅ added
   districtId: "",
+  placeId: "",
 };
 
 const AMENITY_OPTIONS = [
@@ -34,7 +38,6 @@ const AMENITY_OPTIONS = [
   "Cool Box / Mini Fridge",
 ];
 
-// NEW: Vehicle type max capacities
 const VEHICLE_TYPE_MAX_CAPACITY = {
   Motorcycle: 2,
   TukTuk: 3,
@@ -50,22 +53,43 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
   const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [districts, setDistricts] = useState([]);
-  const [maxSeats, setMaxSeats] = useState(20); // NEW: default max seats
+  const [places, setPlaces] = useState([]);
+  const [maxSeats, setMaxSeats] = useState(20);
+
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
-    const savedSupplierId = localStorage.getItem("supplierId");
-    if (savedSupplierId) {
-      setForm((prev) => ({ ...prev, supplierId: savedSupplierId }));
-    } else {
+    const loadMetadata = async () => {
+      try {
+        const [districtRes, placesRes] = await Promise.all([
+          axios.get("http://localhost:5030/api/District"),
+          axios.get("http://localhost:5030/api/places"),
+        ]);
+
+        // Extract the $values arrays from the response data
+        setDistricts(districtRes.data?.$values || []);
+        setPlaces(placesRes.data?.$values || []);
+
+        console.log("Metadata loaded:", {
+          districts: districtRes.data,
+          places: placesRes.data,
+        });
+      } catch (err) {
+        console.error("Error loading metadata:", err);
+      }
+    };
+
+    loadMetadata();
+
+    if (user?.id && user?.username) {
       setForm((prev) => ({
         ...prev,
-        supplierId: "123e4567-e89b-12d3-a456-426614174000",
+        supplierId: user.id,
+        supplierName: user.username, // ✅ set supplierName
       }));
     }
-    axios.get("http://localhost:5030/api/district").then((res) => {
-      setDistricts(res.data);
-    });
-  }, []);
+    console.log("AuthContext user:", user);
+  }, [user]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,14 +100,14 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
       setForm((prev) => ({
         ...prev,
         type: value,
-        NumberOfPassengers:
-          prev.NumberOfPassengers > max
+        numberOfPassengers:
+          prev.numberOfPassengers > max
             ? max.toString()
-            : prev.NumberOfPassengers,
+            : prev.numberOfPassengers,
       }));
-    } else if (name === "NumberOfPassengers") {
-      const clampedValue = Math.min(Number(value), maxSeats);
-      setForm({ ...form, [name]: clampedValue.toString() });
+    } else if (name === "numberOfPassengers") {
+      const clamped = Math.min(Number(value), maxSeats);
+      setForm({ ...form, [name]: clamped.toString() });
     } else {
       setForm({ ...form, [name]: value });
     }
@@ -98,74 +122,68 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
     setForm({ ...form, images: files });
   };
 
-  const handleAmenityToggle = (value, isChecked) => {
+  const handleAmenityToggle = (value, checked) => {
     setForm((prev) => ({
       ...prev,
-      amenities: isChecked
+      amenities: checked
         ? [...prev.amenities, value]
         : prev.amenities.filter((a) => a !== value),
     }));
   };
 
-  const isValidGuid = (guid) => {
-    const guidRegex =
-      /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
-    return guidRegex.test(guid);
-  };
-
   const validate = () => {
-    if (!form.brand) return "Brand is required";
-    if (!form.model) return "Model is required";
-    if (!form.PricePerDay) return "Price is required";
-    if (!form.location) return "Location is required";
-    if (!form.type) return "Vehicle type is required";
-    if (!form.NumberOfPassengers) return "Capacity is required";
-    if (!form.FuelType) return "Fuel type is required";
-    if (!form.transmissionType) return "Transmission type is required";
-    if (!form.districtId) return "District is required";
-    if (
-      !form.supplierId ||
-      (!isValidGuid(form.supplierId) && isNaN(parseInt(form.supplierId)))
-    ) {
-      return "Invalid supplier ID. Please log in again.";
-    }
+    const f = form;
+    if (!f.brand) return "Brand is required";
+    if (!f.model) return "Model is required";
+    if (!f.pricePerDay) return "Price is required";
+    if (!f.location) return "Location is required";
+    if (!f.type) return "Vehicle type is required";
+    if (!f.numberOfPassengers) return "Capacity is required";
+    if (!f.fuelType) return "Fuel type is required";
+    if (!f.transmissionType) return "Transmission type is required";
+    if (!f.districtId) return "District is required";
+    if (!f.placeId) return "Place to visit is required";
     return null;
   };
 
   const handleSubmit = async () => {
+    console.log("Submitting vehicle with form data:", form, user);
     const error = validate();
     if (error) {
       alert(error);
+      console.log("Submitting vehicle with supplierId:", form.supplierId);
       return;
     }
 
     setLoading(true);
-    const formData = new FormData();
+    const data = new FormData();
+    data.append("Brand", form.brand);
+    data.append("Model", form.model);
+    data.append("PricePerDay", form.pricePerDay);
+    data.append("Location", form.location);
+    data.append("Type", form.type);
+    data.append("NumberOfPassengers", form.numberOfPassengers);
+    data.append("FuelType", form.fuelType);
+    data.append("TransmissionType", form.transmissionType);
+    data.append("SupplierId", form.supplierId);
+    data.append("SupplierName", form.supplierName); // ✅ send supplier name
+    data.append("DistrictId", form.districtId);
+    data.append("PlaceId", form.placeId);
 
-    formData.append("Brand", form.brand);
-    formData.append("Model", form.model);
-    formData.append("PricePerDay", parseFloat(form.PricePerDay).toString());
-    formData.append("Location", form.location);
-    formData.append("Type", form.type);
-    formData.append("NumberOfPassengers", form.NumberOfPassengers);
-    formData.append("FuelType", form.FuelType);
-    formData.append("transmissionType", form.transmissionType);
-    formData.append("SupplierId", form.supplierId);
-    formData.append("DistrictId", form.districtId);
-
-    form.amenities.forEach((a) => formData.append("Amenities", a));
-    form.images.forEach((img) => formData.append("Images", img));
+    form.amenities.forEach((a) => data.append("Amenities", a));
+    form.images.forEach((img) => data.append("Images", img));
 
     try {
-      await axios.post("http://localhost:5030/api/vehicle", formData, {
+      await axios.post("http://localhost:5030/api/vehicle", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Vehicle posted successfully!");
       setForm(initialState);
-      setMaxSeats(20); // NEW: reset maxSeats
+      setMaxSeats(20);
       onSuccess();
-    } catch (error) {
-      console.error("Submission error:", error.response || error.message);
+    } catch (err) {
+      console.error("Submission error:", err.response?.data || err.message);
+      alert("Submission failed. Check console for details.");
       onFail();
     } finally {
       setLoading(false);
@@ -173,243 +191,272 @@ const VehicleForm = ({ onClose, onSuccess, onFail }) => {
   };
 
   return (
-    <div className="vehicle-form">
-      <h2>Post New Vehicle</h2>
+    <>
+      <div className="vehicle-form">
+        <h2>Post New Vehicle</h2>
 
-      <div className="form-toggle-buttons">
-        <button
-          className={`toggle-btn ${!preview ? "active" : ""}`}
-          onClick={() => setPreview(false)}>
-          Form
-        </button>
-        <button
-          className={`toggle-btn ${preview ? "active" : ""}`}
-          onClick={() => setPreview(true)}
-          disabled={!form.brand}>
-          Preview
-        </button>
-      </div>
+        <div className="form-toggle-buttons">
+          <button
+            className={`toggle-btn ${!preview ? "active" : ""}`}
+            onClick={() => setPreview(false)}>
+            Form
+          </button>
+          <button
+            className={`toggle-btn ${preview ? "active" : ""}`}
+            onClick={() => setPreview(true)}
+            disabled={!form.brand}>
+            Preview
+          </button>
+        </div>
 
-      {!preview ? (
-        <div className="form-fields">
-          <div className="form-row">
-            <div className="form-group">
-              <label>Brand*</label>
-              <input
-                name="brand"
-                type="text"
-                value={form.brand}
-                onChange={handleChange}
-                placeholder="e.g. Toyota"
-              />
-            </div>
-            <div className="form-group">
-              <label>Model*</label>
-              <input
-                name="model"
-                type="text"
-                value={form.model}
-                onChange={handleChange}
-                placeholder="e.g. Corolla"
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Price Per Day (Rs/day)*</label>
-              <input
-                name="PricePerDay"
-                type="number"
-                value={form.PricePerDay}
-                onChange={handleChange}
-                placeholder="e.g. 7,500"
-                min="0"
-              />
-            </div>
-            <div className="form-group">
-              <label>Location*</label>
-              <input
-                name="location"
-                type="text"
-                value={form.location}
-                onChange={handleChange}
-                placeholder="e.g. Colombo"
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Vehicle Type*</label>
-              <select name="type" value={form.type} onChange={handleChange}>
-                <option value="">Select Type</option>
-                <option value="Motorcycle">Motorcycle</option>
-                <option value="TukTuk">Tuk Tuk</option>
-                <option value="Hatchback">Hatchback</option>
-                <option value="Sedan">Sedan</option>
-                <option value="SUV">SUV</option>
-                <option value="Van">Van</option>
-                <option value="Commuter">Commuter</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Capacity (seats)*</label>
-              <input
-                name="NumberOfPassengers"
-                type="number"
-                value={form.NumberOfPassengers}
-                onChange={handleChange}
-                placeholder={`1 - ${maxSeats}`} // NEW
-                min="1"
-                max={maxSeats} // NEW
-              />
-            </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label>Fuel Type*</label>
-              <select
-                name="FuelType"
-                value={form.FuelType}
-                onChange={handleChange}>
-                <option value="">Select Fuel</option>
-                <option value="Petrol">Petrol</option>
-                <option value="Diesel">Diesel</option>
-                <option value="Electric">Electric</option>
-                <option value="Hybrid">Hybrid</option>
-              </select>
-            </div>
-            <div className="form-group">
-              <label>Transmission*</label>
-              <select
-                name="transmissionType"
-                value={form.transmissionType}
-                onChange={handleChange}>
-                <option value="">Select Transmission</option>
-                <option value="Manual">Manual</option>
-                <option value="Automatic">Automatic</option>
-                <option value="Triptonic">Triptonic</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label>District*</label>
-            <select
-              name="districtId"
-              value={form.districtId}
-              onChange={handleChange}
-              required>
-              <option value="">Select District</option>
-              {districts.map((d) => (
-                <option key={d.id} value={d.id}>
-                  {String(d.id).padStart(2, "0")} - {d.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label>Vehicle Images (max 5)</label>
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            {form.images.length > 0 && (
-              <div className="image-preview-container">
-                {form.images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(img)}
-                    alt={`Preview ${index}`}
-                    className="image-preview"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label>Amenities</label>
-            <div className="checkbox-group">
-              {AMENITY_OPTIONS.map((a) => (
-                <label key={a} className="checkbox-label">
+        {!preview ? (
+          <>
+            <div className="form-fields">
+              {/* BRAND & MODEL */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Brand*</label>
                   <input
-                    type="checkbox"
-                    value={a}
-                    checked={form.amenities.includes(a)}
-                    onChange={(e) => handleAmenityToggle(a, e.target.checked)}
+                    name="brand"
+                    type="text"
+                    value={form.brand}
+                    onChange={handleChange}
+                    placeholder="e.g. Toyota"
                   />
-                  {a}
-                </label>
-              ))}
-            </div>
-          </div>
+                </div>
+                <div className="form-group">
+                  <label>Model*</label>
+                  <input
+                    name="model"
+                    type="text"
+                    value={form.model}
+                    onChange={handleChange}
+                    placeholder="e.g. Corolla"
+                  />
+                </div>
+              </div>
 
-          <div className="form-actions">
-            <button className="cancel-btn" onClick={onClose}>
-              Cancel
-            </button>
-            <button
-              className="submit-btn"
-              onClick={handleSubmit}
-              disabled={loading}>
-              {loading ? "Submitting..." : "Submit"}
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="preview-card">
-          <h3>Preview</h3>
-          <div className="preview-content">
-            <div className="preview-image">
-              {form.images.length > 0 ? (
-                <img
-                  src={URL.createObjectURL(form.images[0])}
-                  alt="Vehicle Preview"
+              {/* PRICE & LOCATION */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Price Per Day (Rs/day)*</label>
+                  <input
+                    name="pricePerDay"
+                    type="number"
+                    value={form.pricePerDay}
+                    onChange={handleChange}
+                    placeholder="e.g. 7500"
+                    min="0"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Location*</label>
+                  <input
+                    name="location"
+                    type="text"
+                    value={form.location}
+                    onChange={handleChange}
+                    placeholder="e.g. Colombo"
+                  />
+                </div>
+              </div>
+
+              {/* TYPE & SEATS */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Vehicle Type*</label>
+                  <select name="type" value={form.type} onChange={handleChange}>
+                    <option value="">Select Type</option>
+                    {Object.keys(VEHICLE_TYPE_MAX_CAPACITY).map((key) => (
+                      <option key={key} value={key}>
+                        {key}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Capacity (seats)*</label>
+                  <input
+                    name="numberOfPassengers"
+                    type="number"
+                    value={form.numberOfPassengers}
+                    onChange={handleChange}
+                    placeholder={`1 - ${maxSeats}`}
+                    min="1"
+                    max={maxSeats}
+                  />
+                </div>
+              </div>
+
+              {/* FUEL & TRANSMISSION */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Fuel Type*</label>
+                  <select
+                    name="fuelType"
+                    value={form.fuelType}
+                    onChange={handleChange}>
+                    <option value="">Select Fuel</option>
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="Electric">Electric</option>
+                    <option value="Hybrid">Hybrid</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label>Transmission*</label>
+                  <select
+                    name="transmissionType"
+                    value={form.transmissionType}
+                    onChange={handleChange}>
+                    <option value="">Select Transmission</option>
+                    <option value="Manual">Manual</option>
+                    <option value="Automatic">Automatic</option>
+                    <option value="Triptonic">Triptonic</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* DISTRICT & PLACE */}
+              <div className="form-row">
+                <div className="form-group">
+                  <label>District*</label>
+                  <select
+                    name="districtId"
+                    value={form.districtId}
+                    onChange={handleChange}
+                    required>
+                    <option value="">Select District</option>
+                    {districts.map((d) => (
+                      <option key={d.id} value={d.id}>
+                        {String(d.id).padStart(2, "0")} - {d.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Service Area*</label>
+                  <select
+                    name="placeId"
+                    value={form.placeId}
+                    onChange={handleChange}
+                    required>
+                    <option value="">Select Area</option>
+                    {places.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {String(p.id).padStart(2, "0")} - {p.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* IMAGES */}
+              <div className="form-group">
+                <label>Vehicle Images (max 5)</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={handleImageChange}
                 />
-              ) : (
-                <div className="no-image">No Image</div>
-              )}
-            </div>
-            <div className="preview-details">
-              <h4>
-                {form.brand} {form.model}
-              </h4>
-              <p className="preview-price">Rs{form.PricePerDay}/day</p>
-              <p className="preview-location">{form.location}</p>
-              <p className="preview-specs">
-                {form.type} - {form.NumberOfPassengers} seats - {form.FuelType},{" "}
-                {form.transmissionType}
-              </p>
-              <div className="preview-amenities">
-                {form.amenities.map((a, i) => (
-                  <span key={i} className="amenity-tag">
-                    {a}
-                  </span>
-                ))}
+                {form.images.length > 0 && (
+                  <div className="image-preview-container">
+                    {form.images.map((img, index) => (
+                      <img
+                        key={index}
+                        src={URL.createObjectURL(img)}
+                        alt={`Preview ${index}`}
+                        className="image-preview"
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* AMENITIES */}
+              <div className="form-group">
+                <label>Amenities</label>
+                <div className="checkbox-group">
+                  {AMENITY_OPTIONS.map((a) => (
+                    <label key={a} className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        value={a}
+                        checked={form.amenities.includes(a)}
+                        onChange={(e) =>
+                          handleAmenityToggle(a, e.target.checked)
+                        }
+                      />
+                      {a}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* ACTIONS */}
+              <div className="form-actions">
+                <button className="cancel-btn" onClick={onClose}>
+                  Cancel
+                </button>
+                <button
+                  className="submit-btn"
+                  onClick={handleSubmit}
+                  disabled={loading}>
+                  {loading ? "Submitting..." : "Submit"}
+                </button>
               </div>
             </div>
+          </>
+        ) : (
+          <div className="preview-card">
+            <h3>Preview</h3>
+            <div className="preview-content">
+              <div className="preview-image">
+                {form.images.length > 0 ? (
+                  <img
+                    src={URL.createObjectURL(form.images[0])}
+                    alt="Vehicle Preview"
+                  />
+                ) : (
+                  <div className="no-image">No Image</div>
+                )}
+              </div>
+              <div className="preview-details">
+                <h4>
+                  {form.brand} {form.model}
+                </h4>
+                <p className="preview-price">Rs{form.pricePerDay}/day</p>
+                <p className="preview-location">{form.location}</p>
+                <p className="preview-specs">
+                  {form.type} - {form.numberOfPassengers} seats -{" "}
+                  {form.fuelType}, {form.transmissionType}
+                </p>
+                <div className="preview-amenities">
+                  {form.amenities.map((a, i) => (
+                    <span key={i} className="amenity-tag">
+                      {a}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="form-actions">
+              <button className="cancel-btn" onClick={onClose}>
+                Cancel
+              </button>
+              <button
+                className="submit-btn"
+                onClick={handleSubmit}
+                disabled={loading}>
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </div>
           </div>
-
-          <div className="form-actions">
-            <button className="cancel-btn" onClick={onClose}>
-              Cancel
-            </button>
-            <button
-              className="submit-btn"
-              onClick={handleSubmit}
-              disabled={loading}>
-              {loading ? "Submitting..." : "Submit"}
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 };
 

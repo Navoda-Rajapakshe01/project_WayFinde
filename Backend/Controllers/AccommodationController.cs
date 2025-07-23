@@ -3,13 +3,16 @@ using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Backend.DTOs;
+using Backend.DTOs;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using System;
 
 namespace Backend.Controllers 
@@ -31,14 +34,22 @@ namespace Backend.Controllers
         public async Task<IActionResult> CreateAccommodation([FromForm] AccommodationCreateDto dto)
         {
 
+
             if (dto == null)
                 return BadRequest("Accommodation data is missing.");
 
             
                 // Validate DistrictId exists
+            
+                // Validate DistrictId exists
                 var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
                 if (!districtExists)
                     return BadRequest($"District with Id {dto.DistrictId} does not exist.");
+
+                // Validate Supplier
+                var supplier = await _context.UsersNew.FirstOrDefaultAsync(u => u.Id == dto.SupplierId);
+                if (supplier == null)
+                    return BadRequest($"Supplier account not found.");
 
                 // Validate Supplier
                 var supplier = await _context.UsersNew.FirstOrDefaultAsync(u => u.Id == dto.SupplierId);
@@ -56,6 +67,10 @@ namespace Backend.Controllers
                     MaxGuests = dto.MaxGuests,
                     Description = dto.Description,
                     DistrictId = dto.DistrictId,
+                    IsAvailable = true,
+                    PlaceId = dto.PlaceId,
+                    SupplierId = supplier.Id,
+                    SupplierUsername = supplier.Username
                     IsAvailable = true,
                     PlaceId = dto.PlaceId,
                     SupplierId = supplier.Id,
@@ -97,12 +112,14 @@ namespace Backend.Controllers
                 return Ok(accommodation);
             }
              private async Task<string> UploadFileToCloudinary(IFormFile file)
+             private async Task<string> UploadFileToCloudinary(IFormFile file)
         {
             await using var stream = file.OpenReadStream();
 
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(file.FileName, stream),
+                Folder = "accommodation"
                 Folder = "accommodation"
             };
 
@@ -113,6 +130,7 @@ namespace Backend.Controllers
 
             throw new Exception("Failed to upload image to Cloudinary.");
         }
+  
   
 
         [HttpPut("{id}/status")]
@@ -159,12 +177,26 @@ namespace Backend.Controllers
             return Ok(bookings);
         }
 
+        [HttpGet("/api/bookings/accommodation/{accommodationId}")]
+        public async Task<IActionResult> GetBookingsByAccommodation(int accommodationId)
+        {
+            var bookings = await _context.AccommodationReservations
+                .Where(b => b.AccommodationId == accommodationId)
+                .ToListAsync();
+
+            return Ok(bookings);
+        }
+
         [HttpGet]
+        public async Task<ActionResult<IEnumerable<AccommodationDto>>> GetAccommodations()
         public async Task<ActionResult<IEnumerable<AccommodationDto>>> GetAccommodations()
         {
             var accommodations = await _context.Accommodations
                 .Include(a => a.Images)
                 .Include(a => a.Amenities)
+                .Include(a => a.Supplier)      // include supplier navigation
+                .Include(a => a.District)      // include district navigation
+                .Include(a => a.PlacesToVisit) // include place navigation
                 .Include(a => a.Supplier)      // include supplier navigation
                 .Include(a => a.District)      // include district navigation
                 .Include(a => a.PlacesToVisit) // include place navigation
@@ -177,10 +209,15 @@ namespace Backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<AccommodationDto>> GetAccommodationById(int id)
 
+        public async Task<ActionResult<AccommodationDto>> GetAccommodationById(int id)
+
         {
             var accommodation = await _context.Accommodations
                 .Include(a => a.Images)
                 .Include(a => a.Amenities)
+                .Include(a => a.Supplier)
+                .Include(a => a.District)
+                .Include(a => a.PlacesToVisit)
                 .Include(a => a.Supplier)
                 .Include(a => a.District)
                 .Include(a => a.PlacesToVisit)
@@ -189,6 +226,13 @@ namespace Backend.Controllers
             if (accommodation == null) return NotFound();
 
             return Ok(MapToDto(accommodation));
+        }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetAccommodationCount()
+        {
+            var count = await _context.Accommodations.CountAsync();
+            return Ok(count);
         }
 
         [HttpGet("count")]
@@ -214,6 +258,10 @@ namespace Backend.Controllers
                 IsAvailable = accommodation.IsAvailable,
                 ImageUrls = accommodation.Images?.Select(i => i.ImageUrl).ToList() ?? new List<string>(),
                 Amenities = accommodation.Amenities?.Select(a => a.AmenityName).ToList() ?? new List<string>(),
+                DistrictId = accommodation.DistrictId,
+                PlaceId = accommodation.PlaceId,
+                SupplierId = accommodation.SupplierId,
+                SupplierUsername = accommodation.SupplierUsername ?? string.Empty,
                 DistrictId = accommodation.DistrictId,
                 PlaceId = accommodation.PlaceId,
                 SupplierId = accommodation.SupplierId,

@@ -5,43 +5,48 @@ import "./ReviewSection.css";
 const ReviewSection = ({ reviews }) => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // Handle "Add a Review" button click
   const handleAddReview = () => {
-    setIsPopupOpen(true); // Open the popup
+    setIsPopupOpen(true);
   };
 
-  // Handle popup close
   const handleClosePopup = () => {
-    setIsPopupOpen(false); // Close the popup
+    setIsPopupOpen(false);
   };
 
-  // Handle review submission
   const handleSubmitReview = (review) => {
-    console.log("New Review:", review); // Replace with your logic to save the review
-    setIsPopupOpen(false); // Close the popup
+    console.log("New Review:", review);
+    setIsPopupOpen(false);
   };
+
+  // Safely handle malformed or missing review data
+  const validReviews = Array.isArray(reviews) ? reviews : [];
 
   return (
     <div className="review-section">
       <h2>Reviews & Ratings</h2>
+
       <div className="reviews">
-        {reviews.map((review) => (
-          <div key={review.id} className="review">
-            <p>
-              <strong>{review.user}</strong> ⭐ {review.rating}
-            </p>
-            <p>{review.comment}</p>
-            <p>
-              <em>{review.date}</em>
-            </p>
-          </div>
-        ))}
+        {validReviews.length === 0 ? (
+          <p>No reviews yet. Be the first to leave one!</p>
+        ) : (
+          validReviews.map((review) => (
+            <div key={review.id} className="review">
+              <p>
+                <strong>{review.name || "Anonymous"}</strong> ⭐ {review.rating}
+              </p>
+              <p>{review.comment}</p>
+              <p>
+                <em>{new Date(review.createdAt).toLocaleDateString()}</em>
+              </p>
+            </div>
+          ))
+        )}
       </div>
+
       <button className="add-review-button" onClick={handleAddReview}>
         Add a Review
       </button>
 
-      {/* Render the popup if isPopupOpen is true */}
       {isPopupOpen && (
         <AddReviewPopup
           onClose={handleClosePopup}

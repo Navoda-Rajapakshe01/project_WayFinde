@@ -13,7 +13,7 @@ const Accommodation = ({ isSignedIn = true }) => {
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(6);
   const [filters, setFilters] = useState({
-    priceRange: [0, 10000], // initial dummy range
+    priceRange: [0, 10000],
     accommodationType: "",
     location: "",
     guests: "",
@@ -23,19 +23,21 @@ const Accommodation = ({ isSignedIn = true }) => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(10000);
 
-  // Fetch accommodations & dynamically update price range
+  // Fetch accommodations and update price range dynamically
   useEffect(() => {
     const fetchAccommodations = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:5030/api/accommodation");
-        const data = res.data;
+        const res = await axios.get("http://localhost:5030/api/Accommodation");
+
+        const raw = res.data;
+        const data = Array.isArray(raw) ? raw : raw?.$values || [];
 
         setAccommodations(data);
         setFilteredAccommodations(data);
 
-        if (data.length) {
-          const prices = data.map((acc) => acc.pricePerNight);
+        if (data.length > 0) {
+          const prices = data.map((acc) => acc.pricePerNight || 0);
           const minP = Math.min(...prices);
           const maxP = Math.max(...prices);
           setMinPrice(minP);
@@ -44,6 +46,8 @@ const Accommodation = ({ isSignedIn = true }) => {
         }
       } catch (error) {
         console.error("Failed to fetch accommodations:", error);
+        setAccommodations([]);
+        setFilteredAccommodations([]);
       } finally {
         setLoading(false);
       }
@@ -54,49 +58,52 @@ const Accommodation = ({ isSignedIn = true }) => {
 
   // Apply filters whenever filters or accommodations change
   useEffect(() => {
-    let results = [...accommodations];
+    let results = Array.isArray(accommodations) ? [...accommodations] : [];
 
+    // Price range filter
     results = results.filter(
       (acc) =>
-        acc.pricePerNight >= filters.priceRange[0] &&
-        acc.pricePerNight <= filters.priceRange[1]
+        acc.pricePerNight >= (filters.priceRange[0] || 0) &&
+        acc.pricePerNight <= (filters.priceRange[1] || maxPrice)
     );
 
+    // Accommodation type filter
     if (filters.accommodationType) {
       results = results.filter((acc) => acc.type === filters.accommodationType);
     }
 
+    // Location filter (case insensitive includes)
     if (filters.location) {
       results = results.filter((acc) =>
-        acc.location.toLowerCase().includes(filters.location.toLowerCase())
+        acc.location?.toLowerCase().includes(filters.location.toLowerCase())
       );
     }
 
-    if (filters.guests) {
-      results = results.filter(
-        (acc) => acc.maxGuests >= parseInt(filters.guests)
-      );
+    // Guests filter
+    if (filters.guests && !isNaN(parseInt(filters.guests))) {
+      const guestsCount = parseInt(filters.guests);
+      results = results.filter((acc) => acc.maxGuests >= guestsCount);
     }
 
-    if (filters.bedrooms) {
-      results = results.filter(
-        (acc) => acc.bedrooms >= parseInt(filters.bedrooms)
-      );
+    // Bedrooms filter
+    if (filters.bedrooms && !isNaN(parseInt(filters.bedrooms))) {
+      const bedroomsCount = parseInt(filters.bedrooms);
+      results = results.filter((acc) => acc.bedrooms >= bedroomsCount);
     }
 
-    if (filters.bathrooms) {
-      results = results.filter(
-        (acc) => acc.bathrooms >= parseInt(filters.bathrooms)
-      );
+    // Bathrooms filter
+    if (filters.bathrooms && !isNaN(parseInt(filters.bathrooms))) {
+      const bathroomsCount = parseInt(filters.bathrooms);
+      results = results.filter((acc) => acc.bathrooms >= bathroomsCount);
     }
 
     setFilteredAccommodations(results);
-  }, [filters, accommodations]);
+  }, [filters, accommodations, maxPrice]);
 
-  // Handler to update filters from child component
+  // Update filters from child
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    setVisibleCount(6); // Reset visible count on filter change
+    setVisibleCount(6); // reset visible count when filters change
   };
 
   // Load more button handler
@@ -123,14 +130,12 @@ const Accommodation = ({ isSignedIn = true }) => {
       />
 
       <div className="accommodation-page-container">
-        {/* Filters */}
         <AccommodationFilter
           onFilterChange={handleFilterChange}
-          minPrice={0} // minPrice fixed as 0 per your requirement
-          maxPrice={maxPrice} // maxPrice dynamic
+          minPrice={minPrice}
+          maxPrice={maxPrice}
         />
 
-        {/* Listings */}
         <section className="accommodation-listings-section">
           <h2 className="accommodation-section-title">
             Available Accommodations
@@ -145,11 +150,7 @@ const Accommodation = ({ isSignedIn = true }) => {
             <>
               <div className="accommodation-card-grid">
                 {filteredAccommodations.slice(0, visibleCount).map((acc) => (
-                  <AccommodationCard
-                    key={acc.id}
-                    accommodation={acc}
-                    // You can add onBookNow handler here if needed
-                  />
+                  <AccommodationCard key={acc.id} accommodation={acc} />
                 ))}
               </div>
 
@@ -164,7 +165,6 @@ const Accommodation = ({ isSignedIn = true }) => {
           )}
         </section>
 
-        {/* Popular Locations */}
         <PopularLocations
           locations={[
             "Colombo",
@@ -181,4 +181,3 @@ const Accommodation = ({ isSignedIn = true }) => {
 };
 
 export default Accommodation;
-[];

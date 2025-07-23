@@ -10,7 +10,7 @@
         public DateTime EndDate { get; set; }
         public string PickupLocation { get; set; } = string.Empty;
         public string ReturnLocation { get; set; } = string.Empty;
-        public string AdditionalRequirements { get; set; } = string.Empty;
+        public string AdditionalRequirements { get; set; } = string.Empty; 
         public decimal TotalAmount { get; set; }
         public string Status { get; set; } = "Pending";
         public DateTime BookingDate { get; set; } = DateTime.UtcNow;

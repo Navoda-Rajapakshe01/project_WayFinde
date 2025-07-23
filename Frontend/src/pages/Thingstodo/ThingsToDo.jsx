@@ -18,7 +18,7 @@ const ThingsToDo = () => {
     axios
       .get("http://localhost:5030/api/district")
       .then((response) => {
-        setDistricts(response.data);
+        setDistricts(response.data.$values);
         setLoading(false);
       })
       .catch((error) => {

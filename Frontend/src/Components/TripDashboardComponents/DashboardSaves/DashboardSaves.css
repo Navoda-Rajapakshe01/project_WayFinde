@@ -116,7 +116,7 @@
   margin-bottom: 10px;
 }
 
-input[type='text'] {
+input[type="text"] {
   width: 100%;
   padding: 8px;
   font-size: 14px;
@@ -124,7 +124,8 @@ input[type='text'] {
   border-radius: 4px;
 }
 
-.to-do-card, .budget-card {
+.to-do-card,
+.budget-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px;
@@ -157,17 +158,76 @@ input[type='text'] {
   background-color: #0056b3;
 }
 
-button {
-  background-color: #b6b9bd;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
+button:hover {
+  /* background-color: #0056b3; */
+}
+
+.enhanced-dashboard-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e2e6ef 100%);
+  border: 1.5px solid #e0e0e0;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(80, 100, 180, 0.07);
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  min-height: 110px;
+  position: relative;
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.enhanced-dashboard-card:hover {
+  box-shadow: 0 6px 24px rgba(80, 100, 180, 0.13);
+  border-color: #b5c1ef;
+}
+
+.dashboard-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboard-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 2px;
+}
+
+.dashboard-card-desc {
+  font-size: 15px;
+  color: #555;
+  font-weight: 400;
+  line-height: 1.5;
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+
+.enhanced-arrow-button {
+  background: linear-gradient(135deg, #66b7ea 0%, #67bcde 100%);
+  color: #fff;
+  border: none;
+  margin-top: 18px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(80, 100, 180, 0.10);
+  position: static;
+  margin-left: 18px;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.enhanced-arrow-button:hover {
+  background: linear-gradient(135deg, #666666 0%, #7a7a7a 100%);
+  transform: scale(1.08);
 }
 
 .enhanced-dashboard-card {
@@ -246,8 +306,9 @@ button:hover {
     width: 100%;
     height: auto;
   }
-  
-  .to-do-card, .budget-card {
+
+  .to-do-card,
+  .budget-card {
     padding-bottom: 40px; /* Extra space for the button */
   }
 }

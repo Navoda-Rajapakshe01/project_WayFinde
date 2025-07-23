@@ -7,8 +7,6 @@ import {
   FaUsers,
   FaStar,
   FaEye,
-  FaArrowUp,
-  FaArrowDown,
   FaHotel,
   FaCar,
 } from "react-icons/fa";
@@ -27,10 +25,14 @@ const DashboardOverview = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [popularPlaces, setPopularPlaces] = useState([]);
+  const [activityData, setActivityData] = useState([]);
+  const [activityLoading, setActivityLoading] = useState(true);
+  const [activityError, setActivityError] = useState(null);
 
   useEffect(() => {
     fetchStats();
     fetchPopularPlaces();
+    fetchActivityData();
   }, []);
 
   const fetchStats = async () => {
@@ -63,14 +65,75 @@ const DashboardOverview = () => {
     finally {
       setIsLoading(false);
     }
+
+    try{
+      const accommodationRes = await axios.get(
+        "http://localhost:5030/api/accommodation/count"
+      );
+      setStats((prev) => ({
+        ...prev,
+        totalAccommodations: accommodationRes.data,
+      }));
+    }
+    catch (error) {
+      console.error("Failed to fetch accommodations count:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+
+    try {
+      const vehicleRes = await axios.get(
+        "http://localhost:5030/api/vehicle/count"
+      );
+      setStats((prev) => ({
+        ...prev,
+        totalVehicles: vehicleRes.data,
+      }));
+    } catch (error) {
+      console.error("Failed to fetch vehicles count:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
+
+    try {
+      const userRes = await axios.get("http://localhost:5030/api/profile/count");
+      setStats((prev) => ({
+        ...prev,
+        totalUsers: userRes.data,
+      }));
+    }
+    catch (error) {
+      console.error("Failed to fetch users count:", error);
+    }
+    finally {
+      setIsLoading(false);
+    }
   };
 
   const fetchPopularPlaces = async () => {
     try {
       const res = await axios.get("http://localhost:5030/api/places/popular");
-      setPopularPlaces(res.data);
+      console.log('API /places/popular response:', res.data);
+      setPopularPlaces(Array.isArray(res.data?.$values) ? res.data.$values : []);
     } catch (err) {
       console.error("Failed to fetch popular places:", err);
+      setPopularPlaces([]); // Always set to array on error
+    }
+  };
+
+  const fetchActivityData = async () => {
+    setActivityLoading(true);
+    setActivityError(null);
+    try {
+      // Replace with your real backend endpoint
+      const res = await axios.get('http://localhost:5030/api/activity/overview');
+      setActivityData(res.data);
+    } catch (err) {
+      setActivityError('Failed to load activity data');
+    } finally {
+      setActivityLoading(false);
     }
   };
 
@@ -149,94 +212,86 @@ const DashboardOverview = () => {
         </div>
       </div>
 
-      <div className="dashboard-grid">
-        <div className="dashboard-card activity-chart">
-          <div className="card-header">
+      <div className="dashboard-grid" style={{ display: 'block' }}>
+        {/* Popular Places Table */}
+        <div className="dashboard-card recent-places popular-places-card">
+          <div className="card-header popular-places-header">
+            <h2>Popular Places</h2>
+          </div>
+          <table className="data-table popular-places-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Image</th>
+                <th>Place</th>
+                <th>District</th>
+                <th>Category</th>
+                <th>Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.isArray(popularPlaces) && popularPlaces.length > 0 ? (
+                popularPlaces.map((place, idx) => {
+                  const rating = Number(place.averageRating) || 0;
+                  const reviewCount = place.reviewCount || 0;
+                  const isTop = idx === 0;
+                  return (
+                    <tr key={place.id} className={`popular-place-row${isTop ? ' top-place' : ''}`}>
+                      <td>{idx + 1}</td>
+                      <td>
+                        {place.mainImageUrl ? (
+                          <img src={place.mainImageUrl} alt={place.name} className={`popular-place-img${isTop ? ' top-img' : ''}`} />
+                        ) : (
+                          <div className="popular-place-img placeholder" />
+                        )}
+                      </td>
+                      <td className="popular-place-name">{place.name || 'Unnamed'}</td>
+                      <td>{place.district?.name || 'Unknown'}</td>
+                      <td>{place.category?.categoryName || 'N/A'}</td>
+                      <td>
+                        <div className="adminrating popular-place-rating">
+                          <span className="adminrating-stars">
+                            {'★'.repeat(Math.round(rating))}
+                            {'☆'.repeat(5 - Math.round(rating))}
+                          </span>
+                          <span className="adminrating-value">
+                            {rating.toFixed(1)}
+                          </span>
+                          <span className="popular-place-review-count">({reviewCount})</span>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="6" style={{ textAlign: 'center' }}>No popular places found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Activity Overview */}
+        <div className="dashboard-card activity-chart activity-overview-card">
+          <div className="card-header activity-overview-header activity-overview-flex">
             <h2>Activity Overview</h2>
-            <select className="time-selector">
+            <select className="time-selector activity-overview-filter">
               <option>Last 6 Months</option>
               <option>Last 3 Months</option>
               <option>Last Month</option>
             </select>
           </div>
           <div className="chart-container">
-            {/* using a charting library like Chart.js or Recharts */}
-            <div className="chart-placeholder">
-              <div className="chart-bars"></div>
-              <div className="chart-legend">
-                <div className="legend-item">
-                  <div className="legend-color visits"></div>
-                  <span>Visits</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color reviews"></div>
-                  <span>Reviews</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-color signups"></div>
-                  <span>Signups</span>
-                </div>
-              </div>
-            </div>
+            {activityLoading ? (
+              <div style={{ textAlign: 'center', width: '100%' }}>Loading chart...</div>
+            ) : activityError ? (
+              <div style={{ color: 'red', textAlign: 'center', width: '100%' }}>{activityError}</div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
-
-        <div className="dashboard-card recent-places">
-          <div className="card-header">
-            <h2>Popular Places</h2>
-          </div>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Place</th>
-                <th>District</th>
-                <th>Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {popularPlaces.map((place) => {
-                console.log("Place object:", place);
-                const rating = Number(place.rating) || 0; 
-
-                return (
-                  <tr key={place.id}>
-                    <td>{place.name || "Unnamed"}</td>
-                    <td>{place.district?.name || "Unknown"}</td>
-                    <td>
-                      <div className="adminrating">
-                        <span className="adminrating-stars">
-                          {"★".repeat(Math.floor(rating))}
-                          {"☆".repeat(5 - Math.floor(rating))}
-                        </span>
-                        <span className="adminrating-value">
-                          {rating.toFixed(1)}
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="dashboard-card recent-users">
-        <div className="card-header">
-          <h2>Recent User Signups</h2>
-          <button className="view-all-btn">View All</button>
-        </div>
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Date</th>
-              <th>User Type</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
       </div>
     </div>
   );
