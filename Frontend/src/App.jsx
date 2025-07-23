@@ -84,25 +84,61 @@ function AppRoutes() {
         <Route path="/trip-planner" element={<PlanTrip />} />
         <Route path="/upcomingtrips" element={<AllTrips />} />
         <Route path="/alltrips" element={<AllTrips />} />
-        <Route path="/accommodation" element={<Accommodation />} />
-        <Route path="/vehicle" element={<Vehicle />} />
+        <Route
+          path="/accommodation"
+          element={
+            user?.role === "NormalUser" ? (
+              <Accommodation />
+            ) : user?.role === "TransportProvider" ? (
+              <Navigate to="/vehicle/supplier" replace />
+            ) : user?.role === "AccommodationProvider" ? (
+              <Navigate to="/accommodation/supplier" replace />
+            ) : (
+              <Navigate to="/signin" replace />
+            )
+          }
+        />
+
+        <Route
+          path="/vehicle"
+          element={
+            user?.role === "NormalUser" ? (
+              <Vehicle />
+            ) : user?.role === "TransportProvider" ? (
+              <Navigate to="/vehicle/supplier" replace />
+            ) : user?.role === "AccommodationProvider" ? (
+              <Navigate to="/accommodation/supplier" replace />
+            ) : (
+              <Navigate to="/signin" replace />
+            )
+          }
+        />
         <Route
           path="/vehicle/supplier"
           element={
             user?.role === "TransportProvider" ? (
               <VehicleSupplier />
-            ) : (
+            ) : user?.role === "AccommodationProvider" ? (
+              <Navigate to="/accommodation/supplier" replace />
+            ) : user?.role === "NormalUser" ? (
               <Navigate to="/vehicle" replace />
+            ) : (
+              <Navigate to="/signin" replace />
             )
           }
         />
+
         <Route
           path="/accommodation/supplier"
           element={
             user?.role === "AccommodationProvider" ? (
               <AccommodationSupplier />
-            ) : (
+            ) : user?.role === "TransportProvider" ? (
+              <Navigate to="/vehicle/supplier" replace />
+            ) : user?.role === "NormalUser" ? (
               <Navigate to="/accommodation" replace />
+            ) : (
+              <Navigate to="/signin" replace />
             )
           }
         />

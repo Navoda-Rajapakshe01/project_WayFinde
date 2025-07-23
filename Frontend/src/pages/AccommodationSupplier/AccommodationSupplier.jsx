@@ -1,17 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import AccommodationForm from "./AccommodationForm";
 import AccommodationCard from "./AccommodationCard";
 import Alert from "../Alert";
 import HeroSection from "../../Components/HeroSection/HeroSection";
 import { Tabs, Tab } from "react-bootstrap";
+import "../CSS/AccommodationSupplier.css";
+import { AuthContext } from "../../Components/Authentication/AuthContext/AuthContext";
+
+const fallbackAccommodations = [];
+const fallbackBookings = [];
 
 const AccommodationSupplier = () => {
+  const { user } = useContext(AuthContext);
+  const supplierId = user?.id;
+
   const [accommodations, setAccommodations] = useState([]);
+  const [accommodationId, setAccommodationId] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [alert, setAlert] = useState("");
-  const [activeTab, setActiveTab] = useState("listings");
+  const [activeTab, setActiveTab] = useState("dashboard");
   const [loading, setLoading] = useState(true);
   const [dashboardStats, setDashboardStats] = useState({
     totalAccommodations: 0,
@@ -26,16 +35,18 @@ const AccommodationSupplier = () => {
     setTimeout(() => setAlert(""), 3000);
   };
 
-  // Fetch accommodations and compute stats
   const fetchAccommodations = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5030/api/Accommodation");
-
+      const res = await axios.get(
+        `http://localhost:5030/api/Accommodation/supplier/${supplierId}`
+      );
       const rawData = res.data;
       const data = Array.isArray(rawData) ? rawData : rawData?.$values || [];
 
-      const active = data.filter((a) => a.isAvailable).length;
+      const active = data.filter(
+        (a) => a.status?.toLowerCase() === "available"
+      ).length;
 
       setAccommodations(data);
       setDashboardStats((prev) => ({
@@ -45,16 +56,18 @@ const AccommodationSupplier = () => {
       }));
     } catch (error) {
       console.error("Fetch accommodations failed:", error);
-      // fallback data...
+      setAccommodations(fallbackAccommodations);
     } finally {
       setLoading(false);
     }
   };
 
   const fetchBookings = async () => {
+    if (!accommodationId) return;
+
     try {
       const res = await axios.get(
-        "http://localhost:5030/api/AccommodationReservation"
+        `http://localhost:5030/api/AccommodationReservation/accommodation/${accommodationId}`
       );
       const rawData = res.data;
       const data = Array.isArray(rawData) ? rawData : rawData?.$values || [];
@@ -69,7 +82,11 @@ const AccommodationSupplier = () => {
       const thisMonth = data.filter(
         (b) => new Date(b.bookingDate) >= startOfMonth
       );
-      const revenue = thisMonth.reduce((sum, b) => sum + b.totalAmount, 0);
+      const revenue = thisMonth.reduce(
+        (sum, b) =>
+          sum + (typeof b.totalAmount === "number" ? b.totalAmount : 0),
+        0
+      );
 
       setBookings(data);
       setDashboardStats((prev) => ({
@@ -80,13 +97,16 @@ const AccommodationSupplier = () => {
       }));
     } catch (error) {
       console.error("Fetch bookings failed:", error);
+      setBookings(fallbackBookings);
     }
   };
 
   const handleToggleStatus = async (id, currentStatus) => {
     try {
       const updated =
-        currentStatus === "Available" ? "Unavailable" : "Available";
+        (currentStatus ?? "").toLowerCase() === "available"
+          ? "Unavailable"
+          : "Available";
       await axios.put(`http://localhost:5030/api/Accommodation/${id}/status`, {
         status: updated,
       });
@@ -113,24 +133,42 @@ const AccommodationSupplier = () => {
     showTemporaryAlert("Edit functionality coming soon.");
   };
 
-  const handleViewBookings = async (accommodationId) => {
+  const handleViewBookings = (id) => {
+    setAccommodationId(id);
+    setActiveTab("bookings");
+  };
+
+  const handleUpdateBookingStatus = async (bookingId, newStatus) => {
     try {
-      const res = await axios.get(
-        `http://localhost:5030/api/AccommodationReservation/accommodation/${accommodationId}`
+      await axios.put(
+        `http://localhost:5030/api/AccommodationReservation/${bookingId}/status`,
+        { status: newStatus }
       );
-      const rawData = res.data;
-      const data = Array.isArray(rawData) ? rawData : rawData?.$values || [];
-      setBookings(data);
-      setActiveTab("bookings");
+      showTemporaryAlert(`Booking ${newStatus.toLowerCase()}.`);
+      fetchBookings();
     } catch {
-      showTemporaryAlert("Failed to fetch bookings.");
+      showTemporaryAlert("Failed to update booking status.");
+    }
+  };
+
+  const handleDeleteBooking = async (bookingId) => {
+    if (window.confirm("Delete this rejected booking?")) {
+      try {
+        await axios.delete(
+          `http://localhost:5030/api/AccommodationReservation/${bookingId}`
+        );
+        showTemporaryAlert("Booking deleted.");
+        fetchBookings();
+      } catch {
+        showTemporaryAlert("Failed to delete booking.");
+      }
     }
   };
 
   useEffect(() => {
-    fetchAccommodations();
-    fetchBookings();
-  }, []);
+    if (supplierId) fetchAccommodations();
+    if (accommodationId) fetchBookings();
+  }, [supplierId, accommodationId]);
 
   if (loading) {
     return (
@@ -219,53 +257,6 @@ const AccommodationSupplier = () => {
                 </div>
               </div>
             </div>
-
-            {bookings.length > 0 && (
-              <div className="recent-bookings">
-                <h3>Recent Bookings</h3>
-                <div className="bookings-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Booking ID</th>
-                        <th>Accommodation</th>
-                        <th>Customer</th>
-                        <th>Dates</th>
-                        <th>Status</th>
-                        <th>Amount</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {bookings.slice(0, 5).map((booking) => (
-                        <tr key={booking.id}>
-                          <td>#{booking.id}</td>
-                          <td>
-                            {accommodations.find(
-                              (a) => a.id === booking.accommodationId
-                            )?.name || "Unknown"}
-                          </td>
-                          <td>{booking.customerName}</td>
-                          <td>
-                            {new Date(booking.checkInDate).toLocaleDateString()}{" "}
-                            -{" "}
-                            {new Date(
-                              booking.checkOutDate
-                            ).toLocaleDateString()}
-                          </td>
-                          <td>
-                            <span
-                              className={`status-badge status-${booking.status.toLowerCase()}`}>
-                              {booking.status}
-                            </span>
-                          </td>
-                          <td>Rs {booking.totalAmount.toFixed(2)}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            )}
           </Tab>
 
           <Tab eventKey="listings" title="Your Accommodations">
@@ -280,7 +271,7 @@ const AccommodationSupplier = () => {
                     onDelete={handleDeleteAccommodation}
                     onEdit={handleEditAccommodation}
                     onToggleStatus={handleToggleStatus}
-                    onViewBookings={handleViewBookings}
+                    onViewBookings={() => handleViewBookings(acc.id)}
                   />
                 ))
               )}
@@ -290,12 +281,12 @@ const AccommodationSupplier = () => {
           <Tab eventKey="bookings" title="Bookings">
             <div className="bookings-table">
               {bookings.length === 0 ? (
-                <p>No bookings available at the moment.</p>
+                <p>No bookings available.</p>
               ) : (
                 <table>
                   <thead>
                     <tr>
-                      <th>Booking ID</th>
+                      <th>ID</th>
                       <th>Accommodation</th>
                       <th>Customer</th>
                       <th>Dates</th>
@@ -304,28 +295,54 @@ const AccommodationSupplier = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.map((booking) => (
-                      <tr key={booking.id}>
-                        <td>#{booking.id}</td>
-                        <td>
-                          {accommodations.find(
-                            (a) => a.id === booking.accommodationId
-                          )?.name || "Unknown"}
-                        </td>
-                        <td>{booking.customerName}</td>
-                        <td>
-                          {new Date(booking.checkInDate).toLocaleDateString()} -{" "}
-                          {new Date(booking.checkOutDate).toLocaleDateString()}
-                        </td>
-                        <td>
-                          <span
-                            className={`status-badge status-${booking.status.toLowerCase()}`}>
-                            {booking.status}
-                          </span>
-                        </td>
-                        <td>Rs {booking.totalAmount.toFixed(2)}</td>
-                      </tr>
-                    ))}
+                    {bookings.map((b) => {
+                      const status = b.status ?? "Pending";
+                      const amount =
+                        typeof b.totalAmount === "number" ? b.totalAmount : 0;
+                      const acc = accommodations.find(
+                        (a) => a.id === b.accommodationId
+                      );
+
+                      return (
+                        <tr key={b.id}>
+                          <td>#{b.id}</td>
+                          <td>{acc?.name || "Unknown"}</td>
+                          <td>{b.customerName}</td>
+                          <td>
+                            {new Date(b.checkInDate).toLocaleDateString()} –{" "}
+                            {new Date(b.checkOutDate).toLocaleDateString()}
+                          </td>
+                          <td>
+                            <span
+                              className={`status-badge status-${status.toLowerCase()}`}>
+                              {status}
+                            </span>
+                            {status === "Pending" && (
+                              <>
+                                <button
+                                  onClick={() =>
+                                    handleUpdateBookingStatus(b.id, "Accepted")
+                                  }>
+                                  Accept
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleUpdateBookingStatus(b.id, "Rejected")
+                                  }>
+                                  Reject
+                                </button>
+                              </>
+                            )}
+                            {status === "Rejected" && (
+                              <button onClick={() => handleDeleteBooking(b.id)}>
+                                🗑
+                              </button>
+                            )}
+                          </td>
+                          <td>Rs {amount.toFixed(2)}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               )}

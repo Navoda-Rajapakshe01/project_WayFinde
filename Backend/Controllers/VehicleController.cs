@@ -196,6 +196,23 @@ namespace Backend.Controllers
             return Ok(MapToDto(vehicle));
         }
 
+        [HttpGet("supplier/{supplierId}")]
+        public async Task<ActionResult<IEnumerable<VehicleDto>>> GetVehiclesBySupplier(Guid supplierId)
+        {
+            var vehicles = await _context.Vehicles
+                .Where(v => v.SupplierId == supplierId)
+                .Include(v => v.Images)
+                .Include(v => v.Amenities)
+                .Include(v => v.Supplier)
+                .Include(v => v.District)
+                .Include(v => v.PlacesToVisit)
+                .ToListAsync();
+
+            var dtos = vehicles.Select(MapToDto);
+            return Ok(dtos);
+        }
+
+
         [HttpGet("count")]
         public async Task<IActionResult> GetVehicleCount()
         {
