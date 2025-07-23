@@ -15,11 +15,18 @@ import {
   FaUserCircle,
 } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../Authentication/AuthContext/AuthContext";
-import { useProfileImage } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
+import logo from "../../assets/Images/logo.png";
+import { AuthContext } from "../Authentication/AuthContext/AuthContext";
+import { ProfileImageContext } from "../UserProfileComponents/ProfileImageContext/ProfileImageContext";
 import "./MainNavbar.css";
+import { Spinner } from "react-bootstrap";
 
 const MainNavbar = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // States
+  const [activeTab, setActiveTab] = useState(location.pathname);
   const [isOpen, setIsOpen] = useState(false);
   const [profileData, setProfileData] = useState({
     profileImage: "/defaultprofilepicture.png",
@@ -28,14 +35,8 @@ const MainNavbar = () => {
   });
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const authContext = useAuth();
-  const profileImageContext = useProfileImage();
-
-  const user = authContext?.user;
-  const loading = authContext?.loading;
-
+  // Context
+  const profileImageContext = useContext(ProfileImageContext);
   const profileImageFromContext =
     profileImageContext?.profileImage || "/defaultprofilepicture.png";
 
@@ -50,9 +51,9 @@ const MainNavbar = () => {
     if (authContext?.logout) {
       authContext.logout();
     } else {
-      // Fallback logout logic
+      console.warn("Logout function not available");
       localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      localStorage.removeItem("userProfile");
       window.location.href = "/";
     }
   }, [authContext]);
@@ -65,14 +66,20 @@ const MainNavbar = () => {
   // Close profile popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isOpen && !event.target.closest(".profile-popup")) {
+      if (
+        !event.target.closest(".navbar-profile") &&
+        !event.target.closest(".profile-popup")
+      ) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    if (isOpen) {
+      document.addEventListener("click", handleClickOutside);
+    }
+
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, [isOpen]);
 
@@ -163,11 +170,18 @@ const MainNavbar = () => {
   // Show loading indicator while auth loading
   if (loading) {
     return (
-      <nav className="navbar">
-        <div className="navbar-container">
-          <div className="navbar-loading">Loading authentication...</div>
-        </div>
-      </nav>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading authentication...</span>
+        </Spinner>
+      </div>
     );
   }
 
@@ -233,8 +247,7 @@ const MainNavbar = () => {
                             onClick={() =>
                               navigate("/signin?redirect=/plantrip")
                             }
-                            style={{ cursor: "pointer" }}
-                          >
+                            style={{ cursor: "pointer" }}>
                             Create a New Trip
                           </div>
                           <div
@@ -242,8 +255,7 @@ const MainNavbar = () => {
                             onClick={() =>
                               navigate("/signin?redirect=/alltrips")
                             }
-                            style={{ cursor: "pointer" }}
-                          >
+                            style={{ cursor: "pointer" }}>
                             My All Trips
                           </div>
                         </>
@@ -297,8 +309,7 @@ const MainNavbar = () => {
                     e.target.src = "/defaultprofilepicture.png";
                   }}
                 />
-                <span className="username">{profileData.username}</span>
-                <span className="dropdown-arrow">▼</span>
+                <span className="profile-indicator"></span>
               </div>
 
               {isOpen && (
@@ -342,9 +353,6 @@ const MainNavbar = () => {
               <button className="signin-btn" onClick={handleSignIn}>
                 Sign In
               </button>
-              <Link to="/signup" className="signup-btn">
-                Sign Up
-              </Link>
             </div>
           )}
         </div>

@@ -7,11 +7,11 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
 
   return (
     <div className={`place-card ${isSelected ? "selected" : ""}`}>
-      <div className="place-image-container">
+      <div className="place-image-container w-full h-[180px] relative rounded overflow-hidden">
         <img
           src={mainImageUrl}
           alt={name}
-          className="place-image"
+          className="place-image absolute top-0 left-0 w-full h-full object-cover transition-transform duration-500 ease-in-out"
           onError={(e) => {
             e.target.style.display = "none";
             console.warn(`Image failed to load for ${name}`);

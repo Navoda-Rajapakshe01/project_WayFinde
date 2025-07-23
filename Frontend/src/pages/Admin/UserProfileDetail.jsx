@@ -30,39 +30,48 @@ const UserProfileDetail = () => {
         const response = await axios.get(
           `http://localhost:5030/api/profile/admin/users/${userId}`
         );
-        console.log("User data received:", response.data);
         setUser(response.data);
         // Fetch stats based on user role
         const role = response.data.role || response.data.Role;
         if (role === "NormalUser") {
           // Blogs
           const blogsRes = await axios.get("http://localhost:5030/api/Blog/all");
-          const userBlogs = blogsRes.data.filter(
+          const blogsArray = Array.isArray(blogsRes.data?.$values) ? blogsRes.data.$values : Array.isArray(blogsRes.data) ? blogsRes.data : [];
+          const userBlogs = Array.isArray(blogsArray) ? blogsArray.filter(
             (b) => b.User && (b.User.Id === userId || b.User.id === userId)
-          );
+          ) : [];
           setBlogCount(userBlogs.length);
           // Trips
           const tripsRes = await axios.get(
             `http://localhost:5030/api/trips/user/${userId}`
           );
-          setTripCount(Array.isArray(tripsRes.data) ? tripsRes.data.length : tripsRes.data?.length || 0);
+          const tripsArray = Array.isArray(tripsRes.data?.$values) ? tripsRes.data.$values : Array.isArray(tripsRes.data) ? tripsRes.data : [];
+          setTripCount(tripsArray.length);
         } else if (role === "AccommodationProvider") {
           // Accommodations
           const accRes = await axios.get("http://localhost:5030/api/accommodation");
-          const userAccs = accRes.data.filter(a => a.ownerId === userId || a.OwnerId === userId);
+          let accData = accRes.data;
+          if (accData && accData.$values) accData = accData.$values;
+          const userAccs = Array.isArray(accData) ? accData.filter(a => a.ownerId === userId || a.OwnerId === userId) : [];
           setAccommodationCount(userAccs.length);
           // Accommodation Bookings
           const bookingsRes = await axios.get("http://localhost:5030/api/AccommodationReservation");
-          const userBookings = bookingsRes.data.filter(b => b.ownerId === userId || b.OwnerId === userId);
+          let bookingsData = bookingsRes.data;
+          if (bookingsData && bookingsData.$values) bookingsData = bookingsData.$values;
+          const userBookings = Array.isArray(bookingsData) ? bookingsData.filter(b => b.ownerId === userId || b.OwnerId === userId) : [];
           setAccommodationBookingCount(userBookings.length);
         } else if (role === "TransportProvider" || role === "VehicleProvider") {
           // Vehicles
           const vehiclesRes = await axios.get("http://localhost:5030/api/vehicle");
-          const userVehicles = vehiclesRes.data.filter(v => v.supplierId === userId || v.SupplierId === userId);
+          let vehiclesData = vehiclesRes.data;
+          if (vehiclesData && vehiclesData.$values) vehiclesData = vehiclesData.$values;
+          const userVehicles = Array.isArray(vehiclesData) ? vehiclesData.filter(v => v.supplierId === userId || v.SupplierId === userId) : [];
           setVehicleCount(userVehicles.length);
           // Vehicle Bookings
           const bookingsRes = await axios.get("http://localhost:5030/api/VehicleReservations");
-          const userBookings = bookingsRes.data.filter(b => b.ownerId === userId || b.OwnerId === userId || b.supplierId === userId || b.SupplierId === userId);
+          let bookingsData = bookingsRes.data;
+          if (bookingsData && bookingsData.$values) bookingsData = bookingsData.$values;
+          const userBookings = Array.isArray(bookingsData) ? bookingsData.filter(b => b.ownerId === userId || b.OwnerId === userId || b.supplierId === userId || b.SupplierId === userId) : [];
           setVehicleBookingCount(userBookings.length);
         }
       } catch (err) {
@@ -126,6 +135,12 @@ const UserProfileDetail = () => {
   };
   const handleTripsClick = () => {
     navigate(`/admin/user-trips/${userId}`);
+  };
+  const handleVehiclesClick = () => {
+    navigate(`/admin/user-vehicles/${userId}`);
+  };
+  const handleAccommodationsClick = () => {
+    navigate(`/admin/user-accommodations/${userId}`);
   };
 
   if (loading) {
@@ -219,17 +234,19 @@ const UserProfileDetail = () => {
               </div>
             </div>
 
-            <div className="detail-section">
-              <h3>Social Statistics</h3>
-              <div className="detail-item">
-                <strong>Followers:</strong>{" "}
-                {user.followersCount || user.FollowersCount || 0}
+            {user.role === 'NormalUser' && (
+              <div className="detail-section">
+                <h3>Social Statistics</h3>
+                <div className="detail-item">
+                  <strong>Followers:</strong>{" "}
+                  {user.followersCount || user.FollowersCount || 0}
+                </div>
+                <div className="detail-item">
+                  <strong>Following:</strong>{" "}
+                  {user.followingCount || user.FollowingCount || 0}
+                </div>
               </div>
-              <div className="detail-item">
-                <strong>Following:</strong>{" "}
-                {user.followingCount || user.FollowingCount || 0}
-              </div>
-            </div>
+            )}
 
             {user.bio && (
               <div className="detail-section full-width">
@@ -255,7 +272,7 @@ const UserProfileDetail = () => {
               )}
               {user && (user.role === "AccommodationProvider") && (
                 <>
-                  <div className="activity-stat">
+                  <div className="activity-stat clickable" onClick={handleAccommodationsClick} title="View all accommodations by this user">
                     <span className="stat-label">Accommodation Places:</span>
                     <span className="stat-value">{accommodationCount}</span>
                   </div>
@@ -267,7 +284,7 @@ const UserProfileDetail = () => {
               )}
               {user && (user.role === "TransportProvider" || user.role === "VehicleProvider") && (
                 <>
-                  <div className="activity-stat">
+                  <div className="activity-stat clickable" onClick={handleVehiclesClick} title="View all vehicles by this user">
                     <span className="stat-label">Vehicles:</span>
                     <span className="stat-value">{vehicleCount}</span>
                   </div>

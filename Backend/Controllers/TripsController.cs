@@ -41,12 +41,17 @@ namespace Backend.Data
             if (dto.PlaceIds == null || !dto.PlaceIds.Any())
                 return BadRequest(new { message = "Validation failed", errors = new { Field = "PlaceIds", Message = "The PlaceIds field is required and must contain at least one place." } });
 
+            var user = await _context.UsersNew.FindAsync(dto.UserId);
+            if (user == null)
+                return BadRequest(new { message = "User not found for the provided UserId." });
+
             var trip = new Trip
             {
                 TripName = dto.TripName,
                 StartDate = dto.StartDate,
                 EndDate = dto.EndDate,
                 UserId = dto.UserId,
+                User = user,
                 TripPlaces = dto.PlaceIds.Select(pid => new TripPlace { PlaceId = pid }).ToList()
             };
 
@@ -78,7 +83,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-            
+
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
                     .Select(tp =>
@@ -90,7 +95,7 @@ namespace Backend.Data
                         {
                             Id = tp.Place.Id,
                             Name = tp.Place.Name,
-                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            GoogleMapLink = tp.Place.GoogleMapLink!,
                             AvgTime = tp.Place.AvgTime,
                             AvgSpend = tp.Place.AvgSpend,
                             Rating = reviews.Any() ? reviews.Average(r => r.Rating) : (double?)null,
@@ -130,7 +135,7 @@ namespace Backend.Data
 
             // Update trip fields as you currently do
             trip.TripName = request.TripName ?? trip.TripName;
-          
+
             trip.StartDate = request.StartDate ?? trip.StartDate;
             trip.EndDate = request.EndDate ?? trip.EndDate;
             trip.UserId = request.UserId ?? trip.UserId;
@@ -191,7 +196,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-              
+
 
                 Places = trip.TripPlaces?
                     .Where(tp => tp?.Place != null)
@@ -222,12 +227,11 @@ namespace Backend.Data
             if (userId == Guid.Empty)
                 return BadRequest("UserId is required.");
 
-
             var trips = await _context.Trips
                 .Where(t => t.UserId == userId)
                 .Include(t => t.TripPlaces)
                     .ThenInclude(tp => tp.Place)
-                        .ThenInclude(p => p.Reviews)          // ← include reviews
+                        .ThenInclude(p => p.Reviews)
                 .Include(t => t.TripDates)
                 .ToListAsync();
 
@@ -237,7 +241,7 @@ namespace Backend.Data
                 tripName = trip.TripName,
                 startDate = trip.StartDate,
                 endDate = trip.EndDate,
-                
+
                 userId = trip.UserId,
                 places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -255,10 +259,10 @@ namespace Backend.Data
                         {
                             Id = tp.Place.Id,
                             Name = tp.Place.Name,
-                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            GoogleMapLink = tp.Place.GoogleMapLink!,
                             AvgTime = tp.Place.AvgTime,
                             AvgSpend = tp.Place.AvgSpend,
-                            Rating = avgRating,               // ← dynamic average
+                            Rating = avgRating,
                             MainImageUrl = tp.Place.MainImageUrl,
                             District = tp.Place.District != null ? new DistrictWithPlacesCountDTO
                             {
@@ -276,7 +280,6 @@ namespace Backend.Data
 
             return Ok(result);
         }
-
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetTripById(int id)
@@ -297,7 +300,7 @@ namespace Backend.Data
                 TripName = trip.TripName,
                 StartDate = trip.StartDate,
                 EndDate = trip.EndDate,
-               
+
 
                 Places = trip.TripPlaces
                     .OrderBy(tp => tp.Order)
@@ -315,7 +318,7 @@ namespace Backend.Data
                         {
                             Id = tp.Place.Id,
                             Name = tp.Place.Name,
-                            GoogleMapLink = tp.Place.GoogleMapLink,
+                            GoogleMapLink = tp.Place.GoogleMapLink!,
                             AvgTime = tp.Place.AvgTime,
                             AvgSpend = tp.Place.AvgSpend,
                             Rating = avgRating,               // dynamic average
@@ -354,7 +357,7 @@ namespace Backend.Data
                     Id = u.Id,
                     Username = u.Username,
                     Email = u.ContactEmail,
-                    ProfilePictureUrl = u.ProfilePictureUrl
+                    ProfilePictureUrl = u.ProfilePictureUrl!
                 })
                 .ToListAsync();
 
@@ -380,7 +383,9 @@ namespace Backend.Data
             var collaborator = new TripCollaborator
             {
                 TripId = tripId,
-                UserId = userId
+                UserId = userId,
+                Trip = trip!,
+                User = user!
             };
 
             _context.TripCollaborator.Add(collaborator);
@@ -518,14 +523,19 @@ namespace Backend.Data
         {
             var invitations = await _context.TripCollaborator
                 .Include(tc => tc.Trip)
-                    .ThenInclude(t => t.User) 
+                    .ThenInclude(t => t.User)
                 .Where(tc => tc.UserId == userId && tc.IsAccepted == false)
-                .Select(tc => new {
+                .Select(tc => new
+                {
                     TripId = tc.TripId,
                     TripName = tc.Trip.TripName,
                     StartDate = tc.Trip.StartDate,
                     InvitedOn = tc.AddedAt,
-                    OwnerName = tc.Trip.User.Username 
+                    OwnerName = tc.Trip.User.Username,
+                    OwnerProfileImageUrl = string.IsNullOrEmpty(tc.Trip.User.ProfilePictureUrl)
+    ? $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(tc.Trip.User.Username)}&background=6C63FF&color=ffffff&size=128&rounded=true"
+    : tc.Trip.User.ProfilePictureUrl
+
                 })
                 .ToListAsync();
 
@@ -551,8 +561,6 @@ namespace Backend.Data
             return Ok("Response recorded.");
         }
 
-
-
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTrip(int id)
         {
@@ -565,7 +573,7 @@ namespace Backend.Data
             return Ok();
         }
 
-                // PATCH: api/trips/{id} - Update trip basic details (tripName, startDate, endDate)
+        // PATCH: api/trips/{id} - Update trip basic details (tripName, startDate, endDate)
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchTrip(int id, [FromBody] PatchTripRequest request)
         {
@@ -589,9 +597,11 @@ namespace Backend.Data
             try
             {
                 await _context.SaveChangesAsync();
-                return Ok(new {
+                return Ok(new
+                {
                     message = "Trip updated successfully",
-                    trip = new {
+                    trip = new
+                    {
                         id = trip.Id,
                         tripName = trip.TripName,
                         startDate = trip.StartDate,
@@ -648,6 +658,34 @@ namespace Backend.Data
                 return StatusCode(500, new { message = "Something went wrong", detail = ex.Message });
             }
         }
+
+        [HttpGet("lightweight-map/{tripId}")]
+        public async Task<IActionResult> GetTripPlacesForMap(int tripId)
+        {
+            var trip = await _context.Trips
+                .Include(t => t.TripPlaces)
+                    .ThenInclude(tp => tp.Place)
+                .Include(t => t.TripDates)
+                .FirstOrDefaultAsync(t => t.Id == tripId);
+
+            if (trip == null)
+                return NotFound("Trip not found");
+
+            var markers = trip.TripPlaces.Select(tp =>
+            {
+                var date = trip.TripDates.FirstOrDefault(d => d.PlaceId == tp.PlaceId);
+                return new
+                {
+                    placeId = tp.PlaceId,
+                    name = tp.Place.Name,
+                    googleMapLink = tp.Place.GoogleMapLink,
+                    startDate = date?.StartDate?.ToString("yyyy-MM-dd")
+                };
+            });
+
+            return Ok(markers);
+        }
+
 
         [HttpGet("user-preview/{userId}")]
         public async Task<IActionResult> GetTripPreviewsByUserId(Guid userId)
@@ -712,6 +750,36 @@ namespace Backend.Data
 
             return Ok(result);
         }
+
+        [HttpGet("ordered-route/{tripId}")]
+        public async Task<IActionResult> GetOrderedRouteForTrip(int tripId)
+        {
+            var trip = await _context.Trips
+                .Include(t => t.TripPlaces)
+                    .ThenInclude(tp => tp.Place)
+                .Include(t => t.TripDates)
+                .FirstOrDefaultAsync(t => t.Id == tripId);
+
+            if (trip == null)
+                return NotFound("Trip not found");
+
+            var orderedPlaces = trip.TripPlaces
+                .OrderBy(tp => tp.Order)
+                .Select(tp =>
+                {
+                    var tripDate = trip.TripDates.FirstOrDefault(td => td.PlaceId == tp.PlaceId);
+                    return new
+                    {
+                        name = tp.Place.Name,
+                        googleMapLink = tp.Place.GoogleMapLink,
+                        startDate = tripDate?.StartDate?.ToString("yyyy-MM-dd")
+                    };
+                })
+                .ToList();
+
+            return Ok(orderedPlaces);
+        }
+
 
 
 

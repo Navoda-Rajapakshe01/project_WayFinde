@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 [Index(nameof(Name), nameof(DistrictId), IsUnique = true)]
 public class PlacesToVisit
 {
-    public int Id { get; set; }
+        public int Id { get; set; }
 
         // Ensuring required properties for validation
         public required string Name { get; set; }  // Make sure it is required through model validation or EF
@@ -37,5 +37,4 @@ public class PlacesToVisit
         // Reviews and images related to this place
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
         public ICollection<PlaceImage>? PlaceImage { get;set;}
-}
 }

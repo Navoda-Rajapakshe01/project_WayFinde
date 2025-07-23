@@ -290,3 +290,131 @@
     padding: 15px;
   }
 } 
+
+.show-requests-toggle {
+  margin-left: 16px;
+  color: #129bb3;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.show-requests-toggle:hover {
+  color: #0d6e8a;
+} 
+
+.account-deletion-requests-bar {
+  margin: 0 0 32px 0;
+  padding: 16px 0;
+  border-bottom: 1px solid #e3eaf3;
+}
+.account-deletion-requests-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.account-deletion-requests-count {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #e74c3c;
+}
+.account-deletion-requests-table {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+  margin-top: 8px;
+}
+.account-deletion-requests-table th {
+  background: #f8fafc;
+  padding: 8px 10px;
+}
+.account-deletion-requests-table td {
+  padding: 8px 10px;
+}
+.account-deletion-requests-table tr {
+  border-bottom: 1px solid #e3eaf3;
+}
+.account-deletion-requests-userid {
+  font-family: monospace;
+}
+.account-deletion-requests-status-pending {
+  color: #e67e22;
+}
+.account-deletion-requests-status-approved {
+  color: #27ae60;
+}
+.account-deletion-requests-status-declined {
+  color: #e74c3c;
+}
+.account-deletion-requests-admin-reply {
+  color: #7b8794;
+} 
+
+/* Decline Modal Styles */
+.decline-modal-btn {
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  min-width: 100px;
+  height: 40px;
+  transition: background 0.2s, color 0.2s;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: none;
+  cursor: pointer;
+  margin-right: 8px;
+}
+.decline-modal-btn:last-child {
+  margin-right: 0;
+}
+.decline-cancel-btn {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+.decline-cancel-btn:focus,
+.decline-cancel-btn:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+.decline-confirm-btn {
+  background: #e74c3c;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.08);
+}
+.decline-confirm-btn:focus,
+.decline-confirm-btn:hover:not(:disabled) {
+  background: #c0392b;
+  color: #fff;
+}
+.decline-confirm-btn:disabled,
+.decline-cancel-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.decline-modal-select {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+}
+
+.decline-modal-input {
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  font-size: 1rem;
+} 
+
+.clickable-userid:hover {
+  background: #f1f5f9;
+  color: black;
+  text-decoration: none;
+} 

@@ -19,16 +19,52 @@ const OptimizedMap = ({ markers = [], onOptimizedOrder, onDistanceChange }) => {
   const directionsRenderer = useRef(null);
   const [ready, setReady] = useState(false);
 
+  const customMarkers = useRef([]);
+
+  const clearCustomMarkers = () => {
+    customMarkers.current.forEach((m) => m.setMap(null));
+    customMarkers.current = [];
+  };
+
+  const drawCustomMarkers = (result) => {
+    const legs = result.routes[0].legs;
+    legs.forEach((leg, idx) => {
+      const start = leg.start_location;
+      const end = leg.end_location;
+
+      customMarkers.current.push(
+        new window.google.maps.Marker({
+          position: start,
+          map: mapRef.current,
+          label: { text: `${idx + 1}`, color: "white", fontWeight: "bold" },
+        })
+      );
+
+      if (idx === legs.length - 1) {
+        customMarkers.current.push(
+          new window.google.maps.Marker({
+            position: end,
+            map: mapRef.current,
+            label: { text: `${idx + 2}`, color: "white", fontWeight: "bold" },
+          })
+        );
+      }
+    });
+
+    const bounds = new window.google.maps.LatLngBounds();
+    legs.forEach((leg) => {
+      bounds.extend(leg.start_location);
+      bounds.extend(leg.end_location);
+    });
+    mapRef.current.fitBounds(bounds);
+  };
+
   useEffect(() => {
-    let cancelled = false;
     getLoader()
       .load()
       .then(() => {
-        if (cancelled || !mapDivRef.current) return;
-
+        if (!mapDivRef.current) return;
         mapRef.current = new window.google.maps.Map(mapDivRef.current, {
-          center: { lat: 7.8731, lng: 80.7718 },
-          zoom: 7,
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
@@ -44,7 +80,6 @@ const OptimizedMap = ({ markers = [], onOptimizedOrder, onDistanceChange }) => {
       });
 
     return () => {
-      cancelled = true;
       if (directionsRenderer.current) {
         directionsRenderer.current.setMap(null);
         directionsRenderer.current = null;
@@ -54,99 +89,58 @@ const OptimizedMap = ({ markers = [], onOptimizedOrder, onDistanceChange }) => {
   }, []);
 
   useEffect(() => {
-    if (!ready || markers.length < 2) return;
+    if (!ready || markers.length === 0 || !mapRef.current) return;
 
-    const origin = markers[0].position;
-    const destination = markers[markers.length - 1].position;
-    const waypoints = markers.slice(1, -1).map((m) => ({
-      location: m.position,
-      stopover: true,
-    }));
+    if (markers.length === 1) {
+      mapRef.current.setCenter(markers[0].position);
+      mapRef.current.setZoom(12);
+      return;
+    }
 
-    const service = new window.google.maps.DirectionsService();
-    service.route(
-      {
-        origin,
-        destination,
-        waypoints,
-        travelMode: window.google.maps.TravelMode.DRIVING,
-        optimizeWaypoints: true,
-      },
-      (result, status) => {
-        if (status === "OK" && result) {
-          directionsRenderer.current.setDirections(result);
+    if (markers.length > 1) {
+      const service = new window.google.maps.DirectionsService();
 
-          clearCustomMarkers();
-          drawCustomMarkers(result);
+      const origin = markers[0].position;
+      const destination = markers[markers.length - 1].position;
+      const waypoints = markers.slice(1, -1).map((m) => ({
+        location: m.position,
+        stopover: true,
+      }));
 
-          // ✅ Calculate total distance in KM
-          const totalDistanceMeters = result.routes[0].legs.reduce(
-            (sum, leg) => sum + (leg.distance?.value || 0),
-            0
-          );
-          const totalDistanceKm = (totalDistanceMeters / 1000).toFixed(2);
+      service.route(
+        {
+          origin,
+          destination,
+          waypoints,
+          travelMode: window.google.maps.TravelMode.DRIVING,
+          optimizeWaypoints: true,
+        },
+        (result, status) => {
+          if (status === "OK" && result) {
+            directionsRenderer.current.setDirections(result);
+            clearCustomMarkers();
+            drawCustomMarkers(result);
 
-          // ✅ Send distance to parent
-          if (onDistanceChange) {
-            onDistanceChange(totalDistanceKm);
+            const totalDistanceMeters = result.routes[0].legs.reduce(
+              (sum, leg) => sum + (leg.distance?.value || 0),
+              0
+            );
+            const totalDistanceKm = (totalDistanceMeters / 1000).toFixed(2);
+
+            if (onDistanceChange) onDistanceChange(totalDistanceKm);
+            if (onOptimizedOrder)
+              onOptimizedOrder(result.routes[0].waypoint_order);
+          } else {
+            console.error("❌ Directions failed:", status);
+            // fallback to simple fitBounds
+            const bounds = new window.google.maps.LatLngBounds();
+            markers.forEach((m) => bounds.extend(m.position));
+            mapRef.current.fitBounds(bounds);
           }
-
-          const optimizedOrder = result.routes[0].waypoint_order;
-          if (onOptimizedOrder) {
-            onOptimizedOrder(optimizedOrder);
-          }
-        } else {
-          console.error("Directions request failed:", status);
         }
-      }
-    );
-  }, [markers, ready]);
-
-  const customMarkers = useRef([]);
-  const clearCustomMarkers = () => {
-    customMarkers.current.forEach((m) => m.setMap(null));
-    customMarkers.current = [];
-  };
-
-  const drawCustomMarkers = (result) => {
-    const routeLegs = result.routes[0].legs;
-    routeLegs.forEach((leg, idx) => {
-      const pos = leg.start_location;
-      customMarkers.current.push(
-        new window.google.maps.Marker({
-          position: pos,
-          map: mapRef.current,
-          label: {
-            text: String(idx + 1),
-            color: "white",
-            fontWeight: "bold",
-          },
-        })
       );
-      /* draw last marker separately (destination) */
-      if (idx === routeLegs.length - 1) {
-        customMarkers.current.push(
-          new window.google.maps.Marker({
-            position: leg.end_location,
-            map: mapRef.current,
-            label: {
-              text: String(idx + 2),
-              color: "white",
-              fontWeight: "bold",
-            },
-          })
-        );
-      }
-    });
-
-    /* fit bounds */
-    const bounds = new window.google.maps.LatLngBounds();
-    routeLegs.forEach((l) => {
-      bounds.extend(l.start_location);
-      bounds.extend(l.end_location);
-    });
-    mapRef.current.fitBounds(bounds);
-  };
+    }
+  }, [markers, ready]);
 
   return (
     <div className="optimized-map-container">

@@ -61,8 +61,6 @@ namespace Backend.Data
         public DbSet<AccommodationImage> AccommodationImages { get; set; }
         public DbSet<AccommodationReview> AccommodationReviews { get; set; }
         public DbSet<AccommodationReservation> AccommodationReservations { get; set; }
-
-
         public DbSet<AccommodationAmenity> AccommodationAmenities { get; set; }
 
 
@@ -71,6 +69,7 @@ namespace Backend.Data
         public object? Amenities { get; internal set; }
 
         public DbSet<Trip> Trips { get; set; }
+        public DbSet<AccountDeletionRequest> AccountDeletionRequests { get; set; }
 
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -78,6 +77,28 @@ namespace Backend.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Composite Key for TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasKey(tp => new { tp.TripId, tp.PlaceId });  // Composite key for TripPlace
+
+            // Relationships between Trip and TripPlace
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Trip)
+                .WithMany(t => t.TripPlaces)
+                .HasForeignKey(tp => tp.TripId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Trip
+
+            modelBuilder.Entity<TripPlace>()
+                .HasOne(tp => tp.Place)
+                .WithMany(p => p.TripPlaces)
+                .HasForeignKey(tp => tp.PlaceId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Place
+
+            // Default Timestamps for Trip
+            modelBuilder.Entity<Trip>()
+                .Property(t => t.CreatedAt)
+                .HasDefaultValueSql("GETDATE()");
 
             // DistrictWithPlacesCountDTO is a keyless DTO
             // modelBuilder.Entity<DistrictWithPlacesCountDTO>().HasNoKey();

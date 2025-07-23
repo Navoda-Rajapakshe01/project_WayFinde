@@ -15,6 +15,19 @@ import "./footer.css";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
+  // Read site settings from localStorage
+  let contactEmail = "info@wayfinde.com";
+  let contactNumber = "+94 xx xxx xxxx";
+  try {
+    const siteSettings = JSON.parse(localStorage.getItem("siteSettings"));
+    if (siteSettings) {
+      if (siteSettings.contactEmail) contactEmail = siteSettings.contactEmail;
+      if (siteSettings.contactNumber) contactNumber = siteSettings.contactNumber;
+    }
+  } catch (e) {
+    // fallback to defaults
+  }
+
   return (
     <footer className="footer">
       <div className="footer-container">
@@ -31,37 +44,13 @@ const Footer = () => {
             </div>
             <div className="footer-contact-item">
               <Mail size={16} />
-              <span>info@wayfinde.com</span>
+              <span>{contactEmail}</span>
             </div>
             <div className="footer-contact-item">
               <Phone size={16} />
-              <span>+94 xx xxx xxxx</span>
+              <span>{contactNumber}</span>
             </div>
           </div>
-        </div>
-
-        <div className="footer-center">
-          <h4 className="footer-heading">Quick Links</h4>
-          <ul className="footer-links">
-            <li>
-              <a href="/about">About Us</a>
-            </li>
-            <li>
-              <a href="/contact">Contact</a>
-            </li>
-            <li>
-              <a href="/terms">Terms & Conditions</a>
-            </li>
-            <li>
-              <a href="/privacy">Privacy Policy</a>
-            </li>
-            <li>
-              <a href="/faq">FAQ</a>
-            </li>
-            <li>
-              <a href="/blog">Travel Blog</a>
-            </li>
-          </ul>
         </div>
 
         <div className="footer-right">

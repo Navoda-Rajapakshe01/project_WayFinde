@@ -6,10 +6,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
-<<<<<<< HEAD
-import { GoogleLogin } from "@react-oauth/google";
-=======
->>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
+import { loginCometChat } from "../../../App";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -157,7 +154,6 @@ const Login = () => {
 
       setUser(userProfile);
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
-
       if (roleClaim === "TransportProvider") {
         window.location.href = "/vehicle/supplier";
       } else if (roleClaim === "AccommodationProvider") {
@@ -175,7 +171,15 @@ const Login = () => {
       const roleClaim = roleClaimKey ? decodedToken[roleClaimKey] : null;
 
       setUser({ ...decodedToken, role: roleClaim });
-
+      // Ensure CometChat login before redirect
+      try {
+        await loginCometChat(decodedToken.id || decodedToken.userId, decodedToken.fullName || decodedToken.username || decodedToken.name);
+        console.log('CometChat login successful!');
+      } catch (e) {
+        console.error('CometChat login failed:', e);
+        setError('CometChat login failed. Please try again.');
+        return;
+      }
       if (roleClaim === "TransportProvider") {
         window.location.href = "/vehicle/supplier";
       } else if (roleClaim === "AccommodationProvider") {
@@ -239,36 +243,24 @@ const Login = () => {
       {showSignInModal && (
         <div
           className="signin-modal-overlay"
-<<<<<<< HEAD
           onClick={() => setShowSignInModal(false)}>
-=======
-          onClick={() => setShowSignInModal(false)}
-        >
->>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}
-              >
+                onClick={() => handleSignInOption("user")}>
                 Normal User
               </button>
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}
-              >
+                onClick={() => handleSignInOption("service")}>
                 Service Provider
               </button>
             </div>
             <button
               className="close-modal-btn"
-<<<<<<< HEAD
               onClick={() => setShowSignInModal(false)}>
-=======
-              onClick={() => setShowSignInModal(false)}
-            >
->>>>>>> ae193ec88690f31e2b95ff3acb633b5eb8b0e6cf
               Close
             </button>
           </div>

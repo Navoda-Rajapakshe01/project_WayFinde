@@ -59,12 +59,6 @@ const AdminSidebar = () => {
     },
   ];
 
-  const handleLogout = () => {
-    localStorage.removeItem("userProfile");
-    localStorage.removeItem("token");
-    navigate("/signin");
-  };
-
   const isUsersActive = () => {
     return (
       location.pathname.startsWith("/admin/users-management") ||
@@ -103,15 +97,6 @@ const AdminSidebar = () => {
           ))}
         </ul>
       </nav>
-
-      <div className="sidebar-footer">
-        <button className="logout-button" onClick={handleLogout}>
-          <span className="menu-icon">
-            <FaSignOutAlt />
-          </span>
-          <span className="menu-label">Logout</span>
-        </button>
-      </div>
     </aside>
   );
 };

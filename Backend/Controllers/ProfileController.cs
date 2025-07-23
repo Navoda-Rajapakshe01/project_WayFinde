@@ -1,5 +1,4 @@
 using Backend.Models;
-
 using Backend.DTOs;
 using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
@@ -143,18 +142,19 @@ namespace Backend.Controllers
                 .Where(b => b.UserId == userId)
                 .Select(b => new
                 {
-                    b.Title,
-                    b.Author,
-                    b.Id,
-                    b.Location,
+                    Title = b.Title,
+                    Author = b.Author,
+                    Id = b.Id,
+                    Location = b.Location,
                     BlogUrl = b.BlogUrl,
                     CoverImageUrl = b.CoverImageUrl,
-                    b.CreatedAt
+                    CreatedAt = b.CreatedAt
                 })
+
                 .ToListAsync();
 
             // Get blog count
-            int blogCount = userBlogs.Count;
+            int blogCount = userBlogs.Count();
 
             return Ok(new
             {

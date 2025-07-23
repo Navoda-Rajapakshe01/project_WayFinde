@@ -16,7 +16,12 @@ builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 // Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("CloudConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure()
+    )
+);
+
 
 
 
@@ -27,7 +32,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["AppSettings:Issuer"],
             ValidateAudience = true,
+            ValidAudience = builder.Configuration["AppSettings:Audience"],
             ValidateLifetime = true,
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
@@ -36,10 +43,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 )
             ),
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
         };
     });
 
@@ -56,6 +59,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<BlobService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
 builder.Services.AddScoped<VehicleReservationService>();
+builder.Services.AddSingleton<CometChatService>();
 
 // Add CORS policies
 builder.Services.AddCors(options =>
@@ -88,6 +92,7 @@ builder.Services.AddSwaggerGen();
 // Add SignalR and HTTP Context
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

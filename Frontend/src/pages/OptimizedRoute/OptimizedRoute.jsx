@@ -46,9 +46,11 @@ const OptimizedRoute = () => {
         );
         if (!isCancelled && data) {
           setTrip(data);
-          setPlaces(
-            (data.places || []).map((p) => ({ ...p, id: p.id ?? uuid() }))
-          );
+          const rawPlaces = data.places?.$values || [];
+          const safePlaces = rawPlaces
+            .filter((p) => p && (p.id || p.name || p.googleMapLink)) // avoid undefined
+            .map((p) => ({ ...p, id: p.id ?? uuid() }));
+          setPlaces(safePlaces);
         }
       } catch (err) {
         if (!isCancelled) {
@@ -75,7 +77,14 @@ const OptimizedRoute = () => {
     }
 
     const markers = places.map((place, idx) => {
-      const position = extractCoordinates(place?.GoogleMapLink);
+      const position = extractCoordinates(
+        place?.GoogleMapLink || place?.googleMapLink,
+        place?.Name || place?.name
+      );
+      if (!position || isNaN(position.lat) || isNaN(position.lng)) {
+        console.warn("❌ Invalid marker:", place?.name, place?.GoogleMapLink);
+      }
+
       return {
         id: place.id,
         position,
@@ -89,11 +98,22 @@ const OptimizedRoute = () => {
   }, [places]);
 
   /* ───────────────────── helpers / callbacks ──────────────────── */
-  const extractCoordinates = (url = "") => {
-    const m = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (m && m.length === 3) return { lat: +m[1], lng: +m[2] };
+  const extractCoordinates = (url = "", placeName = "Unknown") => {
+    // Match @lat,lng pattern
+    const atMatch = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (atMatch && atMatch.length >= 3) {
+      return { lat: parseFloat(atMatch[1]), lng: parseFloat(atMatch[2]) };
+    }
 
-    // fallback: small random jitter near SL
+    // Fallback: Match ?q=lat,lng
+    const qMatch = url.match(/q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (qMatch && qMatch.length >= 3) {
+      return { lat: parseFloat(qMatch[1]), lng: parseFloat(qMatch[2]) };
+    }
+
+    console.warn(
+      `⚠️ No valid coordinates in GoogleMapLink for "${placeName}". Fallback to Galle.`
+    );
     return {
       lat: 6.0329 + Math.random() * 0.05,
       lng: 80.2168 + Math.random() * 0.05,

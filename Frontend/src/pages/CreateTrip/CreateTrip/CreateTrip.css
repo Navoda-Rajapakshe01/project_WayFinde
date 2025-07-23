@@ -492,7 +492,7 @@
     0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.modal-header {
+.modal-header-tnm {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -547,7 +547,7 @@
 }
 
 .modal-button {
-  background-color: #10b981;
+  background-color: #2196f3;
   color: white;
   border: none;
   border-radius: 9999px;
@@ -558,7 +558,7 @@
 }
 
 .modal-button:hover {
-  background-color: #059669;
+  background-color: #1976d2;
   transform: translateY(-2px);
 }
 
