@@ -74,13 +74,12 @@ const AccommodationManagement = () => {
                 <th>Type</th>
                 <th>Location</th>
                 <th>Rooms</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} style={{ textAlign: "center" }}>
+                  <td colSpan={6} style={{ textAlign: "center" }}>
                     No accommodations found.
                   </td>
                 </tr>
@@ -93,13 +92,6 @@ const AccommodationManagement = () => {
                     <td>{a.type}</td>
                     <td>{a.location}</td>
                     <td>{a.bedrooms}</td>
-                    <td>
-                      <div className="adminaction-buttons">
-                        <button className="adminedit-button" title="View">
-                          <FaEye />
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 ))
               )}

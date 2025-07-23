@@ -271,28 +271,16 @@ const UserProfileDetail = () => {
                 </>
               )}
               {user && (user.role === "AccommodationProvider") && (
-                <>
-                  <div className="activity-stat clickable" onClick={handleAccommodationsClick} title="View all accommodations by this user">
-                    <span className="stat-label">Accommodation Places:</span>
-                    <span className="stat-value">{accommodationCount}</span>
-                  </div>
-                  <div className="activity-stat">
-                    <span className="stat-label">Bookings:</span>
-                    <span className="stat-value">{accommodationBookingCount}</span>
-                  </div>
-                </>
+                <div className="activity-stat clickable" onClick={handleAccommodationsClick} title="View all accommodations by this user">
+                  <span className="stat-label">Accommodation Places:</span>
+                  <span className="stat-value">{accommodationCount}</span>
+                </div>
               )}
               {user && (user.role === "TransportProvider" || user.role === "VehicleProvider") && (
-                <>
-                  <div className="activity-stat clickable" onClick={handleVehiclesClick} title="View all vehicles by this user">
-                    <span className="stat-label">Vehicles:</span>
-                    <span className="stat-value">{vehicleCount}</span>
-                  </div>
-                  <div className="activity-stat">
-                    <span className="stat-label">Vehicle Bookings:</span>
-                    <span className="stat-value">{vehicleBookingCount}</span>
-                  </div>
-                </>
+                <div className="activity-stat clickable" onClick={handleVehiclesClick} title="View all vehicles by this user">
+                  <span className="stat-label">Vehicles:</span>
+                  <span className="stat-value">{vehicleCount}</span>
+                </div>
               )}
             </div>
           </div>

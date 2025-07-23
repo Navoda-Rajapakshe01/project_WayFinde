@@ -200,16 +200,6 @@ const DashboardOverview = () => {
             <p className="stat-value">{stats.totalReviews}</p>
           </div>
         </div>
-
-        <div className="stat-card">
-          <div className="stat-icon visits">
-            <FaEye />
-          </div>
-          <div className="stat-details">
-            <h3>Total Visits</h3>
-            <p className="stat-value">{stats.totalVisits}</p>
-          </div>
-        </div>
       </div>
 
       <div className="dashboard-grid" style={{ display: 'block' }}>
