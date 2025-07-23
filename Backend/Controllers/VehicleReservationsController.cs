@@ -1,12 +1,14 @@
 ﻿using Backend.Data;
-using Backend.Models;
 using Backend.DTOs;
+using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;  // For IEnumerable
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Backend.Controllers
@@ -17,11 +19,13 @@ namespace Backend.Controllers
     {
         private readonly VehicleReservationService _reservationService;
         private readonly AppDbContext _context;
+        private readonly ILogger<VehicleReservationsController> _logger;
 
-        public VehicleReservationsController(VehicleReservationService reservationService, AppDbContext context)
+        public VehicleReservationsController(VehicleReservationService reservationService, AppDbContext context, ILogger<VehicleReservationsController> logger)
         {
             _reservationService = reservationService;
             _context = context;
+            _logger = logger;
         }
 
         // POST api/VehicleReservations/reserve
@@ -99,6 +103,53 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpGet("uservehicles")]
+        public async Task<IActionResult> GetUserVehicleReservations()
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                {
+                    return Unauthorized("Invalid user credentials");
+                }
+
+                _logger.LogInformation($"Fetching vehicle reservations for user {userId}");
+
+                var reservations = await _context.VehicleReservations
+                    .Include(r => r.Vehicle)
+                    .Where(r => r.CustomerId == userId)
+                    .OrderByDescending(r => r.BookingDate)
+                    .Select(r => new
+                    {
+                        Id = r.Id,
+                        VehicleId = r.VehicleId,
+                        //VehicleName = r.Vehicle.Name,
+                        //VehicleNumber = r.Vehicle.VehicleNumber,
+                        //VehicleImage = r.Vehicle.ImageUrl,
+                        //ServiceProvider = r.Vehicle.ProviderName,
+                        StartDate = r.StartDate,
+                        EndDate = r.EndDate,
+                        PickupLocation = r.PickupLocation,
+                        ReturnLocation = r.ReturnLocation,
+                        TotalAmount = r.TotalAmount,
+                        Status = r.Status,
+                        BookingDate = r.BookingDate,
+                        TripId = r.TripId,
+                        OrderId = r.OrderId
+                    })
+                    .ToListAsync();
+
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching vehicle reservations");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
 
     }
 }

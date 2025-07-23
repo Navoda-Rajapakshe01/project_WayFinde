@@ -39,9 +39,9 @@ namespace Backend.Controllers
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                if (string.IsNullOrEmpty(userId))
+                if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
                 {
                     return Unauthorized("Invalid user credentials");
                 }
@@ -49,6 +49,7 @@ namespace Backend.Controllers
                 var posts = await _context.Posts
                     .Include(p => p.User)
                     .Include(p => p.Images)
+                    .Where(p => p.UserId == userId) // Add this filter to get only current user's posts
                     .OrderByDescending(p => p.CreatedAt)
                     .ToListAsync();
 
@@ -68,7 +69,7 @@ namespace Backend.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting posts");
+                _logger.LogError(ex, "Error getting user's posts");
                 return StatusCode(500, "An error occurred while retrieving posts");
             }
         }

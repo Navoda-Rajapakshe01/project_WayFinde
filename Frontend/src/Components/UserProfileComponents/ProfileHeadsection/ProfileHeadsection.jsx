@@ -177,7 +177,7 @@ const ProfileHeadSection = () => {
           Saved
         </NavLink> */}
         <NavLink
-          to="/profile/trips"
+          to="/alltrips"
           className={({ isActive }) =>
             isActive ? "nav-tab active" : "nav-tab"
           }

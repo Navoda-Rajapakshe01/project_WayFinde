@@ -1,11 +1,13 @@
 ﻿using Backend.Data;
 using Backend.DTOs;
 using Backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;  // For IEnumerable
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Backend.Controllers
@@ -15,10 +17,12 @@ namespace Backend.Controllers
     public class AccommodationReservationController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<AccommodationReservationController> _logger;
 
-        public AccommodationReservationController(AppDbContext context)
+        public AccommodationReservationController(AppDbContext context, ILogger<AccommodationReservationController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // POST api/AccommodationReservation/accommodation
@@ -108,6 +112,61 @@ namespace Backend.Controllers
                                              .ToListAsync();
 
             return Ok(reservations);
+        }
+        // GET: api/AccommodationReservations/my-reservations
+        [HttpGet("useraccommodations")]
+        [Authorize] // Ensure user is authenticated
+        public async Task<ActionResult<IEnumerable<object>>> GetMyAccommodationReservations()
+        {
+            try
+            {
+                // Get the current user's ID from the JWT token
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                {
+                    return Unauthorized("Invalid user ID");
+                }
+
+                // Fetch all reservations for the current user with related data
+                var reservations = await _context.AccommodationReservations
+                    .Where(r => r.CustomerId == userId)
+                    .Include(r => r.Accommodation) // Include accommodation details
+                    .Include(r => r.Customer) // Include customer details if needed
+                    .OrderByDescending(r => r.BookingDate) // Most recent first
+                    .Select(r => new
+                    {
+                        id = r.Id,
+                        accommodationId = r.AccommodationId,
+                        accommodation = r.Accommodation != null ? new
+                        {
+                            id = r.Accommodation.Id,
+                            name = r.Accommodation.Name,
+                            location = r.Accommodation.Location,
+                            // Add other accommodation properties you need
+                        } : null,
+                        customerName = r.CustomerName,
+                        customerId = r.CustomerId,
+                        startDate = r.StartDate,
+                        endDate = r.EndDate,
+                        guests = r.Guests,
+                        additionalRequirements = r.AdditionalRequirements,
+                        totalAmount = r.TotalAmount,
+                        status = r.Status,
+                        bookingDate = r.BookingDate,
+                        tripId = r.TripId,
+                        email = r.Email,
+                        phone = r.Phone,
+                        orderId = r.OrderId
+                    })
+                    .ToListAsync();
+
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching accommodation reservations for user");
+                return StatusCode(500, "Internal server error occurred while fetching reservations");
+            }
         }
     }
 }

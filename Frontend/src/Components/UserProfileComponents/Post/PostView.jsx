@@ -8,6 +8,7 @@ import "./PostView.css";
 const PostView = () => {
   console.log("PostView component mounted");
   const { id } = useParams();
+  console.log("Post ID from URL:", id);
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -150,86 +151,53 @@ const PostView = () => {
 
   // Updated handleSubmitComment function with better error handling
   const handleSubmitComment = async () => {
-    if (!commentText.trim()) {
-      return;
-    }
-
-    if (!currentUser || !currentUser.id) {
-      alert("You must be logged in to comment");
-      return;
-    }
+    // Your existing validation code...
 
     try {
       setCommentSubmitting(true);
       setCommentError(null);
 
       const token = localStorage.getItem("token");
-
-      // Use simple lowercase property names to match your CreateCommentRequest
-      const commentData = {
-        content: commentText.trim(),
-        postId: post.id, // lowercase 'content' to match C# model
-      };
-
-      console.log("Sending comment data:", commentData);
-      console.log("Post ID:", post.id);
-      console.log("API URL:", `${API_BASE_URL}/Posts/${post.id}/comments`);
-
-      const response = await fetch(
-        `${API_BASE_URL}/Posts/${post.id}/comments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(commentData),
-        }
-      );
-
-      console.log("Response status:", response.status);
-      console.log("Response headers:", response.headers);
-
-      if (!response.ok) {
-        const errorData = await response.text();
-        console.error("Error response:", errorData);
-        throw new Error(
-          `HTTP ${response.status}: ${errorData || "Failed to submit comment"}`
-        );
+      if (!token) {
+        setCommentError("Authentication required");
+        return;
       }
 
-      const responseData = await response.json();
-      console.log("Comment submitted successfully:", responseData);
-      const newComment = responseData.comment || responseData;
+      const commentData = { content: commentText.trim() };
 
-      // Update the post's comment count
-      if (responseData.postCommentCount !== undefined) {
-        setPost((prevPost) => ({
-          ...prevPost,
-          comments: responseData.postCommentCount,
-        }));
-      }
+      console.log("Submitting comment:", commentData);
 
-      // Add the new comment to the comments list
-      setComments((prevComments) => {
-        const existingComments = Array.isArray(prevComments)
-          ? prevComments
-          : [];
-        return [
-          {
-            id: newComment.id,
-            content: newComment.content,
-            createdAt: newComment.createdAt,
-            user: {
-              id: newComment.user.id,
-              username: newComment.user.username,
-              profilePictureUrl: newComment.user.profilePictureUrl,
-            },
-          },
-          ...existingComments,
-        ];
+      const response = await fetch(`${API_BASE_URL}/Posts/${id}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(commentData),
       });
 
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log("Comment submitted successfully:", result);
+
+      // Add the new comment to the list
+      if (result.comment) {
+        setComments((prev) => [result.comment, ...prev]);
+      }
+
+      // Update comment count
+      if (post) {
+        setPost({
+          ...post,
+          comments: result.postCommentCount || post.comments + 1,
+        });
+      }
+
+      // Clear the comment input
       setCommentText("");
     } catch (error) {
       console.error("Error submitting comment:", error);
@@ -452,14 +420,27 @@ const PostView = () => {
   };
 
   useEffect(() => {
+    console.log("useEffect triggered with id:", id);
+
+    if (!id) {
+      console.error("Missing post ID parameter");
+      setError("No post ID provided");
+      setLoading(false);
+      return;
+    }
+
     const fetchData = async () => {
-      await Promise.all([
-        fetchPost(),
-        fetchCurrentUser(),
-        fetchComments(),
-        fetchReactionCount(),
-        checkUserReaction(),
-      ]);
+      try {
+        await fetchPost();
+        await fetchCurrentUser();
+        await fetchComments();
+        await fetchReactionCount();
+        await checkUserReaction();
+        console.log("All data fetching completed");
+      } catch (error) {
+        console.error("Error in data fetching:", error);
+        setError("Failed to load post data");
+      }
     };
 
     fetchData();

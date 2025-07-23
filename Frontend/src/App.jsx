@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 
 import AccommodationManagement from "./Components/AdminProfile/accommodation-management";
+import AdminProfile from "./Components/AdminProfile/admin-profile";
 import DashboardOverview from "./Components/AdminProfile/dashboard-overview";
 import EditPlace from "./Components/AdminProfile/edit-place";
 import PlacesManagement from "./Components/AdminProfile/places-management";
@@ -16,9 +17,8 @@ import ReviewsManagement from "./Components/AdminProfile/reviews-management";
 import SettingsPanel from "./Components/AdminProfile/settings-panel";
 import UsersManagement from "./Components/AdminProfile/user-management";
 import VehiclesManagement from "./Components/AdminProfile/vehicle-management";
-import AdminProfile from "./Components/AdminProfile/admin-profile";
-import UserProfileDetail from "./pages/Admin/UserProfileDetail";
 import AuthProvider from "./Components/Authentication/AuthProvider/AuthProvider";
+import UserProfileDetail from "./pages/Admin/UserProfileDetail";
 
 import { AuthContext } from "./Components/Authentication/AuthContext/AuthContext";
 import ForgotPassword from "./Components/Authentication/ForgotPassword/ForgotPassword";
@@ -65,13 +65,14 @@ import ProfilePosts from "./Components/UserProfileComponents/Post/Post";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
 import "./App.css";
-import UserTrips from "./pages/Admin/UserTrips";
-import UserBlogs from "./pages/Admin/UserBlogs";
-import AdminUserVehicles from "./pages/Admin/AdminUserVehicles";
 import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
+import AdminUserVehicles from "./pages/Admin/AdminUserVehicles";
+import UserBlogs from "./pages/Admin/UserBlogs";
+import UserTrips from "./pages/Admin/UserTrips";
 
 import { CometChat } from "@cometchat-pro/chat";
 import Postview from "./Components/UserProfileComponents/Post/Postview";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
 
 const appID = "279195a6164aa3fa";
 const region = "in";
@@ -239,7 +240,7 @@ function AppRoutes() {
           />
         </Route>
         <Route path="/blogcard" element={<BlogCard />} />
-        <Route path="/profile/posts" element={<ProfilePosts/>} />
+        <Route path="/profile/posts" element={<ProfilePosts />} />
         <Route path="/post/:id" element={<Postview />} />
       </Routes>
 
