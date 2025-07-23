@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Backend.Models;
 using Backend.Models.User;
+using Backend.Models.Post;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using System.Text.Json;
@@ -16,12 +17,16 @@ namespace Backend.Data
     {
         //Profile
         public DbSet<UserNew> UsersNew { get; set; } = null!;
-        public DbSet<UserNew> UserNew { get; set; } = null!;
         public DbSet<Blog> Blogs { get; set; } = null!;
         public DbSet<Post> Posts { get; set; } = null!;
         public DbSet<Follows> Follows { get; set; } = null!;
+        public DbSet<PostImage> PostImages { get; set; } = null!;
 
-        // Vehicles
+        public DbSet<PostComment> PostComments { get; set; } = null!;
+        public DbSet<PostReaction> PostReactions { get; set; } = null!;
+
+
+        // DbSets for your models
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<VehicleImage> VehicleImages { get; set; }
         public DbSet<VehicleReview> VehicleReviews { get; set; }
@@ -47,7 +52,7 @@ namespace Backend.Data
         public DbSet<TodoItem> TodoItems { get; set; }
 
         // Blogs
-        public DbSet<BlogImage> BlogImages { get; set; }
+        
         public DbSet<Comment> Comments { get; set; }
 
         // Travel Budget
@@ -369,6 +374,80 @@ namespace Backend.Data
                 entity.Property(e => e.UpdatedAt)
                     .HasDefaultValueSql("GETDATE()")
                     .ValueGeneratedOnAddOrUpdate();
+            });
+
+            // Configure Post entity
+            modelBuilder.Entity<Post>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Content).IsRequired(false);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UserId).IsRequired();
+                entity.Property(e => e.NumberOfComments).HasDefaultValue(0);
+                entity.Property(e => e.NumberOfReacts).HasDefaultValue(0);
+
+                
+                // Configure relationship with User
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Configure relationship with PostImages
+                entity.HasMany(e => e.Images)
+                    .WithOne(i => i.Post)
+                    .HasForeignKey(i => i.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Configure PostImage entity
+            modelBuilder.Entity<PostImage>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ImageUrl).IsRequired();
+                entity.Property(e => e.DisplayOrder).HasDefaultValue(0);
+
+                entity.HasOne(e => e.Post)
+                    .WithMany(p => p.Images)
+                    .HasForeignKey(e => e.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+            // Add this to your OnModelCreating method
+            modelBuilder.Entity<PostComment>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Relationship with Post - keep cascade delete
+                entity.HasOne(e => e.Post)
+                    .WithMany() // or specify the navigation property if Post has a Comments collection
+                    .HasForeignKey(e => e.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Relationship with User - change to Restrict to avoid cascade cycle
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict); // This prevents the cascade cycle
+            });
+            // PostReaction configuration
+            modelBuilder.Entity<PostReaction>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.Post)
+                    .WithMany()
+                    .HasForeignKey(e => e.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Prevent duplicate reactions
+                entity.HasIndex(e => new { e.PostId, e.UserId })
+                    .IsUnique()
+                    .HasDatabaseName("IX_PostReaction_PostId_UserId");
             });
         }
     }

@@ -11,6 +11,7 @@ using System.Text;
 using Backend.Data;
 using Backend.Services;
 using Microsoft.AspNetCore.Identity;
+using System.Globalization;
 
 namespace Backend.Controllers
 { 
@@ -411,6 +412,56 @@ namespace Backend.Controllers
             {
                 return StatusCode(500, new { message = "Failed to fetch user", error = ex.Message });
             }
+        }
+
+        [HttpGet("signup-trend")]
+        public async Task<IActionResult> GetSignupTrend([FromQuery] string range = "6months")
+        {
+            // Parse range
+            int months = 6;
+            if (range == "3months") months = 3;
+            else if (range == "1month") months = 1;
+
+            var now = DateTime.UtcNow;
+            var start = now.AddMonths(-months + 1); // include current month
+
+            // Prepare month labels
+            var labels = Enumerable.Range(0, months)
+                .Select(i => now.AddMonths(-months + 1 + i).ToString("MMM", CultureInfo.InvariantCulture))
+                .ToList();
+
+            // Fetch users and group by month
+            var users = await _context.UsersNew.ToListAsync();
+            var counts = new int[months];
+            foreach (var user in users)
+            {
+                if (DateTime.TryParse(user.RegisteredDate, out var regDate))
+                {
+                    if (regDate >= start && regDate <= now)
+                    {
+                        int monthDiff = ((regDate.Year - start.Year) * 12 + regDate.Month - start.Month);
+                        if (monthDiff >= 0 && monthDiff < months)
+                        {
+                            counts[monthDiff]++;
+                        }
+                    }
+                }
+            }
+            return Ok(new { labels = labels.ToArray(), data = counts });
+        }
+
+        [HttpGet("signup-roles-pie")]
+        public async Task<IActionResult> GetSignupRolesPie()
+        {
+            var users = await _context.UsersNew.ToListAsync();
+            var roleCounts = users
+                .Where(u => !string.Equals(u.Role, "Admin", StringComparison.OrdinalIgnoreCase))
+                .GroupBy(u => u.Role)
+                .Select(g => new { Role = g.Key, Count = g.Count() })
+                .ToList();
+            var labels = roleCounts.Select(r => r.Role).ToArray();
+            var data = roleCounts.Select(r => r.Count).ToArray();
+            return Ok(new { labels, data });
         }
 
     }

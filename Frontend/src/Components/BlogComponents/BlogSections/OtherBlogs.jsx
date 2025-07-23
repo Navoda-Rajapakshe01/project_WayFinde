@@ -246,7 +246,7 @@ const OtherBlogs = ({ excludeId }) => {
 
   if (loading) {
     return (
-      <div className="custom-container">
+      <div className="custom-container-blog">
         <p>Loading blogs...</p>
       </div>
     );
@@ -254,7 +254,7 @@ const OtherBlogs = ({ excludeId }) => {
 
   if (error) {
     return (
-      <div className="custom-container">
+      <div className="custom-container-blog">
         <p>Error: {error}</p>
       </div>
     );
@@ -262,14 +262,14 @@ const OtherBlogs = ({ excludeId }) => {
 
   if (blogs.length === 0) {
     return (
-      <div className="custom-container">
+      <div className="custom-container-blog">
         <p>No blogs available</p>
       </div>
     );
   }
 
   return (
-    <div className="custom-container">
+    <div className="custom-container-blog">
       <h2 className="TrendingBlogsHeading">Other Blogs</h2>
       <div className="other-blog-grid">
         {currentBlogs.map((blog) => (

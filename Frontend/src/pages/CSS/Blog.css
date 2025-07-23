@@ -1,16 +1,28 @@
-.showMoreButton{
-    padding-top: 10px;
-    margin-top: 10px;
+.showMoreButton {
+    display: inline-block;         /* Prevent stretching */
     padding: 0.75rem 1.5rem;
-    background-color: #19b9df; /* Primary – Sky Blue */
+    margin-top: 10px;
+    background-color: #19b9df;     /* Primary – Sky Blue */
     color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    
+    text-align: center;
 }
-.showMoreButton:hover{
-    background-color: #3aa69b; /* Hover Effects – Teal Green */
+
+/* Hover effect */
+.showMoreButton:hover {
+    background-color: #3aa69b;     /* Hover Effects – Teal Green */
+}
+
+/* Responsive: smaller font and padding on narrow screens */
+@media (max-width: 600px) {
+    .showMoreButton {
+        width: 100%;                /* Full width on mobile */
+        font-size: 0.9rem;
+        padding: 0.65rem 1rem;
+        box-sizing: border-box;
+    }
 }

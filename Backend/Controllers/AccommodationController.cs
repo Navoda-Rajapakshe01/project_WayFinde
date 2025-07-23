@@ -15,7 +15,7 @@ using System.Linq;
 using System;
 using System;
 
-namespace Backend.Controllers 
+namespace Backend.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -33,76 +33,64 @@ namespace Backend.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAccommodation([FromForm] AccommodationCreateDto dto)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (dto == null) return BadRequest();
+            var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
+            if (!districtExists) return BadRequest($"District with Id {dto.DistrictId} does not exist.");
 
+            var supplier = await _context.UsersNew.FirstOrDefaultAsync(u => u.Id == dto.SupplierId);
+            if (supplier == null) return BadRequest("Supplier account not found.");
 
-            if (dto == null)
-                return BadRequest("Accommodation data is missing.");
+            var accommodation = new Accommodation
+            {
+                Name = dto.Name,
+                Type = dto.Type,
+                Location = dto.Location,
+                PricePerNight = dto.PricePerNight,
+                Bedrooms = dto.Bedrooms,
+                Bathrooms = dto.Bathrooms,
+                MaxGuests = dto.MaxGuests,
+                Description = dto.Description,
+                DistrictId = dto.DistrictId,
+                IsAvailable = true,
+                PlaceId = dto.PlaceId,
+                SupplierId = supplier.Id,
+                SupplierUsername = supplier.Username
+            };
 
-            
-                // Validate DistrictId exists
-            
-                // Validate DistrictId exists
-                var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
-                if (!districtExists)
-                    return BadRequest($"District with Id {dto.DistrictId} does not exist.");
+            _context.Accommodations.Add(accommodation);
+            await _context.SaveChangesAsync();
 
-                // Validate Supplier
-                var supplier = await _context.UsersNew.FirstOrDefaultAsync(u => u.Id == dto.SupplierId);
-                if (supplier == null)
-                    return BadRequest($"Supplier account not found.");
-
-                var accommodation = new Accommodation
+            if (dto.Amenities != null)
+            {
+                foreach (var amenity in dto.Amenities)
                 {
-                    Name = dto.Name,
-                    Type = dto.Type,
-                    Location = dto.Location,
-                    PricePerNight = dto.PricePerNight,
-                    Bedrooms = dto.Bedrooms,
-                    Bathrooms = dto.Bathrooms,
-                    MaxGuests = dto.MaxGuests,
-                    Description = dto.Description,
-                    DistrictId = dto.DistrictId,
-                    IsAvailable = true,
-                    PlaceId = dto.PlaceId,
-                    SupplierId = supplier.Id,
-                    SupplierUsername = supplier.Username
-                };
-
-                _context.Accommodations.Add(accommodation);
-                await _context.SaveChangesAsync();
-
-                // Add amenities if any
-                if (dto.Amenities != null)
-                {
-                    foreach (var amenity in dto.Amenities)
+                    _context.AccommodationAmenities.Add(new AccommodationAmenity
                     {
-                        _context.AccommodationAmenities.Add(new AccommodationAmenity
-                        {
-                            AccommodationId = accommodation.Id,
-                            AmenityName = amenity
-                        });
-                    }
+                        AccommodationId = accommodation.Id,
+                        AmenityName = amenity
+                    });
                 }
-
-                // Upload images to Cloudinary and save URLs
-                if (dto.Images != null)
-                {
-                    foreach (var file in dto.Images)
-                    {
-                        var imageUrl = await UploadFileToCloudinary(file);
-                        _context.AccommodationImages.Add(new AccommodationImage
-                        {
-                            AccommodationId = accommodation.Id,
-                            ImageUrl = imageUrl
-                        });
-                    }
-                }
-
-                await _context.SaveChangesAsync();
-
-                return Ok(accommodation);
             }
-             private async Task<string> UploadFileToCloudinary(IFormFile file)
+
+            if (dto.Images != null)
+            {
+                foreach (var file in dto.Images)
+                {
+                    var imageUrl = await UploadFileToCloudinary(file);
+                    _context.AccommodationImages.Add(new AccommodationImage
+                    {
+                        AccommodationId = accommodation.Id,
+                        ImageUrl = imageUrl
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(accommodation);
+        }
+
+        private async Task<string> UploadFileToCloudinary(IFormFile file)
         {
             await using var stream = file.OpenReadStream();
 
@@ -113,14 +101,11 @@ namespace Backend.Controllers
             };
 
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
             if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
                 return uploadResult.SecureUrl.ToString();
 
             throw new Exception("Failed to upload image to Cloudinary.");
         }
-  
-  
 
         [HttpPut("{id}/status")]
         public async Task<IActionResult> UpdateStatus(int id, [FromBody] AccommodationUpdateStatusDto dto)
@@ -166,6 +151,21 @@ namespace Backend.Controllers
             return Ok(bookings);
         }
 
+        [HttpGet("supplier/{supplierId}")]
+        public async Task<ActionResult<IEnumerable<AccommodationDto>>> GetAccommodationsBySupplier(Guid supplierId)
+        {
+            var accommodations = await _context.Accommodations
+                .Where(a => a.SupplierId == supplierId)
+                .Include(a => a.Images)
+                .Include(a => a.Amenities)
+                .Include(a => a.Supplier)
+                .Include(a => a.District)
+                .Include(a => a.PlacesToVisit)
+                .ToListAsync();
+
+            return Ok(accommodations.Select(MapToDto));
+        }
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccommodationDto>>> GetAccommodations()
         
@@ -181,13 +181,11 @@ namespace Backend.Controllers
                 .Include(a => a.PlacesToVisit) // include place navigation
                 .ToListAsync();
 
-            var dtos = accommodations.Select(MapToDto);
-            return Ok(dtos);
+            return Ok(accommodations.Select(MapToDto));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AccommodationDto>> GetAccommodationById(int id)
-
         {
             var accommodation = await _context.Accommodations
                 .Include(a => a.Images)

@@ -80,5 +80,25 @@ namespace Backend.Controllers
 
             return Ok(reservations);
         }
+
+        [HttpGet("supplier/{supplierId}")]
+        public async Task<IActionResult> GetReservationsBySupplier(Guid supplierId)
+        {
+            try
+            {
+                // Get all reservations for vehicles owned by the supplier
+                var reservations = await _context.VehicleReservations
+                    .Include(r => r.Vehicle)
+                    .Where(r => r.Vehicle != null && r.Vehicle.SupplierId == supplierId)
+                    .ToListAsync();
+
+                return Ok(reservations);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
     }
 }

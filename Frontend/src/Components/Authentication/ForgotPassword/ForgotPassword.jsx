@@ -1,8 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import "./ForgotPassword.css";
 import Swal from "sweetalert2";
+import "./ForgotPassword.css";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -140,50 +140,52 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgot-password-container">
-      <div className="forgot-password-form-section">
-        <form onSubmit={handleSubmit} className="forgot-password-form">
-          <h2>Forgot Password</h2>
+    <div className="page-wrapper-forgot-password">
+      <div className="forgot-password-container">
+        <div className="forgot-password-form-section">
+          <form onSubmit={handleSubmit} className="forgot-password-form">
+            <h2>Forgot Password</h2>
 
-          {!emailSent ? (
-            <>
-              <p className="instruction-text">
-                Enter your email address and we&apos;ll send you a link to reset
-                your password.
-              </p>
+            {!emailSent ? (
+              <>
+                <p className="instruction-text">
+                  Enter your email address and we&apos;ll send you a link to
+                  reset your password.
+                </p>
 
-              <div className="input-group">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email Address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-                {error && <p className="field-error-message">{error}</p>}
-                {renderSupportContact()}
+                <div className="forgot-password-input-group">
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Email Address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                  {error && <p className="field-error-message">{error}</p>}
+                  {renderSupportContact()}
+                </div>
+
+                <button type="submit" disabled={isLoading}>
+                  {isLoading ? "Processing..." : "Send Reset Link"}
+                </button>
+              </>
+            ) : (
+              <div className="success-container">
+                <div className="success-icon">✓</div>
+                <p className="success-message">{message}</p>
+                <p className="email-sent-info">
+                  The reset link will expire in 10 minutes. Please check your
+                  email (including spam folder).
+                </p>
               </div>
+            )}
 
-              <button type="submit" disabled={isLoading}>
-                {isLoading ? "Processing..." : "Send Reset Link"}
-              </button>
-            </>
-          ) : (
-            <div className="success-container">
-              <div className="success-icon">✓</div>
-              <p className="success-message">{message}</p>
-              <p className="email-sent-info">
-                The reset link will expire in 10 minutes. Please check your
-                email (including spam folder).
-              </p>
+            <div className="return-signin-forgot">
+              <Link to="/signin">Back to Login</Link>
             </div>
-          )}
-
-          <div className="return-signin">
-            <Link to="/signin">Back to Login</Link>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import "./ProfileHeadsection.css";
 
 
 const ProfileHeadSection = () => {
@@ -149,23 +150,54 @@ const ProfileHeadSection = () => {
         </div>
       )}
 
-      <div className="profile-tabs">
-        <NavLink to="/profile/posts" activeClassName="active">
+      {/* Navigation Tabs */}
+      <div className="nav-tabs">
+        <NavLink
+          to="/profile/posts"
+          className={({ isActive }) =>
+            isActive ? "nav-tab active" : "nav-tab"
+          }
+        >
           Posts
         </NavLink>
-        <NavLink to="/profile/profileBlogs" activeClassName="active">
+        <NavLink
+          to="/profile/profileBlogs"
+          className={({ isActive }) =>
+            isActive ? "nav-tab active" : "nav-tab"
+          }
+        >
           Blogs
         </NavLink>
-        <NavLink to="/profile/saved" activeClassName="active">
+        {/* <NavLink
+          to="/profile/saved"
+          className={({ isActive }) =>
+            isActive ? "nav-tab active" : "nav-tab"
+          }
+        >
           Saved
-        </NavLink>
-        <NavLink to="/profile/trips" activeClassName="active">
+        </NavLink> */}
+        <NavLink
+          to="/profile/trips"
+          className={({ isActive }) =>
+            isActive ? "nav-tab active" : "nav-tab"
+          }
+        >
           Trips
         </NavLink>
-        <NavLink to="/profile/reviews" activeClassName="active">
+        {/* <NavLink
+          to="/profile/reviews"
+          className={({ isActive }) =>
+            isActive ? "nav-tab active" : "nav-tab"
+          }
+        >
           Reviews
-        </NavLink>
-        <NavLink to="/profile/bookings" activeClassName="active">
+        </NavLink> */}
+        <NavLink
+          to="/profile/bookings"
+          className={({ isActive }) =>
+            isActive ? "nav-tab active" : "nav-tab"
+          }
+        >
           Bookings
         </NavLink>
       </div>

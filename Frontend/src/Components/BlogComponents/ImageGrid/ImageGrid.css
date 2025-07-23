@@ -62,7 +62,7 @@
 
 
 
-.custom-container {
+.custom-container-blog {
   margin-left: 100px;
   margin-right: 100px;
 
@@ -75,7 +75,7 @@
   margin-bottom: 16px; /* Equivalent to mb-4 */
 }
 
-.ScrollButtonsSection {
+.ScrollButtonsSectionBlog {
   position: relative; /* relative positioning */
   display: flex; /* flex container */
   align-items: center; /* vertically center items */
