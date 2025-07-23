@@ -196,7 +196,7 @@ const MainNavbar = () => {
 
   const profileMenuItems = [
     { name: "Profile", icon: <FaUserCircle />, path: "/profile/profileBlogs" },
-    { name: "Trips", icon: <FaSuitcase />, path: "/plantrip" },
+    { name: "Trips", icon: <FaSuitcase />, path: "/alltrips" },
     { name: "Posts", icon: <FaPencilAlt />, path: "/posts" },
     { name: "Chat", icon: <FaComments />, path: "/chat" },
     { name: "Blogs", icon: <FaNewspaper />, path: "/profile/profileBlogs" },
