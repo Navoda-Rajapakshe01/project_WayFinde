@@ -203,11 +203,11 @@
   cursor: not-allowed;
 }
 
-.reaction-button-container {
+.reaction-button-container-blog {
   margin-left: 15px;
 }
 
-.reaction-button {
+.reaction-button-blog {
   display: flex;
   align-items: center;
   padding: 10px 16px;
@@ -220,25 +220,25 @@
   box-shadow: 0 4px 12px rgba(149, 152, 156, 0.3);
 }
 
-.reaction-button:hover {
+.reaction-button-blog:hover {
   background-color: #e4e6e9;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(149, 152, 156, 0.4);
 }
 
-.reaction-button.reacted {
+.reaction-button-blog.reacted {
   color: #1877f2;
   font-weight: bold;
   background-color: rgba(24, 119, 242, 0.1);
 }
 
-.reaction-icon {
+.reaction-icon-blog {
   margin-right: 5px;
   font-size: 16px;
   transition: transform 0.2s ease;
 }
 
-.reaction-icon.active {
+.reaction-icon-blog.active {
   color: #1877f2;
   transform: scale(1.1);
 }

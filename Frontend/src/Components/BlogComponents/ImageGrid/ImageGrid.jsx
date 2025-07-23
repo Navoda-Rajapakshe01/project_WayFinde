@@ -160,11 +160,11 @@ const ImageGrid = () => {
   }
 
   return (
-    <div className="custom-container">
+    <div className="custom-container-blog">
       {/* Latest Blogs Section */}
       <div>
         <h2 className="LatestBlogsHeading">Latest Blogs</h2>
-        <div className="ScrollButtonsSection">
+        <div className="ScrollButtonsSectionBlog">
           <button
             className="ScrollButtonLeft"
             onClick={() => handleScrollLeft(scrollContainerRefLatest)}
@@ -207,7 +207,7 @@ const ImageGrid = () => {
       {/* Trending Blogs Section */}
       <div className="TrendingBlogsSection">
         <h2 className="TrendingBlogsHeading">Trending Blogs</h2>
-        <div className="ScrollButtonsSection">
+        <div className="ScrollButtonsSectionBlog">
           {/* Scroll Left Button */}
           <button
             className="ScrollButtonLeft"

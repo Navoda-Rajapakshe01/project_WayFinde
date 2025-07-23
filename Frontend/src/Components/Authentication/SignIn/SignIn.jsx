@@ -2,7 +2,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import React, { useContext, useState } from "react";
 
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { AuthContext } from "../AuthContext/AuthContext";
 import "./SignIn.css";
@@ -209,7 +209,7 @@ const Login = () => {
             required
           />
           {/* Add Forgot Password Link */}
-          <div className="forgot-password-container">
+          <div className="forgot-password-container-login">
             <Link to="/forgot-password" className="forgot-password-link">
               Forgot Password?
             </Link>
@@ -235,24 +235,28 @@ const Login = () => {
       {showSignInModal && (
         <div
           className="signin-modal-overlay"
-          onClick={() => setShowSignInModal(false)}>
+          onClick={() => setShowSignInModal(false)}
+        >
           <div className="signin-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Sign In As</h3>
             <div className="signin-options">
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("user")}>
+                onClick={() => handleSignInOption("user")}
+              >
                 Normal User
               </button>
               <button
                 className="signin-option-btn"
-                onClick={() => handleSignInOption("service")}>
+                onClick={() => handleSignInOption("service")}
+              >
                 Service Provider
               </button>
             </div>
             <button
               className="close-modal-btn"
-              onClick={() => setShowSignInModal(false)}>
+              onClick={() => setShowSignInModal(false)}
+            >
               Close
             </button>
           </div>

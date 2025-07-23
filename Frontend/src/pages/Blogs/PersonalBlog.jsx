@@ -709,14 +709,14 @@ const handleDeleteComment = async (commentId) => {
         </div>
         <Link>
           {/* <div className="follow_button">Follow</div> */}
-          <div className="reaction-button-container">
+          <div className="reaction-button-container-blog">
             <button
-              className={`reaction-button ${hasReacted ? "reacted" : ""}`}
+              className={`reaction-button-blog ${hasReacted ? "reacted" : ""}`}
               onClick={handleReaction}
               disabled={reactionLoading || !currentUser}
             >
               <FaThumbsUp
-                className={`reaction-icon ${hasReacted ? "active" : ""}`}
+                className={`reaction-icon-blog ${hasReacted ? "active" : ""}`}
               />
               <span className="reaction-text">
                 {hasReacted ? "Liked" : "Like"}

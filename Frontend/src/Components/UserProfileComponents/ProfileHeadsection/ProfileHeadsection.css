@@ -75,3 +75,13 @@
     color: #17a2b8;
     border-bottom-color: #17a2b8;
   }
+  .profile-header-blog{
+    max-width: 800px;
+  margin: 30px auto;
+  padding: 2rem;
+  background-color: #ffffff; /* white background */
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  }
+  
