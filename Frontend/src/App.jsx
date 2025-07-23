@@ -57,8 +57,11 @@ import Vehicle from "./pages/Vehicle/Vehicle";
 import VehicleDetail from "./pages/Vehicle/VehicleDetailPage";
 import VehicleSupplier from "./pages/VehicleSupplier/VehicleSupplier";
 
+import "./App.css";
 import BlogCard from "./Components/BlogComponents/BlogCard/BlogCard";
 import CreateTrip from "./pages/CreateTrip/CreateTrip/CreateTrip";
+
+import ProfilePosts from "./Components/UserProfileComponents/Post/Post";
 import OptimizedTripRoute from "./pages/OptimizedRoute/OptimizedRoute";
 
 import "./App.css";
@@ -68,6 +71,7 @@ import AdminUserVehicles from "./pages/Admin/AdminUserVehicles";
 import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
 
 import { CometChat } from "@cometchat-pro/chat";
+import Postview from "./Components/UserProfileComponents/Post/Postview";
 
 const appID = "279195a6164aa3fa"; 
 const region = "in"; 
@@ -191,6 +195,8 @@ function AppRoutes() {
           <Route path="user-accommodations/:userId" element={<AdminUserAccommodations />} />
         </Route>
         <Route path="/blogcard" element={<BlogCard />} />
+        <Route path="/profile/posts" element={<ProfilePosts/>} />
+        <Route path="/post/:id" element={<Postview />} />
       </Routes>
 
       {!isAdminRoute && <Footer />}
