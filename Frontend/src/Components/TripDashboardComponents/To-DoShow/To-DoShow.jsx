@@ -13,7 +13,13 @@ const ToDoShow = ({ onClose, tripId }) => {
     if (tripId) {
       axios.get(`http://localhost:5030/api/todo/trip/${tripId}`)
         .then(res => {
-          const fetchedTodos = res.data.map(todo => ({
+          const todosArray = Array.isArray(res.data.$values) ? res.data.$values : res.data;
+          if (!Array.isArray(todosArray)) {
+            setTodos([]);
+            setLoading(false);
+            return;
+          }
+          const fetchedTodos = todosArray.map(todo => ({
             id: todo.id,
             task: todo.taskName,
             completed: todo.taskStatus === 'Completed'
@@ -87,18 +93,7 @@ const ToDoShow = ({ onClose, tripId }) => {
           <div className="todo-details">
             <h2>Trip To-Do List</h2>
 
-            <div className="add-task-section">
-              <input
-                type="text"
-                value={newTask}
-                onChange={(e) => setNewTask(e.target.value)}
-                placeholder="Add a new task..."
-                className="task-input"
-              />
-              <button className="add-button" onClick={handleAddTask}>
-                <Plus size={20} />
-              </button>
-            </div>
+            
 
             <div className="todo-lists-container">
               <div className="todo-section">

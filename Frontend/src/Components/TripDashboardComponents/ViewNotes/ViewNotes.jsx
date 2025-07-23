@@ -26,7 +26,13 @@ const ViewNotes = ({ isOpen, onClose, tripId, sharedMode = false }) => {
         })
         .then((data) => {
           // Map API data to local state shape
-          const mappedNotes = data.map((note) => ({
+          const notesArray = Array.isArray(data.$values) ? data.$values : data;
+          if (!Array.isArray(notesArray)) {
+            setNotes([]);
+            setIsLoading(false);
+            return;
+          }
+          const mappedNotes = notesArray.map((note) => ({
             id: note.id,
             title: note.noteTitle || "",
             note: note.noteDescription || "",

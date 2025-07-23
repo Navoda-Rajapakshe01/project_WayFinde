@@ -35,3 +35,16 @@
 .customs-button.active:hover {
   background-color: #444;
 }
+
+/* Content area below the buttons to prevent shaking */
+.customs-content-area {
+  min-height: 500px; /* Adjust as needed for your largest tab */
+  transition: min-height 0.2s;
+  /* Optional: fade-in effect */
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

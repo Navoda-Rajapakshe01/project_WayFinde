@@ -1,4 +1,4 @@
-﻿﻿using Backend.DTO;
+﻿using Backend.DTO;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -75,6 +75,8 @@ namespace Backend.Data
 
         public DbSet<Trip> Trips { get; set; }
         public DbSet<AccountDeletionRequest> AccountDeletionRequests { get; set; }
+        public DbSet<SavedVehicle> SavedVehicles { get; set; }
+        public DbSet<SavedAccommodation> SavedAccommodations { get; set; }
 
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
@@ -99,6 +101,15 @@ namespace Backend.Data
                 .WithMany(p => p.TripPlaces)
                 .HasForeignKey(tp => tp.PlaceId)
                 .OnDelete(DeleteBehavior.Cascade);  // Cascade delete for Place
+
+            // Composite Key for SavedVehicle
+            modelBuilder.Entity<SavedVehicle>()
+                .HasKey(sv => new { sv.TripId, sv.VehicleId });
+            // No navigation property configuration needed
+
+            // Composite Key for SavedAccommodation
+            modelBuilder.Entity<SavedAccommodation>()
+                .HasKey(sa => new { sa.TripId, sa.AccommodationId });
 
             // Default Timestamps for Trip
             modelBuilder.Entity<Trip>()

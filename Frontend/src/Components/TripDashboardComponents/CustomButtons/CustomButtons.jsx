@@ -52,6 +52,8 @@ const CustomButtons = ({ tripId, sharedMode }) => {
       </div>
 
       {/* Make sure TodoList component exists and is properly exported */}
+      <div className="customs-content-area">
+        
       {activeButton === "todo-list" && (
         <TodoList tripId={tripId} sharedMode={sharedMode} />
       )}
@@ -59,9 +61,11 @@ const CustomButtons = ({ tripId, sharedMode }) => {
         <TravelBudget tripId={tripId} sharedMode={sharedMode} />
       )}
       {activeButton === "vehicle-rent" && (
-        <VehicleRent sharedMode={sharedMode} />
+        <VehicleRent tripId={tripId} sharedMode={sharedMode} />
       )}
-      {activeButton === "places" && <PlacesToStay sharedMode={sharedMode} />}
+      {activeButton === "places" && <PlacesToStay tripId={tripId} sharedMode={sharedMode} />}
+    </div>
+
     </div>
   );
 };

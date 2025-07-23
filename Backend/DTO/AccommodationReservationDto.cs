@@ -1,4 +1,4 @@
-﻿namespace Backend.DTOs
+﻿﻿namespace Backend.DTOs
 {
     public class AccommodationReservationDto
     {
@@ -18,5 +18,4 @@
         public string OrderId { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
     }
-
 }

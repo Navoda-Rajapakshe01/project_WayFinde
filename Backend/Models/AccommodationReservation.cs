@@ -1,6 +1,7 @@
+
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Backend.Models
+namespace Backend.Model
 {
     public class AccommodationReservation
     {

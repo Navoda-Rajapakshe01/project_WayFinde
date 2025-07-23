@@ -1,15 +1,18 @@
-﻿using Backend.Data;
+using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Backend.DTOs;
 using Backend.DTOs;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using System;
 
 namespace Backend.Controllers
@@ -32,7 +35,6 @@ namespace Backend.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             if (dto == null) return BadRequest();
-
             var districtExists = await _context.Districts.AnyAsync(d => d.Id == dto.DistrictId);
             if (!districtExists) return BadRequest($"District with Id {dto.DistrictId} does not exist.");
 
@@ -166,13 +168,17 @@ namespace Backend.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AccommodationDto>>> GetAccommodations()
+        
         {
             var accommodations = await _context.Accommodations
                 .Include(a => a.Images)
                 .Include(a => a.Amenities)
-                .Include(a => a.Supplier)
-                .Include(a => a.District)
-                .Include(a => a.PlacesToVisit)
+                .Include(a => a.Supplier)      // include supplier navigation
+                .Include(a => a.District)      // include district navigation
+                .Include(a => a.PlacesToVisit) // include place navigation
+                .Include(a => a.Supplier)      // include supplier navigation
+                .Include(a => a.District)      // include district navigation
+                .Include(a => a.PlacesToVisit) // include place navigation
                 .ToListAsync();
 
             return Ok(accommodations.Select(MapToDto));
@@ -184,6 +190,9 @@ namespace Backend.Controllers
             var accommodation = await _context.Accommodations
                 .Include(a => a.Images)
                 .Include(a => a.Amenities)
+                .Include(a => a.Supplier)
+                .Include(a => a.District)
+                .Include(a => a.PlacesToVisit)
                 .Include(a => a.Supplier)
                 .Include(a => a.District)
                 .Include(a => a.PlacesToVisit)
@@ -220,7 +229,7 @@ namespace Backend.Controllers
                 DistrictId = accommodation.DistrictId,
                 PlaceId = accommodation.PlaceId,
                 SupplierId = accommodation.SupplierId,
-                SupplierUsername = accommodation.SupplierUsername ?? string.Empty,
+                SupplierUsername = accommodation.SupplierUsername ?? string.Empty
             };
         }
     }
