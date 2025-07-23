@@ -383,13 +383,12 @@ namespace Backend.Controllers
             }
         }
 
+        // POST: api/Posts/{postId}/comments
         [HttpPost("{postId}/comments")]
         public async Task<ActionResult<object>> AddPostComment(int postId, [FromBody] CreateCommentRequest request)
         {
             try
             {
-                _logger.LogInformation("=== ADD COMMENT DEBUG START ===");
-
                 var post = await _context.Posts.FindAsync(postId);
                 if (post == null)
                 {
@@ -413,63 +412,40 @@ namespace Backend.Controllers
                     return BadRequest("Comment content cannot be empty");
                 }
 
-                try
+                var comment = new PostComment
                 {
-                    // Create comment with only the fields that exist in the model
-                    var comment = new PostComment
-                    {
-                        PostId = postId,
-                        UserId = userId,
-                        Content = request.Content.Trim(),
-                        CreatedAt = DateTime.UtcNow
-                    };
+                    PostId = postId,
+                    UserId = userId,
+                    Content = request.Content.Trim(),
+                    CreatedAt = DateTime.UtcNow
+                };
 
-                    _context.PostComments.Add(comment);
+                _context.PostComments.Add(comment);
+                await _context.SaveChangesAsync();
 
-                    // Wrap in its own try-catch to see detailed database exceptions
-                    try
-                    {
-                        var changes = await _context.SaveChangesAsync();
-                        _logger.LogInformation($"Comment saved with ID: {comment.Id}, Database changes: {changes}");
-                    }
-                    catch (DbUpdateException dbEx)
-                    {
-                        _logger.LogError("Database update error: {Message}", dbEx.Message);
-                        _logger.LogError("Inner exception: {Inner}", dbEx.InnerException?.Message);
-                        throw;
-                    }
+                // Get the updated comment count
+                var commentCount = await _context.PostComments
+                    .CountAsync(c => c.PostId == postId);
 
-                    // Get the updated comment count
-                    var commentCount = await _context.PostComments
-                        .CountAsync(c => c.PostId == postId);
-
-                    // Return the created comment with user info
-                    var result = new
+                // Return the created comment with user info
+                var result = new
+                {
+                    comment = new
                     {
-                        comment = new
+                        id = comment.Id,
+                        content = comment.Content,
+                        createdAt = comment.CreatedAt,
+                        user = new
                         {
-                            id = comment.Id,
-                            content = comment.Content,
-                            createdAt = comment.CreatedAt,
-                            user = new
-                            {
-                                id = user.Id,
-                                username = user.Username,
-                                profilePictureUrl = user.ProfilePictureUrl
-                            }
-                        },
-                        postCommentCount = commentCount
-                    };
+                            id = user.Id,
+                            username = user.Username,
+                            profilePictureUrl = user.ProfilePictureUrl
+                        }
+                    },
+                    postCommentCount = commentCount
+                };
 
-                    _logger.LogInformation("=== ADD COMMENT DEBUG SUCCESS ===");
-                    return Ok(result);
-                }
-                catch (Exception innerEx)
-                {
-                    _logger.LogError("Inner operation error: {Message}", innerEx.Message);
-                    _logger.LogError("Stack trace: {StackTrace}", innerEx.StackTrace);
-                    throw;
-                }
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -477,6 +453,7 @@ namespace Backend.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
         // DELETE: api/Posts/comment/{commentId}
         [HttpDelete("comment/{commentId}")]
         public async Task<ActionResult> DeleteComment(int commentId)

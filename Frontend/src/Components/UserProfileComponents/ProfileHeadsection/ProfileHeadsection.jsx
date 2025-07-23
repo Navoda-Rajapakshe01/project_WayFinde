@@ -167,14 +167,14 @@ const ProfileHeadSection = () => {
         >
           Blogs
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to="/profile/saved"
           className={({ isActive }) =>
             isActive ? "nav-tab active" : "nav-tab"
           }
         >
           Saved
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/profile/trips"
           className={({ isActive }) =>
@@ -183,14 +183,14 @@ const ProfileHeadSection = () => {
         >
           Trips
         </NavLink>
-        <NavLink
+        {/* <NavLink
           to="/profile/reviews"
           className={({ isActive }) =>
             isActive ? "nav-tab active" : "nav-tab"
           }
         >
           Reviews
-        </NavLink>
+        </NavLink> */}
         <NavLink
           to="/profile/bookings"
           className={({ isActive }) =>

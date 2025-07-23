@@ -856,7 +856,7 @@ const handleDeleteComment = async (commentId) => {
                 )}
               </div>
               <div className="comment-content">{comment.content}</div>
-              <p className="comLikeIcons">
+              {/* <p className="comLikeIcons">
                 <span className="flex items-center gap-1">
                   <FaComment className="text-lg" />
                   <span className="numComLikes">Reply</span>
@@ -865,7 +865,7 @@ const handleDeleteComment = async (commentId) => {
                   <FaThumbsUp className="text-lg" />
                   <span className="numComLikes">Like</span>
                 </span>
-              </p>
+              </p> */}
               <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
             </div>
           ))

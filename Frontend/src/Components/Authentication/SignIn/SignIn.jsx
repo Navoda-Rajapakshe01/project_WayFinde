@@ -218,12 +218,12 @@ const Login = () => {
             {isLoading ? "Logging in..." : "Login"}
           </button>
 
-          <div style={{ marginTop: "1rem" }}>
+          {/* <div style={{ marginTop: "1rem" }}>
             <GoogleLogin
               onSuccess={handleGoogleLoginSuccess}
               onError={() => setError("Google login failed")}
             />
-          </div>
+          </div> */}
 
           <p className="CreateNew" onClick={() => handleSignInOption("user")}>
             Create a new Account
