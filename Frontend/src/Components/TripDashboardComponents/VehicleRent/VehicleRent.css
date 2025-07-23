@@ -35,14 +35,18 @@
   border-radius: 10px;
 }
 
-.location-input, .date-input, .vehicle-type-dropdown {
+.location-input,
+.date-input,
+.vehicle-type-dropdown {
   display: flex;
   flex-direction: column;
   margin-right: 20px;
   font-size: 0.9rem;
 }
 
-.location-input input, .date-input input, .vehicle-type-dropdown select {
+.location-input input,
+.date-input input,
+.vehicle-type-dropdown select {
   padding: 10px;
   border: 1px solid #dfd0d0;
   border-radius: 5px;
@@ -122,4 +126,8 @@
 
 .availability-status.unavailable {
   background-color: #dc3545;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

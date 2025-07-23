@@ -31,7 +31,8 @@
   object-fit: cover;
 }
 
-.hotel-details, .vehicle-details {
+.hotel-details,
+.vehicle-details {
   padding: 15px;
   flex-grow: 1;
 }
@@ -62,7 +63,7 @@
   margin-bottom: 10px;
 }
 
-input[type='text'] {
+input[type="text"] {
   width: 100%;
   padding: 8px;
   font-size: 14px;
@@ -70,7 +71,8 @@ input[type='text'] {
   border-radius: 4px;
 }
 
-.to-do-card, .budget-card {
+.to-do-card,
+.budget-card {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px;
@@ -103,17 +105,8 @@ input[type='text'] {
   background-color: #0056b3;
 }
 
-button {
-  background-color: #b6b9bd;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
 button:hover {
-  background-color: #0056b3;
+  /* background-color: #0056b3; */
 }
 
 @media (max-width: 768px) {
@@ -129,8 +122,9 @@ button:hover {
     width: 100%;
     height: auto;
   }
-  
-  .to-do-card, .budget-card {
+
+  .to-do-card,
+  .budget-card {
     padding-bottom: 40px; /* Extra space for the button */
   }
 }

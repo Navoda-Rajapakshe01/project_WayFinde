@@ -16,7 +16,12 @@ builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 
 // Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("CloudConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("CloudConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure()
+    )
+);
+
 
 
 
@@ -60,6 +65,7 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 
 
 builder.Services.AddScoped<VehicleReservationService>();
+builder.Services.AddSingleton<CometChatService>();
 
 // Add CORS policies
 builder.Services.AddCors(options =>

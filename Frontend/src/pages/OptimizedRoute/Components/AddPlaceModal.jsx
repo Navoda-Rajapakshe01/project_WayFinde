@@ -20,12 +20,13 @@ const AddPlaceModal = ({ onAddPlace, onClose, existingPlaceIds = [] }) => {
         const districtsResponse = await axios.get(
           "http://localhost:5030/api/district/getAll"
         );
-        setDistricts(districtsResponse.data || []);
+        setDistricts(districtsResponse.data?.$values || []);
 
         const placesResponse = await axios.get(
           "http://localhost:5030/api/places/getAll"
         );
-        setPlaces(placesResponse.data || []);
+        setPlaces(placesResponse.data?.$values || []);
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching data:", err);

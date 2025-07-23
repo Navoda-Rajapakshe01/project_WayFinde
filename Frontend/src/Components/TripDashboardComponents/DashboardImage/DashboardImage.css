@@ -96,6 +96,12 @@
   transform: rotate(90deg);
 }
 
+.settings-icon.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* View All Places Button Styles */
 .view-all-places-button {
   position: absolute;
@@ -335,7 +341,7 @@
   background: #48bbbb;
   color: white;
   font-size: 1.2rem; /* ⬅️ Increased icon size */
-  width: 36px;        /* ⬅️ Optional: increase button size */
+  width: 36px; /* ⬅️ Optional: increase button size */
   height: 36px;
   display: flex;
   align-items: center;
@@ -388,9 +394,9 @@
 }
 .trip-success-message {
   display: flex;
-  flex-direction: column;   /* Add this */
+  flex-direction: column; /* Add this */
   align-items: center;
-  justify-content: center;  /* Add this */
+  justify-content: center; /* Add this */
   gap: 16px;
   padding: 20px 24px;
   margin: 0 24px 20px 24px;
@@ -407,7 +413,7 @@
 }
 
 .trip-success-message::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -420,9 +426,9 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  align-items: center;      /* centers horizontally */
-  justify-content: center;  /* centers vertically */
-  text-align: center;       /* optional: center text */
+  align-items: center; /* centers horizontally */
+  justify-content: center; /* centers vertically */
+  text-align: center; /* optional: center text */
 }
 
 .success-title {
@@ -492,7 +498,6 @@
   animation: spin 1s linear infinite;
 }
 
-
 /* Animations */
 @keyframes fadeInSuccess {
   from {
@@ -521,8 +526,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Modal overlay enhancement when saving */
@@ -533,7 +542,6 @@
 .trip-modal-content.saving {
   pointer-events: auto;
 }
-
 
 /* Responsive styles for screens smaller than 768px */
 @media (max-width: 768px) {

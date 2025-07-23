@@ -139,6 +139,23 @@ const AuthProvider = ({ children }) => {
   };
   
 
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading authentication...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
   return (
     <AuthContext.Provider
       value={{

@@ -12,9 +12,9 @@ const TripNameModal = ({ onSubmit, isSubmitting, error, onBack, onClose }) => {
   };
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay startlocation">
       <div className="modal-container">
-        <div className="modal-header">
+        <div className="modal-header-tnm">
           <button className="modal-back" onClick={onBack}>
             <ArrowLeft size={18} />
           </button>

@@ -60,7 +60,6 @@ select {
   width: 100%;
   padding: 0.75rem;
   border-radius: 6px;
-  border: 1px solid #ccc;
   font-size: 1rem;
   transition: border-color 0.2s ease;
   resize: vertical;

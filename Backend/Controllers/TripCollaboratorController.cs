@@ -85,8 +85,7 @@ namespace Backend.Controllers
                 return BadRequest("User is already a collaborator for this trip");
             }
 
-            tripCollaborator.CreatedDate = DateTime.UtcNow;
-            tripCollaborator.CreatedTime = DateTime.UtcNow;
+            
             tripCollaborator.AddedAt = DateTime.UtcNow;
 
             _context.TripCollaborator.Add(tripCollaborator);
