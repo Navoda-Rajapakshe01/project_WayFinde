@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import './DashboardSaves.css';
-import SavesComment from '../SavesComment/SavesComment';
-import ToDoShow from '../To-DoShow/To-DoShow';
-import BudgetShow from '../BudgetShow/BudgetShow';
+import React, { useState, useEffect } from "react";
+import "./DashboardSaves.css";
+import SavesComment from "../SavesComment/SavesComment";
+import ToDoShow from "../To-DoShow/To-DoShow";
+import BudgetShow from "../BudgetShow/BudgetShow";
 
-function DashboardSaves({ tripId }) {
+function DashboardSaves({ tripId, sharedMode = false }) {
   const [savedVehicles, setSavedVehicles] = useState([]);
   const [allVehicles, setAllVehicles] = useState([]);
   const [allImages, setAllImages] = useState([]);
@@ -22,30 +22,51 @@ function DashboardSaves({ tripId }) {
   const fetchSavedVehicles = async () => {
     try {
       // Get saved vehicles for this trip
-      const response = await fetch(`http://localhost:5030/api/SavedVehicle/trip/${tripId}`);
+      const response = await fetch(
+        `http://localhost:5030/api/SavedVehicle/trip/${tripId}`
+      );
       if (!response.ok) throw new Error();
       const tripSavedRaw = await response.json();
-      const tripSaved = Array.isArray(tripSavedRaw.$values) ? tripSavedRaw.$values : tripSavedRaw;
+      const tripSaved = Array.isArray(tripSavedRaw.$values)
+        ? tripSavedRaw.$values
+        : tripSavedRaw;
       setSavedVehicles(tripSaved);
 
       // Get all vehicles
-      const vRes = await fetch('http://localhost:5030/api/Vehicle');
+      const vRes = await fetch("http://localhost:5030/api/Vehicle");
       const vehiclesDataRaw = vRes.ok ? await vRes.json() : [];
-      const vehiclesData = Array.isArray(vehiclesDataRaw.$values) ? vehiclesDataRaw.$values : vehiclesDataRaw;
+      const vehiclesData = Array.isArray(vehiclesDataRaw.$values)
+        ? vehiclesDataRaw.$values
+        : vehiclesDataRaw;
       setAllVehicles(vehiclesData);
 
       // Get all vehicle images
-      const imgRes = await fetch('http://localhost:5030/api/VehicleImage');
+      const imgRes = await fetch("http://localhost:5030/api/VehicleImage");
       const imagesDataRaw = imgRes.ok ? await imgRes.json() : [];
-      const imagesData = Array.isArray(imagesDataRaw.$values) ? imagesDataRaw.$values : imagesDataRaw;
+      const imagesData = Array.isArray(imagesDataRaw.$values)
+        ? imagesDataRaw.$values
+        : imagesDataRaw;
       setAllImages(imagesData);
 
       // Log info for each saved vehicle
-      tripSaved.forEach(sv => {
-        const vehicle = vehiclesData.find(v => v.id === sv.vehicleId);
-        const imageObj = imagesData.find(img => img.vehicleId === sv.vehicleId);
-        const imageUrl = imageObj ? imageObj.imageUrl : '/placeholder-vehicle.jpg';
-        console.log('TripId:', sv.tripId, 'VehicleId:', sv.vehicleId, 'Vehicle:', vehicle, 'ImageUrl:', imageUrl);
+      tripSaved.forEach((sv) => {
+        const vehicle = vehiclesData.find((v) => v.id === sv.vehicleId);
+        const imageObj = imagesData.find(
+          (img) => img.vehicleId === sv.vehicleId
+        );
+        const imageUrl = imageObj
+          ? imageObj.imageUrl
+          : "/placeholder-vehicle.jpg";
+        console.log(
+          "TripId:",
+          sv.tripId,
+          "VehicleId:",
+          sv.vehicleId,
+          "Vehicle:",
+          vehicle,
+          "ImageUrl:",
+          imageUrl
+        );
       });
     } catch {
       setSavedVehicles([]);
@@ -55,30 +76,55 @@ function DashboardSaves({ tripId }) {
   const fetchSavedAccommodations = async () => {
     try {
       // Get saved accommodations for this trip
-      const response = await fetch(`http://localhost:5030/api/SavedAccommodation/trip/${tripId}`);
+      const response = await fetch(
+        `http://localhost:5030/api/SavedAccommodation/trip/${tripId}`
+      );
       if (!response.ok) throw new Error();
       const tripSavedRaw = await response.json();
-      const tripSaved = Array.isArray(tripSavedRaw.$values) ? tripSavedRaw.$values : tripSavedRaw;
+      const tripSaved = Array.isArray(tripSavedRaw.$values)
+        ? tripSavedRaw.$values
+        : tripSavedRaw;
       setSavedAccommodations(tripSaved);
 
       // Get all accommodations
-      const aRes = await fetch('http://localhost:5030/api/Accommodation');
+      const aRes = await fetch("http://localhost:5030/api/Accommodation");
       const accommodationsDataRaw = aRes.ok ? await aRes.json() : [];
-      const accommodationsData = Array.isArray(accommodationsDataRaw.$values) ? accommodationsDataRaw.$values : accommodationsDataRaw;
+      const accommodationsData = Array.isArray(accommodationsDataRaw.$values)
+        ? accommodationsDataRaw.$values
+        : accommodationsDataRaw;
       setAllAccommodations(accommodationsData);
 
       // Get all accommodation images
-      const imgRes = await fetch('http://localhost:5030/api/AccommodationImage');
+      const imgRes = await fetch(
+        "http://localhost:5030/api/AccommodationImage"
+      );
       const imagesDataRaw = imgRes.ok ? await imgRes.json() : [];
-      const imagesData = Array.isArray(imagesDataRaw.$values) ? imagesDataRaw.$values : imagesDataRaw;
+      const imagesData = Array.isArray(imagesDataRaw.$values)
+        ? imagesDataRaw.$values
+        : imagesDataRaw;
       setAllAccommodationImages(imagesData);
 
       // Log info for each saved accommodation
-      tripSaved.forEach(sa => {
-        const accommodation = accommodationsData.find(a => a.id === sa.accommodationId);
-        const imageObj = imagesData.find(img => img.accommodationId === sa.accommodationId);
-        const imageUrl = imageObj ? imageObj.imageUrl : '/placeholder-accommodation.jpg';
-        console.log('TripId:', sa.tripId, 'AccommodationId:', sa.accommodationId, 'Accommodation:', accommodation, 'ImageUrl:', imageUrl);
+      tripSaved.forEach((sa) => {
+        const accommodation = accommodationsData.find(
+          (a) => a.id === sa.accommodationId
+        );
+        const imageObj = imagesData.find(
+          (img) => img.accommodationId === sa.accommodationId
+        );
+        const imageUrl = imageObj
+          ? imageObj.imageUrl
+          : "/placeholder-accommodation.jpg";
+        console.log(
+          "TripId:",
+          sa.tripId,
+          "AccommodationId:",
+          sa.accommodationId,
+          "Accommodation:",
+          accommodation,
+          "ImageUrl:",
+          imageUrl
+        );
       });
     } catch {
       setSavedAccommodations([]);
@@ -95,14 +141,26 @@ function DashboardSaves({ tripId }) {
             <div>No accommodations saved for this trip.</div>
           ) : (
             savedAccommodations.map((sa) => {
-              const accommodation = allAccommodations.find(a => a.id === sa.accommodationId);
-              const imageObj = allAccommodationImages.find(img => img.accommodationId === sa.accommodationId);
-              const imageUrl = imageObj ? imageObj.imageUrl : '/placeholder-accommodation.jpg';
+              const accommodation = allAccommodations.find(
+                (a) => a.id === sa.accommodationId
+              );
+              const imageObj = allAccommodationImages.find(
+                (img) => img.accommodationId === sa.accommodationId
+              );
+              const imageUrl = imageObj
+                ? imageObj.imageUrl
+                : "/placeholder-accommodation.jpg";
               return (
                 <div key={sa.accommodationId} className="saves-card">
-                  <img src={imageUrl} alt={accommodation?.name || 'Accommodation'} className="saves-card-img" />
+                  <img
+                    src={imageUrl}
+                    alt={accommodation?.name || "Accommodation"}
+                    className="saves-card-img"
+                  />
                   <div className="hotel-details">
-                    <h3><b>{accommodation?.name}</b></h3>
+                    <h3>
+                      <b>{accommodation?.name}</b>
+                    </h3>
                     <p>{accommodation?.type}</p>
                     <div className="vehicle-specs">
                       <span>{accommodation?.maxGuests} Guests</span>
@@ -123,14 +181,26 @@ function DashboardSaves({ tripId }) {
             <div>No vehicles saved for this trip.</div>
           ) : (
             savedVehicles.map((sv) => {
-              const vehicle = allVehicles.find(v => v.id === sv.vehicleId);
-              const imageObj = allImages.find(img => img.vehicleId === sv.vehicleId);
-              const imageUrl = imageObj ? imageObj.imageUrl : '/placeholder-vehicle.jpg';
+              const vehicle = allVehicles.find((v) => v.id === sv.vehicleId);
+              const imageObj = allImages.find(
+                (img) => img.vehicleId === sv.vehicleId
+              );
+              const imageUrl = imageObj
+                ? imageObj.imageUrl
+                : "/placeholder-vehicle.jpg";
               return (
                 <div key={sv.vehicleId} className="saves-card">
-                  <img src={imageUrl} alt={vehicle?.brand || 'Vehicle'} className="saves-card-img" />
+                  <img
+                    src={imageUrl}
+                    alt={vehicle?.brand || "Vehicle"}
+                    className="saves-card-img"
+                  />
                   <div className="hotel-details">
-                    <h3><b>{vehicle?.brand} {vehicle?.model}</b></h3>
+                    <h3>
+                      <b>
+                        {vehicle?.brand} {vehicle?.model}
+                      </b>
+                    </h3>
                     <p>{vehicle?.type}</p>
                     <div className="vehicle-specs">
                       <span>{vehicle?.numberOfPassengers} Passengers</span>
@@ -150,7 +220,8 @@ function DashboardSaves({ tripId }) {
           <div className="dashboard-card-content">
             <div className="dashboard-card-title">Trip To-Do List</div>
             <div className="dashboard-card-desc">
-              All tasks to complete before and during your journey are shown here. Stay organized and on track!
+              All tasks to complete before and during your journey are shown
+              here. Stay organized and on track!
             </div>
           </div>
           <button
@@ -169,7 +240,8 @@ function DashboardSaves({ tripId }) {
           <div className="dashboard-card-content">
             <div className="dashboard-card-title">Trip Budget Overview</div>
             <div className="dashboard-card-desc">
-              See all expected expenses and keep your travel finances under control. Plan ahead for a stress-free trip!
+              See all expected expenses and keep your travel finances under
+              control. Plan ahead for a stress-free trip!
             </div>
           </div>
           <button
@@ -182,8 +254,12 @@ function DashboardSaves({ tripId }) {
         </div>
       </div>
       {/* Conditionally render popups */}
-      {showTodoPopup && <ToDoShow onClose={() => setShowTodoPopup(false)} tripId={tripId} />}
-      {showBudgetPopup && <BudgetShow onClose={() => setShowBudgetPopup(false)} tripId={tripId} />}
+      {showTodoPopup && (
+        <ToDoShow onClose={() => setShowTodoPopup(false)} tripId={tripId} />
+      )}
+      {showBudgetPopup && (
+        <BudgetShow onClose={() => setShowBudgetPopup(false)} tripId={tripId} />
+      )}
     </div>
   );
 }

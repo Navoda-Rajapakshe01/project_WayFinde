@@ -33,16 +33,6 @@ const VehicleDetailPage = () => {
 
   const [calculatedAmount, setCalculatedAmount] = useState(0);
 
-  // Load payhere.js dynamically
-  useEffect(() => {
-    if (!window.payhere) {
-      const script = document.createElement("script");
-      script.src = "https://www.payhere.lk/lib/payhere.js";
-      script.async = true;
-      document.body.appendChild(script);
-    }
-  }, []);
-
   useEffect(() => {
     if (!id) return;
 
@@ -87,12 +77,14 @@ const VehicleDetailPage = () => {
   };
 
   useEffect(() => {
-    if (vehicle) {
-      const amount = calculateTotalAmount(
-        bookingData.startDate,
-        bookingData.endDate
+    if (bookingData.startDate && bookingData.endDate && vehicle?.pricePerDay) {
+      const start = new Date(bookingData.startDate);
+      const end = new Date(bookingData.endDate);
+      const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+      const cleanedPrice = parseFloat(
+        vehicle.pricePerDay.toString().replace(/[^\d.]/g, "")
       );
-      setCalculatedAmount(amount);
+      setCalculatedAmount(days * cleanedPrice);
     }
   }, [bookingData.startDate, bookingData.endDate, vehicle]);
 
@@ -114,77 +106,49 @@ const VehicleDetailPage = () => {
       return;
     }
 
+    // Recalculate here instead of relying on state
+    const start = new Date(bookingData.startDate);
+    const end = new Date(bookingData.endDate);
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const totalAmount = days * parseFloat(vehicle?.pricePerDay || 0);
+
+    if (isNaN(totalAmount) || totalAmount <= 0) {
+      swal.fire("Error", "Invalid amount or date range", "error");
+      return;
+    }
+
     const [firstName, ...rest] = bookingData.customerName.trim().split(" ");
     const lastName = rest.join(" ") || " ";
 
     const payload = {
-      vehicleId: vehicle.id,
-      startDate: bookingData.startDate,
-      endDate: bookingData.endDate,
-      pickupLocation: bookingData.pickupLocation,
-      returnLocation: bookingData.returnLocation,
-      additionalRequirements: bookingData.additionalRequirements || "None",
-      totalAmount: calculatedAmount,
-      tripId: bookingData.tripId || null,
-      firstName,
-      lastName,
-      email: bookingData.email,
-      phone: bookingData.phone,
-      itemName: `${vehicle.brand} ${vehicle.model}`,
-      orderId: `ORDER_${Date.now()}`,
-      // Important: don't send hash from client, backend will generate it
+      VehicleId: vehicle.id,
+      StartDate: bookingData.startDate,
+      EndDate: bookingData.endDate,
+      PickupLocation: bookingData.pickupLocation,
+      ReturnLocation: bookingData.returnLocation,
+      AdditionalRequirements: bookingData.additionalRequirements || "None",
+      TotalAmount: totalAmount,
+      TripId: bookingData.tripId || null,
+      FirstName: firstName,
+      LastName: lastName,
+      Email: bookingData.email,
+      Phone: bookingData.phone,
+      ItemName: `${vehicle.brand} ${vehicle.model}`,
+      OrderId: `ORDER_${Date.now()}`,
+      Description: `Booking for ${vehicle?.brand} ${vehicle?.model}`,
+      ReservationType: "vehicle",
     };
 
     try {
-      // Request payment details including hash from backend
       const res = await axios.post(
-        "http://localhost:5030/api/payments/create",
+        "http://localhost:5030/api/payments/create-checkout-session",
         payload
       );
 
-      if (res.data) {
-        const payment = res.data;
-
-        // PayHere event handlers
-        window.payhere.onCompleted = async function (orderId) {
-          console.log("Payment completed. OrderID: " + orderId);
-
-          try {
-            // Save booking only on successful payment
-            await axios.post(
-              "http://localhost:5030/api/bookings/create",
-              payload
-            );
-            setBookingSuccess(true);
-            swal.fire(
-              "Success",
-              "Booking confirmed and payment successful!",
-              "success"
-            );
-          } catch (bookingError) {
-            console.error(bookingError);
-            swal.fire(
-              "Error",
-              "Booking saving failed. Contact support.",
-              "error"
-            );
-          }
-        };
-
-        window.payhere.onDismissed = function () {
-          console.log("Payment dismissed by user.");
-          swal.fire("Cancelled", "Payment was cancelled.", "info");
-        };
-
-        window.payhere.onError = function (error) {
-          console.error("Payment error:", error);
-          swal.fire("Error", "Payment failed. Please try again.", "error");
-        };
-
-        // Start PayHere payment popup
-        window.payhere.startPayment(payment);
+      if (res.data?.url) {
+        window.location.href = res.data.url;
       } else {
-        swal.fire("Error", "Failed to initiate payment", "error");
+        swal.fire("Error", "Stripe session creation failed", "error");
       }
     } catch (err) {
       console.error(err);
@@ -500,13 +464,10 @@ const VehicleDetailPage = () => {
               <p>
                 <strong>Price:</strong> Rs. {vehicle.pricePerDay} / day
               </p>
-              <p>
-                <strong>Total Amount:</strong> Rs. {calculatedAmount}
-              </p>
 
               <input
                 type="text"
-                placeholder="Your Name"
+                placeholder="Full Name"
                 value={bookingData.customerName}
                 onChange={(e) =>
                   setBookingData({
@@ -516,12 +477,30 @@ const VehicleDetailPage = () => {
                 }
               />
               <input
+                type="email"
+                placeholder="Email"
+                value={bookingData.email}
+                onChange={(e) =>
+                  setBookingData({ ...bookingData, email: e.target.value })
+                }
+              />
+              <input
+                type="tel"
+                placeholder="Phone"
+                value={bookingData.phone}
+                onChange={(e) =>
+                  setBookingData({ ...bookingData, phone: e.target.value })
+                }
+              />
+              <label htmlFor="">Start Date</label>
+              <input
                 type="date"
                 value={bookingData.startDate}
                 onChange={(e) =>
                   setBookingData({ ...bookingData, startDate: e.target.value })
                 }
               />
+              <label htmlFor="">End Date</label>
               <input
                 type="date"
                 value={bookingData.endDate}
@@ -551,24 +530,14 @@ const VehicleDetailPage = () => {
                   })
                 }
               />
-              <input
-                type="email"
-                placeholder="Email"
-                value={bookingData.email}
-                onChange={(e) =>
-                  setBookingData({ ...bookingData, email: e.target.value })
-                }
-              />
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                value={bookingData.phone}
-                onChange={(e) =>
-                  setBookingData({ ...bookingData, phone: e.target.value })
-                }
-              />
+
+              {/* Total Amount Display */}
+              <p className="font-semibold mt-2">
+                Total: Rs. {calculatedAmount.toFixed(2)}
+              </p>
+
               <textarea
-                placeholder="Additional Requirements (optional)"
+                placeholder="Additional Requirements (If not, type 'NO')"
                 value={bookingData.additionalRequirements}
                 onChange={(e) =>
                   setBookingData({

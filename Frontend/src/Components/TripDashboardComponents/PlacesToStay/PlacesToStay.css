@@ -3,11 +3,12 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 /* Loading and Error States */
-.loading, .error {
+.loading,
+.error {
   text-align: center;
   padding: 40px;
   font-size: 18px;
@@ -336,29 +337,29 @@
   .places-to-stay-container {
     padding: 15px;
   }
-  
+
   .places-grid {
     flex-wrap: wrap;
     gap: 10px;
   }
-  
+
   .accommodation-cards-container {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-  
+
   .accommodation-image-container {
     height: 200px;
   }
-  
+
   .accommodation-info {
     padding: 15px;
   }
-  
+
   .accommodation-name {
     font-size: 18px;
   }
-  
+
   .accommodations-section h2 {
     font-size: 20px;
   }
@@ -369,19 +370,19 @@
     min-width: 120px;
     padding: 8px 12px;
   }
-  
+
   .place-card h3 {
     font-size: 13px;
   }
-  
+
   .accommodation-image-container {
     height: 180px;
   }
-  
+
   .accommodation-name {
     font-size: 16px;
   }
-  
+
   .detail-value.price {
     font-size: 16px;
   }

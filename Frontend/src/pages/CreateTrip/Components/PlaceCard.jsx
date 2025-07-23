@@ -6,8 +6,8 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
   const { name, rating, avgTime, avgSpend, mainImageUrl } = place;
 
   return (
-    <div className={`place-card ${isSelected ? "selected" : ""}`}>
-      <div className="place-image-container w-full h-[180px] relative rounded overflow-hidden">
+    <div className={`place-card-ctr ${isSelected ? "selected" : ""}`}>
+      <div className="place-image-container-ctr w-full h-[180px] relative rounded overflow-hidden">
         <img
           src={mainImageUrl}
           alt={name}
@@ -27,9 +27,9 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
         </button>
       </div>
 
-      <div className="place-info">
-        <h3 className="place-name">{name}</h3>
-        <div className="place-rating">
+      <div className="place-info-ctr">
+        <h3 className="place-name-ctr">{name}</h3>
+        <div className="place-rating-ctr">
           <div className="stars">
             {[1, 2, 3, 4, 5].map((star) => (
               <span
@@ -41,20 +41,20 @@ const PlaceCard = ({ place, onAddPlace, isSelected }) => {
                 ★
               </span>
             ))}
-            <span className="rating-number">
+            <span className="rating-number-ctr">
               {rating ? rating.toFixed(1) : "0.0"}
             </span>
           </div>
         </div>
 
-        <div className="place-details">
-          <div className="detail">
-            <span className="detail-label">Duration:</span>
-            <span className="detail-value">{avgTime || "N/A"}</span>
+        <div className="place-details-str">
+          <div className="detail-ctr">
+            <span className="detail-label-ctr">Duration:</span>
+            <span className="detail-value-ctr">{avgTime || "N/A"}</span>
           </div>
-          <div className="detail">
-            <span className="detail-label">Avg. Spend:</span>
-            <span className="detail-value">
+          <div className="detail-ctr">
+            <span className="detail-label-ctr">Avg. Spend:</span>
+            <span className="detail-value-ctr">
               {avgSpend && avgSpend !== 0 ? `Rs. ${avgSpend}` : "N/A"}
             </span>
           </div>

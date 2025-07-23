@@ -26,35 +26,39 @@ const TripNameModal = ({ onSubmit, isSubmitting, error, onBack, onClose }) => {
         <h2 className="modal-title">Add Trip Name</h2>
         <p className="modal-subtitle">Give your trip a name to get started.</p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="modal-content">
-            <div className="name-input-container">
-              <Edit3 className="name-icon" size={18} />
-              <input
-                type="text"
-                className="name-input"
-                placeholder="Enter a trip name..."
-                value={tripName}
-                onChange={(e) => setTripName(e.target.value)}
-                required
-                minLength={3}
-                maxLength={50}
-              />
-            </div>
+<form onSubmit={handleSubmit}>
+  <div className="modal-content">
+    {/* Trip Name Input Styled Like Location Selector */}
+    <div className="location-selector">
+      <div className="select-container flex items-center gap-2 border border-gray-300 rounded px-3 py-2 w-full bg-white">
+        <Edit3 className="text-gray-500" size={20} />
+        <input
+          type="text"
+          className="flex-1 outline-none bg-transparent border-none"
+          placeholder="Enter a trip name..."
+          value={tripName}
+          onChange={(e) => setTripName(e.target.value)}
+          required
+          minLength={3}
+          maxLength={50}
+        />
+      </div>
+      {error && <div className="text-red-500 text-sm mt-1">{error}</div>}
+    </div>
+  </div>
 
-            {error && <div className="error-message">{error}</div>}
-          </div>
+  <div className="modal-footer">
+    <button
+      type="submit"
+      className="modal-button"
+      disabled={isSubmitting || !tripName.trim()}
+    >
+      {isSubmitting ? "Creating Trip..." : "Confirm & Continue"}
+    </button>
+  </div>
+</form>
 
-          <div className="modal-footer">
-            <button
-              type="submit"
-              className="modal-button"
-              disabled={isSubmitting || !tripName.trim()}
-            >
-              {isSubmitting ? "Creating Trip..." : "Confirm & Continue"}
-            </button>
-          </div>
-        </form>
+
       </div>
     </div>
   );

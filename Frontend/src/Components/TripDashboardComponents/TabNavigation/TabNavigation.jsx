@@ -68,9 +68,11 @@ const TabNavigation = ({
         <button
           className={`tab-button ${activeTab === "saves" ? "active" : ""}`}
           onClick={() => handleTabClick("saves")}
+          disabled={sharedMode}
         >
           Saves
         </button>
+
         <div className="notes-buttons">
           <button
             className="add-notes-button"
