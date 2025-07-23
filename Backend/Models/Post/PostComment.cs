@@ -24,6 +24,6 @@ namespace Backend.Models.Post
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        
+
     }
 }

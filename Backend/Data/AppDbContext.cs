@@ -21,7 +21,7 @@ namespace Backend.Data
         public DbSet<Post> Posts { get; set; } = null!;
         public DbSet<Follows> Follows { get; set; } = null!;
         public DbSet<PostImage> PostImages { get; set; } = null!;
-        public DbSet<PostReact> PostReactions { get; set; } = null!;
+
         public DbSet<PostComment> PostComments { get; set; } = null!;
 
 
@@ -398,6 +398,23 @@ namespace Backend.Data
                     .WithMany(p => p.Images)
                     .HasForeignKey(e => e.PostId)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+            // Add this to your OnModelCreating method
+            modelBuilder.Entity<PostComment>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                // Relationship with Post - keep cascade delete
+                entity.HasOne(e => e.Post)
+                    .WithMany() // or specify the navigation property if Post has a Comments collection
+                    .HasForeignKey(e => e.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                // Relationship with User - change to Restrict to avoid cascade cycle
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict); // This prevents the cascade cycle
             });
         }
     }

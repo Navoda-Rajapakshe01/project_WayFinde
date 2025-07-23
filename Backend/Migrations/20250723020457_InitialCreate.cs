@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class PostCommentReactTables : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -410,34 +410,6 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PostComments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PostId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostComments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PostComments_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PostComments_UsersNew_UserId",
-                        column: x => x.UserId,
-                        principalTable: "UsersNew",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PostImages",
                 columns: table => new
                 {
@@ -454,33 +426,6 @@ namespace Backend.Migrations
                         name: "FK_PostImages_Posts_PostId",
                         column: x => x.PostId,
                         principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PostReactions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PostId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostReactions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PostReactions_Posts_PostId",
-                        column: x => x.PostId,
-                        principalTable: "Posts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PostReactions_UsersNew_UserId",
-                        column: x => x.UserId,
-                        principalTable: "UsersNew",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -886,29 +831,9 @@ namespace Backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostComments_PostId",
-                table: "PostComments",
-                column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostComments_UserId",
-                table: "PostComments",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_PostImages_PostId",
                 table: "PostImages",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostReactions_PostId",
-                table: "PostReactions",
-                column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostReactions_UserId",
-                table: "PostReactions",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_UserId",
@@ -1033,13 +958,7 @@ namespace Backend.Migrations
                 name: "PlaceImages");
 
             migrationBuilder.DropTable(
-                name: "PostComments");
-
-            migrationBuilder.DropTable(
                 name: "PostImages");
-
-            migrationBuilder.DropTable(
-                name: "PostReactions");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
