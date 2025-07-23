@@ -71,6 +71,7 @@ import AdminUserVehicles from "./pages/Admin/AdminUserVehicles";
 import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
 
 import { CometChat } from "@cometchat-pro/chat";
+import Postview from "./Components/UserProfileComponents/Post/Postview";
 
 const appID = "279195a6164aa3fa"; 
 const region = "in"; 

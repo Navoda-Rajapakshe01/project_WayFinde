@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode";
 import PropTypes from "prop-types";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../AuthContext/AuthContext";
+//import { Spinner } from 'react-bootstrap';
 
 // Add the useAuth hook that was missing
 export const useAuth = () => {
@@ -149,9 +150,9 @@ const AuthProvider = ({ children }) => {
           height: "100vh",
         }}
       >
-        <Spinner animation="border" role="status" variant="primary">
+        {/* <Spinner animation="border" role="status" variant="primary">
           <span className="visually-hidden">Loading authentication...</span>
-        </Spinner>
+        </Spinner> */}
       </div>
     );
   }
