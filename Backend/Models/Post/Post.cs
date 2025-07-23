@@ -34,6 +34,8 @@ namespace Backend.Models.Post
 
         // Navigation properties (these won't map to database columns)
         public virtual ICollection<PostImage> Images { get; set; } = new List<PostImage>();
+        public virtual ICollection<PostComment> Comments { get; set; } = new List<PostComment>();
+        public virtual ICollection<PostReaction> Reactions { get; set; } = new List<PostReaction>();
 
         // Helper property to work with ImageUrls as a List<string>
         [NotMapped]

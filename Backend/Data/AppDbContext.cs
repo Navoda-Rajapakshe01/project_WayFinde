@@ -23,6 +23,7 @@ namespace Backend.Data
         public DbSet<PostImage> PostImages { get; set; } = null!;
 
         public DbSet<PostComment> PostComments { get; set; } = null!;
+        public DbSet<PostReaction> PostReactions { get; set; } = null!;
 
 
         // DbSets for your models
@@ -415,6 +416,26 @@ namespace Backend.Data
                     .WithMany()
                     .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Restrict); // This prevents the cascade cycle
+            });
+            // PostReaction configuration
+            modelBuilder.Entity<PostReaction>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.Post)
+                    .WithMany()
+                    .HasForeignKey(e => e.PostId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Prevent duplicate reactions
+                entity.HasIndex(e => new { e.PostId, e.UserId })
+                    .IsUnique()
+                    .HasDatabaseName("IX_PostReaction_PostId_UserId");
             });
         }
     }

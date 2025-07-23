@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import "./ResetPassword.css";
 
@@ -28,7 +28,9 @@ const ResetPassword = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:5030/api/Auth/validate-reset-token?token=${encodeURIComponent(token)}&email=${encodeURIComponent(email)}`
+          `http://localhost:5030/api/Auth/validate-reset-token?token=${encodeURIComponent(
+            token
+          )}&email=${encodeURIComponent(email)}`
         );
         setIsTokenValid(true);
         setTokenChecked(true);
@@ -36,8 +38,8 @@ const ResetPassword = () => {
         console.error("Token validation error:", error);
         setIsTokenValid(false);
         setMessage(
-          error.response?.data?.message || 
-          "This password reset link is invalid or has expired."
+          error.response?.data?.message ||
+            "This password reset link is invalid or has expired."
         );
         setTokenChecked(true);
       }
@@ -55,7 +57,7 @@ const ResetPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setValidationError("");
-    
+
     // Validate password
     if (!validatePassword(password)) {
       setValidationError(
@@ -77,7 +79,7 @@ const ResetPassword = () => {
         "http://localhost:5030/api/Auth/reset-password",
         {
           token: token,
-          newPassword: password
+          newPassword: password,
         },
         {
           headers: {
@@ -87,17 +89,16 @@ const ResetPassword = () => {
       );
 
       setMessage("Your password has been reset successfully!");
-      
+
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate("/signin");
       }, 3000);
-      
     } catch (error) {
       console.error("Password reset error:", error);
       setValidationError(
-        error.response?.data?.message || 
-        "Failed to reset password. The link may have expired."
+        error.response?.data?.message ||
+          "Failed to reset password. The link may have expired."
       );
     } finally {
       setIsLoading(false);
@@ -154,46 +155,48 @@ const ResetPassword = () => {
 
   // Default: Form state
   return (
-    <div className="reset-password-container">
-      <div className="reset-password-form-section">
-        <form onSubmit={handleSubmit} className="reset-password-form">
-          <h2>Reset Password</h2>
-          <p className="instruction-text">
-            Please enter your new password below.
-          </p>
+    <div className="reset-password-page-wrapper">
+      <div className="reset-password-container">
+        <div className="reset-password-form-section">
+          <form onSubmit={handleSubmit} className="reset-password-form">
+            <h2>Reset Password</h2>
+            <p className="instruction-text">
+              Please enter your new password below.
+            </p>
 
-          <div className="input-group">
-            <label htmlFor="password">New Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter new password"
-              required
-            />
-          </div>
+            <div className="input-group-reset-password">
+              <label htmlFor="password">New Password</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter new password"
+                required
+              />
+            </div>
 
-          <div className="input-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
-              required
-            />
-          </div>
+            <div className="input-group-reset-password">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                required
+              />
+            </div>
 
-          {validationError && (
-            <p className="error-message">{validationError}</p>
-          )}
+            {validationError && (
+              <p className="error-message">{validationError}</p>
+            )}
 
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Resetting Password..." : "Reset Password"}
-          </button>
-        </form>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Resetting Password..." : "Reset Password"}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

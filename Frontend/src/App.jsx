@@ -67,6 +67,7 @@ import PlanTrip from "./pages/Trip/NewTrip/PlanTrip";
 import "./App.css";
 import UserTrips from "./pages/Admin/UserTrips";
 import UserBlogs from "./pages/Admin/UserBlogs";
+import Postview from "./Components/UserProfileComponents/Post/PostView";
 
 function AppRoutes() {
   const location = useLocation();
@@ -155,6 +156,7 @@ function AppRoutes() {
         </Route>
         <Route path="/blogcard" element={<BlogCard />} />
         <Route path="/profile/posts" element={<ProfilePosts/>} />
+        <Route path="/post/:id" element={<Postview />} />
       </Routes>
 
       {!isAdminRoute && <Footer />}

@@ -1,4 +1,5 @@
 ﻿using Backend.Data;
+using Backend.Models;
 using Backend.Models.Post;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
@@ -54,11 +55,11 @@ namespace Backend.Controllers
                 var result = posts.Select(p => new PostDto
                 {
                     Id = p.Id,
-                    Content = p.Content, // Map Content to Caption for frontend compatibility
+                    Content = p.Content,
                     CreatedAt = p.CreatedAt,
                     Likes = p.NumberOfReacts,
                     Comments = p.NumberOfComments,
-                    Images = GetImageUrls(p), // Helper method to get all image URLs
+                    Images = GetImageUrls(p),
                     Username = p.User?.Username ?? "Unknown",
                     ProfilePicture = p.User?.ProfilePictureUrl ?? "",
                 }).ToList();
@@ -73,7 +74,6 @@ namespace Backend.Controllers
         }
 
         // POST: api/Posts
-        // Replace your CreatePost method with this debug version
         [HttpPost]
         public async Task<ActionResult<PostDto>> CreatePost([FromForm] CreatePostRequest request)
         {
@@ -91,7 +91,7 @@ namespace Backend.Controllers
                 _logger.LogInformation($"Content: '{request.Content}'");
                 _logger.LogInformation($"Files count: {request.Files?.Count ?? 0}");
 
-                // Step 1: Check if user exists
+                // Check if user exists
                 var userExists = await _context.UsersNew.AnyAsync(u => u.Id == userId);
                 if (!userExists)
                 {
@@ -99,7 +99,7 @@ namespace Backend.Controllers
                 }
                 _logger.LogInformation("✅ User exists in database");
 
-                // Step 2: Upload images to Cloudinary first (but don't save to DB yet)
+                // Upload images to Cloudinary
                 var uploadedImageUrls = new List<string>();
                 string coverImageUrl = string.Empty;
 
@@ -155,10 +155,10 @@ namespace Backend.Controllers
 
                 _logger.LogInformation($"✅ Total images uploaded: {uploadedImageUrls.Count}");
 
-                // Step 3: Create post object
+                // Create post object
                 var post = new Post
                 {
-                    Title = string.IsNullOrEmpty(request.Content   ) ? "Untitled" :
+                    Title = string.IsNullOrEmpty(request.Content) ? "Untitled" :
                            (request.Content.Length > 50 ? request.Content.Substring(0, 50) + "..." : request.Content),
                     Content = request.Content ?? string.Empty,
                     CreatedAt = DateTime.UtcNow,
@@ -168,26 +168,18 @@ namespace Backend.Controllers
                     NumberOfReads = 0,
                     NumberOfReacts = 0,
                     CoverImageUrl = coverImageUrl,
-                    ImageUrls = uploadedImageUrls.Any() ? System.Text.Json.JsonSerializer.Serialize(uploadedImageUrls) : string.Empty
+                    ImageUrls = uploadedImageUrls.Any() ? JsonSerializer.Serialize(uploadedImageUrls) : string.Empty
                 };
 
-                _logger.LogInformation("Post object created with:");
-                _logger.LogInformation($"  Title: {post.Title}");
-                _logger.LogInformation($"  Content: {post.Content}");
-                _logger.LogInformation($"  UserId: {post.UserId}");
-                _logger.LogInformation($"  CoverImageUrl: {post.CoverImageUrl}");
-                _logger.LogInformation($"  ImageUrls: {post.ImageUrls}");
+                _logger.LogInformation("Post object created");
 
-                // Step 4: Save ONLY the post first (no PostImages yet)
-                _logger.LogInformation("Adding post to context...");
+                // Save the post
                 _context.Posts.Add(post);
-
-                _logger.LogInformation("Saving post to database...");
                 await _context.SaveChangesAsync();
 
                 _logger.LogInformation($"✅ Post saved successfully with ID: {post.Id}");
 
-                // Step 5: Try to create PostImage records (this might be where it fails)
+                // Create PostImage records
                 if (uploadedImageUrls.Any())
                 {
                     _logger.LogInformation($"Creating {uploadedImageUrls.Count} PostImage records...");
@@ -203,30 +195,20 @@ namespace Backend.Controllers
                                 DisplayOrder = i
                             };
 
-                            _logger.LogInformation($"Adding PostImage {i + 1}: PostId={post.Id}, ImageUrl={uploadedImageUrls[i]}, DisplayOrder={i}");
                             _context.PostImages.Add(postImage);
                         }
 
-                        _logger.LogInformation("Saving PostImage records...");
                         await _context.SaveChangesAsync();
                         _logger.LogInformation("✅ PostImage records saved successfully");
                     }
                     catch (Exception postImageEx)
                     {
                         _logger.LogError(postImageEx, "❌ Error saving PostImage records");
-                        _logger.LogError("PostImage error details: {Message}", postImageEx.Message);
-                        if (postImageEx.InnerException != null)
-                        {
-                            _logger.LogError("PostImage inner exception: {InnerMessage}", postImageEx.InnerException.Message);
-                        }
-
-                        // Post is already saved, so we can continue without PostImage records
-                        _logger.LogWarning("⚠️ Continuing without PostImage records - post will use ImageUrls field only");
+                        _logger.LogWarning("⚠️ Continuing without PostImage records");
                     }
                 }
 
-                // Step 6: Fetch and return the created post
-                _logger.LogInformation("Fetching created post...");
+                // Fetch and return the created post
                 var createdPost = await _context.Posts
                     .Include(p => p.User)
                     .Include(p => p.Images)
@@ -255,13 +237,6 @@ namespace Backend.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "❌ FATAL ERROR in CreatePost");
-                _logger.LogError("Error message: {Message}", ex.Message);
-                if (ex.InnerException != null)
-                {
-                    _logger.LogError("Inner exception: {InnerMessage}", ex.InnerException.Message);
-                }
-                _logger.LogError("Stack trace: {StackTrace}", ex.StackTrace);
-
                 return StatusCode(500, new
                 {
                     error = "Post creation failed",
@@ -274,13 +249,13 @@ namespace Backend.Controllers
 
         // GET: api/Posts/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<PostDto>> GetPost(int id)
+        public async Task<ActionResult<object>> GetPost(int id)
         {
             try
             {
                 var post = await _context.Posts
-                    .Include(p => p.User)
                     .Include(p => p.Images)
+                    .Include(p => p.User)
                     .FirstOrDefaultAsync(p => p.Id == id);
 
                 if (post == null)
@@ -288,34 +263,45 @@ namespace Backend.Controllers
                     return NotFound("Post not found");
                 }
 
-                // Increment read count
-                post.NumberOfReads++;
-                await _context.SaveChangesAsync();
+                // Get comment count
+                var commentCount = await _context.PostComments
+                    .CountAsync(c => c.PostId == id);
 
-                var postDto = new PostDto
+                // Get like count
+                var likeCount = await _context.PostReactions
+                    .CountAsync(r => r.PostId == id);
+
+                var result = new
                 {
-                    Id = post.Id,
-                    Content = post.Content,
-                    CreatedAt = post.CreatedAt,
-                    Likes = post.NumberOfReacts,
-                    Comments = post.NumberOfComments,
-                    Images = GetImageUrls(post),
-                    Username = post.User?.Username ?? "Unknown",
-                    ProfilePicture = post.User?.ProfilePictureUrl ?? ""
+                    id = post.Id,
+                    title = post.Title,
+                    content = post.Content,
+                    createdAt = post.CreatedAt,
+                    userId = post.UserId,
+                    username = post.User.Username,
+                    likes = likeCount,
+                    comments = commentCount,
+                    images = GetImageUrls(post).Select(img => new { imageUrl = img.ImageUrl }),
+                    user = new
+                    {
+                        id = post.User.Id,
+                        username = post.User.Username,
+                        profilePictureUrl = post.User.ProfilePictureUrl
+                    }
                 };
 
-                return Ok(postDto);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting post {PostId}", id);
-                return StatusCode(500, "An error occurred while retrieving the post");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
-        // POST: api/Posts/{id}/react
-        [HttpPost("{id}/react")]
-        public async Task<ActionResult> ReactToPost(int id)
+        // DELETE: api/Posts/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePost(int id)
         {
             try
             {
@@ -325,22 +311,304 @@ namespace Backend.Controllers
                     return Unauthorized("Invalid user credentials");
                 }
 
-                var post = await _context.Posts.FindAsync(id);
+                var post = await _context.Posts
+                    .Include(p => p.Images)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+
                 if (post == null)
                 {
                     return NotFound("Post not found");
                 }
 
-                // Simple toggle for now - you can implement proper user-specific reactions later
-                post.NumberOfReacts = Math.Max(0, post.NumberOfReacts == 0 ? 1 : 0);
+                if (post.UserId != userId)
+                {
+                    return Forbid("You can only delete your own posts");
+                }
+
+                // Delete related images
+                if (post.Images != null && post.Images.Any())
+                {
+                    _context.PostImages.RemoveRange(post.Images);
+                }
+
+                // Delete the post
+                _context.Posts.Remove(post);
                 await _context.SaveChangesAsync();
 
-                return Ok(new { likes = post.NumberOfReacts, liked = post.NumberOfReacts > 0 });
+                return Ok(new { message = "Post deleted successfully" });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error reacting to post {PostId}", id);
-                return StatusCode(500, "An error occurred while processing the reaction");
+                _logger.LogError(ex, "Error deleting post {PostId}", id);
+                return StatusCode(500, "An error occurred while deleting the post");
+            }
+        }
+
+        // GET: api/Posts/{postId}/comments
+        [HttpGet("{postId}/comments")]
+        public async Task<ActionResult<IEnumerable<object>>> GetPostComments(int postId)
+        {
+            try
+            {
+                var post = await _context.Posts.FindAsync(postId);
+                if (post == null)
+                {
+                    return NotFound("Post not found");
+                }
+
+                var comments = await _context.PostComments
+                    .Where(c => c.PostId == postId)
+                    .Include(c => c.User)
+                    .OrderByDescending(c => c.CreatedAt)
+                    .Select(c => new
+                    {
+                        id = c.Id,
+                        content = c.Content,
+                        createdAt = c.CreatedAt,
+                        user = new
+                        {
+                            id = c.User.Id,
+                            username = c.User.Username,
+                            profilePictureUrl = c.User.ProfilePictureUrl
+                        }
+                    })
+                    .ToListAsync();
+
+                return Ok(comments);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting comments for post {PostId}", postId);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPost("{postId}/comments")]
+        public async Task<ActionResult<object>> AddPostComment(int postId, [FromBody] CreateCommentRequest request)
+        {
+            try
+            {
+                _logger.LogInformation("=== ADD COMMENT DEBUG START ===");
+
+                var post = await _context.Posts.FindAsync(postId);
+                if (post == null)
+                {
+                    return NotFound("Post not found");
+                }
+
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                {
+                    return Unauthorized("Invalid user ID");
+                }
+
+                var user = await _context.UsersNew.FindAsync(userId);
+                if (user == null)
+                {
+                    return Unauthorized("User not found");
+                }
+
+                if (string.IsNullOrWhiteSpace(request.Content))
+                {
+                    return BadRequest("Comment content cannot be empty");
+                }
+
+                try
+                {
+                    // Create comment with only the fields that exist in the model
+                    var comment = new PostComment
+                    {
+                        PostId = postId,
+                        UserId = userId,
+                        Content = request.Content.Trim(),
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.PostComments.Add(comment);
+
+                    // Wrap in its own try-catch to see detailed database exceptions
+                    try
+                    {
+                        var changes = await _context.SaveChangesAsync();
+                        _logger.LogInformation($"Comment saved with ID: {comment.Id}, Database changes: {changes}");
+                    }
+                    catch (DbUpdateException dbEx)
+                    {
+                        _logger.LogError("Database update error: {Message}", dbEx.Message);
+                        _logger.LogError("Inner exception: {Inner}", dbEx.InnerException?.Message);
+                        throw;
+                    }
+
+                    // Get the updated comment count
+                    var commentCount = await _context.PostComments
+                        .CountAsync(c => c.PostId == postId);
+
+                    // Return the created comment with user info
+                    var result = new
+                    {
+                        comment = new
+                        {
+                            id = comment.Id,
+                            content = comment.Content,
+                            createdAt = comment.CreatedAt,
+                            user = new
+                            {
+                                id = user.Id,
+                                username = user.Username,
+                                profilePictureUrl = user.ProfilePictureUrl
+                            }
+                        },
+                        postCommentCount = commentCount
+                    };
+
+                    _logger.LogInformation("=== ADD COMMENT DEBUG SUCCESS ===");
+                    return Ok(result);
+                }
+                catch (Exception innerEx)
+                {
+                    _logger.LogError("Inner operation error: {Message}", innerEx.Message);
+                    _logger.LogError("Stack trace: {StackTrace}", innerEx.StackTrace);
+                    throw;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding comment to post {PostId}", postId);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        // DELETE: api/Posts/comment/{commentId}
+        [HttpDelete("comment/{commentId}")]
+        public async Task<ActionResult> DeleteComment(int commentId)
+        {
+            try
+            {
+                var comment = await _context.PostComments
+                    .Include(c => c.User)
+                    .FirstOrDefaultAsync(c => c.Id == commentId);
+
+                if (comment == null)
+                {
+                    return NotFound("Comment not found");
+                }
+
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                {
+                    return Unauthorized("Invalid user ID");
+                }
+
+                if (comment.UserId != userId)
+                {
+                    return Forbid("You can only delete your own comments");
+                }
+
+                _context.PostComments.Remove(comment);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Comment deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting comment {CommentId}", commentId);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // POST: api/Posts/{postId}/react
+        [HttpPost("{postId}/react")]
+        public async Task<ActionResult<object>> TogglePostReaction(int postId)
+        {
+            try
+            {
+                var post = await _context.Posts.FindAsync(postId);
+                if (post == null)
+                {
+                    return NotFound("Post not found");
+                }
+
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                {
+                    return Unauthorized("Invalid user ID");
+                }
+
+                // Check if user already reacted
+                var existingReaction = await _context.PostReactions
+                    .FirstOrDefaultAsync(r => r.PostId == postId && r.UserId == userId);
+
+                bool reacted;
+                if (existingReaction != null)
+                {
+                    _context.PostReactions.Remove(existingReaction);
+                    reacted = false;
+                }
+                else
+                {
+                    var reaction = new PostReaction
+                    {
+                        PostId = postId,
+                        UserId = userId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    _context.PostReactions.Add(reaction);
+                    reacted = true;
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Get updated count
+                var count = await _context.PostReactions
+                    .CountAsync(r => r.PostId == postId);
+
+                return Ok(new { reacted, count, likes = count, liked = reacted });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error toggling reaction for post {PostId}", postId);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // GET: api/Posts/{postId}/reactions/status
+        [HttpGet("{postId}/reactions/status")]
+        public async Task<ActionResult<bool>> GetUserReactionStatus(int postId)
+        {
+            try
+            {
+                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+                {
+                    return Ok(false);
+                }
+
+                var hasReacted = await _context.PostReactions
+                    .AnyAsync(r => r.PostId == postId && r.UserId == userId);
+
+                return Ok(hasReacted);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting reaction status for post {PostId}", postId);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // GET: api/Posts/{postId}/reactions/count
+        [HttpGet("{postId}/reactions/count")]
+        public async Task<ActionResult<int>> GetPostReactionCount(int postId)
+        {
+            try
+            {
+                var count = await _context.PostReactions
+                    .CountAsync(r => r.PostId == postId);
+
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting reaction count for post {PostId}", postId);
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
 
@@ -369,7 +637,7 @@ namespace Backend.Controllers
                     {
                         imageList.AddRange(urls.Select((url, index) => new PostImageDto
                         {
-                            ImageId = 0, // No specific ID from ImageUrls field
+                            ImageId = 0,
                             ImageUrl = url,
                             DisplayOrder = index
                         }));
@@ -400,57 +668,14 @@ namespace Backend.Controllers
 
             return imageList;
         }
-
-        // Add this method to your existing PostsController
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePost(int id)
-        {
-            try
-            {
-                // Get current user ID
-                var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-                {
-                    return Unauthorized("Invalid user credentials");
-                }
-
-                // Find post
-                var post = await _context.Posts
-                    .Include(p => p.Images)
-                    .FirstOrDefaultAsync(p => p.Id == id);
-
-                if (post == null)
-                {
-                    return NotFound("Post not found");
-                }
-
-                // Verify user owns the post
-                if (post.UserId != userId)
-                {
-                    return Forbid("You can only delete your own posts");
-                }
-
-                // Delete related images first
-                if (post.Images != null && post.Images.Any())
-                {
-                    _context.PostImages.RemoveRange(post.Images);
-                }
-
-                // Delete the post
-                _context.Posts.Remove(post);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Post deleted successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting post {PostId}", id);
-                return StatusCode(500, "An error occurred while deleting the post");
-            }
-        }
     }
 
-    // Keep the same DTOs
+    // Request models
+    public class CreateCommentRequest
+    {
+        public string Content { get; set; } = string.Empty;
+    }
+
     public class CreatePostRequest
     {
         public string Content { get; set; } = string.Empty;

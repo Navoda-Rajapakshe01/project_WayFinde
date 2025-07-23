@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Heart, MessageCircle, Plus, Upload, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../../Authentication/AuthProvider/AuthProvider";
 import ProfileHeadSection from "../ProfileHeadsection/ProfileHeadsection";
@@ -16,6 +17,7 @@ const PostsPage = () => {
   const [uploading, setUploading] = useState(false);
 
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   // API Base URL - adjust this to match your backend
   const API_BASE_URL = "http://localhost:5030/api";
@@ -61,6 +63,8 @@ const PostsPage = () => {
           liked: false,
           timestamp: formatDate(post.createdAt),
           username: post.username || "Unknown",
+          title: post.title || "",
+          userId: post.userId,
         }));
 
         setPosts(formattedPosts);
@@ -70,7 +74,11 @@ const PostsPage = () => {
       }
     } catch (err) {
       console.error("Error fetching posts:", err);
-      // Rest of your error handling
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to load posts. Please try again.",
+      });
     } finally {
       setLoading(false);
     }
@@ -96,7 +104,10 @@ const PostsPage = () => {
   };
 
   // Handle like/unlike post
-  const handleLike = async (postId) => {
+  const handleLike = async (postId, event) => {
+    // Prevent navigation when clicking like button
+    event.stopPropagation();
+
     // Optimistic UI update
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
@@ -160,6 +171,19 @@ const PostsPage = () => {
         showConfirmButton: false,
       });
     }
+  };
+
+  // Handle post click navigation
+  const handlePostClick = (postId) => {
+    navigate(`/post/${postId}`);
+  };
+
+  // Handle comment button click
+  const handleCommentClick = (postId, event) => {
+    // Prevent navigation when clicking comment button
+    event.stopPropagation();
+    // Navigate to post view page
+    navigate(`/post/${postId}`);
   };
 
   // Handle file selection
@@ -270,7 +294,9 @@ const PostsPage = () => {
   };
 
   // Add this function to handle dot navigation
-  const goToImage = (postId, index) => {
+  const goToImage = (postId, index, event) => {
+    // Prevent navigation when clicking dots
+    event.stopPropagation();
     setCurrentImageIndex((prev) => ({
       ...prev,
       [postId]: index,
@@ -363,7 +389,11 @@ const PostsPage = () => {
           </div>
         ) : (
           posts.map((post) => (
-            <div key={post.id} className="post-card">
+            <div
+              key={post.id}
+              className="post-card clickable-post"
+              onClick={() => handlePostClick(post.id)}
+            >
               <div className="post-images">
                 {/* Show indicators for all posts with multiple images */}
                 {post.images.length > 1 && (
@@ -376,7 +406,7 @@ const PostsPage = () => {
                             ? "active"
                             : ""
                         }`}
-                        onClick={() => goToImage(post.id, index)}
+                        onClick={(e) => goToImage(post.id, index, e)}
                       />
                     ))}
                   </div>
@@ -417,6 +447,8 @@ const PostsPage = () => {
                   )}
                 </div>
 
+                {post.title && <h3 className="post-title">{post.title}</h3>}
+
                 <p className="post-caption">{post.caption}</p>
 
                 <div className="post-meta">
@@ -426,12 +458,15 @@ const PostsPage = () => {
                 <div className="post-actions">
                   <button
                     className={`action-btn ${post.liked ? "liked" : ""}`}
-                    onClick={() => handleLike(post.id)}
+                    onClick={(e) => handleLike(post.id, e)}
                   >
                     <Heart size={18} fill={post.liked ? "#e74c3c" : "none"} />
                     <span>Likes ({post.likes})</span>
                   </button>
-                  <button className="action-btn">
+                  <button
+                    className="action-btn"
+                    onClick={(e) => handleCommentClick(post.id, e)}
+                  >
                     <MessageCircle size={18} />
                     <span>Comments ({post.comments})</span>
                   </button>
