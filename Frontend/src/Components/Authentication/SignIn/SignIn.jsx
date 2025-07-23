@@ -154,15 +154,6 @@ const Login = () => {
 
       setUser(userProfile);
       localStorage.setItem("userProfile", JSON.stringify(userProfile));
-      // Ensure CometChat login before redirect
-      try {
-        await loginCometChat(userProfile.id || userProfile.userId, userProfile.fullName || userProfile.username || userProfile.name);
-        console.log('CometChat login successful!');
-      } catch (e) {
-        console.error('CometChat login failed:', e);
-        setError('CometChat login failed. Please try again.');
-        return;
-      }
       if (roleClaim === "TransportProvider") {
         window.location.href = "/vehicle/supplier";
       } else if (roleClaim === "AccommodationProvider") {

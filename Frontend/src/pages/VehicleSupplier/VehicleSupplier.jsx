@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import VehicleForm from "./VehicleForm";
 import VehicleCard from "./VehicleCard";
@@ -6,12 +6,17 @@ import Alert from "../Alert";
 import HeroSection from "../../Components/HeroSection/HeroSection";
 import "../CSS/VehicleSupplier.css";
 import { Tabs, Tab } from "react-bootstrap";
+import { AuthContext } from "../../Components/Authentication/AuthContext/AuthContext";
 
 const fallbackVehicles = [];
 const fallbackBookings = [];
 
 const VehicleSupplier = () => {
+  const { user } = useContext(AuthContext);
+  const supplierId = user?.id;
+
   const [vehicles, setVehicles] = useState([]);
+  const [vehicleId, setVehicleId] = useState(null); // <-- Added state for selected vehicleId
   const [showForm, setShowForm] = useState(false);
   const [alert, setAlert] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -28,9 +33,11 @@ const VehicleSupplier = () => {
   const fetchVehicles = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5030/api/vehicle");
+      const res = await axios.get(
+        `http://localhost:5030/api/Vehicle/supplier/${supplierId}`
+      );
 
-      const vehicleList = res.data?.$values ?? []; // Extract actual array
+      const vehicleList = res.data?.$values ?? [];
       setVehicles(vehicleList);
 
       const totalVehicles = vehicleList.length;
@@ -59,16 +66,21 @@ const VehicleSupplier = () => {
   };
 
   const fetchBookings = async () => {
+    if (!vehicleId) return; // Do nothing if no vehicle is selected
+
     try {
       const res = await axios.get(
-        "http://localhost:5030/api/VehicleReservations"
+        `http://localhost:5030/api/VehicleReservations/vehicle/${vehicleId}`
       );
+      console.log("Bookings API response:", res.data);
 
-      const bookingsData = res.data.map((b) => ({
+      const bookingsArray = res.data?.$values ?? [];
+      const bookingsData = bookingsArray.map((b) => ({
         id: b.id,
         vehicleBrand: b.vehicle?.brand || "Unknown",
         vehicleModel: b.vehicle?.model || "",
         customerName: b.customerName,
+        customerId: b.customerId,
         startDate: b.startDate,
         endDate: b.endDate,
         status: b.status,
@@ -149,30 +161,10 @@ const VehicleSupplier = () => {
     setTimeout(() => setAlert(""), 3000);
   };
 
-  const handleViewBookings = async (vehicleId) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5030/api/VehicleReservations/vehicle/${vehicleId}`
-      );
-
-      const bookingsData = res.data.map((b) => ({
-        id: b.id,
-        vehicleBrand: b.vehicle?.brand || "Unknown",
-        vehicleModel: b.vehicle?.model || "",
-        customerName: b.customerName,
-        startDate: b.startDate,
-        endDate: b.endDate,
-        status: b.status,
-        totalAmount: b.totalAmount,
-        bookingDate: b.bookingDate,
-      }));
-
-      setBookings(bookingsData);
-      setActiveTab("bookings");
-    } catch {
-      setAlert("Failed to load bookings for this vehicle.");
-      setTimeout(() => setAlert(""), 3000);
-    }
+  // Simplified handleViewBookings to just set vehicleId & tab
+  const handleViewBookings = (id) => {
+    setVehicleId(id);
+    setActiveTab("bookings");
   };
 
   const handleUpdateBookingStatus = async (bookingId, newStatus) => {
@@ -207,9 +199,13 @@ const VehicleSupplier = () => {
   };
 
   useEffect(() => {
-    fetchVehicles();
-    fetchBookings();
-  }, []);
+    if (supplierId) {
+      fetchVehicles();
+    }
+    if (vehicleId) {
+      fetchBookings();
+    }
+  }, [supplierId, vehicleId]);
 
   if (loading) {
     return (
@@ -360,7 +356,7 @@ const VehicleSupplier = () => {
                     onToggleStatus={handleToggleStatus}
                     onDelete={() => handleDeleteVehicle(v.id)}
                     onEdit={() => handleEditVehicle(v)}
-                    onViewBookings={() => handleViewBookings(v.id)}
+                    onViewBookings={() => handleViewBookings(v.id)} // passes id to set vehicleId
                   />
                 ))
               )}
@@ -382,7 +378,6 @@ const VehicleSupplier = () => {
                     <th>Dates</th>
                     <th>Status</th>
                     <th>Amount</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -409,36 +404,6 @@ const VehicleSupplier = () => {
                           </span>
                         </td>
                         <td>Rs {amount.toFixed(2)}</td>
-                        <td>
-                          {status.toLowerCase() === "pending" && (
-                            <>
-                              <button
-                                className="btn-confirm"
-                                onClick={() =>
-                                  handleUpdateBookingStatus(b.id, "Confirmed")
-                                }>
-                                Confirm
-                              </button>
-                              <button
-                                className="btn-reject"
-                                onClick={() =>
-                                  handleUpdateBookingStatus(b.id, "Rejected")
-                                }>
-                                Reject
-                              </button>
-                            </>
-                          )}
-                          {status.toLowerCase() === "rejected" && (
-                            <button
-                              className="btn-delete"
-                              onClick={() => handleDeleteBooking(b.id)}>
-                              Delete
-                            </button>
-                          )}
-                          {["confirmed", "completed"].includes(
-                            status.toLowerCase()
-                          ) && <span className="action-none">—</span>}
-                        </td>
                       </tr>
                     );
                   })}

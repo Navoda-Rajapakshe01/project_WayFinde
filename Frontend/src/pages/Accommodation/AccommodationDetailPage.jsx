@@ -18,6 +18,8 @@ const AccommodationDetailPage = () => {
     endDate: "",
     guests: "",
     additionalRequirements: "",
+    email: "",
+    phone: "",
     tripId: null, // optional
   });
   const [userTrips, setUserTrips] = useState([]);
@@ -103,13 +105,16 @@ const AccommodationDetailPage = () => {
     accommodation,
   ]);
 
-  const handleBookNow = () => {
+  const handleBookNow = async () => {
     // basic front‑end validation
     if (
       !bookingData.customerName.trim() ||
       !bookingData.startDate ||
       !bookingData.endDate ||
-      !bookingData.guests
+      !bookingData.guests ||
+      !bookingData.email ||
+      !bookingData.phone ||
+      !bookingData.additionalRequirements
     ) {
       swal.fire(
         "Missing fields",
@@ -128,46 +133,53 @@ const AccommodationDetailPage = () => {
       return;
     }
 
-    /* ----------  PAYLOAD  ---------- */
+    const start = new Date(bookingData.startDate);
+    const end = new Date(bookingData.endDate);
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const totalAmount = days * parseFloat(accommodation?.pricePerNight || 0);
+
+    if (isNaN(totalAmount) || totalAmount <= 0) {
+      swal.fire("Error", "Invalid amount or date range", "error");
+      return;
+    }
+    const [firstName, ...rest] = bookingData.customerName.trim().split(" ");
+    const lastName = rest.join(" ") || " ";
+
     const payload = {
-      accommodationId: accommodation.id,
-      customerName: bookingData.customerName.trim(),
-      startDate: startDateTime.toISOString(),
-      endDate: endDateTime.toISOString(),
-      guests: Number(bookingData.guests), // <‑‑ numeric!
-      additionalRequirements: bookingData.additionalRequirements.trim() || null,
-      tripId: bookingData.tripId || null,
-      totalAmount: calculatedAmount,
+      AccommodationId: accommodation.id,
+      StartDate: bookingData.startDate,
+      EndDate: bookingData.endDate,
+      Guests: Number(bookingData.guests),
+      AdditionalRequirements: bookingData.additionalRequirements || null,
+      TotalAmount: totalAmount,
+      TripId: bookingData.tripId || null,
+      FirstName: firstName,
+      LastName: lastName,
+      Email: bookingData.email,
+      Phone: bookingData.phone,
+      ItemName: accommodation.name,
+      OrderId: `ORDER_${Date.now()}`,
+      Description: `Booking for ${accommodation.name}`,
+      ReservationType: "accommodation",
     };
 
     console.log("Payload:", payload);
 
-    axios
-      .post(
-        "http://localhost:5030/api/AccommodationReservation/accommodation",
+    try {
+      const res = await axios.post(
+        "http://localhost:5030/api/payments/create-checkout-session",
         payload
-      )
-      .then(() => {
-        setBookingSuccess(true);
-        swal.fire("Success", "Booking request sent!", "success");
-        setBookingData({
-          customerName: "",
-          startDate: "",
-          endDate: "",
-          guests: "",
-          additionalRequirements: "",
-          tripId: null,
-        });
-        setCalculatedAmount(0);
-      })
-      .catch((err) => {
-        console.error("Booking error:", err);
-        swal.fire(
-          "Booking failed",
-          err.response?.data || "Please try again later.",
-          "error"
-        );
-      });
+      );
+
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        swal.fire("Error", "Stripe session creation failed", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      swal.fire("Error", "Payment initiation failed", "error");
+    }
   };
 
   const submitReview = (name, email) => {
@@ -503,12 +515,30 @@ const AccommodationDetailPage = () => {
                 }
               />
               <input
+                type="email"
+                placeholder="Email"
+                value={bookingData.email}
+                onChange={(e) =>
+                  setBookingData({ ...bookingData, email: e.target.value })
+                }
+              />
+              <input
+                type="tel"
+                placeholder="Phone"
+                value={bookingData.phone}
+                onChange={(e) =>
+                  setBookingData({ ...bookingData, phone: e.target.value })
+                }
+              />
+              <label htmlFor="">Start Date</label>
+              <input
                 type="date"
                 value={bookingData.startDate}
                 onChange={(e) =>
                   setBookingData({ ...bookingData, startDate: e.target.value })
                 }
               />
+              <label htmlFor="">End Date</label>
               <input
                 type="date"
                 value={bookingData.endDate}
@@ -539,6 +569,11 @@ const AccommodationDetailPage = () => {
                   })
                 }
               />
+
+              <p className="font-semibold mt-2">
+                Total: Rs. {calculatedAmount.toFixed(2)}
+              </p>
+
               <select
                 value={bookingData.tripId || ""}
                 onChange={(e) =>

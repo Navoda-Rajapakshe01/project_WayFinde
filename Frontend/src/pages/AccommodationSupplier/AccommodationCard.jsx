@@ -3,13 +3,13 @@ import "../CSS/Accommodation.css";
 
 const AccommodationCard = ({
   accommodation,
-  onToggleStatus = () => {},
+  onToggleStatus,
   onEdit = () => {},
   onDelete = () => {},
   onViewBookings = () => {},
 }) => {
-  const status = (accommodation.status || "Available").toLowerCase();
-  const isAvailable = status === "available";
+  //const status = (accommodation.status || "Available").toLowerCase();
+  const status = accommodation.isAvailable ? "Available" : "Rented";
 
   return (
     <div className="accommodation-card">
@@ -67,25 +67,15 @@ const AccommodationCard = ({
         )}
 
         <p className="accommodation-status">
-          Status:{" "}
-          <span className={`status-${status}`}>
-            {accommodation.status || "Available"}
-          </span>
+          Status:{""}
+          <span className={`status-${status.toLowerCase()}}`}>{status}</span>
         </p>
 
         <div className="accommodation-card-actions">
           <button
-            type="button"
-            className={`status-toggle-btn ${
-              isAvailable ? "available" : "unavailable"
-            }`}
-            onClick={() =>
-              onToggleStatus(
-                accommodation.id,
-                accommodation.status || "Available"
-              )
-            }>
-            {isAvailable ? "Mark as Unavailable" : "Mark as Available"}
+            className="status-toggle-btn"
+            onClick={() => onToggleStatus(accommodation.id, status)}>
+            {status === "Available" ? "Mark as Rented" : "Mark as Available"}
           </button>
 
           <div className="action-buttons">

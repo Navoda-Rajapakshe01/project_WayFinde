@@ -40,7 +40,7 @@ namespace Backend.Services
                 StartDate = bookingDto.StartDate,
                 EndDate = bookingDto.EndDate,
                 Guests = bookingDto.Guests,
-                CustomerName = bookingDto.CustomerName.Trim(),
+                CustomerName = bookingDto.CustomerName,
                 AdditionalRequirements = bookingDto.SpecialRequests?.Trim() ?? string.Empty,
                 TotalAmount = totalAmount,
                 Status = "Pending",
