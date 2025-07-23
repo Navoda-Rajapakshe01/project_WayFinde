@@ -73,15 +73,21 @@ import AdminUserAccommodations from "./pages/Admin/AdminUserAccommodations";
 import { CometChat } from "@cometchat-pro/chat";
 import Postview from "./Components/UserProfileComponents/Post/Postview";
 
-const appID = "279195a6164aa3fa"; 
-const region = "in"; 
+const appID = "279195a6164aa3fa";
+const region = "in";
 const authKey = import.meta.env.VITE_COMETCHAT_AUTH_KEY;
 
-CometChat.init(appID, new CometChat.AppSettingsBuilder().subscribePresenceForAllUsers().setRegion(region).build())
+CometChat.init(
+  appID,
+  new CometChat.AppSettingsBuilder()
+    .subscribePresenceForAllUsers()
+    .setRegion(region)
+    .build()
+)
   .then(() => {
     console.log("CometChat initialized successfully");
   })
-  .catch(error => {
+  .catch((error) => {
     console.error("CometChat initialization failed", error);
   });
 
@@ -122,33 +128,65 @@ function AppRoutes() {
         <Route path="/plantrip" element={<CreateTrip />} />
         <Route path="/upcomingtrips" element={<AllTrips />} />
         <Route path="/alltrips" element={<AllTrips />} />
-        <Route path="/accommodation" element={<Accommodation />} />
         <Route
-          path="/shared-trip/:tripId"
-          element={<TripDashboard sharedMode={true} />}
+          path="/accommodation"
+          element={
+            user?.role === "NormalUser" ? (
+              <Accommodation />
+            ) : user?.role === "TransportProvider" ? (
+              <Navigate to="/vehicle/supplier" replace />
+            ) : user?.role === "AccommodationProvider" ? (
+              <Navigate to="/accommodation/supplier" replace />
+            ) : (
+              <Navigate to="/signin" replace />
+            )
+          }
         />
 
-        <Route path="/vehicle" element={<Vehicle />} />
+        <Route
+          path="/vehicle"
+          element={
+            user?.role === "NormalUser" ? (
+              <Vehicle />
+            ) : user?.role === "TransportProvider" ? (
+              <Navigate to="/vehicle/supplier" replace />
+            ) : user?.role === "AccommodationProvider" ? (
+              <Navigate to="/accommodation/supplier" replace />
+            ) : (
+              <Navigate to="/signin" replace />
+            )
+          }
+        />
         <Route
           path="/vehicle/supplier"
           element={
             user?.role === "TransportProvider" ? (
               <VehicleSupplier />
-            ) : (
+            ) : user?.role === "AccommodationProvider" ? (
+              <Navigate to="/accommodation/supplier" replace />
+            ) : user?.role === "NormalUser" ? (
               <Navigate to="/vehicle" replace />
+            ) : (
+              <Navigate to="/signin" replace />
             )
           }
         />
+
         <Route
           path="/accommodation/supplier"
           element={
             user?.role === "AccommodationProvider" ? (
               <AccommodationSupplier />
-            ) : (
+            ) : user?.role === "TransportProvider" ? (
+              <Navigate to="/vehicle/supplier" replace />
+            ) : user?.role === "NormalUser" ? (
               <Navigate to="/accommodation" replace />
+            ) : (
+              <Navigate to="/signin" replace />
             )
           }
         />
+        <Route path="/payment-success" element={<PaymentSuccessPage />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/thingstodo" element={<ThingsToDo />} />
         <Route path="/things-to-do/:slug" element={<DistrictDetails />} />
@@ -190,9 +228,15 @@ function AppRoutes() {
           <Route path="user-profile/:userId" element={<UserProfileDetail />} />
           <Route path="user-trips/:userId" element={<UserTrips />} />
           <Route path="user-blogs/:userId" element={<UserBlogs />} />
-          <Route path="accommodation-management" element={<AccommodationManagement />} />
+          <Route
+            path="accommodation-management"
+            element={<AccommodationManagement />}
+          />
           <Route path="user-vehicles/:userId" element={<AdminUserVehicles />} />
-          <Route path="user-accommodations/:userId" element={<AdminUserAccommodations />} />
+          <Route
+            path="user-accommodations/:userId"
+            element={<AdminUserAccommodations />}
+          />
         </Route>
         <Route path="/blogcard" element={<BlogCard />} />
         <Route path="/profile/posts" element={<ProfilePosts/>} />

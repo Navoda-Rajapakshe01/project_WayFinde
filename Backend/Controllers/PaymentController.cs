@@ -1,122 +1,106 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Backend.DTO;
-using System.Security.Cryptography;
-using System.Text;
+using Stripe.Checkout;
+using Stripe;
 
-namespace Backend.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class PaymentsController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class PaymentsController : ControllerBase
+    private readonly IConfiguration _config;
+
+    public PaymentsController(IConfiguration config)
     {
-        private const string MerchantId = "1231285";  // Your sandbox merchant ID
-        private const string MerchantSecret = "4034831300248320874625965917063830912806";        // Your merchant secret here
-        private const string ReturnUrl = "http://localhost:5173/payment/success";
-        private const string CancelUrl = "http://localhost:5173/payment/cancel";
-        private const string NotifyUrl = "http://localhost:5030/api/payments/verify";
-
-        // Helper method to generate PayHere hash
-        private string GeneratePayHereHash(string orderId, decimal amount, string currency = "LKR")
-        {
-            using var md5 = MD5.Create();
-
-            string innerHash;
-            {
-                var innerBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(MerchantSecret.ToUpper()));
-                innerHash = BitConverter.ToString(innerBytes).Replace("-", "").ToUpper();
-            }
-
-            string rawString = MerchantId + orderId + amount.ToString("F2") + currency + innerHash;
-            var bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(rawString));
-            return BitConverter.ToString(bytes).Replace("-", "").ToUpper();
-        }
-
-        [HttpPost("create")]
-        public IActionResult CreatePayment([FromBody] PaymentRequestDto request)
-        {
-            string hash = GeneratePayHereHash(request.OrderId, request.TotalAmount);
-
-            var paymentData = new
-            {
-                sandbox = true,
-                merchant_id = MerchantId,
-                return_url = ReturnUrl,
-                cancel_url = CancelUrl,
-                notify_url = NotifyUrl,
-                order_id = request.OrderId,
-                items = request.ItemName,
-                amount = request.TotalAmount.ToString("F2"),
-                currency = "LKR",
-                hash = hash,
-                first_name = request.FirstName,
-                last_name = request.LastName ?? "",
-                email = request.Email,
-                phone = request.Phone,
-                address = request.Address ?? "N/A",
-                city = request.City ?? "N/A",
-                country = "Sri Lanka"
-            };
-
-            // Return the payment data JSON for frontend to use with payhere.js SDK
-            return Ok(paymentData);
-        }
-
-        // Implement notify_url endpoint to receive payment notifications from PayHere
-        [HttpPost("verify")]
-        public IActionResult VerifyPayment([FromForm] PayHereNotificationDto notification)
-        {
-            // Verify hash as per PayHere docs (md5sig verification)
-            string localMd5Sig = GenerateMd5Signature(notification);
-
-            if (localMd5Sig == notification.Md5Sig && notification.StatusCode == 2)
-            {
-                // Payment successful - update booking/payment status in DB here
-                return Ok("Payment verified and accepted");
-            }
-            else
-            {
-                // Payment failed or invalid notification
-                return BadRequest("Invalid payment notification");
-            }
-        }
-
-        // Helper to generate md5sig for verification
-        private string GenerateMd5Signature(PayHereNotificationDto notification)
-        {
-            using var md5 = MD5.Create();
-
-            string innerHash;
-            {
-                var innerBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(MerchantSecret.ToUpper()));
-                innerHash = BitConverter.ToString(innerBytes).Replace("-", "").ToUpper();
-            }
-
-            string rawString = notification.MerchantId
-                + notification.OrderId
-                + notification.PayhereAmount.ToString("F2")
-                + notification.PayhereCurrency
-                + notification.StatusCode.ToString()
-                + innerHash;
-
-            var bytes = md5.ComputeHash(Encoding.UTF8.GetBytes(rawString));
-            return BitConverter.ToString(bytes).Replace("-", "").ToUpper();
-        }
+        _config = config;
+        StripeConfiguration.ApiKey = _config["Stripe:SecretKey"]; // Make sure this is in appsettings.json
     }
 
-    // DTO for PayHere notify POST params
-    public class PayHereNotificationDto
+    [HttpPost("create-checkout-session")]
+    public IActionResult CreateCheckoutSession([FromBody] CreateCheckoutSessionRequest request)
     {
-        [FromForm(Name = "merchant_id")]
-        public required string MerchantId { get; set; }
-        [FromForm(Name = "order_id")]
-        public required string OrderId { get; set; }
-        [FromForm(Name = "payhere_amount")]
-        public decimal PayhereAmount { get; set; }
-        [FromForm(Name = "payhere_currency")]
-        public required string PayhereCurrency { get; set; }
-        [FromForm(Name = "status_code")]
-        public int StatusCode { get; set; }
-        [FromForm(Name = "md5sig")]
-        public required string Md5Sig { get; set; }
+        // Validate required fields
+        if (string.IsNullOrWhiteSpace(request.Description))
+        {
+            return BadRequest("Description (product name) cannot be empty.");
+        }
+
+        if (request.TotalAmount <= 0)
+        {
+            return BadRequest("Amount must be greater than 0.");
+        }
+
+        var name = string.IsNullOrWhiteSpace(request.ItemName) ? "Reservation" : request.ItemName;
+        var description = string.IsNullOrWhiteSpace(request.Description)
+            ? $"Booking for {name}"
+            : request.Description;
+
+
+        var options = new SessionCreateOptions
+        {
+            PaymentMethodTypes = new List<string> { "card" },
+            LineItems = new List<SessionLineItemOptions>
+            {
+                new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "LKR",
+                        UnitAmountDecimal = request.TotalAmount * 100,
+                ProductData = new SessionLineItemPriceDataProductDataOptions
+                {
+                    Name = request.ItemName,
+                    Description = request.Description
+                }
+            },
+                    Quantity = 1
+                }
+            },
+            Mode = "payment",
+            SuccessUrl = "http://localhost:5173/payment/success",
+            CancelUrl = "http://localhost:5173/payment/cancel",
+            CustomerEmail = request.Email,
+
+            Metadata = new Dictionary<string, string>
+            {
+                { "reservation_type", request.ReservationType },
+                { "item_id", request.ItemId.ToString() },
+                { "customer_name", request.CustomerName },
+                { "start_date", request.StartDate.ToString("yyyy-MM-dd") },
+                { "end_date", request.EndDate.ToString("yyyy-MM-dd") },
+                { "guests", request.Guests.ToString() },
+                { "total_amount", request.TotalAmount.ToString() },
+                { "additional_requirements", request.AdditionalRequirements ?? "" },
+                { "pickup_location", request.PickupLocation ?? "" },
+                { "return_location", request.ReturnLocation ?? "" },
+                { "phone", request.Phone ?? "" },
+                { "order_id", request.OrderId ?? "" }
+            }
+        };
+
+        var service = new SessionService();
+        Session session = service.Create(options);
+
+        return Ok(new { url = session.Url });
+
     }
+}
+
+public class CreateCheckoutSessionRequest
+{
+    public decimal TotalAmount { get; set; }
+    public string ReservationType { get; set; } = "";
+    public string CustomerName { get; set; } = "";
+    public int ItemId { get; set; }
+    public string Description { get; set; } = "";
+    public string ItemName { get; set; } = "";           // ✅ Needed for Stripe product name
+    public int Guests { get; set; }                      // ✅ Needed for metadata
+
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public string PickupLocation { get; set; } = "";
+    public string ReturnLocation { get; set; } = "";
+    public string AdditionalRequirements { get; set; } = "";
+
+    public string Email { get; set; } = "";
+    public string Phone { get; set; } = "";
+    public string OrderId { get; set; } = "";
 }
