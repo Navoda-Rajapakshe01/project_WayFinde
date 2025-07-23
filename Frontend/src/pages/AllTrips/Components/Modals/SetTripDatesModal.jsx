@@ -96,8 +96,16 @@ const SetTripDatesModal = ({
               ? tripPlaceDates[index - 1].endDate || tripStartDate
               : tripStartDate;
 
-          const minStartDate = prevEndDate;
-          const maxStartDate = tripEndDate;
+          // Limit start date to previous end date or next day only
+          const allowedStartDateObj = new Date(prevEndDate);
+          const allowedMaxStartDateObj = new Date(prevEndDate);
+          allowedMaxStartDateObj.setDate(allowedMaxStartDateObj.getDate() + 1);
+
+          const minStartDate = allowedStartDateObj.toISOString().slice(0, 10);
+          const maxStartDate = allowedMaxStartDateObj
+            .toISOString()
+            .slice(0, 10);
+
           const minEndDate = startDateValue || minStartDate;
           const maxEndDate = tripEndDate;
 

@@ -14,7 +14,7 @@ import {
   Trash2,
   MoreHorizontal,
   Calendar,
-  DollarSign,
+  Wallet,
   MapPin,
   Eye,
   Map,
@@ -598,7 +598,7 @@ const AllTrips = () => {
 
                         {/* Avg Spent */}
                         <div className="flex items-center gap-2 mb-4">
-                          <DollarSign size={18} className="text-[#4CC9FE]" />
+                          <Wallet size={18} className="text-[#4CC9FE]" />
                           <span className="text-base font-bold text-gray-800">
                             {trip.avgSpent}
                           </span>
