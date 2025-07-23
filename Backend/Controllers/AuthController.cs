@@ -366,6 +366,27 @@ namespace Backend.Controllers
             return Ok(new { message = "Initial admin created successfully" });
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("approve-account-deletion/{requestId}")]
+        public async Task<IActionResult> ApproveAccountDeletion(int requestId)
+        {
+            var request = await _context.AccountDeletionRequests.FindAsync(requestId);
+            if (request == null)
+                return NotFound("Account deletion request not found.");
+
+            var user = await _context.UsersNew.FindAsync(request.UserId);
+            if (user == null)
+                return NotFound("User not found.");
+
+            // Hard delete: remove the user from the database
+            _context.UsersNew.Remove(user);
+
+            // Remove the deletion request
+            _context.AccountDeletionRequests.Remove(request);
+
+            await _context.SaveChangesAsync();
+            return Ok("User account permanently deleted after admin approval.");
+        }
 
 
     }
