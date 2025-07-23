@@ -75,13 +75,12 @@ const VehicleManagement = () => {
                 <th>Location</th>
                 <th>Capacity</th>
                 <th>Price/Day</th>
-                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: "center" }}>
+                  <td colSpan={7} style={{ textAlign: "center" }}>
                     No vehicles found.
                   </td>
                 </tr>
@@ -95,13 +94,6 @@ const VehicleManagement = () => {
                     <td>{v.location}</td>
                     <td>{v.numberOfPassengers}</td>
                     <td>{v.pricePerDay}</td>
-                    <td>
-                      <div className="adminaction-buttons">
-                        <button className="adminedit-button" title="View">
-                          <FaEye />
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 ))
               )}

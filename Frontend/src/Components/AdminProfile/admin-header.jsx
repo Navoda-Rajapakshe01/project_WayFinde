@@ -52,6 +52,16 @@ const AdminHeader = ({ onShowPendingRequests }) => {
     }
   }, []);
 
+  // Centralized logout function
+  const handleLogout = () => {
+    localStorage.removeItem("userProfile");
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAdmin");
+    localStorage.removeItem("userId");
+    // Add any other keys you use for session/auth
+    window.location.href = "/signin";
+  };
+
   return (
     <header className="admin-header-container">
       <div className="admin-header-right">
@@ -216,15 +226,11 @@ const AdminHeader = ({ onShowPendingRequests }) => {
                   <p>{adminEmail}</p>
                 </div>
               </div>
-              <ul style={{margin: 0, padding: 0}}>
+              <ul style={{margin: 0, padding: 0, borderTop: 'none'}}>
                 <li
                   className="admin-header-logout"
-                  style={{borderTop: "none"}}
-                  onClick={() => {
-                    localStorage.removeItem("userProfile");
-                    localStorage.removeItem("token");
-                    navigate("/signin");
-                  }}
+                  style={{borderTop: 'none', margin: 0, padding: '10px 16px', textAlign: 'center'}}
+                  onClick={handleLogout}
                 >
                   Logout
                 </li>
@@ -233,6 +239,8 @@ const AdminHeader = ({ onShowPendingRequests }) => {
           )}
         </div>
       </div>
+      {/* Divider below notification and avatar */}
+      <hr style={{ margin: '8px 0 0 0', border: 'none', borderTop: '2px solid rgba(0,0,0,0.15)', width: '100%' }} />
     </header>
   );
 };
