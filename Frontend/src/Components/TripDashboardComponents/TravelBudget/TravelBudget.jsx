@@ -90,7 +90,7 @@ const TravelBudget = ({ tripId }) => {
         {expenses.map((expense) => (
           <li key={expense.id} className="expense-item">
             <span className="expense-description">{expense.description}</span>
-            <span className="expense-amount">Rs : {expense.amount}</span>
+            <span className="expense-amount">Rs : {parseFloat(expense.amount).toFixed(2)}</span>
             <button onClick={() => handleDeleteExpense(expense.id)} className="delete-expense-button">X</button>
           </li>
         ))}
@@ -99,7 +99,9 @@ const TravelBudget = ({ tripId }) => {
       {/* Total Budget */}
       <div className="total-amount">
         <span className="total-label">Total Budget:</span> 
-        <span className="total-value">Rs {expenses.reduce((acc, expense) => acc + parseFloat(expense.amount || 0), 0)}</span>
+        <span className="total-value">
+         Rs {expenses.reduce((acc, expense) => acc + parseFloat(expense.amount || 0), 0).toFixed(2)}
+        </span>
       </div>
     </div>
   );
