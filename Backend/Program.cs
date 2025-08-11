@@ -19,7 +19,7 @@ builder.Services.AddHttpClient<IWeatherService, WeatherService>();
 // Add AppDbContext with correct connection string
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
+        builder.Configuration.GetConnectionString("SachinthaConnection"),
         sqlOptions => sqlOptions.EnableRetryOnFailure()
     )
 );
